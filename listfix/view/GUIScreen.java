@@ -1,16 +1,11 @@
 package listfix.view;
 
-/*
- * GUIScreen.java
- *
- * Created on October 23, 2001, 9:10 PM
- */
-
 /**
  *
- * @author  Administrator
+ * @author jcaron
  */
 import java.awt.Component;
+import java.util.Enumeration;
 import listfix.view.ClosestMatchChooserDialog;
 import listfix.view.EditFilenameDialog;
 import listfix.model.EditFilenameResultObject;
@@ -766,9 +761,10 @@ public class GUIScreen extends JFrame {
                     updateStatusLabel();
                 }
             }
-            catch (Exception E)
+            catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, MP3 was not inserted.");
+                e.printStackTrace();
             }
         }
         else
@@ -792,9 +788,10 @@ public class GUIScreen extends JFrame {
                     updateStatusLabel();
                 }
             }
-            catch (Exception E)
+            catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, playlist was not inserted.");
+                e.printStackTrace();
             }
         }
         else
@@ -834,7 +831,8 @@ public class GUIScreen extends JFrame {
             }
             catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, 1 or more files were not copied.");
+                e.printStackTrace();
             }
         }
         else
@@ -971,9 +969,10 @@ public class GUIScreen extends JFrame {
             {
                 ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.updateFileName(row, response.getFileName()) );
             }
-            catch (Exception E)
+            catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, filename was not changed.");
+                e.printStackTrace();
             }
             updateButtons();
             updateStatusLabel();
@@ -993,9 +992,10 @@ public class GUIScreen extends JFrame {
                 File m3uToAppend = jM3UChooser.getSelectedFile();
                 ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.appendPlaylist(m3uToAppend) );                
             }
-            catch (Exception E)
+            catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, playlist was not appended.");
+                e.printStackTrace();
             }
             updateButtons();
             updateStatusLabel();
@@ -1048,9 +1048,10 @@ public class GUIScreen extends JFrame {
                 File mp3ToInsert = jMP3Chooser.getSelectedFile();
                 ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.addMP3(mp3ToInsert) );                
             }
-            catch (Exception E)
+            catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, MP3 was not appended.");
+                e.printStackTrace();
             }
         }
         else
@@ -1108,9 +1109,10 @@ public class GUIScreen extends JFrame {
                 updateButtons();
                 updateStatusLabel();
             }
-            catch (Exception E)
+            catch (Exception e)
             {                
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be saved.");
+                e.printStackTrace();
             }
         }
         else
@@ -1154,7 +1156,8 @@ public class GUIScreen extends JFrame {
             }
             catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
+                e.printStackTrace();
             }
         }
         else
@@ -1199,7 +1202,8 @@ public class GUIScreen extends JFrame {
             }
             catch (Exception e)
             {
-                
+                JOptionPane.showMessageDialog(this, "An error has occured, media directory could not be added.");
+                e.printStackTrace();
             }
         }
         else
@@ -1216,7 +1220,8 @@ public class GUIScreen extends JFrame {
         }
         catch (Exception e)
         {
-            
+            JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
+            e.printStackTrace();
         }
         updateButtons();
     }//GEN-LAST:event_removeMediaDirButtonActionPerformed
@@ -1494,24 +1499,13 @@ public class GUIScreen extends JFrame {
 
         }
     }
-        
-    /**
-     * Set the application Look and Feel to be the normal look and feel
-     * of the platform it is running on (e.g., Windows, Motif, etc...)
-     *
-     * If for whatever reason this doesn't work, fail back to the Swing
-     * native L&F.
-     *
-     * @author Alexander Wise
-     */
+
     private void setLookAndFeel ()
     {
 	try
 	{
             UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 	}
-	// If any of these exceptions occur, the L&F defaults to the
-	// Swing native L&F (metal) so we can just ignore them all...
 	catch ( ClassNotFoundException e ) {}
 	catch ( InstantiationException e ) {}
 	catch ( IllegalAccessException e ) {}
@@ -1521,54 +1515,50 @@ public class GUIScreen extends JFrame {
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+    public static void main(String args[]) 
+    {
         GUIScreen mainWindow = new GUIScreen();
-        java.awt.Dimension screenSize =
-          java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         java.awt.Dimension labelSize = mainWindow.getPreferredSize();
-        mainWindow.setLocation(screenSize.width/2 - (labelSize.width/2),
-                    screenSize.height/2 - (labelSize.height/2));
+        mainWindow.setLocation(screenSize.width/2 - (labelSize.width/2), screenSize.height/2 - (labelSize.height/2));
         mainWindow.setVisible(true);        
     }
     
-        /*
-     * This method picks good column sizes.
-     * If all column heads are wider than the column's cells'
-     * contents, then you can just use column.sizeWidthToFit().
-     */
     private void initColumnSizes(JTable table) 
     {
         CustomTableModel model = (CustomTableModel) table.getModel();
-        TableColumn column = null;
         Component comp = null;
         int headerWidth = 0;
         int cellWidth = 0;
         Object[] longValues = model.longestValues();
+        Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
         TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
-
-        for (int i = 0; i < longValues.length; i++)
+        while(columns.hasMoreElements())
         {
-            column = table.getColumnModel().getColumn(i);
-
-            comp = headerRenderer.getTableCellRendererComponent(
-                    null, column.getHeaderValue(),
-                    false, false, 0, 0);
+            TableColumn column = columns.nextElement();            
+            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);            
             headerWidth = comp.getPreferredSize().width;
-
-            comp = table.getDefaultRenderer(model.getColumnClass(i)).
-                    getTableCellRendererComponent(
-                    table, longValues[i],
-                    false, false, 0, i);
-            cellWidth = comp.getPreferredSize().width;
-            
-            if (i == 1)
+            if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
+            {
+                comp = table.getDefaultRenderer(model.getColumnClass(1)).getTableCellRendererComponent(table, longValues[1], false, false, 0, 1);
+            }
+            else if ( ((String)column.getHeaderValue()).equalsIgnoreCase("file name") )
+            {
+                comp = table.getDefaultRenderer(model.getColumnClass(0)).getTableCellRendererComponent(table, longValues[0], false, false, 0, 0);
+            }
+            else
+            {
+                comp = table.getDefaultRenderer(model.getColumnClass(2)).getTableCellRendererComponent(table, longValues[2], false, false, 0, 2);
+            }            
+            cellWidth = comp.getPreferredSize().width;            
+            if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
             {
                 column.setPreferredWidth(Math.max(headerWidth, cellWidth) + 50);
             }
             else
             {
                 column.setPreferredWidth(Math.max(headerWidth, cellWidth)); 
-            }            
+            }   
         }
     }
 
