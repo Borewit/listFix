@@ -209,7 +209,6 @@ public class GUIScreen extends JFrame {
         });
 
         buttonPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        buttonPanel.setPreferredSize(null);
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
@@ -292,7 +291,6 @@ public class GUIScreen extends JFrame {
         getContentPane().add(buttonPanel, java.awt.BorderLayout.NORTH);
 
         statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        statusPanel.setPreferredSize(null);
         statusPanel.setLayout(new java.awt.BorderLayout());
 
         statusLabel.setFont(new java.awt.Font("Dialog", 1, 10));
@@ -307,10 +305,7 @@ public class GUIScreen extends JFrame {
         splitPane.setMaximumSize(null);
 
         mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
-        mediaLibraryPanel.setPreferredSize(null);
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
-
-        mediaLibraryButtonPanel.setPreferredSize(null);
 
         addMediaDirButton.setFont(new java.awt.Font("Dialog", 1, 10));
         addMediaDirButton.setText("Add");
@@ -341,8 +336,6 @@ public class GUIScreen extends JFrame {
 
         mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
-        mediaLibraryScrollPane.setPreferredSize(null);
-
         mediaLibraryList.setFont(new java.awt.Font("Dialog", 0, 10));
         mediaLibraryList.setPreferredSize(null);
         mediaLibraryScrollPane.setViewportView(mediaLibraryList);
@@ -353,8 +346,6 @@ public class GUIScreen extends JFrame {
 
         playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Playlist Status"));
         playlistPanel.setLayout(new java.awt.BorderLayout());
-
-        playlistButtonPanel.setPreferredSize(null);
 
         locateButton.setFont(new java.awt.Font("Dialog", 1, 10));
         locateButton.setText("Locate MP3's");
@@ -421,7 +412,6 @@ public class GUIScreen extends JFrame {
         getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
 
         mainMenuBar.setBorder(null);
-        mainMenuBar.setPreferredSize(null);
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
@@ -737,6 +727,7 @@ public class GUIScreen extends JFrame {
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
         helpMenuItem.setMnemonic('e');
         helpMenuItem.setText("Help");
+        helpMenuItem.setEnabled(false);
         helpMenu.add(helpMenuItem);
 
         mainMenuBar.add(helpMenu);
