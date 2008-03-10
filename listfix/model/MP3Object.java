@@ -26,7 +26,7 @@ public class MP3Object
 {    
     private final static String fs = System.getProperty("file.separator");    
     private final static String br = System.getProperty("line.separator");
-    public static Vector emptyDriveRoots = new Vector();
+    public static Vector emptyDirectories = new Vector();
     
     private String path = "";
     private String extInf = "";
@@ -104,6 +104,7 @@ public class MP3Object
         try
         {
             String cmdLine = "";
+            // try to figure out the OS so we can issue the correct command
             String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
             if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
             {
@@ -206,8 +207,8 @@ public class MP3Object
     
     public boolean skipExistsCheck()
     {
-        String[] emptyPaths = new String[emptyDriveRoots.size()];
-        emptyDriveRoots.copyInto(emptyPaths);
+        String[] emptyPaths = new String[emptyDirectories.size()];
+        emptyDirectories.copyInto(emptyPaths);
         return found == true || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path);        
     }
     

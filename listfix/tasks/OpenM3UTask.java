@@ -15,10 +15,7 @@ import java.util.*;
 public class OpenM3UTask extends listfix.view.support.Task 
 {
     private GUIDriver guiDriver;
-    private File input;
-    private String[] mediaDir;
-    private String[] mediaLibraryDirectoryList;
-    private String[] mediaLibraryFileList;  
+    private File input; 
     private Vector mp3s = new Vector();
     
     /** Creates new LocateMP3sTask */

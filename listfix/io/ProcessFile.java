@@ -6,7 +6,7 @@ package listfix.io;
 = File:     ProcessFile.java
 = Version:  1.0
 = Purpose:  Read in the playlist file and return a Vector containing 
-=           Mp3Objects that represent the files in the playlist.
+=           MP3Objects that represent the files in the playlist.
 ============================================================================
 */
 
@@ -141,19 +141,43 @@ public class ProcessFile
         {
             path.append("\\\\");
         }
-        
+         
+        String firstToken = "";
         int tokenNumber = 0;
         while(pathTokenizer.hasMoreTokens())
         {
-            String word = pathTokenizer.nextToken();            
-            if (tokenNumber == 0 && !L2.startsWith("\\\\") && !MP3Object.emptyDriveRoots.contains(word + fs))
+            File firstPathToExist = null;
+            String word = pathTokenizer.nextToken(); 
+            if (tokenNumber == 0)
+            {
+                firstToken = word;
+            }
+            if (tokenNumber == 0 && !L2.startsWith("\\\\") && !MP3Object.emptyDirectories.contains(word + fs))
             {
                 // This token is the closest thing we have to the notion of a 'drive' on any OS... 
                 // make a file out of this and see if it has any files.
                 File testFile = new File(word + fs);
                 if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0))
                 {
-                    MP3Object.emptyDriveRoots.add(path.toString() + word + fs);
+                    MP3Object.emptyDirectories.add(path.toString() + word + fs);
+                }
+            }
+            else if (L2.startsWith("\\\\") && !MP3Object.emptyDirectories.contains(path.toString() + word + fs) && pathTokenizer.countTokens() >= 1)
+            {
+                // Handle UNC paths specially
+                File testFile = new File(path.toString() + word + fs);
+                boolean exists = testFile.exists();
+                if (exists && firstPathToExist == null)
+                {
+                    firstPathToExist = testFile;
+                }
+                if (!(exists && testFile.isDirectory() && testFile.list().length > 0) && pathTokenizer.countTokens() == 1)
+                {
+                    MP3Object.emptyDirectories.add(path.toString() + word + fs);
+                    if (firstPathToExist == null)
+                    {
+                        MP3Object.emptyDirectories.add("\\\\" + firstToken);
+                    }
                 }
             }
             if(pathTokenizer.hasMoreTokens())
