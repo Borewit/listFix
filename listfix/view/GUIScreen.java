@@ -1380,6 +1380,7 @@ public class GUIScreen extends JFrame {
             closestMatchesMenuItem.setEnabled(false);
             findClosestMatchesMenuItem.setEnabled(false);
             insertPlaylistMenuItem.setEnabled(false);
+            insertMP3MenuItem.setEnabled(false);
         }
         else if ((playlistTable.getSelectedRowCount() != 0) && (guiDriver.getMP3Count() != 0))
         {
@@ -1401,7 +1402,8 @@ public class GUIScreen extends JFrame {
             openMenuItem.setEnabled(true);
             closestMatchesMenuItem.setEnabled(true);
             findClosestMatchesMenuItem.setEnabled(true);
-            insertPlaylistMenuItem.setEnabled(true);
+            insertPlaylistMenuItem.setEnabled(true);            
+            insertMP3MenuItem.setEnabled(true);
         }                
         if (mediaLibraryList.getModel().getSize() == 0)
         {
