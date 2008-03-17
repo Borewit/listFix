@@ -303,6 +303,7 @@ public class GUIScreen extends JFrame {
 
         splitPane.setBorder(null);
         splitPane.setMaximumSize(null);
+        splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
 
         mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
