@@ -42,9 +42,9 @@ public class DirectoryScanner
         for (int i = 0; i < dirs.length; i++)
         {
             File mediaDir = new File(dirs[i]);
-            if (mediaDir.exists())
+            try
             {
-                String[] mp3s = mediaDir.list(new MP3FileNameFilter());
+                String[] mp3s = mediaDir.list(new AudioFileNameFilter());
                 if (mp3s != null & mp3s.length > 0)
                 {
                     StringBuilder s = new StringBuilder();
@@ -58,6 +58,10 @@ public class DirectoryScanner
                     }
                 }
             }
+            catch (Exception e)
+            {
+                // eat the error and continue... faster than an exists check.
+            }
         }
         String[] result = new String[thisFileList.size()];
         thisFileList.copyInto(result);
@@ -68,16 +72,19 @@ public class DirectoryScanner
     {
         File mediaDir = new File(baseDir);
         String[] subDirs = mediaDir.list(new DirectoryFilter());
-        if(subDirs.length != 0)
+        if (subDirs != null)
         {
-            copyDirsToVector(baseDir, subDirs);
-        }
-        for (int i = 0; i < subDirs.length; i++)
-        {
-            StringBuilder s = new StringBuilder(baseDir);
-            s.append(fs);
-            s.append(subDirs[i]);
-            recursiveDir(s.toString());
+            if (subDirs.length != 0)
+            {
+                copyDirsToVector(baseDir, subDirs);
+            }
+            for (int i = 0; i < subDirs.length; i++)
+            {
+                StringBuilder s = new StringBuilder(baseDir);
+                s.append(fs);
+                s.append(subDirs[i]);
+                recursiveDir(s.toString());
+            }
         }
     }
     

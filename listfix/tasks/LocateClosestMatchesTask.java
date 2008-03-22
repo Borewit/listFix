@@ -18,12 +18,12 @@ import java.io.*;
 
 public class LocateClosestMatchesTask extends listfix.view.support.Task {
 
-    private MP3Object mp3;
+    private PlaylistEntry mp3;
     private String[] mediaLibraryFileList;
     private Vector results = new Vector();
     
     /** Creates new LocateMP3sTask */
-    public LocateClosestMatchesTask(MP3Object x, String[] y) 
+    public LocateClosestMatchesTask(PlaylistEntry x, String[] y) 
     {
         mp3 = x;
         mediaLibraryFileList = y;
@@ -41,7 +41,7 @@ public class LocateClosestMatchesTask extends listfix.view.support.Task {
             int matchedTokens = FileNameTokenizer.countMatchingTokens(fileToFindTokens, currentFileTokens);
             if (matchedTokens > 0)
             {
-                results.add(new MatchedMP3Object(mediaFile, matchedTokens));
+                results.add(new MatchedPlaylistEntry(mediaFile, matchedTokens));
             }
             this.notifyObservers((int)((double)i/(double)(mediaLibraryFileList.length-1) * 100.0));
         }

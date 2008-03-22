@@ -91,7 +91,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog {
         
         jScrollPane1.setPreferredSize(new java.awt.Dimension(453, 200));
         jTable1.setFont(new java.awt.Font("Dialog", 0, 10));
-        jTable1.setModel(new MatchedMP3TableModel(matchData));
+        jTable1.setModel(new MatchedFileTableModel(matchData));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jTable1MousePressed(evt);

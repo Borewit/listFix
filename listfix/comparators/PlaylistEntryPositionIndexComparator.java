@@ -1,14 +1,14 @@
 package listfix.comparators;
 
-import listfix.model.MP3PositionObject;
+import listfix.model.PlaylistEntryPosition;
 import listfix.model.*;
 
-public class MP3PositionObjectPositionComparator implements java.util.Comparator
+public class PlaylistEntryPositionIndexComparator implements java.util.Comparator
 {
     public int compare(Object a, Object b)
     {
-        MP3PositionObject aa = (MP3PositionObject)a;
-        MP3PositionObject bb = (MP3PositionObject)b;
+        PlaylistEntryPosition aa = (PlaylistEntryPosition)a;
+        PlaylistEntryPosition bb = (PlaylistEntryPosition)b;
         if (aa.getPosition() < bb.getPosition())
         {
             return -1;

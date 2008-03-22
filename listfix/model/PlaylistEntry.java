@@ -10,9 +10,9 @@ import listfix.util.*;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     MP3Object.java
+= File:     PlaylistEntry.java
 = Version:  1.0
-= Purpose:  To encapsulate all of the information about an MP3 file.
+= Purpose:  To encapsulate all of the information about a playlist entry.
 =           Provides methods for setting and getting the path to the
 =           file, determining if the file exists, searching for
 =           the file in a list of directories, and finding a closest
@@ -22,7 +22,7 @@ import listfix.util.*;
 
 import java.io.File;
 
-public class MP3Object
+public class PlaylistEntry
 {    
     private final static String fs = System.getProperty("file.separator");    
     private final static String br = System.getProperty("line.separator");
@@ -35,7 +35,7 @@ public class MP3Object
     private String message = "Unknown";
     private boolean found = false;
     
-    public MP3Object(String p, String f, String extra)
+    public PlaylistEntry(String p, String f, String extra)
     {
         path = p;
         fileName = f;
@@ -52,7 +52,7 @@ public class MP3Object
         }
     }
     
-    public MP3Object(File input)
+    public PlaylistEntry(File input)
     {
         fileName = input.getName();
         path = input.getPath().substring(0, input.getPath().indexOf(fileName));
@@ -130,7 +130,7 @@ public class MP3Object
         }
         catch (IOException ex)
         {
-            Logger.getLogger(MP3Object.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PlaylistEntry.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -220,7 +220,7 @@ public class MP3Object
     @Override
     public Object clone()
     {
-        MP3Object result = new MP3Object(new File(this.getFile().getPath()));
+        PlaylistEntry result = new PlaylistEntry(new File(this.getFile().getPath()));
         return result;
     }
 }   

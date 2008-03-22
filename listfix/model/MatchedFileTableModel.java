@@ -1,9 +1,8 @@
 package listfix.model;
 
 import java.util.Vector;
-import listfix.model.*;
 
-public class MatchedMP3TableModel extends javax.swing.table.AbstractTableModel 
+public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel 
 {    
         private final String [] columnNames = { "File Name", "# of keyword matches" };
         private Object[][] data;
@@ -12,24 +11,24 @@ public class MatchedMP3TableModel extends javax.swing.table.AbstractTableModel
                 java.lang.String.class, java.lang.String.class
             };
 
-        public MatchedMP3TableModel(Object[][] input)
+        public MatchedFileTableModel(Object[][] input)
         {
             data = input;
         }
         
-        public MatchedMP3TableModel(Vector input)
+        public MatchedFileTableModel(Vector input)
         {
             int n = input.size();
             String [][] tempData = new String[n][2];
             for (int i = 0; i < n; i++)
             {
-                tempData[i][0] = ((MatchedMP3Object)input.elementAt(i)).getMP3().getFileName();
-                tempData[i][1] = ((MatchedMP3Object)input.elementAt(i)).getCount() + "";
+                tempData[i][0] = ((MatchedPlaylistEntry)input.elementAt(i)).getPlaylistFile().getFileName();
+                tempData[i][1] = ((MatchedPlaylistEntry)input.elementAt(i)).getCount() + "";
             }
             data = tempData;
         }
         
-        public MatchedMP3TableModel()
+        public MatchedFileTableModel()
         {
             Object[][] result = new Object[50][2];
             for (int i = 1; i < 50; i++)

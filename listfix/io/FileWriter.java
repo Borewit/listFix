@@ -13,7 +13,7 @@ package listfix.io;
 
 import listfix.model.M3UHistory;
 import listfix.tasks.WriteIniFileTask;
-import listfix.model.MP3Object;
+import listfix.model.PlaylistEntry;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,7 +30,7 @@ public class FileWriter
     
     public static void writeM3U(Vector mp3s, File fileName)
     {
-        MP3Object tempMP3 = null;
+        PlaylistEntry tempMP3 = null;
         try
         {
             outputStream = new FileOutputStream(fileName);
@@ -38,7 +38,7 @@ public class FileWriter
             output.writeBytes("#EXTM3U" + br);
             for(int i = 0; i < mp3s.size(); i++)
             {
-                tempMP3 = (MP3Object)mp3s.elementAt(i);
+                tempMP3 = (PlaylistEntry)mp3s.elementAt(i);
                 output.writeBytes(tempMP3.toString() + br);
             }        
             output.close();

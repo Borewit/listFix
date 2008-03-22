@@ -18,13 +18,21 @@ public class FileNameTokenizer
         ignoreList.add("to");
     }
     
+    private static String removeExtensionFromFileName(String name)
+    {
+        String result = name;
+        int index = name.lastIndexOf(".");
+        if (index >= 0)
+        {
+            result = name.substring(0, index);
+        }
+        return result;
+    }
+    
     public static String[] splitFileName(String fileName)
     {
         String[] result = new String[0];
-        if (fileName.toLowerCase().endsWith(".mp3"))
-        {
-            fileName = fileName.substring(0, fileName.length() - 4);
-        }
+        fileName = removeExtensionFromFileName(fileName);
         StringTokenizer tokenMaker = new StringTokenizer(fileName, " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;");
         int tokenCount = tokenMaker.countTokens();
         Vector tempResult = new Vector();

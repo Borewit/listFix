@@ -6,8 +6,8 @@ public class DescendingFilenameComparator implements java.util.Comparator
 {
     public int compare(Object a, Object b)
     {
-        MP3Object aa = (MP3Object)a;
-        MP3Object bb = (MP3Object)b;
+        PlaylistEntry aa = (PlaylistEntry)a;
+        PlaylistEntry bb = (PlaylistEntry)b;
         if (aa.getFileName().compareToIgnoreCase(bb.getFileName()) < 0)
         {
             return 1;

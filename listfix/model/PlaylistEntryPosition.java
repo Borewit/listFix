@@ -1,7 +1,7 @@
 package listfix.model;
 
 /*
- * MP3PositionObject.java
+ * PlaylistEntryPosition.java
  *
  * Created on May 20, 2002, 12:46 PM
  */
@@ -13,13 +13,13 @@ package listfix.model;
  */
 import listfix.model.*;
 
-public class MP3PositionObject {
+public class PlaylistEntryPosition {
 
     private int position = -1;
-    private MP3Object mp3 = null;
+    private PlaylistEntry mp3 = null;
     
-    /** Creates new MP3PositionObject */
-    public MP3PositionObject(MP3Object m, int pp) {
+    /** Creates new PlaylistEntryPosition */
+    public PlaylistEntryPosition(PlaylistEntry m, int pp) {
         mp3 = m;
         position = pp;
     }
@@ -34,7 +34,7 @@ public class MP3PositionObject {
         position = input;
     }   
     
-    public MP3Object getMp3()
+    public PlaylistEntry getMp3()
     {
         return mp3;
     }

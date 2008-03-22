@@ -1,7 +1,7 @@
 package listfix.tasks;
 
 /*
- * LocateMP3sTask.java
+ * LocateFilesTask.java
  *
  * Created on April 30, 2002, 2:07 PM
  */
@@ -11,16 +11,16 @@ package listfix.tasks;
  * @author  jcaron
  * @version 
  */
-import listfix.model.MP3Object;
+import listfix.model.PlaylistEntry;
 import java.util.Vector;
 
-public class LocateMP3sTask extends listfix.view.support.Task {
+public class LocateFilesTask extends listfix.view.support.Task {
 
     private Vector mp3s;
     private String[] mediaLibraryFileList;
     
-    /** Creates new LocateMP3sTask */
-    public LocateMP3sTask(Vector x, String[] y) {
+    /** Creates new LocateFilesTask */
+    public LocateFilesTask(Vector x, String[] y) {
         mp3s = x;
         mediaLibraryFileList = y;
     }
@@ -28,10 +28,10 @@ public class LocateMP3sTask extends listfix.view.support.Task {
     /** Run the task. This method is the body of the thread for this task.  */
     public void run() 
     {
-        MP3Object tempMP3 = null;
+        PlaylistEntry tempMP3 = null;
         for (int i = 0; i < mp3s.size(); i++)
         {
-            tempMP3 = (MP3Object) mp3s.elementAt(i);
+            tempMP3 = (PlaylistEntry) mp3s.elementAt(i);
             if (tempMP3.exists())
             {
                 tempMP3.setMessage("Found!");

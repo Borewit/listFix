@@ -10,7 +10,7 @@ package listfix.view;
  *
  * @author  Administrator
  */
-import listfix.model.EditFilenameResultObject;
+import listfix.model.EditFilenameResult;
 import java.awt.Point;
 
 public class EditFilenameDialog extends javax.swing.JDialog {
@@ -188,10 +188,10 @@ public class EditFilenameDialog extends javax.swing.JDialog {
         new EditFilenameDialog(new java.awt.Frame(), "Edit Filename", true, "").setVisible(true);
     }
     
-    public static EditFilenameResultObject showDialog(java.awt.Frame parent, String title, boolean modal, String filename) {
+    public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal, String filename) {
         EditFilenameDialog tempDBox = new EditFilenameDialog(parent, title, modal, filename);
         tempDBox.setVisible(true);
-        return new EditFilenameResultObject(tempDBox.getResultCode(), tempDBox.getFileName());
+        return new EditFilenameResult(tempDBox.getResultCode(), tempDBox.getFileName());
     }
 
 

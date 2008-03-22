@@ -10,7 +10,7 @@ package listfix.io;
 ============================================================================
 */
 
-import listfix.model.MP3Object;
+import listfix.model.PlaylistEntry;
 import listfix.view.support.*;
 import listfix.tasks.*;
 import java.io.BufferedReader;
@@ -152,17 +152,17 @@ public class ProcessFile
             {
                 firstToken = word;
             }
-            if (tokenNumber == 0 && !L2.startsWith("\\\\") && !MP3Object.emptyDirectories.contains(word + fs))
+            if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.emptyDirectories.contains(word + fs))
             {
                 // This token is the closest thing we have to the notion of a 'drive' on any OS... 
                 // make a file out of this and see if it has any files.
                 File testFile = new File(word + fs);
                 if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0))
                 {
-                    MP3Object.emptyDirectories.add(path.toString() + word + fs);
+                    PlaylistEntry.emptyDirectories.add(path.toString() + word + fs);
                 }
             }
-            else if (L2.startsWith("\\\\") && !MP3Object.emptyDirectories.contains(path.toString() + word + fs) && pathTokenizer.countTokens() >= 1)
+            else if (L2.startsWith("\\\\") && !PlaylistEntry.emptyDirectories.contains(path.toString() + word + fs) && pathTokenizer.countTokens() >= 1)
             {
                 // Handle UNC paths specially
                 File testFile = new File(path.toString() + word + fs);
@@ -173,10 +173,10 @@ public class ProcessFile
                 }
                 if (!(exists && testFile.isDirectory() && testFile.list().length > 0) && pathTokenizer.countTokens() == 1)
                 {
-                    MP3Object.emptyDirectories.add(path.toString() + word + fs);
+                    PlaylistEntry.emptyDirectories.add(path.toString() + word + fs);
                     if (firstPathToExist == null)
                     {
-                        MP3Object.emptyDirectories.add("\\\\" + firstToken);
+                        PlaylistEntry.emptyDirectories.add("\\\\" + firstToken);
                     }
                 }
             }
@@ -191,7 +191,7 @@ public class ProcessFile
             }
             tokenNumber++;
         }  
-        results.addElement(new MP3Object(path.toString(), fileName, extInf));
+        results.addElement(new PlaylistEntry(path.toString(), fileName, extInf));
     }
 
     public void close_file() throws IOException
