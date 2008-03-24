@@ -50,7 +50,7 @@ public class GUIDriver
         }
     }
     
-    public boolean isMP3ListEmpty()
+    public boolean isEntryListEmpty()
     {
         if(entries.size() == 0)
         {
@@ -275,19 +275,19 @@ public class GUIDriver
         return mediaDir;
     }
     
-    public String[][] moveUp(int mp3Index)
+    public String[][] moveUp(int entryIndex)
     {
-        PlaylistEntry temp = (PlaylistEntry)entries.elementAt(mp3Index);
-        entries.removeElementAt(mp3Index);
-        entries.insertElementAt(temp, mp3Index - 1);
+        PlaylistEntry temp = (PlaylistEntry)entries.elementAt(entryIndex);
+        entries.removeElementAt(entryIndex);
+        entries.insertElementAt(temp, entryIndex - 1);
         return guiTableUpdate();
     }
     
-    public String[][] moveDown(int mp3Index)
+    public String[][] moveDown(int entryIndex)
     {
-        PlaylistEntry temp = (PlaylistEntry)entries.elementAt(mp3Index);
-        entries.removeElementAt(mp3Index);
-        entries.insertElementAt(temp, mp3Index + 1);
+        PlaylistEntry temp = (PlaylistEntry)entries.elementAt(entryIndex);
+        entries.removeElementAt(entryIndex);
+        entries.insertElementAt(temp, entryIndex + 1);
         return guiTableUpdate();
     }
     
@@ -299,16 +299,16 @@ public class GUIDriver
         return guiTableUpdate();
     }
     
-    public String[][] delete(int mp3Index)
+    public String[][] delete(int entryIndex)
     {
-        entries.removeElementAt(mp3Index);
+        entries.removeElementAt(entryIndex);
         return guiTableUpdate();
     }
     
-    public String[][] addMP3(File input)
+    public String[][] addEntry(File input)
     {
-        PlaylistEntry mp3ToInsert = new PlaylistEntry(input);
-        entries.add(mp3ToInsert);
+        PlaylistEntry entryToInsert = new PlaylistEntry(input);
+        entries.add(entryToInsert);
         return guiTableUpdate();
     }
     
@@ -341,13 +341,13 @@ public class GUIDriver
     
     public String[][] locateFiles(LocateFilesTask input)
     {
-        entries = input.locateMP3s();
+        entries = input.locateFiles();
         return guiTableUpdate();
     }
     
-    public String[][] locateMP3(int mp3ID)
+    public String[][] locateFile(int entryIndex)
     {
-        ((PlaylistEntry)entries.elementAt(mp3ID)).findNewLocationFromFileList(mediaLibraryFileList);
+        ((PlaylistEntry)entries.elementAt(entryIndex)).findNewLocationFromFileList(mediaLibraryFileList);
         return guiTableUpdate();
     }
     
@@ -358,10 +358,10 @@ public class GUIDriver
         return result;
     }
     
-    public String[][] updateEntryAt(int mp3ID, PlaylistEntry newMp3)
+    public String[][] updateEntryAt(int entryIndex, PlaylistEntry newEntry)
     {
-        entries.insertElementAt(newMp3, mp3ID);
-        entries.removeElementAt(mp3ID + 1);
+        entries.insertElementAt(newEntry, entryIndex);
+        entries.removeElementAt(entryIndex + 1);
         return guiTableUpdate();
     }
     
@@ -431,11 +431,11 @@ public class GUIDriver
     
     public String[][] removeMissing()
     {
-        PlaylistEntry tempMp3 = null;
+        PlaylistEntry tempEntry = null;
         for (int i = 0; i < entries.size(); i++)
         {
-            tempMp3 = (PlaylistEntry) entries.elementAt(i);
-            if (!tempMp3.exists())
+            tempEntry = (PlaylistEntry) entries.elementAt(i);
+            if (!tempEntry.exists())
             {
                 entries.removeElementAt(i--);                
             }
@@ -443,15 +443,15 @@ public class GUIDriver
         return guiTableUpdate();
     }
     
-    public void copyMP3sToNewNewDirectory(CopyFilesTask thisTask)
+    public void copyFilesToNewNewDirectory(CopyFilesTask thisTask)
     {
         thisTask.run();
     }
     
-    public String[][] updateFileName(int mp3ID, String filename)
+    public String[][] updateFileName(int entryIndex, String filename)
     {
-        ((PlaylistEntry)entries.elementAt(mp3ID)).setFileName(filename);
-        String[][] result = locateMP3(mp3ID);
+        ((PlaylistEntry)entries.elementAt(entryIndex)).setFileName(filename);
+        String[][] result = locateFile(entryIndex);
         return result;
     }
     
@@ -469,8 +469,8 @@ public class GUIDriver
         // remove dups
         for (int j = 0; j < sortingList.size() - 1; j++)
         {
-            PlaylistEntry temp1 = ((PlaylistEntryPosition)sortingList.elementAt(j)).getMp3();
-            PlaylistEntry temp2 = ((PlaylistEntryPosition)sortingList.elementAt(j+1)).getMp3();
+            PlaylistEntry temp1 = ((PlaylistEntryPosition)sortingList.elementAt(j)).getPlaylistEntry();
+            PlaylistEntry temp2 = ((PlaylistEntryPosition)sortingList.elementAt(j+1)).getPlaylistEntry();
             if (temp1.getFileName().equals(temp2.getFileName()))
             {
                 sortingList.removeElementAt(j+1);
@@ -482,15 +482,15 @@ public class GUIDriver
         // copy back
         while (!sortingList.isEmpty())
         {
-            entries.add(((PlaylistEntryPosition)sortingList.firstElement()).getMp3());
+            entries.add(((PlaylistEntryPosition)sortingList.firstElement()).getPlaylistEntry());
             sortingList.removeElementAt(0);
         }
         return guiTableUpdate();
     }
     
-    public String getMP3FileName(int mp3ID)
+    public String getEntryFileName(int entryIndex)
     {
-        return ((PlaylistEntry)entries.elementAt(mp3ID)).getFileName();
+        return ((PlaylistEntry)entries.elementAt(entryIndex)).getFileName();
     }
     
     public boolean playlistModified()
@@ -504,9 +504,9 @@ public class GUIDriver
         {
             for (int i = 0; i< entries.size(); i++)
             {
-                PlaylistEntry mp3a = (PlaylistEntry)entries.get(i);
-                PlaylistEntry mp3b = (PlaylistEntry)originalEntries.get(i);
-                if ( !mp3a.getFile().getPath().equals(mp3b.getFile().getPath()) )
+                PlaylistEntry entryA = (PlaylistEntry)entries.get(i);
+                PlaylistEntry entryB = (PlaylistEntry)originalEntries.get(i);
+                if ( !entryA.getFile().getPath().equals(entryB.getFile().getPath()) )
                 {
                     result = true;
                     break;
@@ -553,14 +553,14 @@ public class GUIDriver
     }
 
     /**
-    * @param mp3ToInsert
-    * @param mp3Index
+    * @param entryToInsert
+    * @param entryIndex
     * @return
     */
-    public Object[][] insertMP3(File fileToInsert, int mp3Index)
+    public Object[][] insertFile(File fileToInsert, int entryIndex)
     {
-        PlaylistEntry mp3ToInsert = new PlaylistEntry(fileToInsert);
-        entries.insertElementAt(mp3ToInsert, mp3Index+1);
+        PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert);
+        entries.insertElementAt(entryToInsert, entryIndex+1);
         return guiTableIni();
     }
 }

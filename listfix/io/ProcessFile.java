@@ -6,7 +6,7 @@ package listfix.io;
 = File:     ProcessFile.java
 = Version:  1.0
 = Purpose:  Read in the playlist file and return a Vector containing 
-=           MP3Objects that represent the files in the playlist.
+=           PalylistEntries that represent the files in the playlist.
 ============================================================================
 */
 
@@ -56,7 +56,7 @@ public class ProcessFile
             }        
             while (line1 != null)
             {
-                processMP3(line1, line2);
+                processEntry(line1, line2);
                 input.notifyObservers((int)((double)cache.length()/(double)(fileLength + 1.0) * 100.0));
                 line1 = B.readLine();
                 if (line1 != null)
@@ -95,7 +95,7 @@ public class ProcessFile
             }        
             while (line1 != null)
             {
-                processMP3(line1, line2);
+                processEntry(line1, line2);
                 line1 = B.readLine();
                 if (line1 != null)
                 {
@@ -114,7 +114,7 @@ public class ProcessFile
         return results;
     }
 
-    private void processMP3(String L1, String L2) throws IOException
+    private void processEntry(String L1, String L2) throws IOException
     {
         StringTokenizer pathTokenizer = null;
         StringBuilder path = new StringBuilder();

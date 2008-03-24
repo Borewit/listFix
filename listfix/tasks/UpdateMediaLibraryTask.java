@@ -17,7 +17,6 @@ public class UpdateMediaLibraryTask extends listfix.view.support.Task
     private String[] mediaLibraryDirectoryList;
     private String[] mediaLibraryFileList;  
     
-    /** Creates new LocateMP3sTask */
     public UpdateMediaLibraryTask(GUIDriver gd) 
     {
         guiDriver = gd;

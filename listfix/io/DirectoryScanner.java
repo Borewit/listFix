@@ -44,15 +44,15 @@ public class DirectoryScanner
             File mediaDir = new File(dirs[i]);
             try
             {
-                String[] mp3s = mediaDir.list(new AudioFileNameFilter());
-                if (mp3s != null & mp3s.length > 0)
+                String[] files = mediaDir.list(new AudioFileNameFilter());
+                if (files != null & files.length > 0)
                 {
                     StringBuilder s = new StringBuilder();
-                    for (int j = 0; j < mp3s.length; j++)
+                    for (int j = 0; j < files.length; j++)
                     {
                         s.append(dirs[i]);
                         s.append(fs);
-                        s.append(mp3s[j]);
+                        s.append(files[j]);
                         thisFileList.add(s.toString());
                         s.setLength(0);
                     }

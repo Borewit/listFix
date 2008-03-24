@@ -18,7 +18,6 @@ public class AddMediaDirectoryTask extends listfix.view.support.Task
     private String[] mediaLibraryDirectoryList;
     private String[] mediaLibraryFileList;  
     
-    /** Creates new LocateMP3sTask */
     public AddMediaDirectoryTask(String d, GUIDriver gd) 
     {
         dir = d;

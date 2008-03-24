@@ -28,18 +28,18 @@ public class FileWriter
     private static FileOutputStream outputStream;
     private static DataOutputStream output;
     
-    public static void writeM3U(Vector mp3s, File fileName)
+    public static void writeM3U(Vector entries, File fileName)
     {
-        PlaylistEntry tempMP3 = null;
+        PlaylistEntry tempEntry = null;
         try
         {
             outputStream = new FileOutputStream(fileName);
             output = new DataOutputStream(outputStream);
             output.writeBytes("#EXTM3U" + br);
-            for(int i = 0; i < mp3s.size(); i++)
+            for(int i = 0; i < entries.size(); i++)
             {
-                tempMP3 = (PlaylistEntry)mp3s.elementAt(i);
-                output.writeBytes(tempMP3.toString() + br);
+                tempEntry = (PlaylistEntry)entries.elementAt(i);
+                output.writeBytes(tempEntry.toString() + br);
             }        
             output.close();
             outputStream.close();
@@ -55,7 +55,7 @@ public class FileWriter
         {
             outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
             output = new DataOutputStream(outputStream);
-            output.writeBytes("[Recent M3U's]" + br);
+            output.writeBytes("[Recent M3Us]" + br);
             String[] filenames = history.getM3UFilenames();
             for(int i = 0; i < filenames.length; i++)
             {

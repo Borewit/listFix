@@ -16,9 +16,8 @@ public class OpenM3UTask extends listfix.view.support.Task
 {
     private GUIDriver guiDriver;
     private File input; 
-    private Vector mp3s = new Vector();
+    private Vector entries = new Vector();
     
-    /** Creates new LocateMP3sTask */
     public OpenM3UTask(GUIDriver gd, File f) 
     {
         guiDriver = gd;
@@ -33,8 +32,8 @@ public class OpenM3UTask extends listfix.view.support.Task
             guiDriver.setCurrentPlaylist(input);
             guiDriver.getHistory().add(input.getCanonicalPath());
             ProcessFile playlistProcessor = new ProcessFile(input);
-            mp3s = playlistProcessor.readM3U(this);
-            guiDriver.setEntries(mp3s);
+            entries = playlistProcessor.readM3U(this);
+            guiDriver.setEntries(entries);
             playlistProcessor.close_file();
             FileWriter.writeMruM3Us(guiDriver.getHistory());
             this.notifyObservers(100);    

@@ -15,7 +15,6 @@ public class WriteIniFileTask extends listfix.view.support.Task {
     private String[] mediaLibraryDirList;
     private String[] mediaLibraryFileList;
     
-    /** Creates new CopyMP3sTask */
     public WriteIniFileTask(String[] m, String[] mldl, String[] mlfl) 
     {
         mediaDir = m;

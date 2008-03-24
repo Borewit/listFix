@@ -6,7 +6,7 @@ package listfix.io;
 = File:     AudioFileNameFilter.java
 = Version:  1.0
 = Purpose:  Simple instance of FilenameFilter that displays only
-=           MP3 files.
+=           audio files.
 ============================================================================
 */
 

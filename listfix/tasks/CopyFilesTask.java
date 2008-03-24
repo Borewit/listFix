@@ -10,29 +10,29 @@ import java.util.Vector;
 
 public class CopyFilesTask extends listfix.view.support.Task {
 
-    private static Vector mp3s;
+    private static Vector files;
     private static File destination;
     
     /** Creates new CopyFilesTask */
     public CopyFilesTask(Vector x, File y) {
-        mp3s = x;
+        files = x;
         destination = y;
     }
 
     /** Run the task. This method is the body of the thread for this task.  */
     public void run() 
     {
-        PlaylistEntry tempMp3 = null;
+        PlaylistEntry tempEntry = null;
         File fileToCopy = null;
         File dest = null;
         String fs = System.getProperty("file.separator");
-        for (int i = 0; i < mp3s.size(); i++)
+        for (int i = 0; i < files.size(); i++)
         {
-            tempMp3 = (PlaylistEntry) mp3s.elementAt(i);
-            fileToCopy = tempMp3.getFile();
+            tempEntry = (PlaylistEntry) files.elementAt(i);
+            fileToCopy = tempEntry.getFile();
             if (fileToCopy.exists())
             {
-                dest = new File(destination.getPath() + fs + tempMp3.getFileName());
+                dest = new File(destination.getPath() + fs + tempEntry.getFileName());
                 try 
                 {
                     FileCopier.copy(new FileInputStream(fileToCopy), new FileOutputStream(dest));
@@ -42,7 +42,7 @@ public class CopyFilesTask extends listfix.view.support.Task {
                     
                 }
             }
-            this.notifyObservers((int)((double)i/(double)(mp3s.size()-1) * 100.0));
+            this.notifyObservers((int)((double)i/(double)(files.size()-1) * 100.0));
         }   
     }
 }

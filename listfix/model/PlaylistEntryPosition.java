@@ -11,16 +11,15 @@ package listfix.model;
  * @author  jcaron
  * @version 
  */
-import listfix.model.*;
 
 public class PlaylistEntryPosition {
 
     private int position = -1;
-    private PlaylistEntry mp3 = null;
+    private PlaylistEntry entry = null;
     
     /** Creates new PlaylistEntryPosition */
-    public PlaylistEntryPosition(PlaylistEntry m, int pp) {
-        mp3 = m;
+    public PlaylistEntryPosition(PlaylistEntry e, int pp) {
+        entry = e;
         position = pp;
     }
     
@@ -34,9 +33,9 @@ public class PlaylistEntryPosition {
         position = input;
     }   
     
-    public PlaylistEntry getMp3()
+    public PlaylistEntry getPlaylistEntry()
     {
-        return mp3;
+        return entry;
     }
 
 }

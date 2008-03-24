@@ -8,6 +8,6 @@ public class PlaylistEntryPositionFileNameComparator implements java.util.Compar
     {
         PlaylistEntryPosition aa = (PlaylistEntryPosition)a;
         PlaylistEntryPosition bb = (PlaylistEntryPosition)b;
-        return aa.getMp3().getFileName().compareTo(bb.getMp3().getFileName());
+        return aa.getPlaylistEntry().getFileName().compareTo(bb.getPlaylistEntry().getFileName());
     }    
 }
