@@ -17,7 +17,6 @@ public class AudioFileChooserFilter extends javax.swing.filechooser.FileFilter
     {
         return (fileName.endsWith(".mp3") || 
             fileName.endsWith(".m4a") ||
-            fileName.endsWith(".mp4") ||
             fileName.endsWith(".wma") ||
             fileName.endsWith(".ogg") ||
             fileName.endsWith(".flac") ||
@@ -34,7 +33,7 @@ public class AudioFileChooserFilter extends javax.swing.filechooser.FileFilter
     }
     
     public String getDescription() {
-        return "Audio Files (.mp3, .m4a, .mp4, .wma, .ogg, .flac, .wav)";
+        return "Audio Files (.mp3, .m4a, .wma, .ogg, .flac, .wav)";
     }
     
 }

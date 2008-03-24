@@ -18,7 +18,6 @@ public class AudioFileNameFilter implements java.io.FilenameFilter
     {
         return (fileName.endsWith(".mp3") || 
             fileName.endsWith(".m4a") ||
-            fileName.endsWith(".mp4") ||
             fileName.endsWith(".wma") ||
             fileName.endsWith(".ogg") ||
             fileName.endsWith(".flac") ||
