@@ -4,18 +4,18 @@ import java.io.*;
 
 public class MatchedPlaylistEntry
 {
-    private PlaylistEntry thisFile = null;
+    private PlaylistEntry thisEntry = null;
     private int count = 0;
     
     public MatchedPlaylistEntry(String path, String fileName, int c)
     {
-        thisFile = new PlaylistEntry(path, fileName, "");
+        thisEntry = new PlaylistEntry(path, fileName, "");
         count = c;
     }
     
     public MatchedPlaylistEntry(File f, int c)
     {
-        thisFile = new PlaylistEntry(f);
+        thisEntry = new PlaylistEntry(f, "");
         count = c;
     }
     
@@ -26,6 +26,6 @@ public class MatchedPlaylistEntry
     
     public PlaylistEntry getPlaylistFile()
     {
-        return thisFile;
+        return thisEntry;
     }    
 }

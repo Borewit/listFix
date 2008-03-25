@@ -31,10 +31,10 @@ public class OpenM3UTask extends listfix.view.support.Task
         {
             guiDriver.setCurrentPlaylist(input);
             guiDriver.getHistory().add(input.getCanonicalPath());
-            ProcessFile playlistProcessor = new ProcessFile(input);
+            M3UFileReader playlistProcessor = new M3UFileReader(input);
             entries = playlistProcessor.readM3U(this);
             guiDriver.setEntries(entries);
-            playlistProcessor.close_file();
+            playlistProcessor.closeFile();
             FileWriter.writeMruM3Us(guiDriver.getHistory());
             this.notifyObservers(100);    
         }

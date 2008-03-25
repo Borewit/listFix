@@ -8,13 +8,14 @@ package listfix.tasks;
 import listfix.model.PlaylistEntry;
 import java.util.Vector;
 
-public class LocateFilesTask extends listfix.view.support.Task {
-
+public class LocateFilesTask extends listfix.view.support.Task 
+{
     private Vector entries;
     private String[] mediaLibraryFileList;
     
     /** Creates new LocateFilesTask */
-    public LocateFilesTask(Vector x, String[] y) {
+    public LocateFilesTask(Vector x, String[] y) 
+    {
         entries = x;
         mediaLibraryFileList = y;
     }
@@ -26,14 +27,17 @@ public class LocateFilesTask extends listfix.view.support.Task {
         for (int i = 0; i < entries.size(); i++)
         {
             tempEntry = (PlaylistEntry) entries.elementAt(i);
-            if (tempEntry.exists())
+            if (!tempEntry.isURL())
             {
-                tempEntry.setMessage("Found!");
+                if (tempEntry.exists())
+                {
+                    tempEntry.setMessage("Found!");
+                }
+                else
+                {
+                    tempEntry.findNewLocationFromFileList(mediaLibraryFileList);
+                }            
             }
-            else
-            {
-                tempEntry.findNewLocationFromFileList(mediaLibraryFileList);
-            }            
             this.notifyObservers((int)((double)i/(double)(entries.size()-1) * 100.0));
         }
         this.notifyObservers(100);

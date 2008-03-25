@@ -3,8 +3,8 @@ package listfix.tasks;
 import java.io.*;
 import listfix.model.*;
 
-public class WriteIniFileTask extends listfix.view.support.Task {
-
+public class WriteIniFileTask extends listfix.view.support.Task 
+{
     private final static String fs = System.getProperty("file.separator");
     private final static String br = System.getProperty("line.separator");
     private final static String homeDir = System.getProperty("user.home");
@@ -57,7 +57,9 @@ public class WriteIniFileTask extends listfix.view.support.Task {
             outputStream.close();
         }
         catch (IOException e)
-        {            
+        {
+            // eat the error and continue
+            e.printStackTrace();
         }
     }
 }

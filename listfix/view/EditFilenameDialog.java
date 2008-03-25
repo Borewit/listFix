@@ -1,11 +1,5 @@
 package listfix.view;
 
-/*
- * EditFilenameDialog.java
- *
- * Created on March 27, 2002, 3:21 AM
- */
-
 /**
  *
  * @author  Administrator
@@ -13,15 +7,16 @@ package listfix.view;
 import listfix.model.EditFilenameResult;
 import java.awt.Point;
 
-public class EditFilenameDialog extends javax.swing.JDialog {
-    
+public class EditFilenameDialog extends javax.swing.JDialog 
+{    
     private int resultCode;
     private String fileName;
     public static final int OK = 0;
     public static final int CANCEL = 1;
     
     /** Creates new form EditFilenameDialog */
-    public EditFilenameDialog(java.awt.Frame parent, String title, boolean modal, String filename) {
+    public EditFilenameDialog(java.awt.Frame parent, String title, boolean modal, String filename) 
+    {
         super(parent, title, modal);
         initComponents();        
         jTextField1.setText(filename);
@@ -54,15 +49,15 @@ public class EditFilenameDialog extends javax.swing.JDialog {
     }
     
     private void center()
-  {
-      Point parentLocation = this.getParent().getLocationOnScreen();
-      double x = parentLocation.getX();
-      double y = parentLocation.getY();
-      int width = this.getParent().getWidth();
-      int height = this.getParent().getHeight();
-      
-      this.setLocation((int)x + (width - this.getWidth())/2, (int)y + (height - this.getHeight())/2);
-  }
+    {
+        Point parentLocation = this.getParent().getLocationOnScreen();
+        double x = parentLocation.getX();
+        double y = parentLocation.getY();
+        int width = this.getParent().getWidth();
+        int height = this.getParent().getHeight();
+
+        this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -177,16 +172,17 @@ public class EditFilenameDialog extends javax.swing.JDialog {
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+    public static void main(String args[]) 
+    {
         new EditFilenameDialog(new java.awt.Frame(), "Edit Filename", true, "").setVisible(true);
     }
     
-    public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal, String filename) {
+    public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal, String filename) 
+    {
         EditFilenameDialog tempDBox = new EditFilenameDialog(parent, title, modal, filename);
         tempDBox.setVisible(true);
         return new EditFilenameResult(tempDBox.getResultCode(), tempDBox.getFileName());
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

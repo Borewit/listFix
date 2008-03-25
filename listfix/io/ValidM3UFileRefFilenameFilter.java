@@ -3,7 +3,7 @@ package listfix.io;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     AudioFileNameFilter.java
+= File:     ValidM3UFileRefFilenameFilter.java
 = Version:  1.0
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           audio files.
@@ -12,16 +12,12 @@ package listfix.io;
 
 import java.io.File;
 
-public class AudioFileNameFilter implements java.io.FilenameFilter
+public class ValidM3UFileRefFilenameFilter implements java.io.FilenameFilter
 {
     private boolean endsWithValidExtension(String fileName)
     {
-        return (fileName.endsWith(".mp3") || 
-            fileName.endsWith(".m4a") ||
-            fileName.endsWith(".wma") ||
-            fileName.endsWith(".ogg") ||
-            fileName.endsWith(".flac") ||
-            fileName.endsWith(".wav"));
+        // disallow nested playlists
+        return !fileName.endsWith(".m3u");
     }
     
     public boolean accept(File dir, String name)
@@ -43,8 +39,6 @@ public class AudioFileNameFilter implements java.io.FilenameFilter
     
     public String getDescription() 
     {
-        return "Audio Files";
+        return "All Files Except M3Us";
     }
-}
-    
-    
+}    

@@ -44,7 +44,7 @@ public class DirectoryScanner
             File mediaDir = new File(dirs[i]);
             try
             {
-                String[] files = mediaDir.list(new AudioFileNameFilter());
+                String[] files = mediaDir.list(new ValidM3UFileRefFilenameFilter());
                 if (files != null & files.length > 0)
                 {
                     StringBuilder s = new StringBuilder();
@@ -61,6 +61,7 @@ public class DirectoryScanner
             catch (Exception e)
             {
                 // eat the error and continue... faster than an exists check.
+                e.printStackTrace();
             }
         }
         String[] result = new String[thisFileList.size()];

@@ -1,24 +1,19 @@
 package listfix.model;
 
-/*
- * PlaylistEntryPosition.java
- *
- * Created on May 20, 2002, 12:46 PM
- */
-
 /**
  *
  * @author  jcaron
  * @version 
  */
 
-public class PlaylistEntryPosition {
-
+public class PlaylistEntryPosition 
+{
     private int position = -1;
     private PlaylistEntry entry = null;
     
     /** Creates new PlaylistEntryPosition */
-    public PlaylistEntryPosition(PlaylistEntry e, int pp) {
+    public PlaylistEntryPosition(PlaylistEntry e, int pp) 
+    {
         entry = e;
         position = pp;
     }
@@ -37,5 +32,4 @@ public class PlaylistEntryPosition {
     {
         return entry;
     }
-
 }

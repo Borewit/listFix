@@ -8,13 +8,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
-public class CopyFilesTask extends listfix.view.support.Task {
-
+public class CopyFilesTask extends listfix.view.support.Task 
+{
     private static Vector files;
     private static File destination;
     
     /** Creates new CopyFilesTask */
-    public CopyFilesTask(Vector x, File y) {
+    public CopyFilesTask(Vector x, File y) 
+    {
         files = x;
         destination = y;
     }
@@ -29,17 +30,21 @@ public class CopyFilesTask extends listfix.view.support.Task {
         for (int i = 0; i < files.size(); i++)
         {
             tempEntry = (PlaylistEntry) files.elementAt(i);
-            fileToCopy = tempEntry.getFile();
-            if (fileToCopy.exists())
+            if (!tempEntry.isURL())
             {
-                dest = new File(destination.getPath() + fs + tempEntry.getFileName());
-                try 
+                fileToCopy = tempEntry.getFile();
+                if (tempEntry.isFound() && fileToCopy.exists())
                 {
-                    FileCopier.copy(new FileInputStream(fileToCopy), new FileOutputStream(dest));
-                }
-                catch(IOException e)
-                {
-                    
+                    dest = new File(destination.getPath() + fs + tempEntry.getFileName());
+                    try
+                    {
+                        FileCopier.copy(new FileInputStream(fileToCopy), new FileOutputStream(dest));
+                    }
+                    catch (IOException e)
+                    {
+                        // eat the error and continue
+                        e.printStackTrace();
+                    }
                 }
             }
             this.notifyObservers((int)((double)i/(double)(files.size()-1) * 100.0));

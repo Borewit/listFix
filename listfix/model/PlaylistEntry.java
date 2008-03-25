@@ -1,10 +1,8 @@
 package listfix.model;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import listfix.util.*;
 
 /*
@@ -27,13 +25,23 @@ public class PlaylistEntry
     private final static String fs = System.getProperty("file.separator");    
     private final static String br = System.getProperty("line.separator");
     public static Vector emptyDirectories = new Vector();
+    public static String basePath = "";
     
     private String path = "";
     private String extInf = "";
     private String fileName = "";
     private File thisFile = null;
+    private File absoluteFile = null;
+    private URI thisURI = null;
     private String message = "Unknown";
     private boolean found = false;
+
+    public PlaylistEntry(URI uri, String extra)
+    {
+        thisURI = uri;
+        extInf = extra;
+        message = "URL";
+    }
     
     public PlaylistEntry(String p, String f, String extra)
     {
@@ -41,31 +49,79 @@ public class PlaylistEntry
         fileName = f;
         extInf = extra;
         thisFile = new File(path, fileName);
-        if (!skipExistsCheck() && this.exists())
+        if (skipExistsCheck())
+        {
+            message = "Not Found";
+        }
+        else if (this.exists())
         {
             message = "Found!";
             found = true;
+            if (!thisFile.isAbsolute())
+            {
+                absoluteFile = thisFile;
+            }
         }
-        else if (skipExistsCheck())
+        else
         {
-            message = "Not Found";
+            if (!thisFile.isAbsolute())
+            {
+                absoluteFile = new File(basePath, p + fs + f);
+                if (absoluteFile.exists())
+                {
+                    message = "Found!";
+                    found = true;
+                }
+                else
+                {
+                    message = "Not Found";
+                }
+            }
+            else
+            {
+                message = "Not Found";
+            }
         }
     }
     
-    public PlaylistEntry(File input)
+    public PlaylistEntry(File input, String extra)
     {
         fileName = input.getName();
         path = input.getPath().substring(0, input.getPath().indexOf(fileName));
-        extInf = "";
+        extInf = extra;
         thisFile = input;
-        if (!skipExistsCheck() && this.exists())
+        if (skipExistsCheck())
+        {
+            message = "Not Found";
+        }
+        else if (this.exists())
         {
             message = "Found!";
             found = true;
+            if (!thisFile.isAbsolute())
+            {
+                absoluteFile = thisFile;
+            }
         }
-        else if (skipExistsCheck())
+        else
         {
-            message = "Not Found";
+            if (!thisFile.isAbsolute())
+            {
+                absoluteFile = new File(basePath, input.getPath());
+                if (absoluteFile.exists())
+                {
+                    message = "Found!";
+                    found = true;
+                }
+                else
+                {
+                    message = "Not Found";
+                }
+            }
+            else
+            {
+                message = "Not Found";
+            }
         }
     }
     
@@ -76,7 +132,7 @@ public class PlaylistEntry
     
     public String getPath()
     {
-        return path;
+        return this.isURL() ? "" : path;
     }
     
     public File getFile()
@@ -86,7 +142,7 @@ public class PlaylistEntry
     
     public String getFileName()
     {
-        return fileName;
+        return this.isURL() ? thisURI.toString() : fileName;
     }
     
     public String getExtInf()
@@ -96,41 +152,48 @@ public class PlaylistEntry
     
     public boolean exists()
     {
-        return thisFile.exists();
+        return found || thisFile.exists();
     }
 
-    public void play()
+    public URI getURI()
     {
+        return thisURI;
+    }
+
+    public void play() throws Exception
+    {
+        String cmdLine = "";
+        // try to figure out the OS so we can issue the correct command
+        // TODO: Lots of debugging on different OSes to make sure this works.
+        String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
+        if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
+        {
+            cmdLine = "cmd.exe /K start ";
+            cmdLine += "\"" + (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath()) ) + "\"";
+        }
+        else if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("vista"))
+        {
+            cmdLine = "cmd.exe /K ";
+            cmdLine += "\"" + (this.isURL() ? "start " + this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath())) + "\"";
+        }
+        else if (lowerCaseOpSysName.contains("windows"))
+        {
+            cmdLine = "start ";
+            cmdLine += "\"" + (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath())) + "\"";
+        }
+        else
+        {
+            cmdLine = "open ";
+            cmdLine += (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath()));
+        }
         try
         {
-            String cmdLine = "";
-            // try to figure out the OS so we can issue the correct command
-            String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
-            if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
-            {
-                cmdLine = "cmd.exe /c start ";
-                cmdLine += "\"" + this.thisFile.getPath() + "\"";
-            }
-            else if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("vista"))
-            {
-                cmdLine = "cmd.exe /c ";
-                cmdLine += "\"" + this.thisFile.getPath() + "\"";
-            }
-            else if (lowerCaseOpSysName.contains("windows"))
-            {
-                cmdLine = "start ";
-                cmdLine += "\"" + this.thisFile.getPath() + "\"";
-            }
-            else
-            {
-                cmdLine = "open ";                
-                cmdLine += this.thisFile.getPath();
-            }         
-            Process p = Runtime.getRuntime().exec(cmdLine);
+            Runtime.getRuntime().exec(cmdLine);
         }
-        catch (IOException ex)
+        catch (Exception e)
         {
-            Logger.getLogger(PlaylistEntry.class.getName()).log(Level.SEVERE, null, ex);
+            e.printStackTrace();
+            throw e;
         }
     }
     
@@ -158,8 +221,7 @@ public class PlaylistEntry
         path = input.getPath().substring(0, input.getPath().indexOf(fileName));
     }
     
-    @Override
-    public String toString()
+    public String toM3UString()
     {
         StringBuilder result = new StringBuilder();        
         if (!(this.getExtInf() == null) && !(this.getExtInf().equals(""))) 
@@ -167,16 +229,38 @@ public class PlaylistEntry
             result.append(this.getExtInf());
             result.append(br);
         }
-        if (this.getPath().endsWith(fs)) 
+        if (!this.isURL())
         {
-            result.append(this.getPath());
-            result.append(this.getFileName());
-        } 
-        else 
+            if (!this.isRelative())
+            {
+                if (this.getPath().endsWith(fs))
+                {
+                    result.append(this.getPath());
+                    result.append(this.getFileName());
+                }
+                else
+                {
+                    result.append(this.getPath());
+                    result.append(fs);
+                    result.append(this.getFileName());
+                }
+            }
+            else
+            {
+                String tempPath = thisFile.getPath();
+                if (tempPath.substring(0, tempPath.indexOf(fileName)).equals(fs))
+                {
+                    result.append(fileName);
+                }
+                else
+                {
+                    result.append(thisFile.getPath());
+                }
+            }
+        }
+        else
         {
-            result.append(this.getPath());
-            result.append(fs);
-            result.append(this.getFileName());
+            result.append(thisURI.toString());
         }
         return result.toString();
     }
@@ -209,7 +293,7 @@ public class PlaylistEntry
     {
         String[] emptyPaths = new String[emptyDirectories.size()];
         emptyDirectories.copyInto(emptyPaths);
-        return found == true || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path);        
+        return found == true || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path);        
     }
     
     public boolean isFound()
@@ -217,10 +301,36 @@ public class PlaylistEntry
         return found;
     }
     
+    public boolean isURL()
+    {
+        return thisURI != null && thisFile == null;
+    }
+    
+    public boolean isRelative()
+    {
+        return !this.isURL() && thisFile != null && !thisFile.isAbsolute();
+    }
+    
     @Override
     public Object clone()
     {
-        PlaylistEntry result = new PlaylistEntry(new File(this.getFile().getPath()));
+        PlaylistEntry result = null;
+        if (!this.isURL())
+        {
+            result = new PlaylistEntry(new File(this.getFile().getPath()), this.getExtInf());
+        }
+        else
+        {
+            try
+            {
+                result = new PlaylistEntry(new URI(this.getURI().toString()), this.getExtInf());
+            }
+            catch (Exception e)
+            {
+                //eat the error for now.
+                e.printStackTrace();
+            }
+        }            
         return result;
     }
 }   

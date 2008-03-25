@@ -728,7 +728,7 @@
               <Color blue="99" green="99" red="99" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="11"/>
-            <Property name="text" type="java.lang.String" value="Untitled List.     Number of entries in list: 0     Number of lost entries: 0"/>
+            <Property name="text" type="java.lang.String" value="Untitled List.     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

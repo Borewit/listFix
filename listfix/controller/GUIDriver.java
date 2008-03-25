@@ -1,7 +1,7 @@
 package listfix.controller;
 
 import listfix.util.ArrayFunctions;
-import listfix.io.ProcessFile;
+import listfix.io.M3UFileReader;
 import listfix.io.IniFileReader;
 import listfix.io.FileWriter;
 import listfix.model.*;
@@ -48,6 +48,21 @@ public class GUIDriver
             showMediaDirWindow = true;
             e.printStackTrace();
         }
+    }
+
+    public int getURLCount()
+    {
+        int result = 0;
+        int size = this.getEntryCount();
+        for (int i = 0; i < size; i++)
+        {
+            PlaylistEntry tempEntry = (PlaylistEntry)entries.elementAt(i);
+            if ( tempEntry.isURL() )
+            {
+                result++;
+            }
+        }
+        return result;
     }
     
     public boolean isEntryListEmpty()
@@ -173,7 +188,8 @@ public class GUIDriver
         int size = this.getEntryCount();
         for (int i = 0; i < size; i++)
         {
-            if ( !((PlaylistEntry)entries.elementAt(i)).isFound() && (((PlaylistEntry)entries.elementAt(i)).skipExistsCheck() || !((PlaylistEntry)entries.elementAt(i)).exists()) )
+            PlaylistEntry tempEntry = (PlaylistEntry)entries.elementAt(i);
+            if ( !tempEntry.isFound() && !tempEntry.isURL() && ( tempEntry.skipExistsCheck() || !tempEntry.exists() ) )
             {
                 result++;
             }
@@ -195,30 +211,26 @@ public class GUIDriver
         return result;
     }
     
-    public String[][] guiTableIni()
+    public String[][] guiTableUpdate()
     {
         int size = entries.size();
         String[][] result = null;
         result = new String[size][3];
         for (int i = 0; i < size; i++)
         {
-            result[i][0] = (i + 1) + ". " + ((PlaylistEntry)entries.elementAt(i)).getFileName();
-            result[i][1] = ((PlaylistEntry)entries.elementAt(i)).getMessage();
-            result[i][2] = ((PlaylistEntry)entries.elementAt(i)).getPath();
-        }
-        return result;
-    }
-    
-    private String[][] guiTableUpdate()
-    {
-        int size = entries.size();
-        String[][] result = null;
-        result = new String[size][3];
-        for (int i = 0; i < size; i++)
-        {
-            result[i][0] = (i + 1) + ". " + ((PlaylistEntry)entries.elementAt(i)).getFileName();
-            result[i][1] = ((PlaylistEntry)entries.elementAt(i)).getMessage();
-            result[i][2] = ((PlaylistEntry)entries.elementAt(i)).getPath();
+            PlaylistEntry tempEntry = (PlaylistEntry)entries.elementAt(i);
+            if (!tempEntry.isURL())
+            {
+                result[i][0] = (i + 1) + ". " + tempEntry.getFileName();
+                result[i][1] = tempEntry.getMessage();
+                result[i][2] = tempEntry.getPath();
+            }
+            else
+            {                
+                result[i][0] = (i + 1) + ". " + tempEntry.getURI().toString();
+                result[i][1] = tempEntry.getMessage();
+                result[i][2] = "";
+            }
         }
         return result;
     }
@@ -307,7 +319,7 @@ public class GUIDriver
     
     public String[][] addEntry(File input)
     {
-        PlaylistEntry entryToInsert = new PlaylistEntry(input);
+        PlaylistEntry entryToInsert = new PlaylistEntry(input, "");
         entries.add(entryToInsert);
         return guiTableUpdate();
     }
@@ -315,23 +327,23 @@ public class GUIDriver
     public String[][] appendPlaylist(File input) throws java.io.IOException
     {
         // currentPlaylist = null;
-        ProcessFile playlistProcessor = new ProcessFile(input);
+        M3UFileReader playlistProcessor = new M3UFileReader(input);
         entries.addAll(playlistProcessor.readM3U());
-        playlistProcessor.close_file();
-        return guiTableIni();
+        playlistProcessor.closeFile();
+        return guiTableUpdate();
     }
     
     public String[][] insertPlaylist(File input, int index) throws java.io.IOException
     {
-        ProcessFile playlistProcessor = new ProcessFile(input);
+        M3UFileReader playlistProcessor = new M3UFileReader(input);
         Vector temp = playlistProcessor.readM3U();
         while(temp.size() > 0)
         {
             Object x = temp.remove(temp.size() - 1);
             entries.insertElementAt(x, index+1);           
         }
-        playlistProcessor.close_file();
-        return guiTableIni();
+        playlistProcessor.closeFile();
+        return guiTableUpdate();
     }
     
     public void setCurrentPlaylist(File input) throws java.io.FileNotFoundException, java.io.IOException
@@ -435,7 +447,7 @@ public class GUIDriver
         for (int i = 0; i < entries.size(); i++)
         {
             tempEntry = (PlaylistEntry) entries.elementAt(i);
-            if (!tempEntry.exists())
+            if (!tempEntry.isURL() && !tempEntry.exists())
             {
                 entries.removeElementAt(i--);                
             }
@@ -493,6 +505,11 @@ public class GUIDriver
         return ((PlaylistEntry)entries.elementAt(entryIndex)).getFileName();
     }
     
+    public PlaylistEntry getEntryAt(int entryIndex)
+    {
+        return ((PlaylistEntry)entries.elementAt(entryIndex));
+    }
+    
     public boolean playlistModified()
     {
         boolean result = false;
@@ -502,11 +519,30 @@ public class GUIDriver
         }
         else
         {
-            for (int i = 0; i< entries.size(); i++)
+            for (int i = 0; i < entries.size(); i++)
             {
                 PlaylistEntry entryA = (PlaylistEntry)entries.get(i);
                 PlaylistEntry entryB = (PlaylistEntry)originalEntries.get(i);
-                if ( !entryA.getFile().getPath().equals(entryB.getFile().getPath()) )
+                if ( (entryA.isURL() && entryB.isURL()) || (!entryA.isURL() && !entryB.isURL()) )
+                {
+                    if (!entryA.isURL())
+                    {
+                        if (!entryA.getFile().getPath().equals(entryB.getFile().getPath()))
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (!entryA.getURI().toString().equals(entryB.getURI().toString()))
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+                else
                 {
                     result = true;
                     break;
@@ -559,8 +595,8 @@ public class GUIDriver
     */
     public Object[][] insertFile(File fileToInsert, int entryIndex)
     {
-        PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert);
+        PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert, "");
         entries.insertElementAt(entryToInsert, entryIndex+1);
-        return guiTableIni();
+        return guiTableUpdate();
     }
 }

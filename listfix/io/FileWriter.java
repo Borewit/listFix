@@ -39,13 +39,15 @@ public class FileWriter
             for(int i = 0; i < entries.size(); i++)
             {
                 tempEntry = (PlaylistEntry)entries.elementAt(i);
-                output.writeBytes(tempEntry.toString() + br);
+                output.writeBytes(tempEntry.toM3UString() + br);
             }        
             output.close();
             outputStream.close();
         }
         catch(IOException e)
         {
+            // eat the error and continue
+            e.printStackTrace();
         }
     }
     
@@ -65,7 +67,9 @@ public class FileWriter
             outputStream.close();
         }
         catch (IOException e)
-        {            
+        {
+            // eat the error and continue
+            e.printStackTrace();
         }
     }
     
@@ -78,6 +82,8 @@ public class FileWriter
         }
         catch(Exception e)
         {
+            // eat the error and continue
+            e.printStackTrace();
         }
     }
 }
