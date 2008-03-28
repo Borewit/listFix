@@ -10,7 +10,7 @@ import listfix.util.*;
 import java.util.Vector;
 import java.io.*;
 
-public class LocateClosestMatchesTask extends listfix.view.support.Task 
+public class LocateClosestMatchesTask extends listfix.controller.Task 
 {
     private PlaylistEntry entry;
     private String[] mediaLibraryFileList;

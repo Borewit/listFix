@@ -8,7 +8,7 @@ package listfix.tasks;
 import listfix.model.PlaylistEntry;
 import java.util.Vector;
 
-public class LocateFilesTask extends listfix.view.support.Task 
+public class LocateFilesTask extends listfix.controller.Task 
 {
     private Vector entries;
     private String[] mediaLibraryFileList;

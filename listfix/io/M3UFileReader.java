@@ -4,7 +4,6 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     M3UFileReader.java
-= Version:  1.0
 = Purpose:  Read in the playlist file and return a Vector containing 
 =           PlaylistEntries that represent the files in the playlist.
 ============================================================================
@@ -21,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import listfix.controller.Task;
 
 public class M3UFileReader
 {
@@ -35,7 +35,7 @@ public class M3UFileReader
         fileLength = in_data.length();
     }
 
-    public Vector readM3U(OpenM3UTask input) throws IOException
+    public Vector readM3U(Task input) throws IOException
     {
         StringBuilder cache = new StringBuilder();
         String line1 = buffer.readLine(); // ignore line 1

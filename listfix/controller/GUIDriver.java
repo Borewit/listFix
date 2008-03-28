@@ -1,20 +1,18 @@
 package listfix.controller;
 
-import listfix.util.ArrayFunctions;
-import listfix.io.M3UFileReader;
-import listfix.io.IniFileReader;
-import listfix.io.FileWriter;
-import listfix.model.*;
-import listfix.tasks.*;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+
 import listfix.comparators.*;
 import listfix.exceptions.*;
-import java.io.File;
-import java.util.*;
-import java.awt.*;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
+import listfix.io.FileWriter;
+import listfix.io.IniFileReader;
+import listfix.io.M3UFileReader;
+import listfix.model.*;
+import listfix.tasks.*;
+import listfix.util.ArrayFunctions;
 
 public class GUIDriver
 {    
@@ -105,11 +103,11 @@ public class GUIDriver
                 cmdLine = "open ";
                 cmdLine += this.getPlaylist().getPath();
             }
-            Process p = Runtime.getRuntime().exec(cmdLine);
+            Runtime.getRuntime().exec(cmdLine);
         }
-        catch (IOException ex)
+        catch (IOException e)
         {
-            Logger.getLogger(PlaylistEntry.class.getName()).log(Level.SEVERE, null, ex);
+            e.printStackTrace();
         }
     }
     

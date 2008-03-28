@@ -37,6 +37,7 @@ public class CustomTableModel extends javax.swing.table.AbstractTableModel
         return data.length;
     }
 
+    @Override
     public String getColumnName(int col)
     {
         return columnNames[col];

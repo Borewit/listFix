@@ -9,7 +9,6 @@ import listfix.util.*;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     PlaylistEntry.java
-= Version:  1.0
 = Purpose:  To encapsulate all of the information about a playlist entry.
 =           Provides methods for setting and getting the path to the
 =           file, determining if the file exists, searching for

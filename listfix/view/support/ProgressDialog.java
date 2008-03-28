@@ -1,8 +1,10 @@
 package listfix.view.support;
 
+import listfix.controller.Task;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -18,24 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.WindowConstants;
 
-/** A simple dialog with a message and progress meter, for use when a
- * non-interruptible, lengthy task is being performed. The dialog tracks the
- * progress of a <code>Task</code>, which periodically notifies the dialog
- * of the percentage of the task completed. 
- *
- * <p><center>
- * <img src="snapshot/ProgressDialog.gif"><br>
- * <i>An example ProgressDialog.</i>
- * </center>
- *
- * @see kiwi.util.Task
- *
- * @author Mark Lindner
- * @author PING Software Group
- */
 public class ProgressDialog extends JDialog implements ProgressObserver
 {
-
     private JProgressBar bar;
     private JLabel label,  iconLabel;
     private JPanel _main;
@@ -172,24 +158,13 @@ public class ProgressDialog extends JDialog implements ProgressObserver
         return (true);
     }
 
-    /** Construct a new <code>ProgressDialog</code> with a default title.
-     *
-     * @param parent The parent window.
-     * @param modal A flag specifying whether the dialog should be modal.
-     */
-    public ProgressDialog(Frame parent, boolean modal)
-    {
-        this(parent, "", modal);
-        _init();
-    }
-
     /** Construct a new <code>ProgressDialog</code>.
      *
      * @param parent The parent window.
      * @param title The title for the dialog window.
      * @param modal A flag specifying whether the dialog should be modal.
      */
-    public ProgressDialog(Frame parent, String title, boolean modal)
+    public ProgressDialog(Frame parent, String title, boolean modal, int labelWidth, boolean messageOnlyMode)
     {
         super(parent, title, modal);
         _init();
@@ -201,20 +176,25 @@ public class ProgressDialog extends JDialog implements ProgressObserver
 
         main.setLayout(new BorderLayout(5, 5));
 
-        main.add("North", label = new JLabel("  Please Wait                                                                   "));
-
-        JPanel p = new JPanel();
-        p.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-
+        main.add("North", label = new JLabel("  Please Wait"));
+        label.setPreferredSize(new Dimension(labelWidth, 20));
+        
         bar = new JProgressBar();
-        bar.setMinimum(0);
-        bar.setMaximum(100);
-        bar.setValue(0);
-        bar.setOpaque(false);
-        bar.setPreferredSize(new java.awt.Dimension(main.getPreferredSize().width, bar.getPreferredSize().height));
-        p.add(bar);
 
-        main.add("Center", p);
+        if (!messageOnlyMode)
+        {
+            JPanel p = new JPanel();
+            p.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+
+            bar.setMinimum(0);
+            bar.setMaximum(100);
+            bar.setValue(0);
+            bar.setOpaque(false);
+            bar.setPreferredSize(new java.awt.Dimension(main.getPreferredSize().width, bar.getPreferredSize().height));
+            p.add(bar);
+
+            main.add("Center", p);
+        }
 
         if (getTitle().length() == 0)
         {
@@ -285,7 +265,7 @@ public class ProgressDialog extends JDialog implements ProgressObserver
      */
     public void setMessage(String message)
     {
-        label.setText(message);
+        label.setText("  " + message);
         pack();
     }
 

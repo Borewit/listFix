@@ -4,7 +4,6 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     ProcessIniFile.java
-= Version:  1.0
 = Purpose:  Read in the dirLists.ini file and return
 =           a String array containing the directories listed in the file.
 ============================================================================

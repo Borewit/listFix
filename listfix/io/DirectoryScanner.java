@@ -4,7 +4,6 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     DirectoryScanner.java
-= Version:  1.0
 = Purpose:  To create and return a String array containing the absolute
 =           paths to all of the subdirectories in a list of input
 =           directories.
@@ -12,7 +11,10 @@ package listfix.io;
 */
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
+import listfix.controller.Task;
 
 public class DirectoryScanner
 {    
@@ -20,83 +22,77 @@ public class DirectoryScanner
     private static Vector thisFileList = new Vector();
     private static String fs = System.getProperty("file.separator");
     
-    public static String[] createMediaLibraryDirectoryList(String[] baseDir)
+    public static void createMediaLibraryDirectoryAndFileList(String[] baseDirs, Task task)
     {
         thisList.clear();
-        for(int i = 0; i < baseDir.length; i++)
+        thisFileList.clear();
+        for(int i = 0; i < baseDirs.length; i++)
         {
-            if (new File(baseDir[i]).exists())
+            if (new File(baseDirs[i]).exists())
             {
-                thisList.addElement(baseDir[i]);
-                recursiveDir(baseDir[i]);
+                thisList.addElement(baseDirs[i]);
+                
+                recursiveDir(baseDirs[i], task);
             }
         }
-        String[] result = new String[thisList.size()];
-        thisList.copyInto(result);
-        return result;
     }
     
-    public static String[] createMediaLibraryFileList(String[] dirs)
+    private static void recursiveDir(String baseDir, Task task)
     {
-        thisFileList.clear();        
-        for (int i = 0; i < dirs.length; i++)
+        task.setMessage("Scanning \"" + baseDir + "\"");
+        
+        File mediaDir = new File(baseDir);
+        String[] entryList = mediaDir.list();
+        List<String> fileList = new Vector<String>();
+        List<String> dirList = new Vector<String>();
+        StringBuilder s = new StringBuilder();
+        
+        if (entryList != null)
         {
-            File mediaDir = new File(dirs[i]);
-            try
+            for (int i = 0; i < entryList.length; i++)
             {
-                String[] files = mediaDir.list(new ValidM3UFileRefFilenameFilter());
-                if (files != null & files.length > 0)
+                s.append(baseDir);
+                s.append(fs);
+                s.append(entryList[i]);
+                File tempFile = new File(s.toString());
+                if (tempFile.isDirectory())
                 {
-                    StringBuilder s = new StringBuilder();
-                    for (int j = 0; j < files.length; j++)
-                    {
-                        s.append(dirs[i]);
-                        s.append(fs);
-                        s.append(files[j]);
-                        thisFileList.add(s.toString());
-                        s.setLength(0);
-                    }
+                    dirList.add(s.toString());
                 }
-            }
-            catch (Exception e)
-            {
-                // eat the error and continue... faster than an exists check.
-                e.printStackTrace();
+                else
+                {
+                    fileList.add(s.toString());
+                }
+                s.setLength(0);
             }
         }
+        
+        Collections.sort(fileList);
+        Collections.sort(dirList);
+        
+        for (String file: fileList)
+        {
+            thisFileList.add(file);
+        }
+        
+        for (String dir: dirList)
+        {
+            thisList.addElement(dir);
+            recursiveDir(dir, task);
+        }
+    }   
+    
+    public static String[] getFileList()
+    {
         String[] result = new String[thisFileList.size()];
         thisFileList.copyInto(result);
         return result;
     }
     
-    private static void recursiveDir(String baseDir)
+    public static String[] getDirectoryList()
     {
-        File mediaDir = new File(baseDir);
-        String[] subDirs = mediaDir.list(new DirectoryFilter());
-        if (subDirs != null)
-        {
-            if (subDirs.length != 0)
-            {
-                copyDirsToVector(baseDir, subDirs);
-            }
-            for (int i = 0; i < subDirs.length; i++)
-            {
-                StringBuilder s = new StringBuilder(baseDir);
-                s.append(fs);
-                s.append(subDirs[i]);
-                recursiveDir(s.toString());
-            }
-        }
+        String[] result = new String[thisList.size()];
+        thisList.copyInto(result);
+        return result;
     }
-    
-    private static void copyDirsToVector(String b, String[] dirs)
-    {
-        for(int i = 0; i < dirs.length; i++)
-        {
-            StringBuilder s = new StringBuilder(b);
-            s.append(fs);
-            s.append(dirs[i]);
-            thisList.addElement(s.toString());
-        }
-    }    
 }

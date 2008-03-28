@@ -12,7 +12,7 @@ import listfix.controller.*;
 import java.io.File;
 import java.util.*;
 
-public class OpenM3UTask extends listfix.view.support.Task 
+public class OpenM3UTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
     private File input; 

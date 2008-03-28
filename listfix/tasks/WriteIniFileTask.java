@@ -3,7 +3,7 @@ package listfix.tasks;
 import java.io.*;
 import listfix.model.*;
 
-public class WriteIniFileTask extends listfix.view.support.Task 
+public class WriteIniFileTask extends listfix.controller.Task 
 {
     private final static String fs = System.getProperty("file.separator");
     private final static String br = System.getProperty("line.separator");

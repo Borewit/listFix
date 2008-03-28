@@ -4,12 +4,10 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     M3UFilter.java
-= Version:  1.0
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           M3U files or directories.
 ============================================================================
 */
-
 
 public class M3UFilter extends javax.swing.filechooser.FileFilter
 {

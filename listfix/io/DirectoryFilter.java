@@ -4,7 +4,6 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     DirectoryFilter.java
-= Version:  1.0
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           directories.
 ============================================================================

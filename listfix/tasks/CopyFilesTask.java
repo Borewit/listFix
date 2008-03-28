@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
-public class CopyFilesTask extends listfix.view.support.Task 
+public class CopyFilesTask extends listfix.controller.Task 
 {
     private static Vector files;
     private static File destination;

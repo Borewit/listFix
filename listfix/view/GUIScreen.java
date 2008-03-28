@@ -47,10 +47,10 @@ public class GUIScreen extends JFrame {
         jMediaDirChooser = new JFileChooser();
         jCopyToDirChooser = new JFileChooser();
         jSaveFileChooser = new JFileChooser();
-        locateProgressDialog = new listfix.view.support.ProgressDialog(this, "Finding Files:", true);
-        copyFilesProgressDialog = new listfix.view.support.ProgressDialog(this, "Copying Files:", true);
-        updateMediaLibraryProgressDialog = new listfix.view.support.ProgressDialog(this, "Updating Media Library:", true); 
-        openM3UProgressDialog = new listfix.view.support.ProgressDialog(this, "Opening Playlist:", true); 
+        locateProgressDialog = new listfix.view.support.ProgressDialog(this, "Finding Files", true, 250, false);
+        copyFilesProgressDialog = new listfix.view.support.ProgressDialog(this, "Copying Files", true, 250, false);
+        updateMediaLibraryProgressDialog = new listfix.view.support.ProgressDialog(this, "Updating Media Library", true, 450, true); 
+        openM3UProgressDialog = new listfix.view.support.ProgressDialog(this, "Opening Playlist", true, 250, false); 
         guiDriver = new GUIDriver();
         jM3UChooser.setDialogTitle("Choose a Playlist...");
         jM3UChooser.setAcceptAllFileFilterUsed(false);
@@ -305,7 +305,7 @@ public class GUIScreen extends JFrame {
         splitPane.setMaximumSize(null);
         splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
 
-        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 10)));
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
 
         addMediaDirButton.setFont(new java.awt.Font("Dialog", 1, 10));
@@ -345,7 +345,7 @@ public class GUIScreen extends JFrame {
 
         splitPane.setLeftComponent(mediaLibraryPanel);
 
-        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Playlist Status"));
+        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 10)));
         playlistPanel.setLayout(new java.awt.BorderLayout());
 
         locateButton.setFont(new java.awt.Font("Dialog", 1, 10));
@@ -416,8 +416,10 @@ public class GUIScreen extends JFrame {
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
+        fileMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
         loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        loadMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         loadMenuItem.setMnemonic('L');
         loadMenuItem.setText("Open Playlist");
         loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -428,6 +430,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(loadMenuItem);
 
         closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        closeMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         closeMenuItem.setMnemonic('C');
         closeMenuItem.setText("Close Playlist");
         closeMenuItem.setEnabled(false);
@@ -439,6 +442,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(closeMenuItem);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -449,6 +453,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(saveMenuItem);
 
         saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        saveAsMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         saveAsMenuItem.setMnemonic('V');
         saveAsMenuItem.setText("Save As");
         saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -463,9 +468,11 @@ public class GUIScreen extends JFrame {
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
+        recentMenu.setFont(new java.awt.Font("Dialog", 1, 10));
         fileMenu.add(recentMenu);
 
         clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        clearHistoryMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         clearHistoryMenuItem.setMnemonic('H');
         clearHistoryMenuItem.setText("Clear Playlist History");
         clearHistoryMenuItem.setToolTipText("");
@@ -480,6 +487,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(jSeparator1);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        exit.setFont(new java.awt.Font("Dialog", 1, 10));
         exit.setMnemonic('x');
         exit.setText("Exit");
         exit.addActionListener(new java.awt.event.ActionListener() {
@@ -493,8 +501,10 @@ public class GUIScreen extends JFrame {
 
         actionsMenu.setMnemonic('A');
         actionsMenu.setText("Actions");
+        actionsMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
         appendFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
+        appendFileMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         appendFileMenuItem.setMnemonic('A');
         appendFileMenuItem.setText("Append File");
         appendFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -505,6 +515,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(appendFileMenuItem);
 
         insertFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
+        insertFileMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         insertFileMenuItem.setMnemonic('I');
         insertFileMenuItem.setText("Insert File Below Selected Row");
         insertFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -515,6 +526,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(insertFileMenuItem);
 
         editFilenameMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_MASK));
+        editFilenameMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         editFilenameMenuItem.setMnemonic('E');
         editFilenameMenuItem.setText("Edit Filename");
         editFilenameMenuItem.setEnabled(false);
@@ -526,6 +538,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(editFilenameMenuItem);
 
         findClosestMatchesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
+        findClosestMatchesMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         findClosestMatchesMenuItem.setMnemonic('C');
         findClosestMatchesMenuItem.setText("Find Closest Matches");
         findClosestMatchesMenuItem.setEnabled(false);
@@ -537,6 +550,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(findClosestMatchesMenuItem);
 
         playFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        playFileMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         playFileMenuItem.setText("Play Selected File");
         playFileMenuItem.setEnabled(false);
         playFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -547,6 +561,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(playFileMenuItem);
 
         removeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
+        removeMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         removeMenuItem.setText("Remove");
         removeMenuItem.setEnabled(false);
         removeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -557,6 +572,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(removeMenuItem);
 
         removeMissingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.ALT_MASK));
+        removeMissingMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         removeMissingMenuItem.setMnemonic('R');
         removeMissingMenuItem.setText("Remove Missing Files");
         removeMissingMenuItem.setEnabled(false);
@@ -568,6 +584,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(removeMissingMenuItem);
 
         removeDuplicatesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        removeDuplicatesMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         removeDuplicatesMenuItem.setMnemonic('m');
         removeDuplicatesMenuItem.setText("Remove Duplicates");
         removeDuplicatesMenuItem.setEnabled(false);
@@ -582,6 +599,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(jSeparator4);
 
         appendPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        appendPlaylistMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         appendPlaylistMenuItem.setMnemonic('p');
         appendPlaylistMenuItem.setText("Append Playlist");
         appendPlaylistMenuItem.setEnabled(false);
@@ -593,6 +611,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(appendPlaylistMenuItem);
 
         insertPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        insertPlaylistMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         insertPlaylistMenuItem.setMnemonic('n');
         insertPlaylistMenuItem.setText("Insert Playlist Below Selected Row");
         insertPlaylistMenuItem.setEnabled(false);
@@ -607,6 +626,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(jSeparator5);
 
         copyToDirMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        copyToDirMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         copyToDirMenuItem.setMnemonic('C');
         copyToDirMenuItem.setText("Copy Files to New Location");
         copyToDirMenuItem.setEnabled(false);
@@ -621,8 +641,10 @@ public class GUIScreen extends JFrame {
 
         sortMenu.setMnemonic('S');
         sortMenu.setText("Sort");
+        sortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
         randomizeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        randomizeMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         randomizeMenuItem.setMnemonic('R');
         randomizeMenuItem.setText("Randomize List");
         randomizeMenuItem.setEnabled(false);
@@ -634,6 +656,7 @@ public class GUIScreen extends JFrame {
         sortMenu.add(randomizeMenuItem);
 
         reverseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        reverseMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         reverseMenuItem.setMnemonic('e');
         reverseMenuItem.setText("Reverse");
         reverseMenuItem.setEnabled(false);
@@ -647,7 +670,9 @@ public class GUIScreen extends JFrame {
         filenameSortMenu.setMnemonic('F');
         filenameSortMenu.setText("Sort By Filename");
         filenameSortMenu.setEnabled(false);
+        filenameSortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
+        ascendingFilenameMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         ascendingFilenameMenuItem.setMnemonic('A');
         ascendingFilenameMenuItem.setText("Ascending");
         ascendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -657,6 +682,7 @@ public class GUIScreen extends JFrame {
         });
         filenameSortMenu.add(ascendingFilenameMenuItem);
 
+        descendingFilenameMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         descendingFilenameMenuItem.setMnemonic('D');
         descendingFilenameMenuItem.setText("Descending");
         descendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -671,7 +697,9 @@ public class GUIScreen extends JFrame {
         statusSortMenu.setMnemonic('S');
         statusSortMenu.setText("Sort by Status");
         statusSortMenu.setEnabled(false);
+        statusSortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
+        ascendingStatusMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         ascendingStatusMenuItem.setMnemonic('A');
         ascendingStatusMenuItem.setText("Ascending");
         ascendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -681,6 +709,7 @@ public class GUIScreen extends JFrame {
         });
         statusSortMenu.add(ascendingStatusMenuItem);
 
+        descendingStatusMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         descendingStatusMenuItem.setMnemonic('D');
         descendingStatusMenuItem.setText("Descending");
         descendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -695,7 +724,9 @@ public class GUIScreen extends JFrame {
         pathSortMenu.setMnemonic('P');
         pathSortMenu.setText("Sort By Path");
         pathSortMenu.setEnabled(false);
+        pathSortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
+        ascendingPathMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         ascendingPathMenuItem.setMnemonic('A');
         ascendingPathMenuItem.setText("Ascending");
         ascendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -705,6 +736,7 @@ public class GUIScreen extends JFrame {
         });
         pathSortMenu.add(ascendingPathMenuItem);
 
+        descendingPathMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         descendingPathMenuItem.setMnemonic('D');
         descendingPathMenuItem.setText("Descending");
         descendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -720,8 +752,10 @@ public class GUIScreen extends JFrame {
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
+        helpMenu.setFont(new java.awt.Font("Dialog", 1, 10));
 
         aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        aboutMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         aboutMenuItem.setMnemonic('A');
         aboutMenuItem.setText("About");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -732,6 +766,7 @@ public class GUIScreen extends JFrame {
         helpMenu.add(aboutMenuItem);
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
+        helpMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
         helpMenuItem.setMnemonic('e');
         helpMenuItem.setText("Help");
         helpMenuItem.setEnabled(false);
@@ -1200,7 +1235,9 @@ public class GUIScreen extends JFrame {
                 }              
                 updateMediaLibraryProgressDialog.go();          
                 AddMediaDirectoryTask thisTask = new AddMediaDirectoryTask(dir, guiDriver);
+                updateMediaLibraryProgressDialog.setBusyCursor(true);
                 updateMediaLibraryProgressDialog.track(thisTask);
+                updateMediaLibraryProgressDialog.setBusyCursor(false);
                 updateMediaLibraryProgressDialog.setEnabled(false);
                 mediaLibraryList.setListData(guiDriver.getMediaDirs());
             }
@@ -1284,7 +1321,9 @@ public class GUIScreen extends JFrame {
     private void refreshMediaDirsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshMediaDirsButtonActionPerformed
         updateMediaLibraryProgressDialog.go();
         UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
-        updateMediaLibraryProgressDialog.track(thisTask);    
+        updateMediaLibraryProgressDialog.setBusyCursor(true);
+        updateMediaLibraryProgressDialog.track(thisTask);
+        updateMediaLibraryProgressDialog.setBusyCursor(false);
 }//GEN-LAST:event_refreshMediaDirsButtonActionPerformed
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
@@ -1491,6 +1530,7 @@ public class GUIScreen extends JFrame {
             for (int i = 0; i < files.length; i++)
             {
                 JMenuItem temp = new JMenuItem(files[i]);
+                temp.setFont(new java.awt.Font("Dialog", 1, 10));
                 temp.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)

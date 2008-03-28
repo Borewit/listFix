@@ -4,7 +4,6 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     FileNameFilter.java
-= Version:  1.0
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           files matching the input file name (used to search for
 =           a file).

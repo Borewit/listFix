@@ -4,7 +4,6 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     FileWriter.java
-= Version:  1.0
 = Purpose:  Provides 2 static methods, one for writing out a playlist
 =           to a file and one for writing out the ini file for this
 =           program.

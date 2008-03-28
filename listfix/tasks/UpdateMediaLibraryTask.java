@@ -10,7 +10,7 @@ import listfix.model.*;
 import listfix.util.*;
 import listfix.controller.*;
 
-public class UpdateMediaLibraryTask extends listfix.view.support.Task 
+public class UpdateMediaLibraryTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
     private String[] mediaDir;
@@ -28,21 +28,18 @@ public class UpdateMediaLibraryTask extends listfix.view.support.Task
     {
         if(mediaDir != null)
         {
-            mediaLibraryDirectoryList = DirectoryScanner.createMediaLibraryDirectoryList(guiDriver.getMediaDirs());
-            this.notifyObservers((int)(1.0/6.0 * 100.0));
-            mediaLibraryFileList = DirectoryScanner.createMediaLibraryFileList(mediaLibraryDirectoryList);
-            this.notifyObservers((int)(2.0/6.0 * 100.0));
+            DirectoryScanner.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), this);
+            this.setMessage("Finishing...");
+            mediaLibraryDirectoryList = DirectoryScanner.getDirectoryList();
+            mediaLibraryFileList = DirectoryScanner.getFileList();
             java.util.Arrays.sort(mediaDir);
             guiDriver.setMediaDirs(mediaDir);
-            this.notifyObservers((int)(3.0/6.0 * 100.0));
             java.util.Arrays.sort(mediaLibraryDirectoryList);
             guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
-            this.notifyObservers((int)(4.0/6.0 * 100.0));
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-            this.notifyObservers((int)(5.0/6.0 * 100.0));
-            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList); 
             this.notifyObservers(100);
+            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
         }
     }   
 }
