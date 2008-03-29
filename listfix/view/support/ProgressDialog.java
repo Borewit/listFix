@@ -29,13 +29,6 @@ public class ProgressDialog extends JDialog implements ProgressObserver
     private JPanel _main;
     private Vector _listeners = new Vector();
 
-    /** Construct a new <code>KDialog</code>.
-     *
-     * @param parent The parent dialog for this dialog.
-     * @param title The title for this dialog.
-     * @param modal A flag specifying whether this dialog should be modal.
-     */
-
     /*
      * Common initialization.
      */

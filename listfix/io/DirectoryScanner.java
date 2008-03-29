@@ -35,6 +35,43 @@ public class DirectoryScanner
             }
         }
     }
+
+    public static boolean endsWithIndexedExtension(String input)
+    {
+        input = input.toLowerCase();
+        return (input.endsWith(".mp3")  || input.endsWith(".wma")  ||
+                input.endsWith(".flac") || input.endsWith(".ogg")  ||
+                input.endsWith(".wav")  || input.endsWith(".midi") ||
+                input.endsWith(".cda")  || input.endsWith(".mpg")  ||
+                input.endsWith(".mpeg") || input.endsWith(".m2v")  ||
+                input.endsWith(".avi")  || input.endsWith(".m4v")  ||
+                input.endsWith(".flv")  || input.endsWith(".mid")  ||
+                input.endsWith(".mp2")  || input.endsWith(".mp1")  ||
+                input.endsWith(".aac")  || input.endsWith(".asx")  ||
+                input.endsWith(".m4a")  || input.endsWith(".mp4")  ||
+                input.endsWith(".m4v")  || input.endsWith(".nsv")  ||
+                input.endsWith(".aiff") || input.endsWith(".au")   ||
+                input.endsWith(".wmv")  || input.endsWith(".asf"));
+//                input.endsWith(".vlb")  || input.endsWith(".b4s")  ||
+//                input.endsWith(".rmi")  || input.endsWith(".kar")  ||
+//                input.endsWith(".miz")  || input.endsWith(".mod")  ||
+//                input.endsWith(".mdz")  || input.endsWith(".nst")  ||
+//                input.endsWith(".stm")  || input.endsWith(".stz")  ||           
+//                input.endsWith(".s3m")  || input.endsWith(".s3z")  ||  
+//                input.endsWith(".it")   || input.endsWith(".itz")  ||  
+//                input.endsWith(".xm")   || input.endsWith(".xmz")  ||  
+//                input.endsWith(".mtm")  || input.endsWith(".ult")  ||  
+//                input.endsWith(".669")  || input.endsWith(".far")  ||
+//                input.endsWith(".okt")  || input.endsWith(".ptm")  ||
+//                input.endsWith(".avr")  || input.endsWith(".caf")  ||
+//                input.endsWith(".htk")  || input.endsWith(".iff")  ||
+//                input.endsWith(".mat")  || input.endsWith(".paf")  ||
+//                input.endsWith(".pvf")  || input.endsWith(".raw")  ||
+//                input.endsWith(".sd2")  || input.endsWith(".sds")  ||
+//                input.endsWith(".sf")   || input.endsWith(".voc")  ||
+//                input.endsWith(".w64")  || input.endsWith(".xi")   ||
+//                input.endsWith(".amf"));            
+    }
     
     private void recursiveDir(String baseDir, Task task)
     {
@@ -52,7 +89,10 @@ public class DirectoryScanner
             for (int i = 0; i < entryList.length; i++)
             {
                 s.append(baseDir);
-                s.append(fs);
+                if (!baseDir.endsWith(fs))
+                {
+                    s.append(fs);
+                }
                 s.append(entryList[i]);
                 File tempFile = new File(s.toString());
                 if (tempFile.isDirectory())
@@ -61,7 +101,10 @@ public class DirectoryScanner
                 }
                 else
                 {
-                    fileList.add(s.toString());
+                    if (endsWithIndexedExtension(s.toString()))
+                    {
+                        fileList.add(s.toString());
+                    }
                 }
                 s.setLength(0);
             }

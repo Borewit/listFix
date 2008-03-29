@@ -5,6 +5,7 @@ package listfix.view;
  * @author jcaron
  */
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.util.Enumeration;
 import listfix.view.ClosestMatchChooserDialog;
@@ -1262,12 +1263,15 @@ public class GUIScreen extends JFrame {
 }//GEN-LAST:event_addMediaDirButtonActionPerformed
 
     private void removeMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMediaDirButtonActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         try
         {
-            mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getSelectedValue()));
+            mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getSelectedValue()));            
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
         catch (Exception e)
         {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
             e.printStackTrace();
         }
@@ -1287,7 +1291,7 @@ public class GUIScreen extends JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        JOptionPane.showMessageDialog(this, (Object)"listFix( )\nv1.5\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net", "About", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "listFix( )\nv1.5.1 Beta\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net", "About", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
@@ -1504,7 +1508,7 @@ public class GUIScreen extends JFrame {
         }
         else if ( filename.equals(""))
         {
-            statusLabel.setText("Untitled List.     Number of entries in list: " + guiDriver.getEntryCount() + "     Number of lost entries: " + guiDriver.getLostEntryCount() + "     Number of URLs: " + guiDriver.getURLCount());
+            statusLabel.setText("Untitled List     Number of entries in list: " + guiDriver.getEntryCount() + "     Number of lost entries: " + guiDriver.getLostEntryCount() + "     Number of URLs: " + guiDriver.getURLCount());
         }
     }
     
