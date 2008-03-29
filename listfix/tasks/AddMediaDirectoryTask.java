@@ -36,10 +36,12 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
         {
             mediaDir = new String[1];
             mediaDir[0] = dir;
-            DirectoryScanner.createMediaLibraryDirectoryAndFileList(mediaDir, this); 
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.createMediaLibraryDirectoryAndFileList(mediaDir, this); 
             this.setMessage("Finishing...");
-            mediaLibraryDirectoryList = DirectoryScanner.getDirectoryList();
-            mediaLibraryFileList = DirectoryScanner.getFileList();
+            mediaLibraryDirectoryList = ds.getDirectoryList();
+            mediaLibraryFileList = ds.getFileList();
+            ds.reset();
             java.util.Arrays.sort(mediaDir);
             guiDriver.setMediaDirs(mediaDir);
             java.util.Arrays.sort(mediaLibraryDirectoryList);
@@ -54,10 +56,12 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
             String[] tempMediaDir = new String[1];
             tempMediaDir[0] = dir;
             mediaDir = ArrayFunctions.copyArrayAddOneValue(guiDriver.getMediaDirs(), dir);
-            DirectoryScanner.createMediaLibraryDirectoryAndFileList(tempMediaDir, this);
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.createMediaLibraryDirectoryAndFileList(tempMediaDir, this);
             this.setMessage("Finishing...");
-            mediaLibraryDirectoryList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryDirectoryList(), DirectoryScanner.getDirectoryList());  
-            mediaLibraryFileList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryFileList(), DirectoryScanner.getFileList());
+            mediaLibraryDirectoryList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryDirectoryList(), ds.getDirectoryList());  
+            mediaLibraryFileList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryFileList(), ds.getFileList());
+            ds.reset();
             java.util.Arrays.sort(mediaDir);
             guiDriver.setMediaDirs(mediaDir);
             java.util.Arrays.sort(mediaLibraryDirectoryList);

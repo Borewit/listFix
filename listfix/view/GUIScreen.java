@@ -5,6 +5,7 @@ package listfix.view;
  * @author jcaron
  */
 import java.awt.Component;
+import java.awt.Font;
 import java.util.Enumeration;
 import listfix.view.ClosestMatchChooserDialog;
 import listfix.view.EditFilenameDialog;
@@ -47,10 +48,10 @@ public class GUIScreen extends JFrame {
         jMediaDirChooser = new JFileChooser();
         jCopyToDirChooser = new JFileChooser();
         jSaveFileChooser = new JFileChooser();
-        locateProgressDialog = new listfix.view.support.ProgressDialog(this, "Finding Files", true, 250, false);
-        copyFilesProgressDialog = new listfix.view.support.ProgressDialog(this, "Copying Files", true, 250, false);
-        updateMediaLibraryProgressDialog = new listfix.view.support.ProgressDialog(this, "Updating Media Library", true, 450, true); 
-        openM3UProgressDialog = new listfix.view.support.ProgressDialog(this, "Opening Playlist", true, 250, false); 
+        locateProgressDialog = new listfix.view.support.ProgressDialog(this, "Finding Files", true, 250, 25, false);
+        copyFilesProgressDialog = new listfix.view.support.ProgressDialog(this, "Copying Files", true, 250, 25, false);
+        updateMediaLibraryProgressDialog = new listfix.view.support.ProgressDialog(this, "Updating Media Library", true, 450, 40, true); 
+        openM3UProgressDialog = new listfix.view.support.ProgressDialog(this, "Opening Playlist", true, 250, 25, false); 
         guiDriver = new GUIDriver();
         jM3UChooser.setDialogTitle("Choose a Playlist...");
         jM3UChooser.setAcceptAllFileFilterUsed(false);
@@ -70,6 +71,7 @@ public class GUIScreen extends JFrame {
         jSaveFileChooser.setFileFilter(new M3UFilter()); 
         playlistTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         playlistTable.setModel(new CustomTableModel());
+        playlistTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
         if (guiDriver.getShowMediaDirWindow())
         {
             JOptionPane.showMessageDialog(this, "You need to add a media directory before you can find the new locations of your files.  See help for more information.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
@@ -200,7 +202,7 @@ public class GUIScreen extends JFrame {
         entryRightClickMenu.add(openMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("listFix( ) - v1.5");
+        setTitle("listFix( ) - v1.5.1 Beta");
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -209,11 +211,11 @@ public class GUIScreen extends JFrame {
         });
 
         buttonPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        buttonPanel.setPreferredSize(new java.awt.Dimension(219, 40));
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
         openIconButton.setToolTipText("Open Playlist");
-        openIconButton.setBorder(null);
         openIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         openIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -224,7 +226,6 @@ public class GUIScreen extends JFrame {
 
         closeIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.gif"))); // NOI18N
         closeIconButton.setToolTipText("Close Playlist");
-        closeIconButton.setBorder(null);
         closeIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         closeIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -235,7 +236,6 @@ public class GUIScreen extends JFrame {
 
         saveIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
         saveIconButton.setToolTipText("Save");
-        saveIconButton.setBorder(null);
         saveIconButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_off.gif"))); // NOI18N
         saveIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         saveIconButton.addActionListener(new java.awt.event.ActionListener() {
@@ -247,9 +247,9 @@ public class GUIScreen extends JFrame {
 
         upIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow-up.gif"))); // NOI18N
         upIconButton.setToolTipText("Move Up");
-        upIconButton.setBorder(null);
-        upIconButton.setMaximumSize(new java.awt.Dimension(54, 30));
-        upIconButton.setMinimumSize(new java.awt.Dimension(54, 30));
+        upIconButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        upIconButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        upIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         upIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upIconButtonActionPerformed(evt);
@@ -259,7 +259,9 @@ public class GUIScreen extends JFrame {
 
         downIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow_down.gif"))); // NOI18N
         downIconButton.setToolTipText("Move Down");
-        downIconButton.setBorder(null);
+        downIconButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        downIconButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        downIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         downIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downIconButtonActionPerformed(evt);
@@ -269,7 +271,9 @@ public class GUIScreen extends JFrame {
 
         deleteIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete.gif"))); // NOI18N
         deleteIconButton.setToolTipText("Remove Selected Entry");
-        deleteIconButton.setBorder(null);
+        deleteIconButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        deleteIconButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        deleteIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         deleteIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteIconButtonActionPerformed(evt);
@@ -279,7 +283,6 @@ public class GUIScreen extends JFrame {
 
         openPlaylistButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
         openPlaylistButton.setToolTipText("Play this list (available when list is in a saved state)");
-        openPlaylistButton.setBorder(null);
         openPlaylistButton.setPreferredSize(new java.awt.Dimension(25, 25));
         openPlaylistButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -293,23 +296,23 @@ public class GUIScreen extends JFrame {
         statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("Dialog", 1, 10));
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
         statusLabel.setForeground(new java.awt.Color(153, 153, 153));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        statusLabel.setText("Untitled List.     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
+        statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
         statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
 
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
-        splitPane.setBorder(null);
         splitPane.setMaximumSize(null);
         splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
 
-        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 10)));
+        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
 
-        addMediaDirButton.setFont(new java.awt.Font("Dialog", 1, 10));
+        addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         addMediaDirButton.setText("Add");
+        addMediaDirButton.setPreferredSize(new java.awt.Dimension(53, 25));
         addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addMediaDirButtonActionPerformed(evt);
@@ -317,8 +320,9 @@ public class GUIScreen extends JFrame {
         });
         mediaLibraryButtonPanel.add(addMediaDirButton);
 
-        removeMediaDirButton.setFont(new java.awt.Font("Dialog", 1, 10));
+        removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMediaDirButton.setText("Remove");
+        removeMediaDirButton.setPreferredSize(new java.awt.Dimension(73, 25));
         removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeMediaDirButtonActionPerformed(evt);
@@ -326,8 +330,9 @@ public class GUIScreen extends JFrame {
         });
         mediaLibraryButtonPanel.add(removeMediaDirButton);
 
-        refreshMediaDirsButton.setFont(new java.awt.Font("Dialog", 1, 10));
+        refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
         refreshMediaDirsButton.setText("Refresh");
+        refreshMediaDirsButton.setPreferredSize(new java.awt.Dimension(71, 25));
         refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshMediaDirsButtonActionPerformed(evt);
@@ -337,7 +342,7 @@ public class GUIScreen extends JFrame {
 
         mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
-        mediaLibraryList.setFont(new java.awt.Font("Dialog", 0, 10));
+        mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
         mediaLibraryList.setPreferredSize(null);
         mediaLibraryScrollPane.setViewportView(mediaLibraryList);
 
@@ -345,11 +350,12 @@ public class GUIScreen extends JFrame {
 
         splitPane.setLeftComponent(mediaLibraryPanel);
 
-        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 10)));
+        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
         playlistPanel.setLayout(new java.awt.BorderLayout());
 
-        locateButton.setFont(new java.awt.Font("Dialog", 1, 10));
+        locateButton.setFont(new java.awt.Font("Verdana", 0, 9));
         locateButton.setText("Locate Files");
+        locateButton.setPreferredSize(new java.awt.Dimension(93, 25));
         locateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 locateButtonActionPerformed(evt);
@@ -357,8 +363,9 @@ public class GUIScreen extends JFrame {
         });
         playlistButtonPanel.add(locateButton);
 
-        saveButton.setFont(new java.awt.Font("Dialog", 1, 10));
+        saveButton.setFont(new java.awt.Font("Verdana", 0, 9));
         saveButton.setText("Save Repaired List");
+        saveButton.setPreferredSize(new java.awt.Dimension(127, 25));
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -376,7 +383,7 @@ public class GUIScreen extends JFrame {
         playlistScrollPanel.setOpaque(false);
         playlistScrollPanel.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        playlistTable.setFont(new java.awt.Font("Dialog", 0, 10));
+        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
         playlistTable.setModel(new CustomTableModel());
         playlistTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
         playlistTable.setGridColor(new java.awt.Color(153, 153, 153));
@@ -416,10 +423,10 @@ public class GUIScreen extends JFrame {
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
-        fileMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        loadMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         loadMenuItem.setMnemonic('L');
         loadMenuItem.setText("Open Playlist");
         loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -430,7 +437,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(loadMenuItem);
 
         closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        closeMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         closeMenuItem.setMnemonic('C');
         closeMenuItem.setText("Close Playlist");
         closeMenuItem.setEnabled(false);
@@ -442,7 +449,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(closeMenuItem);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -453,7 +460,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(saveMenuItem);
 
         saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        saveAsMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         saveAsMenuItem.setMnemonic('V');
         saveAsMenuItem.setText("Save As");
         saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -468,11 +475,11 @@ public class GUIScreen extends JFrame {
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
-        recentMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
         fileMenu.add(recentMenu);
 
         clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        clearHistoryMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         clearHistoryMenuItem.setMnemonic('H');
         clearHistoryMenuItem.setText("Clear Playlist History");
         clearHistoryMenuItem.setToolTipText("");
@@ -487,7 +494,7 @@ public class GUIScreen extends JFrame {
         fileMenu.add(jSeparator1);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        exit.setFont(new java.awt.Font("Dialog", 1, 10));
+        exit.setFont(new java.awt.Font("Verdana", 0, 9));
         exit.setMnemonic('x');
         exit.setText("Exit");
         exit.addActionListener(new java.awt.event.ActionListener() {
@@ -501,10 +508,10 @@ public class GUIScreen extends JFrame {
 
         actionsMenu.setMnemonic('A');
         actionsMenu.setText("Actions");
-        actionsMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        actionsMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         appendFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
-        appendFileMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        appendFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         appendFileMenuItem.setMnemonic('A');
         appendFileMenuItem.setText("Append File");
         appendFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -515,7 +522,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(appendFileMenuItem);
 
         insertFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
-        insertFileMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        insertFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         insertFileMenuItem.setMnemonic('I');
         insertFileMenuItem.setText("Insert File Below Selected Row");
         insertFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -526,7 +533,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(insertFileMenuItem);
 
         editFilenameMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_MASK));
-        editFilenameMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        editFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         editFilenameMenuItem.setMnemonic('E');
         editFilenameMenuItem.setText("Edit Filename");
         editFilenameMenuItem.setEnabled(false);
@@ -538,7 +545,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(editFilenameMenuItem);
 
         findClosestMatchesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
-        findClosestMatchesMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        findClosestMatchesMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         findClosestMatchesMenuItem.setMnemonic('C');
         findClosestMatchesMenuItem.setText("Find Closest Matches");
         findClosestMatchesMenuItem.setEnabled(false);
@@ -550,7 +557,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(findClosestMatchesMenuItem);
 
         playFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
-        playFileMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        playFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         playFileMenuItem.setText("Play Selected File");
         playFileMenuItem.setEnabled(false);
         playFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -561,7 +568,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(playFileMenuItem);
 
         removeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
-        removeMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        removeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMenuItem.setText("Remove");
         removeMenuItem.setEnabled(false);
         removeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -572,7 +579,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(removeMenuItem);
 
         removeMissingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.ALT_MASK));
-        removeMissingMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        removeMissingMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMissingMenuItem.setMnemonic('R');
         removeMissingMenuItem.setText("Remove Missing Files");
         removeMissingMenuItem.setEnabled(false);
@@ -584,7 +591,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(removeMissingMenuItem);
 
         removeDuplicatesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
-        removeDuplicatesMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        removeDuplicatesMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         removeDuplicatesMenuItem.setMnemonic('m');
         removeDuplicatesMenuItem.setText("Remove Duplicates");
         removeDuplicatesMenuItem.setEnabled(false);
@@ -599,7 +606,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(jSeparator4);
 
         appendPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
-        appendPlaylistMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        appendPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         appendPlaylistMenuItem.setMnemonic('p');
         appendPlaylistMenuItem.setText("Append Playlist");
         appendPlaylistMenuItem.setEnabled(false);
@@ -611,7 +618,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(appendPlaylistMenuItem);
 
         insertPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
-        insertPlaylistMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        insertPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         insertPlaylistMenuItem.setMnemonic('n');
         insertPlaylistMenuItem.setText("Insert Playlist Below Selected Row");
         insertPlaylistMenuItem.setEnabled(false);
@@ -626,7 +633,7 @@ public class GUIScreen extends JFrame {
         actionsMenu.add(jSeparator5);
 
         copyToDirMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        copyToDirMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        copyToDirMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         copyToDirMenuItem.setMnemonic('C');
         copyToDirMenuItem.setText("Copy Files to New Location");
         copyToDirMenuItem.setEnabled(false);
@@ -641,10 +648,10 @@ public class GUIScreen extends JFrame {
 
         sortMenu.setMnemonic('S');
         sortMenu.setText("Sort");
-        sortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        sortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         randomizeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        randomizeMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        randomizeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         randomizeMenuItem.setMnemonic('R');
         randomizeMenuItem.setText("Randomize List");
         randomizeMenuItem.setEnabled(false);
@@ -656,7 +663,7 @@ public class GUIScreen extends JFrame {
         sortMenu.add(randomizeMenuItem);
 
         reverseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
-        reverseMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        reverseMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         reverseMenuItem.setMnemonic('e');
         reverseMenuItem.setText("Reverse");
         reverseMenuItem.setEnabled(false);
@@ -670,9 +677,9 @@ public class GUIScreen extends JFrame {
         filenameSortMenu.setMnemonic('F');
         filenameSortMenu.setText("Sort By Filename");
         filenameSortMenu.setEnabled(false);
-        filenameSortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        filenameSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
-        ascendingFilenameMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        ascendingFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         ascendingFilenameMenuItem.setMnemonic('A');
         ascendingFilenameMenuItem.setText("Ascending");
         ascendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -682,7 +689,7 @@ public class GUIScreen extends JFrame {
         });
         filenameSortMenu.add(ascendingFilenameMenuItem);
 
-        descendingFilenameMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        descendingFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         descendingFilenameMenuItem.setMnemonic('D');
         descendingFilenameMenuItem.setText("Descending");
         descendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -697,9 +704,9 @@ public class GUIScreen extends JFrame {
         statusSortMenu.setMnemonic('S');
         statusSortMenu.setText("Sort by Status");
         statusSortMenu.setEnabled(false);
-        statusSortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        statusSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
-        ascendingStatusMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        ascendingStatusMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         ascendingStatusMenuItem.setMnemonic('A');
         ascendingStatusMenuItem.setText("Ascending");
         ascendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -709,7 +716,7 @@ public class GUIScreen extends JFrame {
         });
         statusSortMenu.add(ascendingStatusMenuItem);
 
-        descendingStatusMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        descendingStatusMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         descendingStatusMenuItem.setMnemonic('D');
         descendingStatusMenuItem.setText("Descending");
         descendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -724,9 +731,9 @@ public class GUIScreen extends JFrame {
         pathSortMenu.setMnemonic('P');
         pathSortMenu.setText("Sort By Path");
         pathSortMenu.setEnabled(false);
-        pathSortMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        pathSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
-        ascendingPathMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        ascendingPathMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         ascendingPathMenuItem.setMnemonic('A');
         ascendingPathMenuItem.setText("Ascending");
         ascendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -736,7 +743,7 @@ public class GUIScreen extends JFrame {
         });
         pathSortMenu.add(ascendingPathMenuItem);
 
-        descendingPathMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        descendingPathMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         descendingPathMenuItem.setMnemonic('D');
         descendingPathMenuItem.setText("Descending");
         descendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -752,10 +759,10 @@ public class GUIScreen extends JFrame {
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
-        helpMenu.setFont(new java.awt.Font("Dialog", 1, 10));
+        helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        aboutMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         aboutMenuItem.setMnemonic('A');
         aboutMenuItem.setText("About");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -766,7 +773,7 @@ public class GUIScreen extends JFrame {
         helpMenu.add(aboutMenuItem);
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
-        helpMenuItem.setFont(new java.awt.Font("Dialog", 1, 10));
+        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         helpMenuItem.setMnemonic('e');
         helpMenuItem.setText("Help");
         helpMenuItem.setEnabled(false);
@@ -1530,7 +1537,7 @@ public class GUIScreen extends JFrame {
             for (int i = 0; i < files.length; i++)
             {
                 JMenuItem temp = new JMenuItem(files[i]);
-                temp.setFont(new java.awt.Font("Dialog", 1, 10));
+                temp.setFont(new java.awt.Font("Verdana", 0, 9));
                 temp.addActionListener(new java.awt.event.ActionListener()
                 {
                     public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1622,7 +1629,7 @@ public class GUIScreen extends JFrame {
             cellWidth = comp.getPreferredSize().width;            
             if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
             {
-                column.setPreferredWidth(Math.max(headerWidth, cellWidth) + 50);
+                column.setPreferredWidth(Math.max(headerWidth, cellWidth) + 40);
             }
             else
             {

@@ -18,28 +18,28 @@ import listfix.controller.Task;
 
 public class DirectoryScanner
 {    
-    private static Vector thisList = new Vector();
-    private static Vector thisFileList = new Vector();
-    private static String fs = System.getProperty("file.separator");
+    private Vector thisDirList;
+    private Vector thisFileList;
+    private final String fs = System.getProperty("file.separator");
+    private int recursiveCount = 0;
     
-    public static void createMediaLibraryDirectoryAndFileList(String[] baseDirs, Task task)
+    public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, Task task)
     {
-        thisList.clear();
-        thisFileList.clear();
+        this.reset();
         for(int i = 0; i < baseDirs.length; i++)
         {
             if (new File(baseDirs[i]).exists())
             {
-                thisList.addElement(baseDirs[i]);
-                
-                recursiveDir(baseDirs[i], task);
+                thisDirList.addElement(baseDirs[i]);                
+                this.recursiveDir(baseDirs[i], task);
             }
         }
     }
     
-    private static void recursiveDir(String baseDir, Task task)
+    private void recursiveDir(String baseDir, Task task)
     {
-        task.setMessage("Scanning \"" + baseDir + "\"");
+        recursiveCount++;
+        task.setMessage("<html><body>Scanning Directory #" + recursiveCount + "<BR><BR>" + (baseDir.length() < 70 ? baseDir : baseDir.substring(0, 70) + "...") + "</body></html>");
         
         File mediaDir = new File(baseDir);
         String[] entryList = mediaDir.list();
@@ -77,22 +77,29 @@ public class DirectoryScanner
         
         for (String dir: dirList)
         {
-            thisList.addElement(dir);
+            thisDirList.addElement(dir);
             recursiveDir(dir, task);
         }
     }   
     
-    public static String[] getFileList()
+    public void reset()
+    {
+        recursiveCount = 0;
+        thisDirList = new Vector();
+        thisFileList = new Vector();
+    }
+    
+    public String[] getFileList()
     {
         String[] result = new String[thisFileList.size()];
         thisFileList.copyInto(result);
         return result;
     }
     
-    public static String[] getDirectoryList()
+    public String[] getDirectoryList()
     {
-        String[] result = new String[thisList.size()];
-        thisList.copyInto(result);
+        String[] result = new String[thisDirList.size()];
+        thisDirList.copyInto(result);
         return result;
     }
 }

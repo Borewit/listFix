@@ -90,7 +90,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog {
         jPanel1.setLayout(new java.awt.BorderLayout());
         
         jScrollPane1.setPreferredSize(new java.awt.Dimension(453, 200));
-        jTable1.setFont(new java.awt.Font("Dialog", 0, 10));
+        jTable1.setFont(new java.awt.Font("Verdana", 0, 9));
         jTable1.setModel(new MatchedFileTableModel(matchData));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -102,7 +102,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog {
         
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
         
-        jButton1.setFont(new java.awt.Font("Dialog", 1, 10));
+        jButton1.setFont(new java.awt.Font("Verdana", 0, 9));
         jButton1.setText("OK");
         jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -113,7 +113,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog {
         
         jPanel2.add(jButton1);
         
-        jButton2.setFont(new java.awt.Font("Dialog", 1, 10));
+        jButton2.setFont(new java.awt.Font("Verdana", 0, 9));
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,12 +128,12 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog {
         jPanel3.setLayout(new java.awt.GridBagLayout());
         java.awt.GridBagConstraints gridBagConstraints1;
         
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 10));
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel1.setText("Choose a replacement from the list below");
         gridBagConstraints1 = new java.awt.GridBagConstraints();
         jPanel3.add(jLabel1, gridBagConstraints1);
         
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 10));
+        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel2.setText("and click ok, or click cancel to quit the operation.");
         gridBagConstraints1 = new java.awt.GridBagConstraints();
         gridBagConstraints1.gridx = 0;

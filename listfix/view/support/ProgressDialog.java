@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -13,6 +14,7 @@ import java.awt.Point;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -164,7 +166,7 @@ public class ProgressDialog extends JDialog implements ProgressObserver
      * @param title The title for the dialog window.
      * @param modal A flag specifying whether the dialog should be modal.
      */
-    public ProgressDialog(Frame parent, String title, boolean modal, int labelWidth, boolean messageOnlyMode)
+    public ProgressDialog(Frame parent, String title, boolean modal, int labelWidth, int labelHeight, boolean messageOnlyMode)
     {
         super(parent, title, modal);
         _init();
@@ -176,8 +178,10 @@ public class ProgressDialog extends JDialog implements ProgressObserver
 
         main.setLayout(new BorderLayout(5, 5));
 
-        main.add("North", label = new JLabel("  Please Wait"));
-        label.setPreferredSize(new Dimension(labelWidth, 20));
+        main.add("North", label = new JLabel("Please Wait"));
+        label.setPreferredSize(new Dimension(labelWidth, labelHeight));
+        label.setFont(new Font("Verdana", 0, 9));
+        label.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         
         bar = new JProgressBar();
 
@@ -265,7 +269,7 @@ public class ProgressDialog extends JDialog implements ProgressObserver
      */
     public void setMessage(String message)
     {
-        label.setText("  " + message);
+        label.setText(message);
         pack();
     }
 

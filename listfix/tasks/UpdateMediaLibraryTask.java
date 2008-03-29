@@ -28,10 +28,12 @@ public class UpdateMediaLibraryTask extends listfix.controller.Task
     {
         if(mediaDir != null)
         {
-            DirectoryScanner.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), this);
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), this);
             this.setMessage("Finishing...");
-            mediaLibraryDirectoryList = DirectoryScanner.getDirectoryList();
-            mediaLibraryFileList = DirectoryScanner.getFileList();
+            mediaLibraryDirectoryList = ds.getDirectoryList();
+            mediaLibraryFileList = ds.getFileList();
+            ds.reset();
             java.util.Arrays.sort(mediaDir);
             guiDriver.setMediaDirs(mediaDir);
             java.util.Arrays.sort(mediaLibraryDirectoryList);
