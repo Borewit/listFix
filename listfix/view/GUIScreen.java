@@ -135,6 +135,8 @@ public class GUIScreen extends JFrame {
         recentMenu = new javax.swing.JMenu();
         clearHistoryMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
+        appOptionsMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
         exit = new javax.swing.JMenuItem();
         actionsMenu = new javax.swing.JMenu();
         appendFileMenuItem = new javax.swing.JMenuItem();
@@ -508,6 +510,21 @@ public class GUIScreen extends JFrame {
 
         jSeparator1.setForeground(new java.awt.Color(102, 102, 153));
         fileMenu.add(jSeparator1);
+
+        appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
+        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        appOptionsMenuItem.setMnemonic('H');
+        appOptionsMenuItem.setText("Options...");
+        appOptionsMenuItem.setToolTipText("");
+        appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                appOptionsMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(appOptionsMenuItem);
+
+        jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
+        fileMenu.add(jSeparator2);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         exit.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -1419,6 +1436,10 @@ public class GUIScreen extends JFrame {
         replaceFileMenuItemActionPerformed(evt);
 }//GEN-LAST:event_replaceFileRCMenuItemActionPerformed
 
+    private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appOptionsMenuItemActionPerformed
+        AppOptionsDialog.showDialog(this, "listFix() options", true);
+}//GEN-LAST:event_appOptionsMenuItemActionPerformed
+
     private void updateButtons()
     {
         if (guiDriver.getPlaylist() == null)
@@ -1708,6 +1729,7 @@ public class GUIScreen extends JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenu actionsMenu;
     private javax.swing.JButton addMediaDirButton;
+    private javax.swing.JMenuItem appOptionsMenuItem;
     private javax.swing.JMenuItem appendFileMenuItem;
     private javax.swing.JMenuItem appendPlaylistMenuItem;
     private javax.swing.JMenuItem ascendingFilenameMenuItem;
@@ -1737,6 +1759,7 @@ public class GUIScreen extends JFrame {
     private javax.swing.JMenuItem insertFileMenuItem;
     private javax.swing.JMenuItem insertPlaylistMenuItem;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
