@@ -95,10 +95,11 @@ public class GUIScreen extends JFrame {
     private void initComponents() {
 
         entryRightClickMenu = new javax.swing.JPopupMenu();
-        deleteMenuItem = new javax.swing.JMenuItem();
-        editFileNameMenuItem = new javax.swing.JMenuItem();
-        closestMatchesMenuItem = new javax.swing.JMenuItem();
-        openMenuItem = new javax.swing.JMenuItem();
+        deleteRCMenuItem = new javax.swing.JMenuItem();
+        editFileNameRCMenuItem = new javax.swing.JMenuItem();
+        replaceFileRCMenuItem = new javax.swing.JMenuItem();
+        closestMatchesRCMenuItem = new javax.swing.JMenuItem();
+        openRCMenuItem = new javax.swing.JMenuItem();
         buttonPanel = new javax.swing.JPanel();
         openIconButton = new javax.swing.JButton();
         closeIconButton = new javax.swing.JButton();
@@ -144,6 +145,7 @@ public class GUIScreen extends JFrame {
         removeMenuItem = new javax.swing.JMenuItem();
         removeMissingMenuItem = new javax.swing.JMenuItem();
         removeDuplicatesMenuItem = new javax.swing.JMenuItem();
+        replaceFileMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
         appendPlaylistMenuItem = new javax.swing.JMenuItem();
         insertPlaylistMenuItem = new javax.swing.JMenuItem();
@@ -165,42 +167,55 @@ public class GUIScreen extends JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
         helpMenuItem = new javax.swing.JMenuItem();
 
-        deleteMenuItem.setMnemonic('D');
-        deleteMenuItem.setText("Delete");
-        deleteMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        deleteRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        deleteRCMenuItem.setMnemonic('D');
+        deleteRCMenuItem.setText("Delete");
+        deleteRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteMenuItemActionPerformed(evt);
+                deleteRCMenuItemActionPerformed(evt);
             }
         });
-        entryRightClickMenu.add(deleteMenuItem);
+        entryRightClickMenu.add(deleteRCMenuItem);
 
-        editFileNameMenuItem.setMnemonic('E');
-        editFileNameMenuItem.setText("Edit Filename");
-        editFileNameMenuItem.setEnabled(false);
-        editFileNameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        editFileNameRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        editFileNameRCMenuItem.setMnemonic('E');
+        editFileNameRCMenuItem.setText("Edit Filename");
+        editFileNameRCMenuItem.setEnabled(false);
+        editFileNameRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editFileNameMenuItemActionPerformed(evt);
+                editFileNameRCMenuItemActionPerformed(evt);
             }
         });
-        entryRightClickMenu.add(editFileNameMenuItem);
+        entryRightClickMenu.add(editFileNameRCMenuItem);
 
-        closestMatchesMenuItem.setMnemonic('C');
-        closestMatchesMenuItem.setText("Find Closest Matches");
-        closestMatchesMenuItem.setEnabled(false);
-        closestMatchesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        replaceFileRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        replaceFileRCMenuItem.setText("Replace Selected Entry");
+        replaceFileRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closestMatchesMenuItemActionPerformed(evt);
+                replaceFileRCMenuItemActionPerformed(evt);
             }
         });
-        entryRightClickMenu.add(closestMatchesMenuItem);
+        entryRightClickMenu.add(replaceFileRCMenuItem);
 
-        openMenuItem.setText("Open");
-        openMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        closestMatchesRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        closestMatchesRCMenuItem.setMnemonic('C');
+        closestMatchesRCMenuItem.setText("Find Closest Matches");
+        closestMatchesRCMenuItem.setEnabled(false);
+        closestMatchesRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openMenuItemActionPerformed(evt);
+                closestMatchesRCMenuItemActionPerformed(evt);
             }
         });
-        entryRightClickMenu.add(openMenuItem);
+        entryRightClickMenu.add(closestMatchesRCMenuItem);
+
+        openRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        openRCMenuItem.setText("Open");
+        openRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(openRCMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("listFix( ) - v1.5.1 Beta");
@@ -559,7 +574,7 @@ public class GUIScreen extends JFrame {
 
         playFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         playFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        playFileMenuItem.setText("Play Selected File");
+        playFileMenuItem.setText("Play Selected Entry");
         playFileMenuItem.setEnabled(false);
         playFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -582,7 +597,7 @@ public class GUIScreen extends JFrame {
         removeMissingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.ALT_MASK));
         removeMissingMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMissingMenuItem.setMnemonic('R');
-        removeMissingMenuItem.setText("Remove Missing Files");
+        removeMissingMenuItem.setText("Remove Missing Entries");
         removeMissingMenuItem.setEnabled(false);
         removeMissingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -602,6 +617,17 @@ public class GUIScreen extends JFrame {
             }
         });
         actionsMenu.add(removeDuplicatesMenuItem);
+
+        replaceFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
+        replaceFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        replaceFileMenuItem.setMnemonic('I');
+        replaceFileMenuItem.setText("Replace Selected Entry");
+        replaceFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                replaceFileMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(replaceFileMenuItem);
 
         jSeparator4.setForeground(new java.awt.Color(102, 102, 153));
         actionsMenu.add(jSeparator4);
@@ -934,20 +960,20 @@ public class GUIScreen extends JFrame {
         updateStatusLabel();
     }//GEN-LAST:event_randomizeMenuItemActionPerformed
 
-    private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
+    private void deleteRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRCMenuItemActionPerformed
         deleteIconButtonActionPerformed(evt);
         updateStatusLabel();
-}//GEN-LAST:event_deleteMenuItemActionPerformed
+}//GEN-LAST:event_deleteRCMenuItemActionPerformed
 
-    private void closestMatchesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closestMatchesMenuItemActionPerformed
+    private void closestMatchesRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closestMatchesRCMenuItemActionPerformed
         findClosestMatchesMenuItemActionPerformed(evt);
         updateStatusLabel();
-}//GEN-LAST:event_closestMatchesMenuItemActionPerformed
+}//GEN-LAST:event_closestMatchesRCMenuItemActionPerformed
 
-    private void editFileNameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFileNameMenuItemActionPerformed
+    private void editFileNameRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFileNameRCMenuItemActionPerformed
         editFilenameMenuItemActionPerformed(evt);
         updateStatusLabel();
-}//GEN-LAST:event_editFileNameMenuItemActionPerformed
+}//GEN-LAST:event_editFileNameRCMenuItemActionPerformed
 
     private void playlistTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseClicked
         if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
@@ -1337,7 +1363,7 @@ public class GUIScreen extends JFrame {
         updateMediaLibraryProgressDialog.setBusyCursor(false);
 }//GEN-LAST:event_refreshMediaDirsButtonActionPerformed
 
-    private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
+    private void openRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openRCMenuItemActionPerformed
         int row = playlistTable.getSelectedRow();
         PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
         try
@@ -1348,7 +1374,7 @@ public class GUIScreen extends JFrame {
         {
             JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
         }
-}//GEN-LAST:event_openMenuItemActionPerformed
+}//GEN-LAST:event_openRCMenuItemActionPerformed
 
     private void openPlaylistButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openPlaylistButtonActionPerformed
         guiDriver.playPlaylist();
@@ -1359,8 +1385,39 @@ public class GUIScreen extends JFrame {
     }//GEN-LAST:event_removeMenuItemActionPerformed
 
     private void playFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFileMenuItemActionPerformed
-        openMenuItemActionPerformed(evt);
+        openRCMenuItemActionPerformed(evt);
 }//GEN-LAST:event_playFileMenuItemActionPerformed
+
+    private void replaceFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceFileMenuItemActionPerformed
+        int response = jFileChooser.showOpenDialog(this);
+        if (response == JFileChooser.APPROVE_OPTION)
+        {
+            try
+            {
+                File fileToInsert = jFileChooser.getSelectedFile();
+                if (playlistTable.getSelectedRowCount() != 0)
+                {
+                    int entryIndex = playlistTable.getSelectedRow();
+                    ((CustomTableModel) playlistTable.getModel()).updateData(guiDriver.replaceFile(fileToInsert, entryIndex));
+                    updateButtons();
+                    updateStatusLabel();
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "An error has occured, file was not inserted.");
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            jM3UChooser.cancelSelection();
+        }
+}//GEN-LAST:event_replaceFileMenuItemActionPerformed
+
+    private void replaceFileRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceFileRCMenuItemActionPerformed
+        replaceFileMenuItemActionPerformed(evt);
+}//GEN-LAST:event_replaceFileRCMenuItemActionPerformed
 
     private void updateButtons()
     {
@@ -1392,7 +1449,7 @@ public class GUIScreen extends JFrame {
             removeMenuItem.setEnabled(false);
             deleteIconButton.setEnabled(false);
             playFileMenuItem.setEnabled(false);
-            deleteMenuItem.setEnabled(false);
+            deleteRCMenuItem.setEnabled(false);
             locateButton.setEnabled(false);
             randomizeMenuItem.setEnabled(false);
             reverseMenuItem.setEnabled(false);
@@ -1402,9 +1459,9 @@ public class GUIScreen extends JFrame {
             removeMissingMenuItem.setEnabled(false);
             removeDuplicatesMenuItem.setEnabled(false);
             copyToDirMenuItem.setEnabled(false);
-            editFileNameMenuItem.setEnabled(false);
-            openMenuItem.setEnabled(false);
-            closestMatchesMenuItem.setEnabled(false);
+            editFileNameRCMenuItem.setEnabled(false);
+            openRCMenuItem.setEnabled(false);
+            closestMatchesRCMenuItem.setEnabled(false);
             findClosestMatchesMenuItem.setEnabled(false);
             insertFileMenuItem.setEnabled(false);
         }
@@ -1423,7 +1480,7 @@ public class GUIScreen extends JFrame {
             removeMenuItem.setEnabled(true);
             deleteIconButton.setEnabled(true);
             playFileMenuItem.setEnabled(true);
-            deleteMenuItem.setEnabled(true);
+            deleteRCMenuItem.setEnabled(true);
             locateButton.setEnabled(true); 
             randomizeMenuItem.setEnabled(true);
             reverseMenuItem.setEnabled(true);
@@ -1433,9 +1490,9 @@ public class GUIScreen extends JFrame {
             removeMissingMenuItem.setEnabled(true);
             removeDuplicatesMenuItem.setEnabled(true);
             copyToDirMenuItem.setEnabled(true);
-            editFileNameMenuItem.setEnabled(true);
-            openMenuItem.setEnabled(true);
-            closestMatchesMenuItem.setEnabled(true);
+            editFileNameRCMenuItem.setEnabled(true);
+            openRCMenuItem.setEnabled(true);
+            closestMatchesRCMenuItem.setEnabled(true);
             findClosestMatchesMenuItem.setEnabled(true);
             insertFileMenuItem.setEnabled(true);
         }
@@ -1445,13 +1502,15 @@ public class GUIScreen extends JFrame {
             removeMenuItem.setEnabled(false);
             deleteIconButton.setEnabled(false);
             playFileMenuItem.setEnabled(false);
-            deleteMenuItem.setEnabled(false);  
-            editFileNameMenuItem.setEnabled(false);
-            openMenuItem.setEnabled(false);
-            closestMatchesMenuItem.setEnabled(false);
+            deleteRCMenuItem.setEnabled(false);  
+            editFileNameRCMenuItem.setEnabled(false);
+            openRCMenuItem.setEnabled(false);
+            closestMatchesRCMenuItem.setEnabled(false);
             findClosestMatchesMenuItem.setEnabled(false);
             insertPlaylistMenuItem.setEnabled(false);
             insertFileMenuItem.setEnabled(false);
+            replaceFileMenuItem.setEnabled(false);
+            replaceFileRCMenuItem.setEnabled(false);
         }
         else if ((playlistTable.getSelectedRowCount() != 0) && (guiDriver.getEntryCount() != 0))
         {
@@ -1466,26 +1525,28 @@ public class GUIScreen extends JFrame {
                 downIconButton.setEnabled(false);
             }
             removeMenuItem.setEnabled(true);
-            deleteMenuItem.setEnabled(true);
+            deleteRCMenuItem.setEnabled(true);
             deleteIconButton.setEnabled(true);
             playFileMenuItem.setEnabled(true);
             if (!guiDriver.getEntryAt(playlistTable.getSelectedRow()).isURL())
             {
-                editFileNameMenuItem.setEnabled(true);
+                editFileNameRCMenuItem.setEnabled(true);
                 editFilenameMenuItem.setEnabled(true);
-                closestMatchesMenuItem.setEnabled(true);
+                closestMatchesRCMenuItem.setEnabled(true);
                 findClosestMatchesMenuItem.setEnabled(true);
             }
             else
             {
-                editFileNameMenuItem.setEnabled(false);
+                editFileNameRCMenuItem.setEnabled(false);
                 editFilenameMenuItem.setEnabled(false);
-                closestMatchesMenuItem.setEnabled(false);
+                closestMatchesRCMenuItem.setEnabled(false);
                 findClosestMatchesMenuItem.setEnabled(false);
             }
-            openMenuItem.setEnabled(true);
+            openRCMenuItem.setEnabled(true);
             insertPlaylistMenuItem.setEnabled(true);            
             insertFileMenuItem.setEnabled(true);
+            replaceFileMenuItem.setEnabled(true);
+            replaceFileRCMenuItem.setEnabled(true);
         }                
         if (mediaLibraryList.getModel().getSize() == 0)
         {
@@ -1656,15 +1717,15 @@ public class GUIScreen extends JFrame {
     private javax.swing.JMenuItem clearHistoryMenuItem;
     private javax.swing.JButton closeIconButton;
     private javax.swing.JMenuItem closeMenuItem;
-    private javax.swing.JMenuItem closestMatchesMenuItem;
+    private javax.swing.JMenuItem closestMatchesRCMenuItem;
     private javax.swing.JMenuItem copyToDirMenuItem;
     private javax.swing.JButton deleteIconButton;
-    private javax.swing.JMenuItem deleteMenuItem;
+    private javax.swing.JMenuItem deleteRCMenuItem;
     private javax.swing.JMenuItem descendingFilenameMenuItem;
     private javax.swing.JMenuItem descendingPathMenuItem;
     private javax.swing.JMenuItem descendingStatusMenuItem;
     private javax.swing.JButton downIconButton;
-    private javax.swing.JMenuItem editFileNameMenuItem;
+    private javax.swing.JMenuItem editFileNameRCMenuItem;
     private javax.swing.JMenuItem editFilenameMenuItem;
     private javax.swing.JPopupMenu entryRightClickMenu;
     private javax.swing.JMenuItem exit;
@@ -1687,8 +1748,8 @@ public class GUIScreen extends JFrame {
     private javax.swing.JPanel mediaLibraryPanel;
     private javax.swing.JScrollPane mediaLibraryScrollPane;
     private javax.swing.JButton openIconButton;
-    private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JButton openPlaylistButton;
+    private javax.swing.JMenuItem openRCMenuItem;
     private javax.swing.JMenu pathSortMenu;
     private javax.swing.JMenuItem playFileMenuItem;
     private javax.swing.JPanel playlistButtonPanel;
@@ -1703,6 +1764,8 @@ public class GUIScreen extends JFrame {
     private javax.swing.JButton removeMediaDirButton;
     private javax.swing.JMenuItem removeMenuItem;
     private javax.swing.JMenuItem removeMissingMenuItem;
+    private javax.swing.JMenuItem replaceFileMenuItem;
+    private javax.swing.JMenuItem replaceFileRCMenuItem;
     private javax.swing.JMenuItem reverseMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JButton saveButton;

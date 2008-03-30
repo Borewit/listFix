@@ -16,7 +16,6 @@ import listfix.util.ArrayFunctions;
 
 public class GUIDriver
 {
-
     private static String[] mediaDir = null;
     private static final int HISTORY_LIMIT = 5;
     private static boolean showMediaDirWindow = false;
@@ -633,6 +632,19 @@ public class GUIDriver
     {
         PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert, "");
         entries.insertElementAt(entryToInsert, entryIndex + 1);
+        return guiTableUpdate();
+    }
+    
+    /**
+     * @param entryToInsert
+     * @param entryIndex
+     * @return
+     */
+    public Object[][] replaceFile(File fileToInsert, int entryIndex)
+    {
+        PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert, "");
+        entries.remove(entryIndex);
+        entries.insertElementAt(entryToInsert, entryIndex);
         return guiTableUpdate();
     }
 }
