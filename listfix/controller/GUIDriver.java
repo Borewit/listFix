@@ -17,14 +17,14 @@ import listfix.util.ArrayFunctions;
 public class GUIDriver
 {
     private static String[] mediaDir = null;
-    private static final int HISTORY_LIMIT = 5;
     private static boolean showMediaDirWindow = false;
     private static String[] mediaLibraryDirectoryList = null;
     private static String[] mediaLibraryFileList = null;
     private static File currentPlaylist;
     private static Vector entries = new Vector();
-    private static Vector originalEntries = new Vector();
-    private static M3UHistory history = new M3UHistory(HISTORY_LIMIT);
+    private static Vector originalEntries = new Vector();    
+    private static AppOptions options = new AppOptions();
+    private static M3UHistory history;
 
     public GUIDriver()
     {
@@ -33,6 +33,8 @@ public class GUIDriver
             IniFileReader initReader = new IniFileReader();
             initReader.readIni();
             mediaDir = initReader.getMediaDirs();
+            options = initReader.getAppOptions();
+            history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
             history.initHistory(initReader.getHistory());
             mediaLibraryDirectoryList = initReader.getMediaLibrary();
             mediaLibraryFileList = initReader.getMediaLibraryFiles();
@@ -46,6 +48,11 @@ public class GUIDriver
             showMediaDirWindow = true;
             e.printStackTrace();
         }
+    }
+
+    public AppOptions getAppOptions()
+    {
+        return options;
     }
 
     public int getURLCount()
@@ -109,6 +116,11 @@ public class GUIDriver
         {
             e.printStackTrace();
         }
+    }
+
+    public void setAppOptions(AppOptions opts)
+    {
+        options = opts;
     }
 
     public void setMediaDirs(String[] value)

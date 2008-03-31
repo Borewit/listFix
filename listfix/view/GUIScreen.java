@@ -1,7 +1,6 @@
 package listfix.view;
 
 /**
- *
  * @author jcaron
  */
 import java.awt.Component;
@@ -1437,7 +1436,9 @@ public class GUIScreen extends JFrame {
 }//GEN-LAST:event_replaceFileRCMenuItemActionPerformed
 
     private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appOptionsMenuItemActionPerformed
-        AppOptionsDialog.showDialog(this, "listFix() options", true);
+        AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
+        AppOptions options = optDialog.showDialog();
+        guiDriver.setAppOptions(options);        
 }//GEN-LAST:event_appOptionsMenuItemActionPerformed
 
     private void updateButtons()

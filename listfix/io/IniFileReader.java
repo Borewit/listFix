@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
 import java.util.Vector;
+import listfix.model.AppOptions;
+import listfix.model.AppOptionsEnum;
 
 public class IniFileReader
 {
@@ -28,6 +31,7 @@ public class IniFileReader
     private String[] history = new String[0];
     private String[] mediaLibrary = new String[0];
     private String[] mediaLibraryFiles = new String[0]; 
+    private AppOptions options = new AppOptions();
 
     public IniFileReader() throws FileNotFoundException
     {
@@ -48,11 +52,17 @@ public class IniFileReader
         B2 = new BufferedReader(new FileReader(in_data2));
     }
 
-    public void readIni() throws IOException
+    public AppOptions getAppOptions()
+    {
+        return options;
+    }
+
+    public void readIni() throws Exception
     {
         Vector tempVector = new Vector();
-        // ignore line 1, contains static data
-        String line = B1.readLine(); 
+        // Read in base media directories
+        // skip first line, contains header
+        String line = B1.readLine();
         line = B1.readLine();
         while ( ( line != null) && ( !line.startsWith("[") ) )
         {
@@ -62,7 +72,44 @@ public class IniFileReader
         mediaDirs = new String[tempVector.size()];
         tempVector.copyInto(mediaDirs);
         tempVector.clear();
-        line = B1.readLine(); // skip to line after header
+        
+        // Read in app options, but only if the file contains them in this spot...
+        // skip first line, contains header
+        if (line.startsWith("[Options]"))
+        {
+            line = B1.readLine().trim();    
+            while ( ( line != null) && ( !line.startsWith("[") ) )
+            {
+                StringTokenizer tempTizer = new StringTokenizer(line, "=");
+                String optionName = tempTizer.nextToken();
+                String optionValue = tempTizer.nextToken();
+                Integer optionEnum = AppOptions.optionEnumTable.get(optionName);
+                if (optionEnum != null)
+                {
+                    if (optionEnum.equals(AppOptionsEnum.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
+                    {
+                        options.setAutoLocateEntriesOnPlaylistLoad((new Boolean(optionValue)).booleanValue());
+                    }
+                    else if (optionEnum.equals(AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE))
+                    {
+                        options.setMaxPlaylistHistoryEntries((new Integer(optionValue)).intValue());
+                    }
+                    else if (optionEnum.equals(AppOptionsEnum.SAVE_RELATIVE_REFERENCES))
+                    {
+                        options.setSavePlaylistsWithRelativePaths((new Boolean(optionValue)).booleanValue());
+                    }
+                }
+                tempVector.addElement(line);
+                line = B1.readLine();
+            }        
+            mediaDirs = new String[tempVector.size()];
+            tempVector.copyInto(mediaDirs);
+            tempVector.clear();
+        }
+        
+        // Read in media library directories
+        // skip first line, contains header
+        line = B1.readLine();
         while ( ( line != null) && ( !line.startsWith("[") ) )
         {
             tempVector.addElement(line);
@@ -70,17 +117,21 @@ public class IniFileReader
         }   
         mediaLibrary = new String[tempVector.size()];
         tempVector.copyInto(mediaLibrary);
-        tempVector.clear(); 
-        line = B1.readLine(); // skip to line after header
-        while (line != null) 
+        tempVector.clear();
+        
+        // Read in media library files
+        // skip first line, contains header
+        line = B1.readLine();
+        while (line != null)
         {
             tempVector.addElement(line);
             line = B1.readLine();
         }   
         mediaLibraryFiles = new String[tempVector.size()];
-        tempVector.copyInto(mediaLibraryFiles);
-        
+        tempVector.copyInto(mediaLibraryFiles);        
         tempVector.clear();
+        
+        // Read in history...
         line = B2.readLine(); 
         line = B2.readLine();
         while ( line != null )

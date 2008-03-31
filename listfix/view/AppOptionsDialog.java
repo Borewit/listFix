@@ -4,20 +4,29 @@ package listfix.view;
  *
  * @author  Administrator
  */
-import listfix.model.EditFilenameResult;
 import java.awt.Point;
+import listfix.model.AppOptions;
 
 public class AppOptionsDialog extends javax.swing.JDialog 
 {    
     private int resultCode;
     private String fileName;
+    private AppOptions options = null;
     public static final int OK = 0;
     public static final int CANCEL = 1;
     
     /** Creates new form EditFilenameDialog */
-    public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal) 
+    public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts) 
     {
         super(parent, title, modal);
+        if (opts == null)
+        {
+            options = new AppOptions();
+        }
+        else
+        {
+            options = opts;
+        }
         initComponents();
         this.center();
     }    
@@ -70,13 +79,13 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        recentPlaylistLimitComboBox = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        autoLocateCheckBox = new javax.swing.JCheckBox();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jCheckBox2 = new javax.swing.JCheckBox();
+        relativePathsCheckBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -105,9 +114,11 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel3.add(jLabel1);
 
-        jComboBox1.setFont(new java.awt.Font("Verdana", 0, 9));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" }));
-        jPanel3.add(jComboBox1);
+        recentPlaylistLimitComboBox.setFont(new java.awt.Font("Verdana", 0, 9));
+        recentPlaylistLimitComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" }));
+        recentPlaylistLimitComboBox.setSelectedItem("" + options.getMaxPlaylistHistoryEntries());
+        recentPlaylistLimitComboBox.setPreferredSize(new java.awt.Dimension(50, 20));
+        jPanel3.add(recentPlaylistLimitComboBox);
 
         jPanel1.add(jPanel3);
 
@@ -121,12 +132,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel2.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel4.add(jLabel2);
 
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-        jPanel4.add(jCheckBox1);
+        autoLocateCheckBox.setSelected(options.getAutoLocateEntriesOnPlaylistLoad());
+        jPanel4.add(autoLocateCheckBox);
 
         jPanel1.add(jPanel4);
 
@@ -140,12 +147,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel3.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel5.add(jLabel3);
 
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-        jPanel5.add(jCheckBox2);
+        relativePathsCheckBox.setSelected(options.getSavePlaylistsWithRelativePaths());
+        jPanel5.add(relativePathsCheckBox);
 
         jPanel1.add(jPanel5);
 
@@ -201,35 +204,30 @@ public class AppOptionsDialog extends javax.swing.JDialog
         dispose();
     }//GEN-LAST:event_closeDialog
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
-
     /**
     * @param args the command line arguments
     */
     public static void main(String args[]) 
     {
-        new AppOptionsDialog(new java.awt.Frame(), "listFix() options", true).setVisible(true);
+        new AppOptionsDialog(new java.awt.Frame(), "listFix() options", true, null).setVisible(true);
     }
     
-    public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal) 
+    public AppOptions showDialog() 
     {
-        AppOptionsDialog tempDBox = new AppOptionsDialog(parent, title, modal);
-        tempDBox.setVisible(true);
-        return new EditFilenameResult(tempDBox.getResultCode(), tempDBox.getFileName());
+        this.setVisible(true);
+        if (this.getResultCode() == OK)
+        {
+            options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
+            options.setMaxPlaylistHistoryEntries( new Integer((String)recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())).intValue() );
+            options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
+        }
+        return options;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox autoLocateCheckBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -239,6 +237,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JComboBox recentPlaylistLimitComboBox;
+    private javax.swing.JCheckBox relativePathsCheckBox;
     // End of variables declaration//GEN-END:variables
 
 }
