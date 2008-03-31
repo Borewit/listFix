@@ -24,15 +24,20 @@ public class GUIDriver
     private static Vector entries = new Vector();
     private static Vector originalEntries = new Vector();    
     private static AppOptions options = new AppOptions();
-    private static M3UHistory history;
+    private static M3UHistory history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
 
     public GUIDriver()
     {
         try
         {
+            FileWriter.writeDefaultIniFilesIfNeeded();
             IniFileReader initReader = new IniFileReader();
             initReader.readIni();
             mediaDir = initReader.getMediaDirs();
+            if (mediaDir.length == 0)
+            {
+                showMediaDirWindow = true;
+            }
             options = initReader.getAppOptions();
             history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
             history.initHistory(initReader.getHistory());
@@ -273,7 +278,7 @@ public class GUIDriver
             {
                 mediaLibraryDirectoryList = new String[0];
                 mediaLibraryFileList = new String[0];
-                FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+                FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, options);
             }
             else
             {
@@ -323,7 +328,7 @@ public class GUIDriver
                 mediaLibraryFileList = mlfVector.toArray(mediaLibraryFileList);
                 mlfVector = null;
 
-                FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+                FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, options);
             }
             else
             {

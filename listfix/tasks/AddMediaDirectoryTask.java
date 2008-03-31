@@ -48,7 +48,7 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
             guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
             this.notifyObservers(100);
         }
         else
@@ -69,7 +69,7 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
             this.notifyObservers(100);
-            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
         }
     }   
 }

@@ -3,24 +3,18 @@ package listfix.view;
 /**
  * @author jcaron
  */
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Font;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import javax.swing.*;
+import javax.swing.table.*;
 import java.util.Enumeration;
-import listfix.view.ClosestMatchChooserDialog;
-import listfix.view.EditFilenameDialog;
-import listfix.model.EditFilenameResult;
-import listfix.io.ValidM3UFileRefFileChooserFilter;
-import listfix.io.M3UFilter;
+import java.util.Vector;
+
+import listfix.io.*;
 import listfix.model.*;
 import listfix.tasks.*;
 import listfix.controller.GUIDriver;
-import java.io.File;
-import java.util.Vector;
-import javax.swing.*;
-import java.awt.event.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import listfix.util.ArrayFunctions;
 
 public class GUIScreen extends JFrame {
@@ -1438,7 +1432,11 @@ public class GUIScreen extends JFrame {
     private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appOptionsMenuItemActionPerformed
         AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
         AppOptions options = optDialog.showDialog();
-        guiDriver.setAppOptions(options);        
+        guiDriver.setAppOptions(options);
+        if (optDialog.getResultCode() == AppOptionsDialog.OK)
+        {
+            FileWriter.writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
+        }
 }//GEN-LAST:event_appOptionsMenuItemActionPerformed
 
     private void updateButtons()

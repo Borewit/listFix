@@ -38,14 +38,22 @@ public class IniFileReader
         fname1 = homeDir + fs + "dirLists.ini";
         fname2 = homeDir + fs + "listFixHistory.ini";
         File in_data1 = new File(fname1);
-        if (in_data1.length() == 0)
+        if (!in_data1.exists())
+        {
+            throw new FileNotFoundException(in_data1.getPath());
+        }
+        else if (in_data1.length() == 0)
         {
             throw new FileNotFoundException("File found, but was of zero size.");
         }
         B1 = new BufferedReader(new FileReader(in_data1));
         
         File in_data2 = new File(fname2);
-        if (in_data2.length() == 0)
+        if (!in_data2.exists())
+        {
+            throw new FileNotFoundException(in_data2.getPath());
+        }
+        else if (in_data2.length() == 0)
         {
             throw new FileNotFoundException("File found, but was of zero size.");
         }
@@ -99,11 +107,8 @@ public class IniFileReader
                         options.setSavePlaylistsWithRelativePaths((new Boolean(optionValue)).booleanValue());
                     }
                 }
-                tempVector.addElement(line);
                 line = B1.readLine();
             }        
-            mediaDirs = new String[tempVector.size()];
-            tempVector.copyInto(mediaDirs);
             tempVector.clear();
         }
         

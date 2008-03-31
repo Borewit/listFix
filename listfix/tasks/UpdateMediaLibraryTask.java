@@ -41,7 +41,7 @@ public class UpdateMediaLibraryTask extends listfix.controller.Task
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
             this.notifyObservers(100);
-            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
         }
     }   
 }

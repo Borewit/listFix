@@ -14,12 +14,14 @@ public class WriteIniFileTask extends listfix.controller.Task
     private String[] mediaDir;
     private String[] mediaLibraryDirList;
     private String[] mediaLibraryFileList;
-    
-    public WriteIniFileTask(String[] m, String[] mldl, String[] mlfl) 
+    private AppOptions options;
+
+    public WriteIniFileTask(String[] m, String[] mldl, String[] mlfl, AppOptions opts)
     {
         mediaDir = m;
         mediaLibraryDirList = mldl;
         mediaLibraryFileList = mlfl;
+        options = opts;
     }
 
     /** Run the task. This method is the body of the thread for this task.  */
@@ -36,6 +38,16 @@ public class WriteIniFileTask extends listfix.controller.Task
                 {
                     output.writeBytes(mediaDir[i] + br);
                 }
+            }
+            if (options != null)
+            {
+                output.writeBytes("[Options]" + br);
+                output.writeBytes("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" 
+                        + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad()) + br);
+                output.writeBytes("MAX_PLAYLIST_HISTORY_SIZE=" 
+                        + options.getMaxPlaylistHistoryEntries() + br);
+                output.writeBytes("SAVE_RELATIVE_REFERENCES=" 
+                        + Boolean.toString(options.getSavePlaylistsWithRelativePaths()) + br);
             }
             if (mediaLibraryDirList != null)
             {
