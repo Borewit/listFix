@@ -110,7 +110,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel1.setText("Recent Playlist Limit: ");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel1.setMinimumSize(new java.awt.Dimension(111, 9));
-        jLabel1.setPreferredSize(new java.awt.Dimension(111, 11));
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel3.add(jLabel1);
 
@@ -156,12 +155,13 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
         jPanel2.setMaximumSize(new java.awt.Dimension(400, 24));
         jPanel2.setMinimumSize(new java.awt.Dimension(131, 24));
-        jPanel2.setPreferredSize(new java.awt.Dimension(350, 24));
+        jPanel2.setPreferredSize(new java.awt.Dimension(350, 32));
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         jButton1.setFont(new java.awt.Font("Verdana", 0, 9));
         jButton1.setText("OK");
-        jButton1.setPreferredSize(new java.awt.Dimension(49, 20));
+        jButton1.setMinimumSize(new java.awt.Dimension(49, 20));
+        jButton1.setPreferredSize(null);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -171,7 +171,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
         jButton2.setFont(new java.awt.Font("Verdana", 0, 9));
         jButton2.setText("Cancel");
-        jButton2.setPreferredSize(new java.awt.Dimension(67, 20));
+        jButton2.setMinimumSize(new java.awt.Dimension(67, 20));
+        jButton2.setPreferredSize(null);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);

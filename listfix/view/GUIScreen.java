@@ -323,7 +323,8 @@ public class GUIScreen extends JFrame {
 
         addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         addMediaDirButton.setText("Add");
-        addMediaDirButton.setPreferredSize(new java.awt.Dimension(53, 25));
+        addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
+        addMediaDirButton.setPreferredSize(null);
         addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addMediaDirButtonActionPerformed(evt);
@@ -333,7 +334,8 @@ public class GUIScreen extends JFrame {
 
         removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMediaDirButton.setText("Remove");
-        removeMediaDirButton.setPreferredSize(new java.awt.Dimension(73, 25));
+        removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
+        removeMediaDirButton.setPreferredSize(null);
         removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeMediaDirButtonActionPerformed(evt);
@@ -343,7 +345,8 @@ public class GUIScreen extends JFrame {
 
         refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
         refreshMediaDirsButton.setText("Refresh");
-        refreshMediaDirsButton.setPreferredSize(new java.awt.Dimension(71, 25));
+        refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
+        refreshMediaDirsButton.setPreferredSize(null);
         refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshMediaDirsButtonActionPerformed(evt);
@@ -366,7 +369,8 @@ public class GUIScreen extends JFrame {
 
         locateButton.setFont(new java.awt.Font("Verdana", 0, 9));
         locateButton.setText("Locate Files");
-        locateButton.setPreferredSize(new java.awt.Dimension(93, 25));
+        locateButton.setMinimumSize(new java.awt.Dimension(93, 25));
+        locateButton.setPreferredSize(null);
         locateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 locateButtonActionPerformed(evt);
@@ -376,7 +380,8 @@ public class GUIScreen extends JFrame {
 
         saveButton.setFont(new java.awt.Font("Verdana", 0, 9));
         saveButton.setText("Save Repaired List");
-        saveButton.setPreferredSize(new java.awt.Dimension(127, 25));
+        saveButton.setMinimumSize(new java.awt.Dimension(127, 25));
+        saveButton.setPreferredSize(null);
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -1471,6 +1476,8 @@ public class GUIScreen extends JFrame {
         {
             FileWriter.writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
         }
+        guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
+        updateRecentMenu();
 }//GEN-LAST:event_appOptionsMenuItemActionPerformed
 
     private void updateButtons()

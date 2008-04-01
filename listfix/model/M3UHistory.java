@@ -23,6 +23,15 @@ public class M3UHistory {
     {
         limit = x;
     }
+
+    public void setCapacity(int maxPlaylistHistoryEntries)
+    {
+       limit = maxPlaylistHistoryEntries;
+       if (limit < playlists.size())
+       {
+           playlists.setSize(limit);
+       }
+    }
     
     protected int getLimit() // added to assist testing
     {
@@ -36,14 +45,15 @@ public class M3UHistory {
     
     public void initHistory(String[] input)
     {
-        int size = input.length;
-        for (int i = 0; i < size; i++)
+        int i = 0;
+        while (i < input.length && i < limit)
         {
             File testFile = new File(input[i]);
             if (testFile.exists())
             {
                 playlists.add(input[i]);
             }
+            i++;
         }
     }
     
