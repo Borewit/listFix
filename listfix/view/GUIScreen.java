@@ -321,6 +321,9 @@ public class GUIScreen extends JFrame {
         mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
 
+        mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
+        mediaLibraryButtonPanel.setPreferredSize(null);
+
         addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         addMediaDirButton.setText("Add");
         addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
@@ -1239,6 +1242,10 @@ public class GUIScreen extends JFrame {
                 updateButtons();
                 updateStatusLabel();                
                 this.initColumnSizes(playlistTable);
+                if (guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+                {
+                    locateButtonActionPerformed(evt);
+                }
             }
             catch (Exception e)
             {
@@ -1692,6 +1699,10 @@ public class GUIScreen extends JFrame {
             updateButtons();
             updateStatusLabel();
             this.initColumnSizes(playlistTable);
+            if (guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+            {
+                locateButtonActionPerformed(evt);
+            }
         }
         catch (Exception e)
         {
