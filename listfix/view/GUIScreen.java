@@ -1276,7 +1276,25 @@ public class GUIScreen extends JFrame {
                         JOptionPane.showMessageDialog(this, "The directory you attempted to add is a subdirectory of one already in your media library, no change was made.", "Reminder", JOptionPane.INFORMATION_MESSAGE);                        
                         return;
                     }
-                }              
+                    else
+                    {
+                        // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.                        
+                        String[] dirsToCheck = guiDriver.getMediaDirs();
+                        for (int i = 0; i < dirsToCheck.length; i++)
+                        {
+                            int matchCount = 0;
+                            if (dirsToCheck[i].startsWith(dir))
+                            {
+                                if (matchCount == 0)
+                                {
+                                    JOptionPane.showMessageDialog(this, "One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically.", "Reminder", JOptionPane.INFORMATION_MESSAGE);                        
+                                }
+                                removeMediaDirByIndex(evt, i);
+                                matchCount++;
+                            }
+                        }
+                    }
+                }
                 updateMediaLibraryProgressDialog.go();          
                 AddMediaDirectoryTask thisTask = new AddMediaDirectoryTask(dir, guiDriver);
                 updateMediaLibraryProgressDialog.setBusyCursor(true);
@@ -1314,6 +1332,22 @@ public class GUIScreen extends JFrame {
         updateButtons();
     }//GEN-LAST:event_removeMediaDirButtonActionPerformed
 
+    private void removeMediaDirByIndex(java.awt.event.ActionEvent evt, int index) {                                                     
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        try
+        {
+            mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getModel().getElementAt(index)));            
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+        catch (Exception e)
+        {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
+            e.printStackTrace();
+        }
+        updateButtons();
+    }                        
+    
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if (guiDriver.getPlaylist() != null)
         {

@@ -312,7 +312,7 @@ public class GUIDriver
                     }
                 }
                 mldVector.removeAll(toRemove);
-                mediaLibraryDirectoryList = mldVector.toArray(mediaLibraryDirectoryList);
+                mediaLibraryDirectoryList = mldVector.toArray(new String[mldVector.size()]);
                 mldVector = null;
                 toRemove.removeAllElements();
 
@@ -325,7 +325,7 @@ public class GUIDriver
                     }
                 }
                 mlfVector.removeAll(toRemove);
-                mediaLibraryFileList = mlfVector.toArray(mediaLibraryFileList);
+                mediaLibraryFileList = mlfVector.toArray(new String[mlfVector.size()]);
                 mlfVector = null;
 
                 FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, options);
