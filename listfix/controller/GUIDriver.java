@@ -608,7 +608,14 @@ public class GUIDriver
     {
         if (currentPlaylist != null)
         {
-            FileWriter.writeM3U(entries, currentPlaylist);
+            if (options.getSavePlaylistsWithRelativePaths())
+			{
+				entries = FileWriter.writeRelativeM3U(entries, currentPlaylist);
+			}
+			else
+			{
+				entries = FileWriter.writeM3U(entries, currentPlaylist);
+			}
             originalEntries.clear();
             for (int i = 0; i < entries.size(); i++)
             {
@@ -623,7 +630,14 @@ public class GUIDriver
         {
             try
             {
-                FileWriter.writeM3U(entries, destination);
+				if (options.getSavePlaylistsWithRelativePaths())
+				{
+					entries = FileWriter.writeRelativeM3U(entries, destination);
+				}
+				else
+				{
+					entries = FileWriter.writeM3U(entries, destination);
+				}
                 currentPlaylist = destination;
                 originalEntries.clear();
                 for (int i = 0; i < entries.size(); i++)

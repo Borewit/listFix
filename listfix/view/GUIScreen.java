@@ -251,7 +251,7 @@ public class GUIScreen extends JFrame {
         saveIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
         saveIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveIconButtonActionPerformed(evt);
+                saveButtonActionPerformed(evt);
             }
         });
         buttonPanel.add(saveIconButton);
@@ -322,7 +322,6 @@ public class GUIScreen extends JFrame {
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
 
         mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
-        mediaLibraryButtonPanel.setPreferredSize(null);
 
         addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         addMediaDirButton.setText("Add");
@@ -473,7 +472,7 @@ public class GUIScreen extends JFrame {
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveMenuItemActionPerformed(evt);
+                saveButtonActionPerformed(evt);
             }
         });
         fileMenu.add(saveMenuItem);
@@ -1183,19 +1182,23 @@ public class GUIScreen extends JFrame {
         {
             try
             {
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 File playlist = jSaveFileChooser.getSelectedFile();
                 if (!playlist.getName().endsWith(".m3u"))
                 {
                     playlist = new File(playlist.getPath() + ".m3u");
-                }
+                }				
+				PlaylistEntry.basePath = playlist.getParent();
                 guiDriver.saveM3U(playlist);                
                 guiDriver.setCurrentPlaylist(playlist);
+				((CustomTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
                 updateRecentMenu();
                 updateButtons();
-                updateStatusLabel();
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
             catch (Exception e)
-            {                
+            {            
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be saved.");
                 e.printStackTrace();
             }
@@ -1259,18 +1262,6 @@ public class GUIScreen extends JFrame {
             jM3UChooser.cancelSelection();
         }
     }//GEN-LAST:event_openIconButtonActionPerformed
-
-    private void saveIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveIconButtonActionPerformed
-        if (guiDriver.getPlaylist() != null)
-        {
-            guiDriver.saveM3U();
-            updateStatusLabel();
-        }
-        else
-        {
-            saveAsMenuItemActionPerformed(evt);
-        }
-    }//GEN-LAST:event_saveIconButtonActionPerformed
 
     private void addMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMediaDirButtonActionPerformed
         int response = jMediaDirChooser.showOpenDialog(this);
@@ -1362,9 +1353,13 @@ public class GUIScreen extends JFrame {
     
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if (guiDriver.getPlaylist() != null)
-        {
+        {			
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			PlaylistEntry.basePath = guiDriver.getPlaylist().getParent();
             guiDriver.saveM3U();
             updateStatusLabel();
+			((CustomTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
         else
         {
@@ -1376,18 +1371,6 @@ public class GUIScreen extends JFrame {
         JOptionPane.showMessageDialog(this, "listFix( )\nv1.5.1 Beta\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net", "About", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
-    private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-        if (guiDriver.getPlaylist() != null)
-        {
-            guiDriver.saveM3U();
-            updateStatusLabel();
-        }
-        else
-        {
-            saveAsMenuItemActionPerformed(evt);
-        }
-    }//GEN-LAST:event_saveMenuItemActionPerformed
-
     private void locateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locateButtonActionPerformed
         locateProgressDialog.go();
         LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
@@ -1395,7 +1378,7 @@ public class GUIScreen extends JFrame {
         if(!guiDriver.isEntryListEmpty())
         {
             String[][] dataModel = guiDriver.locateFiles(thisTask);
-            ((CustomTableModel)playlistTable.getModel()).updateData( dataModel );            
+            ((CustomTableModel)playlistTable.getModel()).updateData( dataModel );       
         }
         locateProgressDialog.setEnabled(false);
         updateButtons();

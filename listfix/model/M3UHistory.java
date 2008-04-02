@@ -1,14 +1,8 @@
 package listfix.model;
 
-/*
- * M3UHistory.java
- *
- * Created on December 21, 2002, 5:21 PM
- */
-
 /**
  *
- * @author  Administrator
+ * @author  jcaron
  */
 import java.util.Vector;
 import java.io.File;

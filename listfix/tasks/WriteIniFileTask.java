@@ -10,7 +10,7 @@ public class WriteIniFileTask extends listfix.controller.Task
     private final static String homeDir = System.getProperty("user.home");
     
     private FileOutputStream outputStream;
-    private DataOutputStream output;
+    private BufferedOutputStream output;
     private String[] mediaDir;
     private String[] mediaLibraryDirList;
     private String[] mediaLibraryFileList;
@@ -29,42 +29,44 @@ public class WriteIniFileTask extends listfix.controller.Task
     {
         try
         {
-            outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
-            output = new DataOutputStream(outputStream);
+            StringBuffer buffer = new StringBuffer();
             if (mediaDir != null)
             {
-                output.writeBytes("[Media Directories]" + br);
+                buffer.append("[Media Directories]").append(br);
                 for(int i = 0; i < mediaDir.length; i++)
                 {
-                    output.writeBytes(mediaDir[i] + br);
+                    buffer.append(mediaDir[i]).append(br);
                 }
             }
             if (options != null)
             {
-                output.writeBytes("[Options]" + br);
-                output.writeBytes("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" 
-                        + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad()) + br);
-                output.writeBytes("MAX_PLAYLIST_HISTORY_SIZE=" 
-                        + options.getMaxPlaylistHistoryEntries() + br);
-                output.writeBytes("SAVE_RELATIVE_REFERENCES=" 
-                        + Boolean.toString(options.getSavePlaylistsWithRelativePaths()) + br);
+                buffer.append("[Options]").append(br);
+                buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" 
+                    + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(br);
+                buffer.append("MAX_PLAYLIST_HISTORY_SIZE=" 
+                    + options.getMaxPlaylistHistoryEntries() + br);
+                buffer.append("SAVE_RELATIVE_REFERENCES=" 
+					+ Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
             }
             if (mediaLibraryDirList != null)
             {
-                output.writeBytes("[Media Library Directories]" + br);
+                buffer.append("[Media Library Directories]").append(br);
                 for(int i = 0; i < mediaLibraryDirList.length; i++)
                 {
-                    output.writeBytes(mediaLibraryDirList[i] + br);
+                    buffer.append(mediaLibraryDirList[i]).append(br);
                 }
             }
             if (mediaLibraryDirList != null)
             {
-                output.writeBytes("[Media Library Files]" + br);
+                buffer.append("[Media Library Files]").append(br);
                 for(int i = 0; i < mediaLibraryFileList.length; i++)
                 {
-                    output.writeBytes(mediaLibraryFileList[i] + br);
+                    buffer.append(mediaLibraryFileList[i]).append(br);
                 }
             }
+            outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
+            output = new BufferedOutputStream(outputStream);
+            output.write(buffer.toString().getBytes());
             output.close();
             outputStream.close();
         }

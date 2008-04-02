@@ -12,7 +12,7 @@ package listfix.util;
 import java.util.Vector;
 
 public class ArrayFunctions
-{
+{	
     public static float[] multByConstant(int[] array1, float constant)
     {
         float[] temp = new float[array1.length];
@@ -149,4 +149,5 @@ public class ArrayFunctions
         }
         return result;
     }
+
 }
