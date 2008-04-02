@@ -139,7 +139,17 @@ public class FileWriter
             for (int i = 0; i < entries.size(); i++)
             {
                 tempEntry = (PlaylistEntry) entries.elementAt(i);
-                buffer.append(tempEntry.toM3UString() + br);
+				if (tempEntry.isRelative())
+				{
+					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getExtInf());
+					buffer.append(tempEntry.toM3UString() + br);
+					entries.remove(i);
+					entries.add(i, tempEntry);
+				}
+				else
+				{
+					buffer.append(tempEntry.toM3UString() + br);
+				}
             }
             output.write(buffer.toString().getBytes());
             output.close();
@@ -164,30 +174,22 @@ public class FileWriter
             for (int i = 0; i < entries.size(); i++)
             {
                 tempEntry = (PlaylistEntry) entries.elementAt(i);
-
-                if (!tempEntry.isURL())
-                {
-                    if (!tempEntry.isRelative())
-                    {
-						if (!tempEntry.getExtInf().isEmpty())
-						{
-							buffer.append(tempEntry.getExtInf() + br);
-						}
-						String relPath = getRelativePath(tempEntry.getFile().getAbsoluteFile(), fileName);
-                        buffer.append(relPath + br);
-						// replace the existing entry with a new relative one...
-						entries.remove(i);
-						entries.add(i, new PlaylistEntry(new File(relPath), tempEntry.getExtInf()));
-                    }
-                    else
-                    {
-                        buffer.append(tempEntry.toM3UString() + br);
-                    }
-                }
-                else
-                {
-                    buffer.append(tempEntry.toM3UString() + br);
-                }
+				if (!tempEntry.isRelative())
+				{
+					if (!tempEntry.getExtInf().isEmpty())
+					{
+						buffer.append(tempEntry.getExtInf() + br);
+					}
+					String relPath = getRelativePath(tempEntry.getFile().getAbsoluteFile(), fileName);
+					buffer.append(relPath + br);
+					// replace the existing entry with a new relative one...
+					entries.remove(i);
+					entries.add(i, new PlaylistEntry(new File(relPath), tempEntry.getExtInf()));
+				}
+				else
+				{
+					buffer.append(tempEntry.toM3UString() + br);
+				}
             }			
             outputStream = new FileOutputStream(fileName);
             output = new BufferedOutputStream(outputStream);

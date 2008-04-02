@@ -140,7 +140,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
         jLabel3.setFont(new java.awt.Font("Verdana", 0, 9));
-        jLabel3.setText("Save playlists with relative paths when possible:");
+        jLabel3.setText("Save playlists with relative file references:");
         jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel3.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel3.setVerticalTextPosition(javax.swing.SwingConstants.TOP);

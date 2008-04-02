@@ -31,6 +31,7 @@ public class PlaylistEntry
     private String fileName = "";
     private File thisFile = null;
     private File absoluteFile = null;
+
     private URI thisURI = null;
     private String message = "Unknown";
     private boolean found = false;
@@ -332,4 +333,9 @@ public class PlaylistEntry
         }            
         return result;
     }
+	
+	public File getAbsoluteFile()
+	{
+		return absoluteFile;
+	}
 }   
