@@ -106,6 +106,14 @@ public class IniFileReader
                     {
                         options.setSavePlaylistsWithRelativePaths((new Boolean(optionValue)).booleanValue());
                     }
+					else if (optionEnum.equals(AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
+                    {
+                        options.setAutoRefreshMediaLibraryOnStartup((new Boolean(optionValue)).booleanValue());
+                    }
+					else if (optionEnum.equals(AppOptionsEnum.LOOK_AND_FEEL))
+                    {
+                        options.setLookAndFeel(optionValue);
+                    }
                 }
                 line = B1.readLine();
             }        

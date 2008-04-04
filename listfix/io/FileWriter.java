@@ -41,8 +41,15 @@ public class FileWriter
         }
 
         // throw away last token from each, don't need the file names for path calculation.
-        String fileName = fileTokens.remove(fileTokens.size() - 1);
-        relativeToTokens.removeElementAt(relativeToTokens.size() - 1);
+        String fileName = "";
+		if (file.isFile())
+		{
+			fileName = fileTokens.remove(fileTokens.size() - 1);
+		}
+		if (relativeTo.isFile())
+		{
+			relativeToTokens.removeElementAt(relativeToTokens.size() - 1);
+		}
 
         int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
         boolean tokenMatch = false;
@@ -61,6 +68,10 @@ public class FileWriter
                 // files can not be made relative to one another.
                 return file.getAbsolutePath();
             }
+			else
+			{
+				break;				
+			}
         }
 
         StringBuffer resultBuffer = new StringBuffer();

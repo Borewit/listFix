@@ -47,6 +47,9 @@ public class WriteIniFileTask extends listfix.controller.Task
                     + options.getMaxPlaylistHistoryEntries() + br);
                 buffer.append("SAVE_RELATIVE_REFERENCES=" 
 					+ Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
+				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=" 
+					+ Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
+				buffer.append("LOOK_AND_FEEL=" + options.getLookAndFeel()).append(br);
             }
             if (mediaLibraryDirList != null)
             {

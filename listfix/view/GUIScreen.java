@@ -17,13 +17,13 @@ import listfix.tasks.*;
 import listfix.controller.GUIDriver;
 import listfix.util.ArrayFunctions;
 
-public class GUIScreen extends JFrame {
-    
-    private final JFileChooser jM3UChooser;
-    private final JFileChooser jFileChooser;
-    private final JFileChooser jMediaDirChooser;
-    private final JFileChooser jCopyToDirChooser;
-    private final JFileChooser jSaveFileChooser;
+public class GUIScreen extends JFrame 
+{    
+	private final JFileChooser jM3UChooser;
+	private final JFileChooser jFileChooser;
+	private final JFileChooser jMediaDirChooser;
+	private final JFileChooser jCopyToDirChooser;
+	private final JFileChooser jSaveFileChooser;	
     private final listfix.view.support.ProgressDialog locateProgressDialog;
     private final listfix.view.support.ProgressDialog copyFilesProgressDialog;
     private final listfix.view.support.ProgressDialog updateMediaLibraryProgressDialog;    
@@ -35,7 +35,6 @@ public class GUIScreen extends JFrame {
     /** Creates new form GUIScreen */
     public GUIScreen() 
     {        
-        this.setLookAndFeel();
         initComponents();
         jM3UChooser = new JFileChooser();
         jFileChooser = new JFileChooser();
@@ -47,6 +46,7 @@ public class GUIScreen extends JFrame {
         updateMediaLibraryProgressDialog = new listfix.view.support.ProgressDialog(this, "Updating Media Library", true, 450, 40, true); 
         openM3UProgressDialog = new listfix.view.support.ProgressDialog(this, "Opening Playlist", true, 250, 25, false); 
         guiDriver = new GUIDriver();
+		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
         jM3UChooser.setDialogTitle("Choose a Playlist...");
         jM3UChooser.setAcceptAllFileFilterUsed(false);
         jM3UChooser.setFileFilter(new M3UFilter());
@@ -78,6 +78,11 @@ public class GUIScreen extends JFrame {
         updateRecentMenu();
         updateStatusLabel();
     }
+	
+	public AppOptions getOptions()
+	{
+		return guiDriver.getAppOptions();
+	}
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -316,6 +321,7 @@ public class GUIScreen extends JFrame {
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
         splitPane.setMaximumSize(null);
+        splitPane.setOneTouchExpandable(true);
         splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
 
         mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
@@ -1358,6 +1364,7 @@ public class GUIScreen extends JFrame {
 			PlaylistEntry.basePath = guiDriver.getPlaylist().getParent();
             guiDriver.saveM3U();
             updateStatusLabel();
+			updateButtons();
 			((CustomTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
@@ -1402,6 +1409,15 @@ public class GUIScreen extends JFrame {
         updateMediaLibraryProgressDialog.setBusyCursor(false);
 }//GEN-LAST:event_refreshMediaDirsButtonActionPerformed
 
+	private void refreshMediaDirs() 
+	{                                                       
+        updateMediaLibraryProgressDialog.go();
+        UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
+        updateMediaLibraryProgressDialog.setBusyCursor(true);
+        updateMediaLibraryProgressDialog.track(thisTask);
+        updateMediaLibraryProgressDialog.setBusyCursor(false);
+	} 
+	
     private void openRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openRCMenuItemActionPerformed
         int row = playlistTable.getSelectedRow();
         PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
@@ -1468,6 +1484,7 @@ public class GUIScreen extends JFrame {
         }
         guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
         updateRecentMenu();
+		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
 }//GEN-LAST:event_appOptionsMenuItemActionPerformed
 
     private void updateButtons()
@@ -1696,16 +1713,26 @@ public class GUIScreen extends JFrame {
         }
     }
 
-    private void setLookAndFeel ()
-    {
-	try
+	private void setLookAndFeel(String className)
 	{
-            UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-	}
-	catch ( ClassNotFoundException e ) {}
-	catch ( InstantiationException e ) {}
-	catch ( IllegalAccessException e ) {}
-	catch ( UnsupportedLookAndFeelException e ) {}
+		try
+		{
+			UIManager.setLookAndFeel(className);
+			SwingUtilities.updateComponentTreeUI(this);
+			SwingUtilities.updateComponentTreeUI(jM3UChooser);
+			SwingUtilities.updateComponentTreeUI(jFileChooser);
+			SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
+			SwingUtilities.updateComponentTreeUI(jCopyToDirChooser);
+			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);	
+			SwingUtilities.updateComponentTreeUI(locateProgressDialog);
+			SwingUtilities.updateComponentTreeUI(copyFilesProgressDialog);
+			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);    
+			SwingUtilities.updateComponentTreeUI(openM3UProgressDialog);
+		}
+		catch ( ClassNotFoundException e ) {}
+		catch ( InstantiationException e ) {}
+		catch ( IllegalAccessException e ) {}
+		catch ( UnsupportedLookAndFeelException e ) {}
     }
     
     /**
@@ -1716,9 +1743,13 @@ public class GUIScreen extends JFrame {
         GUIScreen mainWindow = new GUIScreen();
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         java.awt.Dimension labelSize = mainWindow.getPreferredSize();
-        mainWindow.setLocation(screenSize.width/2 - (labelSize.width/2), screenSize.height/2 - (labelSize.height/2));
-        mainWindow.setVisible(true);        
-    }
+        mainWindow.setLocation(screenSize.width/2 - (labelSize.width / 2), screenSize.height / 2 - (labelSize.height / 2));
+		mainWindow.setVisible(true);
+		if (mainWindow.getOptions().getAutoRefreshMediaLibraryOnStartup())
+		{
+			mainWindow.refreshMediaDirs();
+		}
+	}
     
     private void initColumnSizes(JTable table) 
     {

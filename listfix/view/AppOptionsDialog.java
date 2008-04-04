@@ -5,6 +5,9 @@ package listfix.view;
  * @author  Administrator
  */
 import java.awt.Point;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import listfix.model.AppOptions;
 
 public class AppOptionsDialog extends javax.swing.JDialog 
@@ -29,7 +32,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         }
         initComponents();
         this.center();
-    }    
+    }	
     
     public AppOptionsDialog()
     {
@@ -55,6 +58,40 @@ public class AppOptionsDialog extends javax.swing.JDialog
     {
         return resultCode;
     }
+	
+	private DefaultComboBoxModel getLookAndFeelMenuItems()
+	{
+		UIManager.LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		String[] model = new String[plafs.length];
+		for(int i=0; i< plafs.length; i++)
+		{
+			model[i] = plafs[i].getName();	
+		}
+		return new DefaultComboBoxModel(model);
+	}
+	
+	private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
+	{
+		UIManager.LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		if (index < plafs.length)
+		{
+			return plafs[index];
+		}
+		return plafs[0];
+	}
+	
+		private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
+	{
+		UIManager.LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		for (int i = 0; i < plafs.length; i++)
+		{
+			if (name.equals(plafs[i].getClassName()))
+			{
+				return plafs[i];
+			}
+		}
+		return plafs[0];
+	}
     
     private void center()
     {
@@ -80,12 +117,18 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         recentPlaylistLimitComboBox = new javax.swing.JComboBox();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        lookAndFeelComboBox = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         autoLocateCheckBox = new javax.swing.JCheckBox();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         relativePathsCheckBox = new javax.swing.JCheckBox();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        autoRefreshOnStartupCheckBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -121,6 +164,23 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
         jPanel1.add(jPanel3);
 
+        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+
+        jLabel5.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel5.setText("Look and Feel:");
+        jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jLabel5.setMinimumSize(new java.awt.Dimension(111, 9));
+        jLabel5.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        jPanel8.add(jLabel5);
+
+        lookAndFeelComboBox.setFont(new java.awt.Font("Verdana", 0, 9));
+        lookAndFeelComboBox.setModel(this.getLookAndFeelMenuItems());
+        lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(options.getLookAndFeel()).getName());
+        lookAndFeelComboBox.setPreferredSize(new java.awt.Dimension(120, 20));
+        jPanel8.add(lookAndFeelComboBox);
+
+        jPanel1.add(jPanel8);
+
         jPanel4.setMinimumSize(new java.awt.Dimension(165, 20));
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
@@ -150,6 +210,26 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel5.add(relativePathsCheckBox);
 
         jPanel1.add(jPanel5);
+
+        jPanel7.setMinimumSize(new java.awt.Dimension(165, 20));
+        jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+
+        jLabel4.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel4.setText("Auto refresh media library at startup:");
+        jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jLabel4.setMinimumSize(new java.awt.Dimension(111, 9));
+        jLabel4.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        jPanel7.add(jLabel4);
+
+        autoRefreshOnStartupCheckBox.setSelected(options.getAutoRefreshMediaLibraryOnStartup());
+        autoRefreshOnStartupCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoRefreshOnStartupCheckBoxActionPerformed(evt);
+            }
+        });
+        jPanel7.add(autoRefreshOnStartupCheckBox);
+
+        jPanel1.add(jPanel7);
 
         jPanel6.add(jPanel1);
 
@@ -205,6 +285,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
         dispose();
     }//GEN-LAST:event_closeDialog
 
+	private void autoRefreshOnStartupCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoRefreshOnStartupCheckBoxActionPerformed
+		// TODO add your handling code here:
+}//GEN-LAST:event_autoRefreshOnStartupCheckBoxActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -221,23 +305,31 @@ public class AppOptionsDialog extends javax.swing.JDialog
             options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
             options.setMaxPlaylistHistoryEntries( new Integer((String)recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())).intValue() );
             options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
+			options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
+			options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
         }
         return options;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox autoLocateCheckBox;
+    private javax.swing.JCheckBox autoRefreshOnStartupCheckBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JComboBox lookAndFeelComboBox;
     private javax.swing.JComboBox recentPlaylistLimitComboBox;
     private javax.swing.JCheckBox relativePathsCheckBox;
     // End of variables declaration//GEN-END:variables

@@ -15,14 +15,18 @@ public class AppOptions
 {
     private boolean savePlaylistsWithRelativePaths = false;
     private boolean autoLocateEntriesOnPlaylistLoad = false;
+	private boolean autoRefreshMediaLibraryOnStartup = false;
     private int maxPlaylistHistoryEntries = 5;
-    public static final Hashtable<String,Integer> optionEnumTable = new Hashtable<String,Integer>();
-    
+	private String lookAndFeel = "";
+	
+    public static final Hashtable<String,Integer> optionEnumTable = new Hashtable<String,Integer>();    
     static
     {
         optionEnumTable.put("SAVE_RELATIVE_REFERENCES", AppOptionsEnum.SAVE_RELATIVE_REFERENCES);
         optionEnumTable.put("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD", AppOptionsEnum.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD);
         optionEnumTable.put("MAX_PLAYLIST_HISTORY_SIZE", AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE);
+		optionEnumTable.put("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD", AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD);
+		optionEnumTable.put("LOOK_AND_FEEL", AppOptionsEnum.LOOK_AND_FEEL);
     }
     
     public AppOptions()
@@ -30,11 +34,14 @@ public class AppOptions
         // creates an AppOptions instance with the default settings.
     }
     
-    public AppOptions(int maxPlaylistHistoryEntries, boolean autoLocateEntriesOnPlaylistLoad, boolean savePlaylistsWithRelativePaths)
+    public AppOptions(int maxPlaylistHistoryEntries, boolean autoLocateEntriesOnPlaylistLoad, 
+			boolean savePlaylistsWithRelativePaths, boolean autoRefreshMediaLibraryOnStartup, String lookAndFeel)
     {
         this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
         this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
         this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
+		this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
+		this.lookAndFeel = lookAndFeel;
     }
     
     public boolean getAutoLocateEntriesOnPlaylistLoad()
@@ -52,9 +59,29 @@ public class AppOptions
         return maxPlaylistHistoryEntries;
     }
 
+	public void setLookAndFeel(String lookAndFeel)
+	{
+		this.lookAndFeel = lookAndFeel;
+	}
+	
+	public String getLookAndFeel()
+	{
+		return lookAndFeel;
+	}
+	
     public void setMaxPlaylistHistoryEntries(int maxPlaylistHistoryEntries)
     {
         this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
+    }
+
+	public void setAutoRefreshMediaLibraryOnStartup(boolean autoRefreshMediaLibraryOnStartup)
+	{
+		this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
+	}
+	
+	public boolean getAutoRefreshMediaLibraryOnStartup()
+    {
+        return autoRefreshMediaLibraryOnStartup;
     }
 
     public boolean getSavePlaylistsWithRelativePaths()
@@ -65,5 +92,5 @@ public class AppOptions
     public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths)
     {
         this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
-    }
+    }	
 }
