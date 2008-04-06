@@ -218,7 +218,7 @@ public class GUIScreen extends JFrame
         entryRightClickMenu.add(openRCMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("listFix( ) - v1.5.1 Beta");
+        setTitle("listFix( ) - v1.5.1");
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -226,13 +226,22 @@ public class GUIScreen extends JFrame
             }
         });
 
-        buttonPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        buttonPanel.setPreferredSize(new java.awt.Dimension(219, 40));
-        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        buttonPanel.setAlignmentX(0.0F);
+        buttonPanel.setAlignmentY(0.0F);
+        buttonPanel.setFont(buttonPanel.getFont());
+        buttonPanel.setMaximumSize(null);
+        buttonPanel.setMinimumSize(null);
+        buttonPanel.setPreferredSize(null);
+        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 1, 1));
 
         openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
         openIconButton.setToolTipText("Open Playlist");
-        openIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        openIconButton.setBorder(null);
+        openIconButton.setFocusable(false);
+        openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        openIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        openIconButton.setMinimumSize(null);
+        openIconButton.setPreferredSize(null);
         openIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openIconButtonActionPerformed(evt);
@@ -242,7 +251,12 @@ public class GUIScreen extends JFrame
 
         closeIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.gif"))); // NOI18N
         closeIconButton.setToolTipText("Close Playlist");
-        closeIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        closeIconButton.setBorder(null);
+        closeIconButton.setFocusable(false);
+        closeIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        closeIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        closeIconButton.setMinimumSize(null);
+        closeIconButton.setPreferredSize(null);
         closeIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeIconButtonActionPerformed(evt);
@@ -252,8 +266,13 @@ public class GUIScreen extends JFrame
 
         saveIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
         saveIconButton.setToolTipText("Save");
+        saveIconButton.setBorder(null);
         saveIconButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_off.gif"))); // NOI18N
-        saveIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        saveIconButton.setFocusable(false);
+        saveIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        saveIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        saveIconButton.setMinimumSize(null);
+        saveIconButton.setPreferredSize(null);
         saveIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -263,9 +282,12 @@ public class GUIScreen extends JFrame
 
         upIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow-up.gif"))); // NOI18N
         upIconButton.setToolTipText("Move Up");
-        upIconButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        upIconButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        upIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        upIconButton.setBorder(null);
+        upIconButton.setFocusable(false);
+        upIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        upIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        upIconButton.setMinimumSize(null);
+        upIconButton.setPreferredSize(null);
         upIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 upIconButtonActionPerformed(evt);
@@ -275,9 +297,12 @@ public class GUIScreen extends JFrame
 
         downIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow_down.gif"))); // NOI18N
         downIconButton.setToolTipText("Move Down");
-        downIconButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        downIconButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        downIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        downIconButton.setBorder(null);
+        downIconButton.setFocusable(false);
+        downIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        downIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        downIconButton.setMinimumSize(null);
+        downIconButton.setPreferredSize(null);
         downIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downIconButtonActionPerformed(evt);
@@ -287,9 +312,12 @@ public class GUIScreen extends JFrame
 
         deleteIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete.gif"))); // NOI18N
         deleteIconButton.setToolTipText("Remove Selected Entry");
-        deleteIconButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        deleteIconButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        deleteIconButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        deleteIconButton.setBorder(null);
+        deleteIconButton.setFocusable(false);
+        deleteIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        deleteIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        deleteIconButton.setMinimumSize(null);
+        deleteIconButton.setPreferredSize(null);
         deleteIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteIconButtonActionPerformed(evt);
@@ -299,7 +327,12 @@ public class GUIScreen extends JFrame
 
         openPlaylistButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
         openPlaylistButton.setToolTipText("Play this list (available when list is in a saved state)");
-        openPlaylistButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        openPlaylistButton.setBorder(null);
+        openPlaylistButton.setFocusable(false);
+        openPlaylistButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        openPlaylistButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        openPlaylistButton.setMinimumSize(null);
+        openPlaylistButton.setPreferredSize(null);
         openPlaylistButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openPlaylistButtonActionPerformed(evt);
@@ -320,6 +353,7 @@ public class GUIScreen extends JFrame
 
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
+        splitPane.setDividerSize(7);
         splitPane.setMaximumSize(null);
         splitPane.setOneTouchExpandable(true);
         splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
@@ -331,6 +365,7 @@ public class GUIScreen extends JFrame
 
         addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         addMediaDirButton.setText("Add");
+        addMediaDirButton.setFocusable(false);
         addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
         addMediaDirButton.setPreferredSize(null);
         addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
@@ -342,6 +377,7 @@ public class GUIScreen extends JFrame
 
         removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMediaDirButton.setText("Remove");
+        removeMediaDirButton.setFocusable(false);
         removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
         removeMediaDirButton.setPreferredSize(null);
         removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
@@ -353,6 +389,7 @@ public class GUIScreen extends JFrame
 
         refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
         refreshMediaDirsButton.setText("Refresh");
+        refreshMediaDirsButton.setFocusable(false);
         refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
         refreshMediaDirsButton.setPreferredSize(null);
         refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
@@ -377,6 +414,7 @@ public class GUIScreen extends JFrame
 
         locateButton.setFont(new java.awt.Font("Verdana", 0, 9));
         locateButton.setText("Locate Files");
+        locateButton.setFocusable(false);
         locateButton.setMinimumSize(new java.awt.Dimension(93, 25));
         locateButton.setPreferredSize(null);
         locateButton.addActionListener(new java.awt.event.ActionListener() {
@@ -388,6 +426,7 @@ public class GUIScreen extends JFrame
 
         saveButton.setFont(new java.awt.Font("Verdana", 0, 9));
         saveButton.setText("Save Repaired List");
+        saveButton.setFocusable(false);
         saveButton.setMinimumSize(new java.awt.Dimension(127, 25));
         saveButton.setPreferredSize(null);
         saveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1375,7 +1414,7 @@ public class GUIScreen extends JFrame
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        JOptionPane.showMessageDialog(this, "listFix( )\nv1.5.1 Beta\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net", "About", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "listFix( ) v1.5.1\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void locateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locateButtonActionPerformed
@@ -1728,6 +1767,7 @@ public class GUIScreen extends JFrame
 			SwingUtilities.updateComponentTreeUI(copyFilesProgressDialog);
 			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);    
 			SwingUtilities.updateComponentTreeUI(openM3UProgressDialog);
+			SwingUtilities.updateComponentTreeUI(entryRightClickMenu);
 		}
 		catch ( ClassNotFoundException e ) {}
 		catch ( InstantiationException e ) {}
