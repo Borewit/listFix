@@ -230,9 +230,7 @@ public class GUIScreen extends JFrame
         buttonPanel.setAlignmentY(0.0F);
         buttonPanel.setFont(buttonPanel.getFont());
         buttonPanel.setMaximumSize(null);
-        buttonPanel.setMinimumSize(null);
-        buttonPanel.setPreferredSize(null);
-        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 1, 1));
+        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 2, 2));
 
         openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
         openIconButton.setToolTipText("Open Playlist");
