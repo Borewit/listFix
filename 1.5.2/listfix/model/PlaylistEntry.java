@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.*;
 import listfix.util.*;
 
-public class PlaylistEntry
+public class PlaylistEntry implements Cloneable
 {    
     private final static String fs = System.getProperty("file.separator");    
     private final static String br = System.getProperty("line.separator");
@@ -320,6 +320,15 @@ public class PlaylistEntry
     @Override
     public Object clone()
     {
+		try
+		{
+			super.clone();
+		}
+		catch (Exception e)
+		{
+			//eat the error for now.
+			e.printStackTrace();
+		}
         PlaylistEntry result = null;
         if (!this.isURL())
         {

@@ -46,7 +46,7 @@ public class LocateFilesTask extends listfix.controller.Task
         PlaylistEntry tempEntry = null;
         for (int i = 0; i < entries.size(); i++)
         {
-            tempEntry = (PlaylistEntry) entries.elementAt(i);
+            tempEntry = entries.elementAt(i);
             if (!tempEntry.isURL())
             {
                 if (tempEntry.exists())

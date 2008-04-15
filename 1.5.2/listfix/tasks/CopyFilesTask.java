@@ -49,7 +49,7 @@ public class CopyFilesTask extends listfix.controller.Task
         String fs = System.getProperty("file.separator");
         for (int i = 0; i < files.size(); i++)
         {
-            tempEntry = (PlaylistEntry) files.elementAt(i);
+            tempEntry = files.elementAt(i);
             if (!tempEntry.isURL())
             {
                 fileToCopy = tempEntry.getFile();

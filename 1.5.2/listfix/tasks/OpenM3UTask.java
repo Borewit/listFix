@@ -26,16 +26,15 @@ package listfix.tasks;
  * @version 
  */
 import listfix.io.*;
-import listfix.model.PlaylistEntry;
 import listfix.controller.*;
 import java.io.File;
 import java.util.*;
+import listfix.model.Playlist;
 
 public class OpenM3UTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
     private File input; 
-    private Vector<PlaylistEntry> entries = new Vector<PlaylistEntry>();
     
     public OpenM3UTask(GUIDriver gd, File f) 
     {
@@ -45,21 +44,17 @@ public class OpenM3UTask extends listfix.controller.Task
     
     /** Run the task. This method is the body of the thread for this task.  */
     public void run() 
-    {
-        try
-        {
-            guiDriver.setCurrentPlaylist(input);
-            guiDriver.getHistory().add(input.getCanonicalPath());
-            M3UFileReader playlistProcessor = new M3UFileReader(input);
-            entries = playlistProcessor.readM3U(this);
-            guiDriver.setEntries(entries);
-            playlistProcessor.closeFile();
-            FileWriter.writeMruM3Us(guiDriver.getHistory());
-            this.notifyObservers(100);    
-        }
-        catch(Exception e)
-        {
-            this.notifyObservers(100);
-        }
+    {	
+		try
+		{
+			guiDriver.setCurrentList(new Playlist(input, this));
+			guiDriver.getHistory().add(input.getCanonicalPath());
+			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			this.notifyObservers(100);
+		}
     }   
 }

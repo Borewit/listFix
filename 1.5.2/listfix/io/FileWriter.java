@@ -24,8 +24,8 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     FileWriter.java
-= Purpose:  Provides static methods for writing out a playlist
-=           to a file and writing out the ini files for this program.
+= Purpose:  Provides methods for writing a playlist to a file
+=           and writing out the ini files for this program.
 ============================================================================
  */
 import java.io.*;
@@ -34,18 +34,18 @@ import java.util.Vector;
 
 import listfix.model.AppOptions;
 import listfix.model.M3UHistory;
-import listfix.tasks.WriteIniFileTask;
 import listfix.model.PlaylistEntry;
+import listfix.tasks.WriteIniFileTask;
 
 public class FileWriter
 {
-    private final static String br = System.getProperty("line.separator");
-    private final static String fs = System.getProperty("file.separator");
-    private final static String homeDir = System.getProperty("user.home");
-    private static FileOutputStream outputStream;
-    private static BufferedOutputStream output;
+    private final String br = System.getProperty("line.separator");
+    private final String fs = System.getProperty("file.separator");
+    private final String homeDir = System.getProperty("user.home");
+    private FileOutputStream outputStream;
+    private BufferedOutputStream output;
 
-    public static String getRelativePath(File file, File relativeTo)
+    public String getRelativePath(File file, File relativeTo)
     {
         StringTokenizer fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
         StringTokenizer relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), fs);
@@ -110,7 +110,7 @@ public class FileWriter
         return resultBuffer.toString();
     }
 
-    public static void writeDefaultIniFilesIfNeeded()
+    public void writeDefaultIniFilesIfNeeded()
     {
         File testFile = new File(homeDir + fs + "dirLists.ini");
         if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
@@ -158,7 +158,7 @@ public class FileWriter
         }
     }
 
-    public static Vector<PlaylistEntry> writeM3U(Vector<PlaylistEntry> entries, File fileName)
+    public Vector<PlaylistEntry> writeM3U(Vector<PlaylistEntry> entries, File fileName)
     {
         PlaylistEntry tempEntry = null;
         try
@@ -195,7 +195,7 @@ public class FileWriter
         }
     }
 
-    public static Vector<PlaylistEntry> writeRelativeM3U(Vector<PlaylistEntry> entries, File fileName)
+    public Vector<PlaylistEntry> writeRelativeM3U(Vector<PlaylistEntry> entries, File fileName)
     {
         PlaylistEntry tempEntry = null;
         try
@@ -237,7 +237,7 @@ public class FileWriter
         }
     }
 
-    public static void writeMruM3Us(M3UHistory history)
+    public void writeMruM3Us(M3UHistory history)
     {
         try
         {
@@ -261,7 +261,7 @@ public class FileWriter
         }
     }
 
-    public static void writeIni(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList, AppOptions options)
+    public void writeIni(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList, AppOptions options)
     {
         try
         {

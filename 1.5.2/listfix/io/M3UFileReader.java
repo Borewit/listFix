@@ -29,7 +29,6 @@ package listfix.io;
 ============================================================================
 */
 
-import listfix.model.PlaylistEntry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +37,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import listfix.controller.Task;
+import listfix.model.PlaylistEntry;
 
 public class M3UFileReader
 {
@@ -47,10 +48,10 @@ public class M3UFileReader
     private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
     private long fileLength = 0;
 
-    public M3UFileReader(File in_data) throws FileNotFoundException
+    public M3UFileReader(File in) throws FileNotFoundException
     {
-        buffer = new BufferedReader(new FileReader(in_data));
-        fileLength = in_data.length();
+        buffer = new BufferedReader(new FileReader(in));
+        fileLength = in.length();
     }
 
     public Vector<PlaylistEntry> readM3U(Task input) throws IOException
@@ -76,10 +77,11 @@ public class M3UFileReader
             while (line1 != null)
             {
                 processEntry(line1, line2);
-                input.notifyObservers((int)((double)cache.length()/(double)(fileLength + 1.0) * 100.0));
+                input.notifyObservers((int)((double)cache.toString().getBytes().length/(double)(fileLength) * 100.0));
                 line1 = buffer.readLine();
                 if (line1 != null)
                 {
+					cache.append(line1);
                     if (!line1.startsWith("#EXTINF"))
                     {
                         line2 = line1;
