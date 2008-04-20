@@ -41,7 +41,6 @@ public class GUIDriver
     private AppOptions options = new AppOptions();
     private M3UHistory history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
 
-
     public GUIDriver()
     {
         try

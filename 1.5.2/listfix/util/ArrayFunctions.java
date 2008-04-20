@@ -25,7 +25,7 @@ package listfix.util;
 = Author:   Jeremy Caron
 = File:     ArrayFunctions.java
 = Purpose:  A compilation of commonly used array functions, including
-=           several which mimic Vector functions.
+=           several which mimic Vector functionality.
 ============================================================================
 */
 
