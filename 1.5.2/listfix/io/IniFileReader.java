@@ -134,6 +134,10 @@ public class IniFileReader
                     {
                         options.setLookAndFeel(optionValue);
                     }
+					else if (optionEnum.equals(AppOptionsEnum.ALWAYS_USE_UNC_PATHS))
+                    {
+                        options.setAlwaysUseUNCPaths((new Boolean(optionValue)).booleanValue());
+                    }
                 }
                 line = B1.readLine();
             }        
@@ -189,16 +193,76 @@ public class IniFileReader
     
     public String[] getMediaDirs()
     {
-        return mediaDirs;
+		if (options.getAlwaysUseUNCPaths())
+		{
+			String[] result = new String[mediaDirs.length];
+			for (int i = 0; i < result.length; i++)
+			{
+				UNCFile file = new UNCFile(mediaDirs[i]);
+				if (file.onNetworkDrive())
+				{
+					result[i] = file.getUNCPath();					
+				}
+				else
+				{
+					result[i] = mediaDirs[i];
+				}
+			}
+			return result;
+		}
+		else
+		{
+			return mediaDirs;
+		}
     }
     
     public String[] getMediaLibrary()
     {
-        return mediaLibrary;
+		if (options.getAlwaysUseUNCPaths())
+		{
+			String[] result = new String[mediaLibrary.length];
+			for (int i = 0; i < result.length; i++)
+			{
+				UNCFile file = new UNCFile(mediaLibrary[i]);
+				if (file.onNetworkDrive())
+				{
+					result[i] = file.getUNCPath();
+				}
+				else
+				{
+					result[i] = mediaLibrary[i];
+				}
+			}
+			return result;
+		}
+		else
+		{
+			return mediaLibrary;
+		}
     }
     
     public String[] getMediaLibraryFiles()
     {
-        return mediaLibraryFiles;
+		if (options.getAlwaysUseUNCPaths())
+		{
+			String[] result = new String[mediaLibraryFiles.length];
+			for (int i = 0; i < result.length; i++)
+			{
+				UNCFile file = new UNCFile(mediaLibraryFiles[i]);
+				if (file.onNetworkDrive())
+				{
+					result[i] = file.getUNCPath();
+				}
+				else
+				{
+					result[i] = mediaLibraryFiles[i];
+				}
+			}
+			return result;
+		}
+		else
+		{
+			return mediaLibraryFiles;
+		}
     } 
 }

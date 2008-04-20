@@ -98,6 +98,7 @@ public class GUIScreen extends JFrame
         updateButtons();
         updateRecentMenu();
         updateStatusLabel();
+		(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
     }
 	
 	public AppOptions getOptions()
@@ -1337,7 +1338,14 @@ public class GUIScreen extends JFrame
         {
             try
             {                
-                File mediaDir = jMediaDirChooser.getSelectedFile();                
+                UNCFile mediaDir = new UNCFile(jMediaDirChooser.getSelectedFile());
+				if (guiDriver.getAppOptions().getAlwaysUseUNCPaths())
+				{					
+					if (mediaDir.onNetworkDrive())
+					{
+						mediaDir = new UNCFile(mediaDir.getUNCPath());
+					}
+				}
                 String dir = mediaDir.getPath();     
                 if (mediaDir != null)
                 {
@@ -1545,6 +1553,11 @@ public class GUIScreen extends JFrame
             (new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
         }
         guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
+		if (options.getAlwaysUseUNCPaths())
+		{
+			guiDriver.switchMediaLibraryToUNCPaths();
+			mediaLibraryList.setListData(guiDriver.getMediaDirs());
+		}
         updateRecentMenu();
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
 }//GEN-LAST:event_appOptionsMenuItemActionPerformed

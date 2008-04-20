@@ -150,6 +150,9 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel7 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         autoRefreshOnStartupCheckBox = new javax.swing.JCheckBox();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        alwaysUseUNCPathsCheckBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -165,7 +168,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel6.setLayout(new javax.swing.BoxLayout(jPanel6, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Config", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
-        jPanel1.setPreferredSize(new java.awt.Dimension(350, 250));
+        jPanel1.setPreferredSize(new java.awt.Dimension(380, 250));
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
@@ -243,14 +246,24 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel7.add(jLabel4);
 
         autoRefreshOnStartupCheckBox.setSelected(options.getAutoRefreshMediaLibraryOnStartup());
-        autoRefreshOnStartupCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                autoRefreshOnStartupCheckBoxActionPerformed(evt);
-            }
-        });
         jPanel7.add(autoRefreshOnStartupCheckBox);
 
         jPanel1.add(jPanel7);
+
+        jPanel9.setMinimumSize(new java.awt.Dimension(165, 20));
+        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+
+        jLabel6.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel6.setText("Media library uses UNC paths for directories on mapped drives:");
+        jLabel6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jLabel6.setMinimumSize(new java.awt.Dimension(111, 9));
+        jLabel6.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        jPanel9.add(jLabel6);
+
+        alwaysUseUNCPathsCheckBox.setSelected(options.getAlwaysUseUNCPaths());
+        jPanel9.add(alwaysUseUNCPathsCheckBox);
+
+        jPanel1.add(jPanel9);
 
         jPanel6.add(jPanel1);
 
@@ -306,10 +319,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
         dispose();
     }//GEN-LAST:event_closeDialog
 
-	private void autoRefreshOnStartupCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoRefreshOnStartupCheckBoxActionPerformed
-		// TODO add your handling code here:
-}//GEN-LAST:event_autoRefreshOnStartupCheckBoxActionPerformed
-
     /**
     * @param args the command line arguments
     */
@@ -324,15 +333,17 @@ public class AppOptionsDialog extends javax.swing.JDialog
         if (this.getResultCode() == OK)
         {
             options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
-            options.setMaxPlaylistHistoryEntries( new Integer((String)recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())).intValue() );
+            options.setMaxPlaylistHistoryEntries( new Integer( (String)recentPlaylistLimitComboBox.getItemAt( recentPlaylistLimitComboBox.getSelectedIndex() ) ).intValue() );
             options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
 			options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
 			options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
+			options.setAlwaysUseUNCPaths(this.alwaysUseUNCPathsCheckBox.isSelected());
         }
         return options;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox alwaysUseUNCPathsCheckBox;
     private javax.swing.JCheckBox autoLocateCheckBox;
     private javax.swing.JCheckBox autoRefreshOnStartupCheckBox;
     private javax.swing.JButton jButton1;
@@ -342,6 +353,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -350,6 +362,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JComboBox lookAndFeelComboBox;
     private javax.swing.JComboBox recentPlaylistLimitComboBox;
     private javax.swing.JCheckBox relativePathsCheckBox;
