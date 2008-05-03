@@ -45,13 +45,11 @@ public class Playlist
 		{
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
 			this.setEntries(playlistProcessor.readM3U(task));
-			file = playlist;			
-            task.notifyObservers(100);    
+			file = playlist;
 		}
 		catch(Exception e)
         {
 			e.printStackTrace();
-            task.notifyObservers(100);
         }
 	}
 

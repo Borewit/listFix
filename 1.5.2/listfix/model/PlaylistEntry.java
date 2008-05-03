@@ -37,7 +37,6 @@ public class PlaylistEntry implements Cloneable
     private String fileName = "";
     private File thisFile = null;
     private File absoluteFile = null;
-
     private URI thisURI = null;
     private String message = "Unknown";
     private boolean found = false;
@@ -63,7 +62,7 @@ public class PlaylistEntry implements Cloneable
         {
             message = "Found!";
             found = true;
-            if (!thisFile.isAbsolute())
+            if (thisFile.isAbsolute())
             {
                 absoluteFile = thisFile;
             }
@@ -104,7 +103,7 @@ public class PlaylistEntry implements Cloneable
         {
             message = "Found!";
             found = true;
-            if (!thisFile.isAbsolute())
+            if (thisFile.isAbsolute())
             {
                 absoluteFile = thisFile;
             }

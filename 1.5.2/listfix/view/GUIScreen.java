@@ -20,9 +20,6 @@
 
 package listfix.view;
 
-/**
- * @author jcaron
- */
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -35,6 +32,7 @@ import listfix.io.*;
 import listfix.model.*;
 import listfix.tasks.*;
 import listfix.controller.GUIDriver;
+import listfix.view.FileEditor;
 import listfix.util.ArrayFunctions;
 
 public class GUIScreen extends JFrame 
@@ -143,7 +141,7 @@ public class GUIScreen extends JFrame
         locateButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         playlistTablePanel = new javax.swing.JPanel();
-        playlistScrollPanel = new javax.swing.JScrollPane(playlistTable);
+        playlistScrollPanel = playlistScrollPanel = new javax.swing.JScrollPane(playlistTable);
         playlistTable = new javax.swing.JTable();
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -422,6 +420,7 @@ public class GUIScreen extends JFrame
         mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
         mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
+        mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         mediaLibraryList.setPreferredSize(null);
         mediaLibraryScrollPane.setViewportView(mediaLibraryList);
 
@@ -1302,18 +1301,18 @@ public class GUIScreen extends JFrame
                 openM3UProgressDialog.go();
                 File playlist = jM3UChooser.getSelectedFile();
                 PlaylistEntry.basePath = playlist.getParent();
-                OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);                
+                OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
                 openM3UProgressDialog.track(thisTask);
                 openM3UProgressDialog.setEnabled(false);
-                ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.guiTableUpdate() );
+                ((CustomTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
                 updateRecentMenu();
                 updateButtons();
-                updateStatusLabel();                
+                updateStatusLabel();
                 this.initColumnSizes(playlistTable);
-				if (guiDriver.getPlaylist().getFile() == null)
-				{
-					JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
-				}
+                if (guiDriver.getPlaylist().getFile() == null)
+                {
+                    JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
+                }
                 if (guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
                 {
                     locateButtonActionPerformed(evt);
@@ -1788,27 +1787,35 @@ public class GUIScreen extends JFrame
         }
     }
 
-	private void setLookAndFeel(String className)
-	{
-		try
-		{
-			UIManager.setLookAndFeel(className);
-			SwingUtilities.updateComponentTreeUI(this);
-			SwingUtilities.updateComponentTreeUI(jM3UChooser);
-			SwingUtilities.updateComponentTreeUI(jFileChooser);
-			SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
-			SwingUtilities.updateComponentTreeUI(jCopyToDirChooser);
-			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);	
-			SwingUtilities.updateComponentTreeUI(locateProgressDialog);
-			SwingUtilities.updateComponentTreeUI(copyFilesProgressDialog);
-			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);    
-			SwingUtilities.updateComponentTreeUI(openM3UProgressDialog);
-			SwingUtilities.updateComponentTreeUI(entryRightClickMenu);
-		}
-		catch ( ClassNotFoundException e ) {}
-		catch ( InstantiationException e ) {}
-		catch ( IllegalAccessException e ) {}
-		catch ( UnsupportedLookAndFeelException e ) {}
+    private void setLookAndFeel(String className)
+    {
+        try
+        {
+            UIManager.setLookAndFeel(className);
+            SwingUtilities.updateComponentTreeUI(this);
+            SwingUtilities.updateComponentTreeUI(jM3UChooser);
+            SwingUtilities.updateComponentTreeUI(jFileChooser);
+            SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
+            SwingUtilities.updateComponentTreeUI(jCopyToDirChooser);
+            SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
+            SwingUtilities.updateComponentTreeUI(locateProgressDialog);
+            SwingUtilities.updateComponentTreeUI(copyFilesProgressDialog);
+            SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);
+            SwingUtilities.updateComponentTreeUI(openM3UProgressDialog);
+            SwingUtilities.updateComponentTreeUI(entryRightClickMenu);
+        }
+        catch (ClassNotFoundException e)
+        {
+        }
+        catch (InstantiationException e)
+        {
+        }
+        catch (IllegalAccessException e)
+        {
+        }
+        catch (UnsupportedLookAndFeelException e)
+        {
+        }
     }
     
     /**
