@@ -32,7 +32,6 @@ import listfix.io.*;
 import listfix.model.*;
 import listfix.tasks.*;
 import listfix.controller.GUIDriver;
-import listfix.view.FileEditor;
 import listfix.util.ArrayFunctions;
 
 public class GUIScreen extends JFrame 
@@ -1427,7 +1426,7 @@ public class GUIScreen extends JFrame
     }                        
     
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        if (guiDriver.getPlaylist() != null)
+        if (guiDriver.getPlaylist() != null && guiDriver.getPlaylist().getFile() != null)
         {			
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			PlaylistEntry.basePath = guiDriver.getPlaylist().getFile().getParent();
@@ -1563,7 +1562,7 @@ public class GUIScreen extends JFrame
 
     private void updateButtons()
     {
-        if (guiDriver.getPlaylist() == null)
+        if (guiDriver.getPlaylist().getFile() == null)
         {
             closeMenuItem.setEnabled(false);
             closeIconButton.setEnabled(false);            
@@ -1575,7 +1574,7 @@ public class GUIScreen extends JFrame
             closeMenuItem.setEnabled(true);
             closeIconButton.setEnabled(true);            
             appendPlaylistMenuItem.setEnabled(true);
-            openPlaylistButton.setEnabled(false);
+			openPlaylistButton.setEnabled(false);
         }
         else
         {

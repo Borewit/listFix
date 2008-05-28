@@ -21,6 +21,7 @@
 package listfix.model;
 
 import java.util.Hashtable;
+import javax.swing.UIManager;
 
 /**
  *
@@ -33,7 +34,7 @@ public class AppOptions
 	private boolean autoRefreshMediaLibraryOnStartup = false;
 	private boolean alwaysUseUNCPaths = false;
     private int maxPlaylistHistoryEntries = 5;
-	private String lookAndFeel = "";
+	private String lookAndFeel = UIManager.getInstalledLookAndFeels()[0].getClassName();
 	
     public static final Hashtable<String,Integer> optionEnumTable = new Hashtable<String,Integer>();    
     static
