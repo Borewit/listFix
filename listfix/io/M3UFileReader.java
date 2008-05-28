@@ -188,7 +188,7 @@ public class M3UFileReader
                     // This token is the closest thing we have to the notion of a 'drive' on any OS... 
                     // make a file out of this and see if it has any files.
                     File testFile = new File(path.toString() + word + fs);
-                    if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0))
+                    if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
                     {
                         PlaylistEntry.emptyDirectories.add(path.toString() + word + fs);
                     }

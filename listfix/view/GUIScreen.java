@@ -420,6 +420,7 @@ public class GUIScreen extends JFrame
         mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
         mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
+        mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         mediaLibraryList.setPreferredSize(null);
         mediaLibraryScrollPane.setViewportView(mediaLibraryList);
 
