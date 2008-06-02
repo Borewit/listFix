@@ -120,7 +120,7 @@ public class GUIDriver
                 cmdLine = "cmd.exe /c start ";
                 cmdLine += "\"" + this.getPlaylist().getPath() + "\"";
             }
-            else if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("vista"))
+            else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
             {
                 cmdLine = "cmd.exe /c ";
                 cmdLine += "\"" + this.getPlaylist().getPath() + "\"";
