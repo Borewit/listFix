@@ -176,7 +176,7 @@ public class PlaylistEntry implements Cloneable
             cmdLine = "cmd.exe /K start ";
             cmdLine += "\"" + (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath()) ) + "\"";
         }
-        else if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("vista"))
+        else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
         {
             cmdLine = "cmd.exe /K ";
             cmdLine += "\"" + (this.isURL() ? "start " + this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath())) + "\"";

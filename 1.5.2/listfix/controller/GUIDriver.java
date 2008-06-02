@@ -152,7 +152,7 @@ public class GUIDriver
 				cmdLine = "cmd.exe /c start ";
 				cmdLine += "\"" + getCurrentList().getFile().getPath() + "\"";
 			}
-			else if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("vista"))
+            else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
 			{
 				cmdLine = "cmd.exe /c ";
 				cmdLine += "\"" + getCurrentList().getFile().getPath() + "\"";
