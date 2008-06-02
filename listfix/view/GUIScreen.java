@@ -35,6 +35,7 @@ import listfix.io.*;
 import listfix.model.*;
 import listfix.tasks.*;
 import listfix.controller.GUIDriver;
+import listfix.exceptions.UnsupportedPlaylistFormat;
 import listfix.util.ArrayFunctions;
 
 public class GUIScreen extends JFrame 
@@ -936,6 +937,11 @@ public class GUIScreen extends JFrame
                     updateStatusLabel();
                 }
             }
+			catch (UnsupportedPlaylistFormat upf)
+			{
+				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
+                upf.printStackTrace();
+			}
             catch (Exception e)
             {
                 JOptionPane.showMessageDialog(this, "An error has occured, playlist was not inserted.");
@@ -1140,6 +1146,11 @@ public class GUIScreen extends JFrame
                 File m3uToAppend = jM3UChooser.getSelectedFile();
                 ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.appendPlaylist(m3uToAppend) );                
             }
+			catch (UnsupportedPlaylistFormat upf)
+			{
+				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
+				upf.printStackTrace();
+			}
             catch (Exception e)
             {
                 JOptionPane.showMessageDialog(this, "An error has occured, playlist was not appended.");
@@ -1296,12 +1307,13 @@ public class GUIScreen extends JFrame
         int response = jM3UChooser.showOpenDialog(this);
         if (response == JFileChooser.APPROVE_OPTION)
         {
+			openM3UProgressDialog.go();
+            File playlist = jM3UChooser.getSelectedFile();
+            OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist); 
+			
             try
-            {
-                openM3UProgressDialog.go();
-                File playlist = jM3UChooser.getSelectedFile();
-                PlaylistEntry.basePath = playlist.getParent();
-                OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);                
+            {                
+                PlaylistEntry.basePath = playlist.getParent();               
                 openM3UProgressDialog.track(thisTask);
                 openM3UProgressDialog.setEnabled(false);
                 ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.guiTableUpdate() );
@@ -1320,6 +1332,11 @@ public class GUIScreen extends JFrame
                 JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
                 e.printStackTrace();
             }
+			
+			if (thisTask.notM3UFormat)
+			{
+				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
+			}
         }
         else
         {
@@ -1744,12 +1761,13 @@ public class GUIScreen extends JFrame
     private void recentPlaylistActionPerformed(java.awt.event.ActionEvent evt)
     {
         JMenuItem temp = (JMenuItem)evt.getSource();
+		openM3UProgressDialog.go();
+        File playlist = new File(temp.getText());
+        OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
+		
         try
         {
-            openM3UProgressDialog.go();
-            File playlist = new File(temp.getText());
             PlaylistEntry.basePath = playlist.getParent();
-            OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
             openM3UProgressDialog.track(thisTask);
             openM3UProgressDialog.setEnabled(false);
             ((CustomTableModel) playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
@@ -1769,6 +1787,11 @@ public class GUIScreen extends JFrame
             JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
             e.printStackTrace();
         }
+		
+		if (thisTask.notM3UFormat)
+		{
+			JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
+		}
     }
 
 	private void setLookAndFeel(String className)

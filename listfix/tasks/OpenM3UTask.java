@@ -31,12 +31,14 @@ import listfix.util.*;
 import listfix.controller.*;
 import java.io.File;
 import java.util.*;
+import listfix.exceptions.UnsupportedPlaylistFormat;
 
 public class OpenM3UTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
     private File input; 
     private Vector entries = new Vector();
+	public boolean notM3UFormat = false;
     
     public OpenM3UTask(GUIDriver gd, File f) 
     {
@@ -56,11 +58,18 @@ public class OpenM3UTask extends listfix.controller.Task
             guiDriver.setEntries(entries);
             playlistProcessor.closeFile();
             FileWriter.writeMruM3Us(guiDriver.getHistory());
-            this.notifyObservers(100);    
         }
+		catch(UnsupportedPlaylistFormat upf)
+		{
+			notM3UFormat = true;
+		}
         catch(Exception e)
         {
-            this.notifyObservers(100);
+			e.printStackTrace();
         }
+		finally
+		{			
+            this.notifyObservers(100);
+		}
     }   
 }

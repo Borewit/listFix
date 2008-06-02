@@ -164,8 +164,6 @@ public class FileWriter
         try
         {
             StringBuffer buffer = new StringBuffer();
-            outputStream = new FileOutputStream(fileName);
-            output = new BufferedOutputStream(outputStream);
             buffer.append("#EXTM3U" + br);
             for (int i = 0; i < entries.size(); i++)
             {
@@ -181,7 +179,9 @@ public class FileWriter
 				{
 					buffer.append(tempEntry.toM3UString() + br);
 				}
-            }
+            }			
+            outputStream = new FileOutputStream(fileName);
+            output = new BufferedOutputStream(outputStream);
             output.write(buffer.toString().getBytes());
             output.close();
             outputStream.close();

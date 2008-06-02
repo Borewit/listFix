@@ -395,7 +395,7 @@ public class GUIDriver
         return guiTableUpdate();
     }
 
-    public String[][] appendPlaylist(File input) throws java.io.IOException
+    public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException, UnsupportedPlaylistFormat
     {
         // currentPlaylist = null;
         M3UFileReader playlistProcessor = new M3UFileReader(input);
@@ -404,7 +404,7 @@ public class GUIDriver
         return guiTableUpdate();
     }
 
-    public String[][] insertPlaylist(File input, int index) throws java.io.IOException
+    public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException, UnsupportedPlaylistFormat
     {
         M3UFileReader playlistProcessor = new M3UFileReader(input);
         Vector temp = playlistProcessor.readM3U();
@@ -417,7 +417,7 @@ public class GUIDriver
         return guiTableUpdate();
     }
 
-    public void setCurrentPlaylist(File input) throws java.io.FileNotFoundException, java.io.IOException
+    public void setCurrentPlaylist(File input)
     {
         currentPlaylist = input;
     }
