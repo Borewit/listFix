@@ -38,14 +38,16 @@ import java.net.URI;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import listfix.exceptions.UnsupportedPlaylistFormat;
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
 
 public class M3UFileReader
 {
+	private final static String fs = System.getProperty("file.separator");
+	private final static String br = System.getProperty("line.separator");
     private BufferedReader buffer;
-    private String fs = System.getProperty("file.separator");
-    private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
+    private Vector results = new Vector();
     private long fileLength = 0;
 
     public M3UFileReader(File in) throws FileNotFoundException
@@ -54,17 +56,21 @@ public class M3UFileReader
         fileLength = in.length();
     }
 
-    public Vector<PlaylistEntry> readM3U(Task input) throws IOException
+    public Vector<PlaylistEntry> readM3U(Task input) throws IOException, UnsupportedPlaylistFormat
     {
         StringBuilder cache = new StringBuilder();
         String line1 = buffer.readLine(); // ignore line 1
+		if (!line1.startsWith("#EXTM3U"))
+		{
+			throw new UnsupportedPlaylistFormat("Playlist is not in M3U format.");
+		}
         cache.append(line1);
         String line2 = "";
         line1 = buffer.readLine();
         cache.append(line1);
         if (line1 != null)
         {
-            if (!line1.startsWith("#EXTINF"))
+            if (!line1.startsWith("#"))
             {
                 line2 = line1;
                 line1 = "";
@@ -73,6 +79,12 @@ public class M3UFileReader
             {
                 line2 = buffer.readLine();
                 cache.append(line2);
+				while (line2.startsWith("#"))
+				{
+					line1 = line1 + br + line2;
+					line2 = buffer.readLine();
+					cache.append(line2);
+				}
             }        
             while (line1 != null)
             {
@@ -82,7 +94,7 @@ public class M3UFileReader
                 if (line1 != null)
                 {
 					cache.append(line1);
-                    if (!line1.startsWith("#EXTINF"))
+                    if (!line1.startsWith("#"))
                     {
                         line2 = line1;
                         line1 = "";
@@ -91,6 +103,12 @@ public class M3UFileReader
                     {
                         line2 = buffer.readLine();
                         cache.append(line2);
+						while (line2.startsWith("#"))
+						{
+							line1 = line1 + br + line2;
+							line2 = buffer.readLine();
+							cache.append(line2);
+						}
                     }    
                 }
             }
@@ -98,14 +116,18 @@ public class M3UFileReader
         return results;
     }
     
-    public Vector<PlaylistEntry> readM3U() throws IOException
+    public Vector<PlaylistEntry> readM3U() throws IOException, UnsupportedPlaylistFormat
     {
         String line1 = buffer.readLine(); // ignore line 1
+		if (!line1.startsWith("#EXTM3U"))
+		{
+			throw new UnsupportedPlaylistFormat("Playlist is not in M3U format.");
+		}
         String line2 = "";
         line1 = buffer.readLine();
         if (line1 != null)
         {
-            if (!line1.startsWith("#EXTINF"))
+            if (!line1.startsWith("#"))
             {
                 line2 = line1;
                 line1 = "";
@@ -113,6 +135,11 @@ public class M3UFileReader
             else
             {
                 line2 = buffer.readLine();
+				while (line2.startsWith("#"))
+				{
+					line1 = line1 + br + line2;
+					line2 = buffer.readLine();
+				}
             }        
             while (line1 != null)
             {
@@ -120,7 +147,7 @@ public class M3UFileReader
                 line1 = buffer.readLine();
                 if (line1 != null)
                 {
-                    if (!line1.startsWith("#EXTINF"))
+                    if (!line1.startsWith("#"))
                     {
                         line2 = line1;
                         line1 = "";
@@ -128,6 +155,11 @@ public class M3UFileReader
                     else
                     {
                         line2 = buffer.readLine();
+						while (line2.startsWith("#"))
+						{
+							line1 = line1 + br + line2;
+							line2 = buffer.readLine();
+						}
                     }    
                 }
             }

@@ -25,16 +25,19 @@ package listfix.tasks;
  * @author  jcaron
  * @version 
  */
-import listfix.io.*;
-import listfix.controller.*;
 import java.io.File;
 import java.util.*;
+
+import listfix.controller.*;
+import listfix.exceptions.UnsupportedPlaylistFormat;
+import listfix.io.*;
 import listfix.model.Playlist;
 
 public class OpenM3UTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
     private File input; 
+	public boolean notM3UFormat = false;
     
     public OpenM3UTask(GUIDriver gd, File f) 
     {
@@ -50,12 +53,18 @@ public class OpenM3UTask extends listfix.controller.Task
 			guiDriver.setCurrentList(new Playlist(input, this));
 			guiDriver.getHistory().add(input.getCanonicalPath());
 			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
-			this.notifyObservers(100);
-		}
-		catch (Exception e)
+        }
+		catch(UnsupportedPlaylistFormat upf)
 		{
+			notM3UFormat = true;
+		}
+        catch(Exception e)
+        {
 			e.printStackTrace();
-			this.notifyObservers(100);
+        }
+		finally
+		{			
+            this.notifyObservers(100);
 		}
     }   
 }
