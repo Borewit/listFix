@@ -1091,26 +1091,19 @@ public class GUIScreen extends JFrame
         locateProgressDialog.go();
         int row = playlistTable.getSelectedRow();
         PlaylistEntry entryToFind = guiDriver.getEntryAt(row);
-        if (!entryToFind.isFound())
-        {
-            LocateClosestMatchesTask thisTask = new LocateClosestMatchesTask(entryToFind, guiDriver.getMediaLibraryFileList());
-            locateProgressDialog.track(thisTask);
-            Vector<MatchedPlaylistEntry> response = guiDriver.findClosestMatches(thisTask);
-            locateProgressDialog.setEnabled(false);
-            ClosestMatchChooserDialog tempDialog = new ClosestMatchChooserDialog(this, response, true);
-            tempDialog.center();
-            tempDialog.setVisible(true);
-            if (tempDialog.getResultCode() == ClosestMatchChooserDialog.OK)
-            {
-                ((CustomTableModel)playlistTable.getModel()).updateData( guiDriver.updateEntryAt(row, ((MatchedPlaylistEntry)response.elementAt(tempDialog.getChoice())).getPlaylistFile() ) );
-            }
-            updateButtons();
-            updateStatusLabel();
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(this, "The file you selected is already found in the location specified by your playlist.");
-        }
+		LocateClosestMatchesTask thisTask = new LocateClosestMatchesTask(entryToFind, guiDriver.getMediaLibraryFileList());
+		locateProgressDialog.track(thisTask);
+		Vector<MatchedPlaylistEntry> response = guiDriver.findClosestMatches(thisTask);
+		locateProgressDialog.setEnabled(false);
+		ClosestMatchChooserDialog tempDialog = new ClosestMatchChooserDialog(this, response, true);
+		tempDialog.center();
+		tempDialog.setVisible(true);
+		if (tempDialog.getResultCode() == ClosestMatchChooserDialog.OK)
+		{
+			((CustomTableModel)playlistTable.getModel()).updateData(guiDriver.updateEntryAt(row, ((MatchedPlaylistEntry)response.elementAt(tempDialog.getChoice())).getPlaylistFile()));
+		}
+		updateButtons();
+		updateStatusLabel();
     }//GEN-LAST:event_findClosestMatchesMenuItemActionPerformed
 
     private void editFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFilenameMenuItemActionPerformed
