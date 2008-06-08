@@ -29,6 +29,7 @@ public class PlaylistEntry implements Cloneable
 {    
     private final static String fs = System.getProperty("file.separator");    
     private final static String br = System.getProperty("line.separator");
+	private static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
     public static Vector<String> emptyDirectories = new Vector<String>();
     public static String basePath = "";
     
@@ -66,6 +67,10 @@ public class PlaylistEntry implements Cloneable
             {
                 absoluteFile = thisFile;
             }
+			else
+			{
+				absoluteFile = new File(thisFile.getAbsolutePath());
+			}
         }
         else
         {
@@ -273,10 +278,10 @@ public class PlaylistEntry implements Cloneable
     public void findNewLocationFromFileList(String[] fileList)
     {
         int searchResult = -1;
-        String trimmedFileName = fileName.trim();
+        String trimmedFileName = fileSystemIsCaseSensitive ? fileName.trim() : fileName.trim().toLowerCase();
         for (int i = 0; i < fileList.length; i++)
         {
-            if (fileList[i].endsWith(trimmedFileName))
+            if (fileSystemIsCaseSensitive ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
             {
                 searchResult = i;
                 break;
@@ -298,7 +303,7 @@ public class PlaylistEntry implements Cloneable
     {
         String[] emptyPaths = new String[emptyDirectories.size()];
         emptyDirectories.copyInto(emptyPaths);
-        return found == true || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path);        
+        return found == true || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);      
     }
     
     public boolean isFound()

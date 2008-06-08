@@ -33,7 +33,7 @@ import listfix.tasks.*;
 import listfix.util.ArrayFunctions;
 
 public class GUIDriver
-{
+{	
 	private boolean showMediaDirWindow = false;
 	private String[] mediaDir = null;
 	private String[] mediaLibraryDirectoryList = null;
@@ -41,6 +41,8 @@ public class GUIDriver
 	private Playlist currentList = new Playlist();
 	private AppOptions options = new AppOptions();
 	private M3UHistory history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
+	
+	public static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
 
 	public GUIDriver()
 	{
@@ -374,7 +376,18 @@ public class GUIDriver
 
 	public String[][] locateFile(int entryIndex)
 	{
-		getCurrentList().getEntries().elementAt(entryIndex).findNewLocationFromFileList(mediaLibraryFileList);
+		PlaylistEntry entry = getCurrentList().getEntries().elementAt(entryIndex);
+		if (!entry.isURL())
+		{
+			if (entry.isFound() && !ArrayFunctions.ContainsStringWithPrefix(mediaDir, entry.getAbsoluteFile().getPath(), !fileSystemIsCaseSensitive))
+			{
+				// do nothing to entries that are found outside of the media library
+			}
+			else
+			{
+				entry.findNewLocationFromFileList(mediaLibraryFileList);
+			}
+		}
 		return guiTableUpdate();
 	}
 
@@ -478,8 +491,7 @@ public class GUIDriver
 	public String[][] updateFileName(int entryIndex, String filename)
 	{
 		getCurrentList().getEntries().elementAt(entryIndex).setFileName(filename);
-		String[][] result = locateFile(entryIndex);
-		return result;
+		return locateFile(entryIndex);
 	}
 
 	public String[][] removeDuplicates()
@@ -526,7 +538,7 @@ public class GUIDriver
 		return getCurrentList().getEntries().elementAt(entryIndex);
 	}
 
-	public void saveM3U()
+	public void saveM3U() throws Exception
 	{
 		if (getCurrentList().getFile() != null)
 		{
@@ -541,30 +553,21 @@ public class GUIDriver
 		}
 	}
 
-	public void saveM3U(File destination)
+	public void saveM3U(File destination) throws Exception
 	{
-		if (destination != null)
+		if (options.getSavePlaylistsWithRelativePaths())
 		{
-			try
-			{
-				if (options.getSavePlaylistsWithRelativePaths())
-				{
-					getCurrentList().setEntries((new FileWriter()).writeRelativeM3U(getCurrentList().getEntries(), destination));
-				}
-				else
-				{
-					getCurrentList().setEntries((new FileWriter()).writeRelativeM3U(getCurrentList().getEntries(), destination));
-				}
-				getCurrentList().setFile(destination);
-				history.add(destination.getCanonicalPath());
-				(new FileWriter()).writeMruM3Us(history);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			getCurrentList().setEntries((new FileWriter()).writeRelativeM3U(getCurrentList().getEntries(), destination));
 		}
+		else
+		{
+			getCurrentList().setEntries((new FileWriter()).writeM3U(getCurrentList().getEntries(), destination));
+		}
+		getCurrentList().setFile(destination);
+		history.add(destination.getCanonicalPath());
+		(new FileWriter()).writeMruM3Us(history);
 	}
+	
 
 	/**
 	 * @param entryToInsert

@@ -126,13 +126,16 @@ public class FileWriter
                 buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad()) + br);
                 buffer.append("MAX_PLAYLIST_HISTORY_SIZE=" + options.getMaxPlaylistHistoryEntries() + br);
                 buffer.append("SAVE_RELATIVE_REFERENCES=" + Boolean.toString(options.getSavePlaylistsWithRelativePaths()) + br);
+				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=" + Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup()) + br);
+				buffer.append("LOOK_AND_FEEL=" + options.getLookAndFeel() + br);
+				buffer.append("ALWAYS_USE_UNC_PATHS=" + Boolean.toString(options.getAlwaysUseUNCPaths()) + br);
                 buffer.append("[Media Library Directories]" + br);
                 buffer.append("[Media Library Files]" + br);
                 output.write(buffer.toString().getBytes());
                 output.close();
                 outputStream.close();
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 // eat the error and continue
                 e.printStackTrace();
@@ -150,7 +153,7 @@ public class FileWriter
                 output.close();
                 outputStream.close();
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 // eat the error and continue
                 e.printStackTrace();
@@ -158,98 +161,80 @@ public class FileWriter
         }
     }
 
-    public Vector<PlaylistEntry> writeM3U(Vector<PlaylistEntry> entries, File fileName)
+    public Vector<PlaylistEntry> writeM3U(Vector<PlaylistEntry> entries, File fileName) throws Exception
     {
         PlaylistEntry tempEntry = null;
-        try
-        {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("#EXTM3U" + br);
-            for (int i = 0; i < entries.size(); i++)
-            {
-                tempEntry = entries.elementAt(i);
-				if (tempEntry.isRelative())
-				{
-					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getExtInf());
-					buffer.append(tempEntry.toM3UString() + br);
-					entries.remove(i);
-					entries.add(i, tempEntry);
-				}
-				else
-				{
-					buffer.append(tempEntry.toM3UString() + br);
-				}
-            }
-            outputStream = new FileOutputStream(fileName);
-            output = new BufferedOutputStream(outputStream);
-            output.write(buffer.toString().getBytes());
-            output.close();
-            outputStream.close();
-			return entries;
-        }
-        catch (IOException e)
-        {
-            // eat the error and continue
-            e.printStackTrace();
-			return entries;
-        }
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#EXTM3U" + br);
+		for (int i = 0; i < entries.size(); i++)
+		{
+			tempEntry = entries.elementAt(i);
+			if (tempEntry.isRelative())
+			{
+				tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getExtInf());
+				buffer.append(tempEntry.toM3UString() + br);
+				entries.remove(i);
+				entries.add(i, tempEntry);
+			}
+			else
+			{
+				buffer.append(tempEntry.toM3UString() + br);
+			}
+		}
+		outputStream = new FileOutputStream(fileName);
+		output = new BufferedOutputStream(outputStream);
+		output.write(buffer.toString().getBytes());
+		output.close();
+		outputStream.close();
+		return entries;
     }
 
-    public Vector<PlaylistEntry> writeRelativeM3U(Vector<PlaylistEntry> entries, File fileName)
+    public Vector<PlaylistEntry> writeRelativeM3U(Vector<PlaylistEntry> entries, File fileName) throws Exception
     {
         PlaylistEntry tempEntry = null;
-        try
-        {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("#EXTM3U" + br);
-            for (int i = 0; i < entries.size(); i++)
-            {
-                tempEntry = entries.elementAt(i);
-				if (!tempEntry.isRelative())
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#EXTM3U" + br);
+		for (int i = 0; i < entries.size(); i++)
+		{
+			tempEntry = entries.elementAt(i);
+			if (!tempEntry.isRelative() && !tempEntry.isURL())
+			{
+				if (!tempEntry.getExtInf().isEmpty())
 				{
-					if (!tempEntry.getExtInf().isEmpty())
-					{
-						buffer.append(tempEntry.getExtInf() + br);
-					}
-					String relPath = getRelativePath(tempEntry.getFile().getAbsoluteFile(), fileName);
-					buffer.append(relPath + br);
-					// replace the existing entry with a new relative one...
-					entries.remove(i);
-					entries.add(i, new PlaylistEntry(new File(relPath), tempEntry.getExtInf()));
+					buffer.append(tempEntry.getExtInf() + br);
 				}
-				else
-				{
-					buffer.append(tempEntry.toM3UString() + br);
-				}
-            }			
-            outputStream = new FileOutputStream(fileName);
-            output = new BufferedOutputStream(outputStream);
-            output.write(buffer.toString().getBytes());			
-            output.close();
-            outputStream.close();
-			return entries;
-        }
-        catch (IOException e)
-        {
-            // eat the error and continue
-            e.printStackTrace();
-			return entries;
-        }
+				String relPath = getRelativePath(tempEntry.getFile().getAbsoluteFile(), fileName);
+				buffer.append(relPath + br);
+				// replace the existing entry with a new relative one...
+				entries.remove(i);
+				entries.add(i, new PlaylistEntry(new File(relPath), tempEntry.getExtInf()));
+			}
+			else
+			{
+				buffer.append(tempEntry.toM3UString() + br);
+			}
+		}
+		outputStream = new FileOutputStream(fileName);
+		output = new BufferedOutputStream(outputStream);
+		output.write(buffer.toString().getBytes());
+		output.close();
+		outputStream.close();
+		return entries;
     }
 
     public void writeMruM3Us(M3UHistory history)
     {
         try
         {
-            outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
-            output = new BufferedOutputStream(outputStream);
             StringBuffer buffer = new StringBuffer();
             buffer.append("[Recent M3Us]" + br);
             String[] filenames = history.getM3UFilenames();
             for (int i = 0; i < filenames.length; i++)
             {
                 buffer.append(filenames[i] + br);
-            }
+            }			
+			outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
+			output = new BufferedOutputStream(outputStream);
             output.write(buffer.toString().getBytes());
             output.close();
             outputStream.close();

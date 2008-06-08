@@ -34,7 +34,7 @@ public class AppOptions
 	private boolean autoRefreshMediaLibraryOnStartup = false;
 	private boolean alwaysUseUNCPaths = false;
     private int maxPlaylistHistoryEntries = 5;
-	private String lookAndFeel = UIManager.getInstalledLookAndFeels()[0].getClassName();
+	private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
 	
     public static final Hashtable<String,Integer> optionEnumTable = new Hashtable<String,Integer>();    
     static

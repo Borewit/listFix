@@ -141,14 +141,14 @@ public class ArrayFunctions
         return cArray;
     }
     
-    public static boolean ContainsStringWithPrefix(String[] a, String b)
+    public static boolean ContainsStringWithPrefix(String[] a, String b, boolean ignoreCase)
     {        
         boolean result = false;
         if (a != null && a.length > 0)
         {
             for (int i = 0; i < a.length; i++)
             {
-                if (b.startsWith(a[i]))
+                if (ignoreCase ? b.toLowerCase().startsWith(a[i].toLowerCase()) : b.startsWith(a[i]))
                 {
                     result = true;
                     break;                            

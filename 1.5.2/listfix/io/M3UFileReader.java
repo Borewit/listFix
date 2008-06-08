@@ -88,7 +88,10 @@ public class M3UFileReader
             }        
             while (line1 != null)
             {
-                processEntry(line1, line2);
+				if (!line2.equals(""))
+				{
+					processEntry(line1, line2);
+				}
                 input.notifyObservers((int)((double)cache.toString().getBytes().length/(double)(fileLength) * 100.0));
                 line1 = buffer.readLine();
                 if (line1 != null)
@@ -207,9 +210,9 @@ public class M3UFileReader
 
             String firstToken = "";
             int tokenNumber = 0;
+			File firstPathToExist = null;
             while (pathTokenizer.hasMoreTokens())
-            {
-                File firstPathToExist = null;
+            {                
                 String word = pathTokenizer.nextToken();
                 if (tokenNumber == 0)
                 {

@@ -25,8 +25,8 @@ package listfix.tasks;
  * @author  jcaron
  * @version 
  */
-import listfix.model.PlaylistEntry;
 import java.util.Vector;
+import listfix.model.PlaylistEntry;
 
 public class LocateFilesTask extends listfix.controller.Task 
 {
@@ -34,10 +34,10 @@ public class LocateFilesTask extends listfix.controller.Task
     private String[] mediaLibraryFileList;
     
     /** Creates new LocateFilesTask */
-    public LocateFilesTask(Vector<PlaylistEntry> x, String[] y) 
+    public LocateFilesTask(Vector<PlaylistEntry> playlistEntries, String[] files) 
     {
-        entries = x;
-        mediaLibraryFileList = y;
+        entries = playlistEntries;
+        mediaLibraryFileList = files;
     }
 
     /** Run the task. This method is the body of the thread for this task.  */

@@ -30,12 +30,12 @@ import listfix.model.*;
 
 public class ClosestMatchChooserDialog extends javax.swing.JDialog 
 {
-	private static final long serialVersionUID = -5374761780814261291L;
-	private Vector<MatchedPlaylistEntry> matchData;
-    private int choice = -1;
+	private static final long serialVersionUID = -5374761780814261291L;	
     public static final int OK = 0;
     public static final int CANCEL = 1;
-    private int resultCode = 1;
+	private Vector<MatchedPlaylistEntry> matchData;
+    private int choice = -1;
+    private int resultCode = CANCEL;
     
     /** Creates new form ClosestMatchChooserDialog */
     public ClosestMatchChooserDialog(java.awt.Frame parent, Vector<MatchedPlaylistEntry> matches, boolean modal) 
