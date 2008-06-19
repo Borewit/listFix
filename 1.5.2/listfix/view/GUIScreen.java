@@ -23,12 +23,13 @@ package listfix.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import javax.swing.*;
-import javax.swing.table.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.tree.TreePath;
+import javax.swing.*;
+import javax.swing.table.*;
+import javax.swing.tree.*;
+
 import listfix.io.*;
 import listfix.model.*;
 import listfix.tasks.*;
@@ -142,810 +143,810 @@ public class GUIScreen extends JFrame
         mediaLibraryList = new javax.swing.JList();
         playlistDirectoryPanel = new javax.swing.JPanel();
         treeScrollPane = new javax.swing.JScrollPane();
-        playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File("C:\\Users\\jcaron\\Desktop\\Playlists\\")));
-            MouseListener ml = new MouseAdapter() 
+        playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
+        MouseListener ml = new MouseAdapter()
+        {
+            public void mousePressed(MouseEvent e)
             {
-                public void mousePressed(MouseEvent e) 
+                int selRow = playlistDirectoryTree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = playlistDirectoryTree.getPathForLocation(e.getX(), e.getY());
+                if(selRow != -1)
                 {
-                    int selRow = playlistDirectoryTree.getRowForLocation(e.getX(), e.getY());
-                    TreePath selPath = playlistDirectoryTree.getPathForLocation(e.getX(), e.getY());
-                    if(selRow != -1) 
+                    if(e.getClickCount() == 2)
                     {
-                        if(e.getClickCount() == 2) 
-                        {
-                            myDoubleClick(selRow, selPath);
-                        }
+                        myDoubleClick(selRow, selPath);
                     }
                 }
-            };
-
-            playlistDirectoryTree.addMouseListener(ml);
-            playlistPanel = new javax.swing.JPanel();
-            playlistButtonPanel = new javax.swing.JPanel();
-            locateButton = new javax.swing.JButton();
-            saveButton = new javax.swing.JButton();
-            playlistTablePanel = new javax.swing.JPanel();
-            playlistScrollPanel = playlistScrollPanel = new javax.swing.JScrollPane(playlistTable);
-            playlistTable = new javax.swing.JTable();
-            mainMenuBar = new javax.swing.JMenuBar();
-            fileMenu = new javax.swing.JMenu();
-            loadMenuItem = new javax.swing.JMenuItem();
-            closeMenuItem = new javax.swing.JMenuItem();
-            saveMenuItem = new javax.swing.JMenuItem();
-            saveAsMenuItem = new javax.swing.JMenuItem();
-            jSeparator3 = new javax.swing.JSeparator();
-            recentMenu = new javax.swing.JMenu();
-            clearHistoryMenuItem = new javax.swing.JMenuItem();
-            jSeparator1 = new javax.swing.JSeparator();
-            appOptionsMenuItem = new javax.swing.JMenuItem();
-            jSeparator2 = new javax.swing.JSeparator();
-            exit = new javax.swing.JMenuItem();
-            actionsMenu = new javax.swing.JMenu();
-            appendFileMenuItem = new javax.swing.JMenuItem();
-            insertFileMenuItem = new javax.swing.JMenuItem();
-            editFilenameMenuItem = new javax.swing.JMenuItem();
-            findClosestMatchesMenuItem = new javax.swing.JMenuItem();
-            playFileMenuItem = new javax.swing.JMenuItem();
-            removeMenuItem = new javax.swing.JMenuItem();
-            removeMissingMenuItem = new javax.swing.JMenuItem();
-            removeDuplicatesMenuItem = new javax.swing.JMenuItem();
-            replaceFileMenuItem = new javax.swing.JMenuItem();
-            jSeparator4 = new javax.swing.JSeparator();
-            appendPlaylistMenuItem = new javax.swing.JMenuItem();
-            insertPlaylistMenuItem = new javax.swing.JMenuItem();
-            jSeparator5 = new javax.swing.JSeparator();
-            copyToDirMenuItem = new javax.swing.JMenuItem();
-            sortMenu = new javax.swing.JMenu();
-            randomizeMenuItem = new javax.swing.JMenuItem();
-            reverseMenuItem = new javax.swing.JMenuItem();
-            filenameSortMenu = new javax.swing.JMenu();
-            ascendingFilenameMenuItem = new javax.swing.JMenuItem();
-            descendingFilenameMenuItem = new javax.swing.JMenuItem();
-            statusSortMenu = new javax.swing.JMenu();
-            ascendingStatusMenuItem = new javax.swing.JMenuItem();
-            descendingStatusMenuItem = new javax.swing.JMenuItem();
-            pathSortMenu = new javax.swing.JMenu();
-            ascendingPathMenuItem = new javax.swing.JMenuItem();
-            descendingPathMenuItem = new javax.swing.JMenuItem();
-            helpMenu = new javax.swing.JMenu();
-            aboutMenuItem = new javax.swing.JMenuItem();
-            helpMenuItem = new javax.swing.JMenuItem();
-
-            deleteRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            deleteRCMenuItem.setText("Delete");
-            deleteRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    deleteRCMenuItemActionPerformed(evt);
-                }
-            });
-            entryRightClickMenu.add(deleteRCMenuItem);
-
-            editFileNameRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            editFileNameRCMenuItem.setText("Edit Filename");
-            editFileNameRCMenuItem.setEnabled(false);
-            editFileNameRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    editFileNameRCMenuItemActionPerformed(evt);
-                }
-            });
-            entryRightClickMenu.add(editFileNameRCMenuItem);
-
-            locateRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            locateRCMenuItem.setText("Locate File");
-            locateRCMenuItem.setEnabled(false);
-            locateRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    locateRCMenuItemActionPerformed(evt);
-                }
-            });
-            entryRightClickMenu.add(locateRCMenuItem);
-
-            closestMatchesRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            closestMatchesRCMenuItem.setText("Find Closest Matches");
-            closestMatchesRCMenuItem.setEnabled(false);
-            closestMatchesRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    closestMatchesRCMenuItemActionPerformed(evt);
-                }
-            });
-            entryRightClickMenu.add(closestMatchesRCMenuItem);
-
-            replaceFileRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            replaceFileRCMenuItem.setText("Replace Selected Entry");
-            replaceFileRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    replaceFileRCMenuItemActionPerformed(evt);
-                }
-            });
-            entryRightClickMenu.add(replaceFileRCMenuItem);
-
-            openRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            openRCMenuItem.setText("Open");
-            openRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    openRCMenuItemActionPerformed(evt);
-                }
-            });
-            entryRightClickMenu.add(openRCMenuItem);
-
-            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-            setTitle("listFix( ) - v1.5.2");
-            setName("mainFrame"); // NOI18N
-            addWindowListener(new java.awt.event.WindowAdapter() {
-                public void windowClosing(java.awt.event.WindowEvent evt) {
-                    exitForm(evt);
-                }
-            });
-
-            buttonPanel.setAlignmentX(0.0F);
-            buttonPanel.setAlignmentY(0.0F);
-            buttonPanel.setFont(buttonPanel.getFont());
-            buttonPanel.setMaximumSize(null);
-            buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 2, 2));
-
-            openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
-            openIconButton.setToolTipText("Open Playlist");
-            openIconButton.setBorder(null);
-            openIconButton.setFocusable(false);
-            openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            openIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            openIconButton.setMinimumSize(null);
-            openIconButton.setPreferredSize(null);
-            openIconButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    openIconButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(openIconButton);
-
-            closeIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.gif"))); // NOI18N
-            closeIconButton.setToolTipText("Close Playlist");
-            closeIconButton.setBorder(null);
-            closeIconButton.setFocusable(false);
-            closeIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            closeIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            closeIconButton.setMinimumSize(null);
-            closeIconButton.setPreferredSize(null);
-            closeIconButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    closeIconButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(closeIconButton);
-
-            saveIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
-            saveIconButton.setToolTipText("Save");
-            saveIconButton.setBorder(null);
-            saveIconButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_off.gif"))); // NOI18N
-            saveIconButton.setFocusable(false);
-            saveIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            saveIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            saveIconButton.setMinimumSize(null);
-            saveIconButton.setPreferredSize(null);
-            saveIconButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    saveButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(saveIconButton);
-
-            upIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow-up.gif"))); // NOI18N
-            upIconButton.setToolTipText("Move Up");
-            upIconButton.setBorder(null);
-            upIconButton.setFocusable(false);
-            upIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            upIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            upIconButton.setMinimumSize(null);
-            upIconButton.setPreferredSize(null);
-            upIconButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    upIconButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(upIconButton);
-
-            downIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow_down.gif"))); // NOI18N
-            downIconButton.setToolTipText("Move Down");
-            downIconButton.setBorder(null);
-            downIconButton.setFocusable(false);
-            downIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            downIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            downIconButton.setMinimumSize(null);
-            downIconButton.setPreferredSize(null);
-            downIconButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    downIconButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(downIconButton);
-
-            deleteIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete.gif"))); // NOI18N
-            deleteIconButton.setToolTipText("Remove Selected Entry");
-            deleteIconButton.setBorder(null);
-            deleteIconButton.setFocusable(false);
-            deleteIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            deleteIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            deleteIconButton.setMinimumSize(null);
-            deleteIconButton.setPreferredSize(null);
-            deleteIconButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    deleteIconButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(deleteIconButton);
-
-            openPlaylistButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
-            openPlaylistButton.setToolTipText("Play this list (available when list is in a saved state)");
-            openPlaylistButton.setBorder(null);
-            openPlaylistButton.setFocusable(false);
-            openPlaylistButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-            openPlaylistButton.setMaximumSize(new java.awt.Dimension(50, 50));
-            openPlaylistButton.setMinimumSize(null);
-            openPlaylistButton.setPreferredSize(null);
-            openPlaylistButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    openPlaylistButtonActionPerformed(evt);
-                }
-            });
-            buttonPanel.add(openPlaylistButton);
-
-            getContentPane().add(buttonPanel, java.awt.BorderLayout.NORTH);
-
-            statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-            statusPanel.setLayout(new java.awt.BorderLayout());
-
-            statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
-            statusLabel.setForeground(new java.awt.Color(153, 153, 153));
-            statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-            statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
-            statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
-
-            getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
-
-            splitPane.setDividerSize(7);
-            splitPane.setMaximumSize(null);
-            splitPane.setOneTouchExpandable(true);
-            splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
-
-            leftSplitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-            leftSplitPane.setDividerLocation(280);
-            leftSplitPane.setDividerSize(7);
-            leftSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-            leftSplitPane.setMaximumSize(null);
-            leftSplitPane.setOneTouchExpandable(true);
-
-            mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9)));
-            mediaLibraryPanel.setAlignmentX(0.0F);
-            mediaLibraryPanel.setAlignmentY(0.0F);
-            mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
-
-            mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
-
-            addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
-            addMediaDirButton.setText("Add");
-            addMediaDirButton.setFocusable(false);
-            addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
-            addMediaDirButton.setPreferredSize(null);
-            addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    addMediaDirButtonActionPerformed(evt);
-                }
-            });
-            mediaLibraryButtonPanel.add(addMediaDirButton);
-
-            removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
-            removeMediaDirButton.setText("Remove");
-            removeMediaDirButton.setFocusable(false);
-            removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
-            removeMediaDirButton.setPreferredSize(null);
-            removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    removeMediaDirButtonActionPerformed(evt);
-                }
-            });
-            mediaLibraryButtonPanel.add(removeMediaDirButton);
-
-            refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
-            refreshMediaDirsButton.setText("Refresh");
-            refreshMediaDirsButton.setFocusable(false);
-            refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
-            refreshMediaDirsButton.setPreferredSize(null);
-            refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    refreshMediaDirsButtonActionPerformed(evt);
-                }
-            });
-            mediaLibraryButtonPanel.add(refreshMediaDirsButton);
-
-            mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
-
-            mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
-            mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-            mediaLibraryList.setPreferredSize(null);
-            mediaLibraryScrollPane.setViewportView(mediaLibraryList);
-
-            mediaLibraryPanel.add(mediaLibraryScrollPane, java.awt.BorderLayout.CENTER);
-
-            leftSplitPane.setBottomComponent(mediaLibraryPanel);
-
-            playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9)));
-            playlistDirectoryPanel.setAlignmentX(0.0F);
-            playlistDirectoryPanel.setAlignmentY(0.0F);
-            playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
-
-            treeScrollPane.setViewportView(playlistDirectoryTree);
-
-            playlistDirectoryPanel.add(treeScrollPane, java.awt.BorderLayout.CENTER);
-
-            leftSplitPane.setTopComponent(playlistDirectoryPanel);
-
-            splitPane.setLeftComponent(leftSplitPane);
-
-            playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
-            playlistPanel.setLayout(new java.awt.BorderLayout());
-
-            locateButton.setFont(new java.awt.Font("Verdana", 0, 9));
-            locateButton.setText("Locate Files");
-            locateButton.setFocusable(false);
-            locateButton.setMinimumSize(new java.awt.Dimension(93, 25));
-            locateButton.setPreferredSize(null);
-            locateButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    locateButtonActionPerformed(evt);
-                }
-            });
-            playlistButtonPanel.add(locateButton);
-
-            saveButton.setFont(new java.awt.Font("Verdana", 0, 9));
-            saveButton.setText("Save Repaired List");
-            saveButton.setFocusable(false);
-            saveButton.setMinimumSize(new java.awt.Dimension(127, 25));
-            saveButton.setPreferredSize(null);
-            saveButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    saveButtonActionPerformed(evt);
-                }
-            });
-            playlistButtonPanel.add(saveButton);
-
-            playlistPanel.add(playlistButtonPanel, java.awt.BorderLayout.SOUTH);
-
-            playlistTablePanel.setBackground(java.awt.Color.white);
-            playlistTablePanel.setLayout(new java.awt.BorderLayout());
-
-            playlistScrollPanel.setBackground(new java.awt.Color(255, 255, 255));
-            playlistScrollPanel.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            playlistScrollPanel.setOpaque(false);
-            playlistScrollPanel.setPreferredSize(new java.awt.Dimension(600, 400));
-
-            playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
-            playlistTable.setModel(new CustomTableModel());
-            playlistTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
-            playlistTable.setGridColor(new java.awt.Color(153, 153, 153));
-            playlistTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
-            playlistTable.setMaximumSize(new java.awt.Dimension(32767, 32767));
-            playlistTable.setMinimumSize(new java.awt.Dimension(5, 5));
-            playlistTable.setPreferredSize(null);
-            playlistTable.setRowHeight(20);
-            playlistTable.setFillsViewportHeight(true);
-            playlistTable.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    playlistTableMouseClicked(evt);
-                }
-                public void mousePressed(java.awt.event.MouseEvent evt) {
-                    playlistTableMousePressed(evt);
-                }
-                public void mouseReleased(java.awt.event.MouseEvent evt) {
-                    playlistTableMouseReleased(evt);
-                }
-            });
-            playlistTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-                public void mouseDragged(java.awt.event.MouseEvent evt) {
-                    playlistTableMouseDragged(evt);
-                }
-            });
-            playlistScrollPanel.setViewportView(playlistTable);
-
-            playlistTablePanel.add(playlistScrollPanel, java.awt.BorderLayout.CENTER);
-
-            playlistPanel.add(playlistTablePanel, java.awt.BorderLayout.CENTER);
-
-            splitPane.setRightComponent(playlistPanel);
-
-            getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
-
-            mainMenuBar.setBorder(null);
-
-            fileMenu.setMnemonic('F');
-            fileMenu.setText("File");
-            fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-            loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            loadMenuItem.setMnemonic('L');
-            loadMenuItem.setText("Open Playlist");
-            loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    openIconButtonActionPerformed(evt);
-                }
-            });
-            fileMenu.add(loadMenuItem);
-
-            closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-            closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            closeMenuItem.setMnemonic('C');
-            closeMenuItem.setText("Close Playlist");
-            closeMenuItem.setEnabled(false);
-            closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    closeMenuItemActionPerformed(evt);
-                }
-            });
-            fileMenu.add(closeMenuItem);
-
-            saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-            saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            saveMenuItem.setMnemonic('S');
-            saveMenuItem.setText("Save");
-            saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    saveButtonActionPerformed(evt);
-                }
-            });
-            fileMenu.add(saveMenuItem);
-
-            saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-            saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            saveAsMenuItem.setMnemonic('V');
-            saveAsMenuItem.setText("Save As");
-            saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    saveAsMenuItemActionPerformed(evt);
-                }
-            });
-            fileMenu.add(saveAsMenuItem);
-
-            jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
-            fileMenu.add(jSeparator3);
-
-            recentMenu.setText("Recent Playlists");
-            recentMenu.setToolTipText("Recently Opened Playlists");
-            recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-            fileMenu.add(recentMenu);
-
-            clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-            clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            clearHistoryMenuItem.setMnemonic('H');
-            clearHistoryMenuItem.setText("Clear Playlist History");
-            clearHistoryMenuItem.setToolTipText("");
-            clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    clearHistoryMenuItemActionPerformed(evt);
-                }
-            });
-            fileMenu.add(clearHistoryMenuItem);
-
-            jSeparator1.setForeground(new java.awt.Color(102, 102, 153));
-            fileMenu.add(jSeparator1);
-
-            appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-            appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            appOptionsMenuItem.setMnemonic('H');
-            appOptionsMenuItem.setText("Options...");
-            appOptionsMenuItem.setToolTipText("");
-            appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    appOptionsMenuItemActionPerformed(evt);
-                }
-            });
-            fileMenu.add(appOptionsMenuItem);
-
-            jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
-            fileMenu.add(jSeparator2);
-
-            exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-            exit.setFont(new java.awt.Font("Verdana", 0, 9));
-            exit.setMnemonic('x');
-            exit.setText("Exit");
-            exit.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    exitActionPerformed(evt);
-                }
-            });
-            fileMenu.add(exit);
-
-            mainMenuBar.add(fileMenu);
-
-            actionsMenu.setMnemonic('A');
-            actionsMenu.setText("Actions");
-            actionsMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            appendFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
-            appendFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            appendFileMenuItem.setMnemonic('A');
-            appendFileMenuItem.setText("Append File");
-            appendFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    appendFileMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(appendFileMenuItem);
-
-            insertFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
-            insertFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            insertFileMenuItem.setMnemonic('I');
-            insertFileMenuItem.setText("Insert File Below Selected Row");
-            insertFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    insertFileMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(insertFileMenuItem);
-
-            editFilenameMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_MASK));
-            editFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            editFilenameMenuItem.setMnemonic('E');
-            editFilenameMenuItem.setText("Edit Filename");
-            editFilenameMenuItem.setEnabled(false);
-            editFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    editFilenameMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(editFilenameMenuItem);
-
-            findClosestMatchesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
-            findClosestMatchesMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            findClosestMatchesMenuItem.setMnemonic('C');
-            findClosestMatchesMenuItem.setText("Find Closest Matches");
-            findClosestMatchesMenuItem.setEnabled(false);
-            findClosestMatchesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    findClosestMatchesMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(findClosestMatchesMenuItem);
-
-            playFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
-            playFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            playFileMenuItem.setText("Play Selected Entry");
-            playFileMenuItem.setEnabled(false);
-            playFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    playFileMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(playFileMenuItem);
-
-            removeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
-            removeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            removeMenuItem.setText("Remove");
-            removeMenuItem.setEnabled(false);
-            removeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    removeMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(removeMenuItem);
-
-            removeMissingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.ALT_MASK));
-            removeMissingMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            removeMissingMenuItem.setMnemonic('R');
-            removeMissingMenuItem.setText("Remove Missing Entries");
-            removeMissingMenuItem.setEnabled(false);
-            removeMissingMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    removeMissingMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(removeMissingMenuItem);
-
-            removeDuplicatesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
-            removeDuplicatesMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            removeDuplicatesMenuItem.setMnemonic('m');
-            removeDuplicatesMenuItem.setText("Remove Duplicates");
-            removeDuplicatesMenuItem.setEnabled(false);
-            removeDuplicatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    removeDuplicatesMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(removeDuplicatesMenuItem);
-
-            replaceFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
-            replaceFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            replaceFileMenuItem.setMnemonic('I');
-            replaceFileMenuItem.setText("Replace Selected Entry");
-            replaceFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    replaceFileMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(replaceFileMenuItem);
-
-            jSeparator4.setForeground(new java.awt.Color(102, 102, 153));
-            actionsMenu.add(jSeparator4);
-
-            appendPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
-            appendPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            appendPlaylistMenuItem.setMnemonic('p');
-            appendPlaylistMenuItem.setText("Append Playlist");
-            appendPlaylistMenuItem.setEnabled(false);
-            appendPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    appendPlaylistMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(appendPlaylistMenuItem);
-
-            insertPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
-            insertPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            insertPlaylistMenuItem.setMnemonic('n');
-            insertPlaylistMenuItem.setText("Insert Playlist Below Selected Row");
-            insertPlaylistMenuItem.setEnabled(false);
-            insertPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    insertPlaylistMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(insertPlaylistMenuItem);
-
-            jSeparator5.setForeground(new java.awt.Color(102, 102, 153));
-            actionsMenu.add(jSeparator5);
-
-            copyToDirMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-            copyToDirMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            copyToDirMenuItem.setMnemonic('C');
-            copyToDirMenuItem.setText("Copy Files to New Location");
-            copyToDirMenuItem.setEnabled(false);
-            copyToDirMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    copyToDirMenuItemActionPerformed(evt);
-                }
-            });
-            actionsMenu.add(copyToDirMenuItem);
-
-            mainMenuBar.add(actionsMenu);
-
-            sortMenu.setMnemonic('S');
-            sortMenu.setText("Sort");
-            sortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            randomizeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-            randomizeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            randomizeMenuItem.setMnemonic('R');
-            randomizeMenuItem.setText("Randomize List");
-            randomizeMenuItem.setEnabled(false);
-            randomizeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    randomizeMenuItemActionPerformed(evt);
-                }
-            });
-            sortMenu.add(randomizeMenuItem);
-
-            reverseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
-            reverseMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            reverseMenuItem.setMnemonic('e');
-            reverseMenuItem.setText("Reverse");
-            reverseMenuItem.setEnabled(false);
-            reverseMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    reverseMenuItemActionPerformed(evt);
-                }
-            });
-            sortMenu.add(reverseMenuItem);
-
-            filenameSortMenu.setMnemonic('F');
-            filenameSortMenu.setText("Sort By Filename");
-            filenameSortMenu.setEnabled(false);
-            filenameSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            ascendingFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            ascendingFilenameMenuItem.setMnemonic('A');
-            ascendingFilenameMenuItem.setText("Ascending");
-            ascendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    ascendingFilenameMenuItemActionPerformed(evt);
-                }
-            });
-            filenameSortMenu.add(ascendingFilenameMenuItem);
-
-            descendingFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            descendingFilenameMenuItem.setMnemonic('D');
-            descendingFilenameMenuItem.setText("Descending");
-            descendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    descendingFilenameMenuItemActionPerformed(evt);
-                }
-            });
-            filenameSortMenu.add(descendingFilenameMenuItem);
-
-            sortMenu.add(filenameSortMenu);
-
-            statusSortMenu.setMnemonic('S');
-            statusSortMenu.setText("Sort by Status");
-            statusSortMenu.setEnabled(false);
-            statusSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            ascendingStatusMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            ascendingStatusMenuItem.setMnemonic('A');
-            ascendingStatusMenuItem.setText("Ascending");
-            ascendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    ascendingStatusMenuItemActionPerformed(evt);
-                }
-            });
-            statusSortMenu.add(ascendingStatusMenuItem);
-
-            descendingStatusMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            descendingStatusMenuItem.setMnemonic('D');
-            descendingStatusMenuItem.setText("Descending");
-            descendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    descendingStatusMenuItemActionPerformed(evt);
-                }
-            });
-            statusSortMenu.add(descendingStatusMenuItem);
-
-            sortMenu.add(statusSortMenu);
-
-            pathSortMenu.setMnemonic('P');
-            pathSortMenu.setText("Sort By Path");
-            pathSortMenu.setEnabled(false);
-            pathSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            ascendingPathMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            ascendingPathMenuItem.setMnemonic('A');
-            ascendingPathMenuItem.setText("Ascending");
-            ascendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    ascendingPathMenuItemActionPerformed(evt);
-                }
-            });
-            pathSortMenu.add(ascendingPathMenuItem);
-
-            descendingPathMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            descendingPathMenuItem.setMnemonic('D');
-            descendingPathMenuItem.setText("Descending");
-            descendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    descendingPathMenuItemActionPerformed(evt);
-                }
-            });
-            pathSortMenu.add(descendingPathMenuItem);
-
-            sortMenu.add(pathSortMenu);
-
-            mainMenuBar.add(sortMenu);
-
-            helpMenu.setMnemonic('H');
-            helpMenu.setText("Help");
-            helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-
-            aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-            aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            aboutMenuItem.setMnemonic('A');
-            aboutMenuItem.setText("About");
-            aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    aboutMenuItemActionPerformed(evt);
-                }
-            });
-            helpMenu.add(aboutMenuItem);
-
-            helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
-            helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-            helpMenuItem.setMnemonic('e');
-            helpMenuItem.setText("Help");
-            helpMenuItem.setEnabled(false);
-            helpMenu.add(helpMenuItem);
-
-            mainMenuBar.add(helpMenu);
-
-            setJMenuBar(mainMenuBar);
-
-            pack();
-        }// </editor-fold>//GEN-END:initComponents
+            }
+        };
+
+        playlistDirectoryTree.addMouseListener(ml);
+        playlistPanel = new javax.swing.JPanel();
+        playlistButtonPanel = new javax.swing.JPanel();
+        locateButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        playlistTablePanel = new javax.swing.JPanel();
+        playlistScrollPanel = playlistScrollPanel = new javax.swing.JScrollPane(playlistTable);
+        playlistTable = new javax.swing.JTable();
+        mainMenuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        loadMenuItem = new javax.swing.JMenuItem();
+        closeMenuItem = new javax.swing.JMenuItem();
+        saveMenuItem = new javax.swing.JMenuItem();
+        saveAsMenuItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
+        recentMenu = new javax.swing.JMenu();
+        clearHistoryMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        appOptionsMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        exit = new javax.swing.JMenuItem();
+        actionsMenu = new javax.swing.JMenu();
+        appendFileMenuItem = new javax.swing.JMenuItem();
+        insertFileMenuItem = new javax.swing.JMenuItem();
+        editFilenameMenuItem = new javax.swing.JMenuItem();
+        findClosestMatchesMenuItem = new javax.swing.JMenuItem();
+        playFileMenuItem = new javax.swing.JMenuItem();
+        removeMenuItem = new javax.swing.JMenuItem();
+        removeMissingMenuItem = new javax.swing.JMenuItem();
+        removeDuplicatesMenuItem = new javax.swing.JMenuItem();
+        replaceFileMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JSeparator();
+        appendPlaylistMenuItem = new javax.swing.JMenuItem();
+        insertPlaylistMenuItem = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JSeparator();
+        copyToDirMenuItem = new javax.swing.JMenuItem();
+        sortMenu = new javax.swing.JMenu();
+        randomizeMenuItem = new javax.swing.JMenuItem();
+        reverseMenuItem = new javax.swing.JMenuItem();
+        filenameSortMenu = new javax.swing.JMenu();
+        ascendingFilenameMenuItem = new javax.swing.JMenuItem();
+        descendingFilenameMenuItem = new javax.swing.JMenuItem();
+        statusSortMenu = new javax.swing.JMenu();
+        ascendingStatusMenuItem = new javax.swing.JMenuItem();
+        descendingStatusMenuItem = new javax.swing.JMenuItem();
+        pathSortMenu = new javax.swing.JMenu();
+        ascendingPathMenuItem = new javax.swing.JMenuItem();
+        descendingPathMenuItem = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
+        helpMenuItem = new javax.swing.JMenuItem();
+
+        deleteRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        deleteRCMenuItem.setText("Delete");
+        deleteRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(deleteRCMenuItem);
+
+        editFileNameRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        editFileNameRCMenuItem.setText("Edit Filename");
+        editFileNameRCMenuItem.setEnabled(false);
+        editFileNameRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editFileNameRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(editFileNameRCMenuItem);
+
+        locateRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        locateRCMenuItem.setText("Locate File");
+        locateRCMenuItem.setEnabled(false);
+        locateRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                locateRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(locateRCMenuItem);
+
+        closestMatchesRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        closestMatchesRCMenuItem.setText("Find Closest Matches");
+        closestMatchesRCMenuItem.setEnabled(false);
+        closestMatchesRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closestMatchesRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(closestMatchesRCMenuItem);
+
+        replaceFileRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        replaceFileRCMenuItem.setText("Replace Selected Entry");
+        replaceFileRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                replaceFileRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(replaceFileRCMenuItem);
+
+        openRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        openRCMenuItem.setText("Open");
+        openRCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openRCMenuItemActionPerformed(evt);
+            }
+        });
+        entryRightClickMenu.add(openRCMenuItem);
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("listFix( ) - v1.5.2");
+        setName("mainFrame"); // NOI18N
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                exitForm(evt);
+            }
+        });
+
+        buttonPanel.setAlignmentX(0.0F);
+        buttonPanel.setAlignmentY(0.0F);
+        buttonPanel.setFont(buttonPanel.getFont());
+        buttonPanel.setMaximumSize(null);
+        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 2, 2));
+
+        openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
+        openIconButton.setToolTipText("Open Playlist");
+        openIconButton.setBorder(null);
+        openIconButton.setFocusable(false);
+        openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        openIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        openIconButton.setMinimumSize(null);
+        openIconButton.setPreferredSize(null);
+        openIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openIconButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(openIconButton);
+
+        closeIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.gif"))); // NOI18N
+        closeIconButton.setToolTipText("Close Playlist");
+        closeIconButton.setBorder(null);
+        closeIconButton.setFocusable(false);
+        closeIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        closeIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        closeIconButton.setMinimumSize(null);
+        closeIconButton.setPreferredSize(null);
+        closeIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeIconButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(closeIconButton);
+
+        saveIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
+        saveIconButton.setToolTipText("Save");
+        saveIconButton.setBorder(null);
+        saveIconButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_off.gif"))); // NOI18N
+        saveIconButton.setFocusable(false);
+        saveIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        saveIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        saveIconButton.setMinimumSize(null);
+        saveIconButton.setPreferredSize(null);
+        saveIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(saveIconButton);
+
+        upIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow-up.gif"))); // NOI18N
+        upIconButton.setToolTipText("Move Up");
+        upIconButton.setBorder(null);
+        upIconButton.setFocusable(false);
+        upIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        upIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        upIconButton.setMinimumSize(null);
+        upIconButton.setPreferredSize(null);
+        upIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                upIconButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(upIconButton);
+
+        downIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow_down.gif"))); // NOI18N
+        downIconButton.setToolTipText("Move Down");
+        downIconButton.setBorder(null);
+        downIconButton.setFocusable(false);
+        downIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        downIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        downIconButton.setMinimumSize(null);
+        downIconButton.setPreferredSize(null);
+        downIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downIconButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(downIconButton);
+
+        deleteIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete.gif"))); // NOI18N
+        deleteIconButton.setToolTipText("Remove Selected Entry");
+        deleteIconButton.setBorder(null);
+        deleteIconButton.setFocusable(false);
+        deleteIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        deleteIconButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        deleteIconButton.setMinimumSize(null);
+        deleteIconButton.setPreferredSize(null);
+        deleteIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteIconButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(deleteIconButton);
+
+        openPlaylistButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
+        openPlaylistButton.setToolTipText("Play this list (available when list is in a saved state)");
+        openPlaylistButton.setBorder(null);
+        openPlaylistButton.setFocusable(false);
+        openPlaylistButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        openPlaylistButton.setMaximumSize(new java.awt.Dimension(50, 50));
+        openPlaylistButton.setMinimumSize(null);
+        openPlaylistButton.setPreferredSize(null);
+        openPlaylistButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openPlaylistButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(openPlaylistButton);
+
+        getContentPane().add(buttonPanel, java.awt.BorderLayout.NORTH);
+
+        statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        statusPanel.setLayout(new java.awt.BorderLayout());
+
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
+        statusLabel.setForeground(new java.awt.Color(153, 153, 153));
+        statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
+        statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
+
+        getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
+
+        splitPane.setDividerSize(7);
+        splitPane.setMaximumSize(null);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
+
+        leftSplitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        leftSplitPane.setDividerLocation(280);
+        leftSplitPane.setDividerSize(7);
+        leftSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        leftSplitPane.setMaximumSize(null);
+        leftSplitPane.setOneTouchExpandable(true);
+
+        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9)));
+        mediaLibraryPanel.setAlignmentX(0.0F);
+        mediaLibraryPanel.setAlignmentY(0.0F);
+        mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
+
+        mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
+
+        addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        addMediaDirButton.setText("Add");
+        addMediaDirButton.setFocusable(false);
+        addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
+        addMediaDirButton.setPreferredSize(null);
+        addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addMediaDirButtonActionPerformed(evt);
+            }
+        });
+        mediaLibraryButtonPanel.add(addMediaDirButton);
+
+        removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        removeMediaDirButton.setText("Remove");
+        removeMediaDirButton.setFocusable(false);
+        removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
+        removeMediaDirButton.setPreferredSize(null);
+        removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeMediaDirButtonActionPerformed(evt);
+            }
+        });
+        mediaLibraryButtonPanel.add(removeMediaDirButton);
+
+        refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        refreshMediaDirsButton.setText("Refresh");
+        refreshMediaDirsButton.setFocusable(false);
+        refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
+        refreshMediaDirsButton.setPreferredSize(null);
+        refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshMediaDirsButtonActionPerformed(evt);
+            }
+        });
+        mediaLibraryButtonPanel.add(refreshMediaDirsButton);
+
+        mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
+
+        mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
+        mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        mediaLibraryList.setPreferredSize(null);
+        mediaLibraryScrollPane.setViewportView(mediaLibraryList);
+
+        mediaLibraryPanel.add(mediaLibraryScrollPane, java.awt.BorderLayout.CENTER);
+
+        leftSplitPane.setBottomComponent(mediaLibraryPanel);
+
+        playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9)));
+        playlistDirectoryPanel.setAlignmentX(0.0F);
+        playlistDirectoryPanel.setAlignmentY(0.0F);
+        playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
+
+        treeScrollPane.setViewportView(playlistDirectoryTree);
+
+        playlistDirectoryPanel.add(treeScrollPane, java.awt.BorderLayout.CENTER);
+
+        leftSplitPane.setTopComponent(playlistDirectoryPanel);
+
+        splitPane.setLeftComponent(leftSplitPane);
+
+        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
+        playlistPanel.setLayout(new java.awt.BorderLayout());
+
+        locateButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        locateButton.setText("Locate Files");
+        locateButton.setFocusable(false);
+        locateButton.setMinimumSize(new java.awt.Dimension(93, 25));
+        locateButton.setPreferredSize(null);
+        locateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                locateButtonActionPerformed(evt);
+            }
+        });
+        playlistButtonPanel.add(locateButton);
+
+        saveButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        saveButton.setText("Save Repaired List");
+        saveButton.setFocusable(false);
+        saveButton.setMinimumSize(new java.awt.Dimension(127, 25));
+        saveButton.setPreferredSize(null);
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        playlistButtonPanel.add(saveButton);
+
+        playlistPanel.add(playlistButtonPanel, java.awt.BorderLayout.SOUTH);
+
+        playlistTablePanel.setBackground(java.awt.Color.white);
+        playlistTablePanel.setLayout(new java.awt.BorderLayout());
+
+        playlistScrollPanel.setBackground(new java.awt.Color(255, 255, 255));
+        playlistScrollPanel.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        playlistScrollPanel.setOpaque(false);
+        playlistScrollPanel.setPreferredSize(new java.awt.Dimension(600, 400));
+
+        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
+        playlistTable.setModel(new CustomTableModel());
+        playlistTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
+        playlistTable.setGridColor(new java.awt.Color(153, 153, 153));
+        playlistTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
+        playlistTable.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        playlistTable.setMinimumSize(new java.awt.Dimension(5, 5));
+        playlistTable.setPreferredSize(null);
+        playlistTable.setRowHeight(20);
+        playlistTable.setFillsViewportHeight(true);
+        playlistTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                playlistTableMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                playlistTableMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                playlistTableMouseReleased(evt);
+            }
+        });
+        playlistTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                playlistTableMouseDragged(evt);
+            }
+        });
+        playlistScrollPanel.setViewportView(playlistTable);
+
+        playlistTablePanel.add(playlistScrollPanel, java.awt.BorderLayout.CENTER);
+
+        playlistPanel.add(playlistTablePanel, java.awt.BorderLayout.CENTER);
+
+        splitPane.setRightComponent(playlistPanel);
+
+        getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
+
+        mainMenuBar.setBorder(null);
+
+        fileMenu.setMnemonic('F');
+        fileMenu.setText("File");
+        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        loadMenuItem.setMnemonic('L');
+        loadMenuItem.setText("Open Playlist");
+        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openIconButtonActionPerformed(evt);
+            }
+        });
+        fileMenu.add(loadMenuItem);
+
+        closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        closeMenuItem.setMnemonic('C');
+        closeMenuItem.setText("Close Playlist");
+        closeMenuItem.setEnabled(false);
+        closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(closeMenuItem);
+
+        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        saveMenuItem.setMnemonic('S');
+        saveMenuItem.setText("Save");
+        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveMenuItem);
+
+        saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        saveAsMenuItem.setMnemonic('V');
+        saveAsMenuItem.setText("Save As");
+        saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAsMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveAsMenuItem);
+
+        jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
+        fileMenu.add(jSeparator3);
+
+        recentMenu.setText("Recent Playlists");
+        recentMenu.setToolTipText("Recently Opened Playlists");
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        fileMenu.add(recentMenu);
+
+        clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        clearHistoryMenuItem.setMnemonic('H');
+        clearHistoryMenuItem.setText("Clear Playlist History");
+        clearHistoryMenuItem.setToolTipText("");
+        clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearHistoryMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(clearHistoryMenuItem);
+
+        jSeparator1.setForeground(new java.awt.Color(102, 102, 153));
+        fileMenu.add(jSeparator1);
+
+        appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
+        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        appOptionsMenuItem.setMnemonic('H');
+        appOptionsMenuItem.setText("Options...");
+        appOptionsMenuItem.setToolTipText("");
+        appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                appOptionsMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(appOptionsMenuItem);
+
+        jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
+        fileMenu.add(jSeparator2);
+
+        exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        exit.setFont(new java.awt.Font("Verdana", 0, 9));
+        exit.setMnemonic('x');
+        exit.setText("Exit");
+        exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exit);
+
+        mainMenuBar.add(fileMenu);
+
+        actionsMenu.setMnemonic('A');
+        actionsMenu.setText("Actions");
+        actionsMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        appendFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
+        appendFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        appendFileMenuItem.setMnemonic('A');
+        appendFileMenuItem.setText("Append File");
+        appendFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                appendFileMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(appendFileMenuItem);
+
+        insertFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
+        insertFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        insertFileMenuItem.setMnemonic('I');
+        insertFileMenuItem.setText("Insert File Below Selected Row");
+        insertFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insertFileMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(insertFileMenuItem);
+
+        editFilenameMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_MASK));
+        editFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        editFilenameMenuItem.setMnemonic('E');
+        editFilenameMenuItem.setText("Edit Filename");
+        editFilenameMenuItem.setEnabled(false);
+        editFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editFilenameMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(editFilenameMenuItem);
+
+        findClosestMatchesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
+        findClosestMatchesMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        findClosestMatchesMenuItem.setMnemonic('C');
+        findClosestMatchesMenuItem.setText("Find Closest Matches");
+        findClosestMatchesMenuItem.setEnabled(false);
+        findClosestMatchesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findClosestMatchesMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(findClosestMatchesMenuItem);
+
+        playFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        playFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        playFileMenuItem.setText("Play Selected Entry");
+        playFileMenuItem.setEnabled(false);
+        playFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playFileMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(playFileMenuItem);
+
+        removeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
+        removeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        removeMenuItem.setText("Remove");
+        removeMenuItem.setEnabled(false);
+        removeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(removeMenuItem);
+
+        removeMissingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.ALT_MASK));
+        removeMissingMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        removeMissingMenuItem.setMnemonic('R');
+        removeMissingMenuItem.setText("Remove Missing Entries");
+        removeMissingMenuItem.setEnabled(false);
+        removeMissingMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeMissingMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(removeMissingMenuItem);
+
+        removeDuplicatesMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        removeDuplicatesMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        removeDuplicatesMenuItem.setMnemonic('m');
+        removeDuplicatesMenuItem.setText("Remove Duplicates");
+        removeDuplicatesMenuItem.setEnabled(false);
+        removeDuplicatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeDuplicatesMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(removeDuplicatesMenuItem);
+
+        replaceFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
+        replaceFileMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        replaceFileMenuItem.setMnemonic('I');
+        replaceFileMenuItem.setText("Replace Selected Entry");
+        replaceFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                replaceFileMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(replaceFileMenuItem);
+
+        jSeparator4.setForeground(new java.awt.Color(102, 102, 153));
+        actionsMenu.add(jSeparator4);
+
+        appendPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        appendPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        appendPlaylistMenuItem.setMnemonic('p');
+        appendPlaylistMenuItem.setText("Append Playlist");
+        appendPlaylistMenuItem.setEnabled(false);
+        appendPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                appendPlaylistMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(appendPlaylistMenuItem);
+
+        insertPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        insertPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        insertPlaylistMenuItem.setMnemonic('n');
+        insertPlaylistMenuItem.setText("Insert Playlist Below Selected Row");
+        insertPlaylistMenuItem.setEnabled(false);
+        insertPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insertPlaylistMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(insertPlaylistMenuItem);
+
+        jSeparator5.setForeground(new java.awt.Color(102, 102, 153));
+        actionsMenu.add(jSeparator5);
+
+        copyToDirMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        copyToDirMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        copyToDirMenuItem.setMnemonic('C');
+        copyToDirMenuItem.setText("Copy Files to New Location");
+        copyToDirMenuItem.setEnabled(false);
+        copyToDirMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyToDirMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(copyToDirMenuItem);
+
+        mainMenuBar.add(actionsMenu);
+
+        sortMenu.setMnemonic('S');
+        sortMenu.setText("Sort");
+        sortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        randomizeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        randomizeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        randomizeMenuItem.setMnemonic('R');
+        randomizeMenuItem.setText("Randomize List");
+        randomizeMenuItem.setEnabled(false);
+        randomizeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                randomizeMenuItemActionPerformed(evt);
+            }
+        });
+        sortMenu.add(randomizeMenuItem);
+
+        reverseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        reverseMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        reverseMenuItem.setMnemonic('e');
+        reverseMenuItem.setText("Reverse");
+        reverseMenuItem.setEnabled(false);
+        reverseMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reverseMenuItemActionPerformed(evt);
+            }
+        });
+        sortMenu.add(reverseMenuItem);
+
+        filenameSortMenu.setMnemonic('F');
+        filenameSortMenu.setText("Sort By Filename");
+        filenameSortMenu.setEnabled(false);
+        filenameSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        ascendingFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        ascendingFilenameMenuItem.setMnemonic('A');
+        ascendingFilenameMenuItem.setText("Ascending");
+        ascendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ascendingFilenameMenuItemActionPerformed(evt);
+            }
+        });
+        filenameSortMenu.add(ascendingFilenameMenuItem);
+
+        descendingFilenameMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        descendingFilenameMenuItem.setMnemonic('D');
+        descendingFilenameMenuItem.setText("Descending");
+        descendingFilenameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                descendingFilenameMenuItemActionPerformed(evt);
+            }
+        });
+        filenameSortMenu.add(descendingFilenameMenuItem);
+
+        sortMenu.add(filenameSortMenu);
+
+        statusSortMenu.setMnemonic('S');
+        statusSortMenu.setText("Sort by Status");
+        statusSortMenu.setEnabled(false);
+        statusSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        ascendingStatusMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        ascendingStatusMenuItem.setMnemonic('A');
+        ascendingStatusMenuItem.setText("Ascending");
+        ascendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ascendingStatusMenuItemActionPerformed(evt);
+            }
+        });
+        statusSortMenu.add(ascendingStatusMenuItem);
+
+        descendingStatusMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        descendingStatusMenuItem.setMnemonic('D');
+        descendingStatusMenuItem.setText("Descending");
+        descendingStatusMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                descendingStatusMenuItemActionPerformed(evt);
+            }
+        });
+        statusSortMenu.add(descendingStatusMenuItem);
+
+        sortMenu.add(statusSortMenu);
+
+        pathSortMenu.setMnemonic('P');
+        pathSortMenu.setText("Sort By Path");
+        pathSortMenu.setEnabled(false);
+        pathSortMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        ascendingPathMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        ascendingPathMenuItem.setMnemonic('A');
+        ascendingPathMenuItem.setText("Ascending");
+        ascendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ascendingPathMenuItemActionPerformed(evt);
+            }
+        });
+        pathSortMenu.add(ascendingPathMenuItem);
+
+        descendingPathMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        descendingPathMenuItem.setMnemonic('D');
+        descendingPathMenuItem.setText("Descending");
+        descendingPathMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                descendingPathMenuItemActionPerformed(evt);
+            }
+        });
+        pathSortMenu.add(descendingPathMenuItem);
+
+        sortMenu.add(pathSortMenu);
+
+        mainMenuBar.add(sortMenu);
+
+        helpMenu.setMnemonic('H');
+        helpMenu.setText("Help");
+        helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        aboutMenuItem.setMnemonic('A');
+        aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(aboutMenuItem);
+
+        helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
+        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        helpMenuItem.setMnemonic('e');
+        helpMenuItem.setText("Help");
+        helpMenuItem.setEnabled(false);
+        helpMenu.add(helpMenuItem);
+
+        mainMenuBar.add(helpMenu);
+
+        setJMenuBar(mainMenuBar);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void myDoubleClick(int selRow, TreePath selPath)
 	{
@@ -1660,6 +1661,7 @@ public class GUIScreen extends JFrame
 			guiDriver.switchMediaLibraryToUNCPaths();
 			mediaLibraryList.setListData(guiDriver.getMediaDirs());
 		}
+		playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
         updateRecentMenu();
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
 }//GEN-LAST:event_appOptionsMenuItemActionPerformed

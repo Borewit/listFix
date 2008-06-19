@@ -43,4 +43,10 @@ public class M3UFilter extends javax.swing.filechooser.FileFilter
 	{
 		return "Playlist Files (*.m3u, *.m3u8)";
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Playlist Files (*.m3u, *.m3u8)";
+	}
 }

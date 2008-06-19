@@ -47,67 +47,73 @@ public class FileWriter
 
     public String getRelativePath(File file, File relativeTo)
     {
-        StringTokenizer fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
-        StringTokenizer relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), fs);
-        Vector<String> fileTokens = new Vector<String>();
-        Vector<String> relativeToTokens = new Vector<String>();
-        while (fileTizer.hasMoreTokens())
-        {
-            fileTokens.add(fileTizer.nextToken());
-        }
-        while (relativeToTizer.hasMoreTokens())
-        {
-            relativeToTokens.add(relativeToTizer.nextToken());
-        }
-
-        // throw away last token from each, don't need the file names for path calculation.
-        String fileName = "";
-		if (file.isFile())
+		try
 		{
-			fileName = fileTokens.remove(fileTokens.size() - 1);
-		}
-		if (relativeTo.isFile())
-		{
-			relativeToTokens.removeElementAt(relativeToTokens.size() - 1);
-		}
-
-        int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
-        boolean tokenMatch = false;
-        for (int i = 0; i < maxSize; i++)
-        {
-            if (fileTokens.get(i).equals(relativeToTokens.get(i)))
-            {
-                tokenMatch = true;
-                fileTokens.remove(i);
-                relativeToTokens.remove(i);
-                i--;
-                maxSize--;
-            }
-            else if (tokenMatch == false)
-            {
-                // files can not be made relative to one another.
-                return file.getAbsolutePath();
-            }
-			else
+			StringTokenizer fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
+			StringTokenizer relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), fs);
+			Vector<String> fileTokens = new Vector<String>();
+			Vector<String> relativeToTokens = new Vector<String>();
+			while (fileTizer.hasMoreTokens())
 			{
-				break;				
+				fileTokens.add(fileTizer.nextToken());
 			}
-        }
+			while (relativeToTizer.hasMoreTokens())
+			{
+				relativeToTokens.add(relativeToTizer.nextToken());
+			}
 
-        StringBuffer resultBuffer = new StringBuffer();
-        for (int i = 0; i < relativeToTokens.size(); i++)
-        {
-            resultBuffer.append("..").append(fs);
-        }
+			// throw away last token from each, don't need the file names for path calculation.
+			String fileName = "";
+			if (file.isFile())
+			{
+				fileName = fileTokens.remove(fileTokens.size() - 1);
+			}
+			
+			// relativeTo is the M3U we'll be writing to, we need to remove the last token regardless...
+			relativeToTokens.removeElementAt(relativeToTokens.size() - 1);			
 
-        for (int i = 0; i < fileTokens.size(); i++)
-        {
-            resultBuffer.append(fileTokens.get(i)).append(fs);
-        }
+			int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
+			boolean tokenMatch = false;
+			for (int i = 0; i < maxSize; i++)
+			{
+				if (fileTokens.get(i).equals(relativeToTokens.get(i)))
+				{
+					tokenMatch = true;
+					fileTokens.remove(i);
+					relativeToTokens.remove(i);
+					i--;
+					maxSize--;
+				}
+				else if (tokenMatch == false)
+				{
+					// files can not be made relative to one another.
+					return file.getAbsolutePath();
+				}
+				else
+				{
+					break;
+				}
+			}
 
-        resultBuffer.append(fileName);
+			StringBuffer resultBuffer = new StringBuffer();
+			for (int i = 0; i < relativeToTokens.size(); i++)
+			{
+				resultBuffer.append("..").append(fs);
+			}
 
-        return resultBuffer.toString();
+			for (int i = 0; i < fileTokens.size(); i++)
+			{
+				resultBuffer.append(fileTokens.get(i)).append(fs);
+			}
+
+			resultBuffer.append(fileName);
+
+			return resultBuffer.toString();
+		}
+		catch (Exception e)
+		{
+			return file.getAbsolutePath();
+		}
     }
 
     public void writeDefaultIniFilesIfNeeded()
@@ -129,6 +135,7 @@ public class FileWriter
 				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=" + Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup()) + br);
 				buffer.append("LOOK_AND_FEEL=" + options.getLookAndFeel() + br);
 				buffer.append("ALWAYS_USE_UNC_PATHS=" + Boolean.toString(options.getAlwaysUseUNCPaths()) + br);
+				buffer.append("PLAYLISTS_DIRECTORY=" + options.getPlaylistsDirectory() + br);
                 buffer.append("[Media Library Directories]" + br);
                 buffer.append("[Media Library Files]" + br);
                 output.write(buffer.toString().getBytes());
@@ -169,7 +176,7 @@ public class FileWriter
 		for (int i = 0; i < entries.size(); i++)
 		{
 			tempEntry = entries.elementAt(i);
-			if (tempEntry.isRelative())
+			if (tempEntry.isRelative() && tempEntry.getAbsoluteFile() != null)
 			{
 				tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getExtInf());
 				buffer.append(tempEntry.toM3UString() + br);

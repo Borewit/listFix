@@ -30,56 +30,60 @@ public class FileTreeNodeGenerator
 	/** Add nodes from under "dir" into curTop. Highly recursive. */
 	public static DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir)
 	{
-		String curPath = dir.getPath();
-		TreeNodeFile file = new TreeNodeFile(curPath);
-		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(file);
-		curDir.setUserObject(file);
-		if (curTop != null)
-		{   
-			curTop.add(curDir);
-		}
-		Vector ol = new Vector();
-		String[] tmp = dir.list();
-		if (tmp != null)
+		if (dir.exists())
 		{
-			for (int i = 0; i < tmp.length; i++)
+			String curPath = dir.getPath();
+			TreeNodeFile file = new TreeNodeFile(curPath);
+			DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(file);
+			curDir.setUserObject(file);
+			if (curTop != null)
 			{
-				ol.addElement(tmp[i]);
+				curTop.add(curDir);
 			}
-			Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
-			File f;
-			Vector files = new Vector();
-			// Make two passes, one for Dirs and one for Files. This is #1.
-			for (int i = 0; i < ol.size(); i++)
+			Vector ol = new Vector();
+			String[] tmp = dir.list();
+			if (tmp != null)
 			{
-				String thisObject = (String)ol.elementAt(i);
-				String newPath;
-				if (curPath.equals("."))
+				for (int i = 0; i < tmp.length; i++)
 				{
-					newPath = thisObject;
+					ol.addElement(tmp[i]);
 				}
-				else
+				Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
+				File f;
+				Vector files = new Vector();
+				// Make two passes, one for Dirs and one for Files. This is #1.
+				for (int i = 0; i < ol.size(); i++)
 				{
-					newPath = curPath + File.separator + thisObject;
-				}
-				if ((f = new File(newPath)).isDirectory())
-				{
-					addNodes(curDir, f);
-				}
-				else
-				{
-					if (thisObject.toLowerCase().indexOf(".m3u") >= 0)
+					String thisObject = (String)ol.elementAt(i);
+					String newPath;
+					if (curPath.equals("."))
 					{
-						files.addElement(curPath + File.separator + thisObject);
+						newPath = thisObject;
+					}
+					else
+					{
+						newPath = curPath + File.separator + thisObject;
+					}
+					if ((f = new File(newPath)).isDirectory())
+					{
+						addNodes(curDir, f);
+					}
+					else
+					{
+						if (thisObject.toLowerCase().indexOf(".m3u") >= 0)
+						{
+							files.addElement(curPath + File.separator + thisObject);
+						}
 					}
 				}
+				// Pass two: for files.
+				for (int fnum = 0; fnum < files.size(); fnum++)
+				{
+					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile((String)files.elementAt(fnum))));
+				}
+				return curDir;
 			}
-			// Pass two: for files.
-			for (int fnum = 0; fnum < files.size(); fnum++)
-			{
-				curDir.add(new DefaultMutableTreeNode(new TreeNodeFile((String)files.elementAt(fnum))));
-			}
-			return curDir;
+			return null;
 		}
 		return null;
 	}

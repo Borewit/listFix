@@ -180,7 +180,7 @@ public class M3UFileReader
         }
         else if (fs.equalsIgnoreCase("/")) //OS Specific Hack
         {
-            if (!L2.startsWith("\\\\"))
+            if (!L2.startsWith("\\\\") && !L2.startsWith("."))
             {
                 path.append("/");
             }

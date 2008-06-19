@@ -71,6 +71,7 @@ public class WriteIniFileTask extends listfix.controller.Task
 					+ Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
 				buffer.append("LOOK_AND_FEEL=" + options.getLookAndFeel()).append(br);
 				buffer.append("ALWAYS_USE_UNC_PATHS=" + options.getAlwaysUseUNCPaths()).append(br);
+				buffer.append("PLAYLISTS_DIRECTORY=" + options.getPlaylistsDirectory()).append(br);
             }
             if (mediaLibraryDirList != null)
             {

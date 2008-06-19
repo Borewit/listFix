@@ -94,9 +94,12 @@ public class IniFileReader
         line = B1.readLine();
         while ( ( line != null) && ( !line.startsWith("[") ) )
         {
-            tempVector.addElement(line);
+			if (new File(line).exists())
+			{
+				tempVector.addElement(line);
+			}
             line = B1.readLine();
-        }        
+        }
         mediaDirs = new String[tempVector.size()];
         tempVector.copyInto(mediaDirs);
         tempVector.clear();
@@ -138,6 +141,10 @@ public class IniFileReader
                     {
                         options.setAlwaysUseUNCPaths((new Boolean(optionValue)).booleanValue());
                     }
+					else if (optionEnum.equals(AppOptionsEnum.PLAYLISTS_DIRECTORY))
+					{
+						options.setPlaylistsDirectory(optionValue);
+					}
                 }
                 line = B1.readLine();
             }        
