@@ -20,7 +20,7 @@
 
 package listfix.model;
 
-public class CustomTableModel extends javax.swing.table.AbstractTableModel
+public class PlaylistTableModel extends javax.swing.table.AbstractTableModel
 {
 	private static final long serialVersionUID = 120759877405624279L;
 	private final String[] columnNames = {"File Name", "Status", "Location"};
@@ -30,12 +30,12 @@ public class CustomTableModel extends javax.swing.table.AbstractTableModel
         java.lang.String.class, java.lang.String.class, java.lang.String.class
     };
 
-    public CustomTableModel(Object[][] input)
+    public PlaylistTableModel(Object[][] input)
     {
         data = input;
     }
 
-    public CustomTableModel()
+    public PlaylistTableModel()
     {
         Object[][] result = new Object[0][3];
         data = result;

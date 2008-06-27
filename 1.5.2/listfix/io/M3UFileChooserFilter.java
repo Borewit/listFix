@@ -17,19 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
+
 package listfix.io;
 
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     M3UFilter.java
+= File:     M3UFileChooserFilter.java
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           M3U files or directories.
 ============================================================================
  */
-public class M3UFilter extends javax.swing.filechooser.FileFilter
+
+public class M3UFileChooserFilter extends javax.swing.filechooser.FileFilter
 {
-	public M3UFilter()
+	public M3UFileChooserFilter()
 	{
 
 	}

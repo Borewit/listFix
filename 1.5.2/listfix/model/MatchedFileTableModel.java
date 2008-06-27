@@ -24,7 +24,7 @@ import java.util.Vector;
 public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 {
 	private static final long serialVersionUID = -1888652455638101278L;
-	private final String[] columnNames = {"File Name", "# of keyword matches"};
+	private final String[] columnNames = {"File Name", "Score"};
 	private Object[][] data;
 	private final boolean[] canEdit = new boolean[]{false, false};
 	private final Class<?>[] types = new Class<?>[]{
@@ -99,4 +99,28 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	{
 		return canEdit[columnIndex];
 	}
+	
+	public Object[] longestValues()
+    {
+        String[] result = new String[2];
+        if (data.length > 0)
+        {
+            for (int i = 0; i < data.length; i++)
+            {
+                for (int j = 0; j < data[i].length; j++)
+                {
+                    if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
+                    {
+                        result[j] = (String) data[i][j];
+                    }
+                }
+            }
+        }
+        else
+        {
+            result[0] = "";
+            result[1] = "";
+        }
+        return result;
+    }
 }

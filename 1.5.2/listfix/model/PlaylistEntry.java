@@ -20,7 +20,10 @@
 
 package listfix.model;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 import listfix.util.*;
@@ -198,7 +201,31 @@ public class PlaylistEntry implements Cloneable
         }
         try
         {
-            Runtime.getRuntime().exec(cmdLine);
+            Process proc = Runtime.getRuntime().exec(cmdLine);
+			System.out.println("command was: " + cmdLine);
+			synchronized(proc)
+			{
+				proc.wait(500);
+			}
+			InputStream stream = proc.getErrorStream();
+			BufferedReader streamTwo = new BufferedReader(new InputStreamReader(stream));
+			String line = null;
+			if (streamTwo.ready())
+			{
+				line = streamTwo.readLine();
+			}
+			while (line != null)
+			{
+				System.out.println(line);
+				if (streamTwo.ready())
+				{
+					line = streamTwo.readLine();
+				}
+				else
+				{
+					line = null;
+				}
+			}					
         }
         catch (Exception e)
         {

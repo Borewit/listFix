@@ -766,6 +766,7 @@
               <Image iconType="3" name="/images/open.gif"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Open Playlist"/>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -774,7 +775,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -793,6 +794,7 @@
               <Image iconType="3" name="/images/close.gif"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Close Playlist"/>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -801,7 +803,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -820,6 +822,7 @@
               <Image iconType="3" name="/images/save.gif"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Save"/>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -831,7 +834,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -850,6 +853,7 @@
               <Image iconType="3" name="/images/arrow-up.gif"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Move Up"/>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -858,7 +862,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -877,6 +881,7 @@
               <Image iconType="3" name="/images/arrow_down.gif"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Move Down"/>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -885,7 +890,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -904,6 +909,7 @@
               <Image iconType="3" name="/images/delete.gif"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Remove Selected Entry"/>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -912,7 +918,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -933,6 +939,7 @@
             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&quot;Play this list (available when list is in a saved state)&quot;" type="code"/>
             </Property>
+            <Property name="alignmentY" type="float" value="0.0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -941,7 +948,7 @@
               <Insets value="[0, 0, 0, 0]"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 50]"/>
+              <Dimension value="null"/>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
@@ -1185,7 +1192,7 @@
                     <Component class="javax.swing.JTree" name="playlistDirectoryTree">
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())))"/>
-                        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="MouseListener ml = new MouseAdapter() &#xa;{&#xa;&#x9;public void mousePressed(MouseEvent e) &#xa;&#x9;{&#xa;&#x9;&#x9;int selRow = playlistDirectoryTree.getRowForLocation(e.getX(), e.getY());&#xa;        TreePath selPath = playlistDirectoryTree.getPathForLocation(e.getX(), e.getY());&#xa;        if(selRow != -1) &#xa;&#x9;&#x9;{&#xa;            if(e.getClickCount() == 2) &#xa;&#x9;&#x9;&#x9;{&#xa;&#x9;&#x9;&#x9;&#x9;myDoubleClick(selRow, selPath);&#xa;            }&#xa;        }&#xa;    }&#xa;};&#xa; &#xa;playlistDirectoryTree.addMouseListener(ml);"/>
+                        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="MouseListener ml = new MouseAdapter() &#xa;{&#xa;&#x9;public void mousePressed(MouseEvent e) &#xa;&#x9;{&#xa;&#x9;&#x9;int selRow = playlistDirectoryTree.getRowForLocation(e.getX(), e.getY());&#xa;        TreePath selPath = playlistDirectoryTree.getPathForLocation(e.getX(), e.getY());&#xa;        if(selRow != -1) &#xa;&#x9;&#x9;{&#xa;            if(e.getClickCount() == 2) &#xa;&#x9;&#x9;&#x9;{&#xa;&#x9;&#x9;&#x9;&#x9;treeNodeDoubleClick(selRow, selPath);&#xa;            }&#xa;        }&#xa;    }&#xa;};&#xa; &#xa;playlistDirectoryTree.addMouseListener(ml);"/>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
                     </Component>
@@ -1302,7 +1309,7 @@
                           <Font name="Verdana" size="9" style="0"/>
                         </Property>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="new CustomTableModel()" type="code"/>
+                          <Connection code="new listfix.model.PlaylistTableModel()" type="code"/>
                         </Property>
                         <Property name="autoResizeMode" type="int" value="3"/>
                         <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">

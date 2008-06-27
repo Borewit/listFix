@@ -23,6 +23,8 @@ package listfix.model;
 import javax.swing.tree.*;
 import java.io.*;
 import java.util.*;
+import listfix.comparators.FileComparator;
+import listfix.io.M3UFileFilter;
 import listfix.io.TreeNodeFile;
 
 public class FileTreeNodeGenerator
@@ -36,50 +38,53 @@ public class FileTreeNodeGenerator
 			TreeNodeFile file = new TreeNodeFile(curPath);
 			DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(file);
 			curDir.setUserObject(file);
-			if (curTop != null)
+			
+			// if we're creating the root node here use a regular file to get the full path to show.
+			if (curTop == null)
 			{
-				curTop.add(curDir);
+				curDir.setUserObject(new File(curPath));
 			}
-			Vector ol = new Vector();
-			String[] tmp = dir.list();
-			if (tmp != null)
+			
+			Vector<File> ol = new Vector<File>();
+			File[] inodes = dir.listFiles(new M3UFileFilter());
+			
+			if (inodes != null && inodes.length > 0)
 			{
-				for (int i = 0; i < tmp.length; i++)
+				for (int i = 0; i < inodes.length; i++)
 				{
-					ol.addElement(tmp[i]);
+					ol.addElement(inodes[i]);
 				}
-				Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
+				Collections.sort(ol, new FileComparator());
 				File f;
-				Vector files = new Vector();
+				Vector<File> files = new Vector<File>();
 				// Make two passes, one for Dirs and one for Files. This is #1.
 				for (int i = 0; i < ol.size(); i++)
 				{
-					String thisObject = (String)ol.elementAt(i);
-					String newPath;
-					if (curPath.equals("."))
+					f = ol.elementAt(i);
+					if (f.isDirectory())
 					{
-						newPath = thisObject;
-					}
-					else
-					{
-						newPath = curPath + File.separator + thisObject;
-					}
-					if ((f = new File(newPath)).isDirectory())
-					{
-						addNodes(curDir, f);
-					}
-					else
-					{
-						if (thisObject.toLowerCase().indexOf(".m3u") >= 0)
+						File[] tmp = f.listFiles(new M3UFileFilter());
+						if (tmp != null && tmp.length > 0)
 						{
-							files.addElement(curPath + File.separator + thisObject);
+							addNodes(curDir, f);
 						}
+					}
+					else
+					{
+						files.addElement(f);
 					}
 				}
 				// Pass two: for files.
 				for (int fnum = 0; fnum < files.size(); fnum++)
 				{
-					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile((String)files.elementAt(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile(files.elementAt(fnum).getPath())));
+				}
+				if (curDir.children().hasMoreElements() || !((File)curDir.getUserObject()).isDirectory())
+				{
+					if (curTop != null)
+					{
+						curTop.add(curDir);
+					}
 				}
 				return curDir;
 			}

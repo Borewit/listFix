@@ -27,11 +27,13 @@ package listfix.view;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+
 import listfix.model.AppOptions;
 
 public class AppOptionsDialog extends javax.swing.JDialog 
@@ -293,7 +295,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         playlistDirectoryTextField.setAlignmentX(0.0F);
         playlistDirectoryTextField.setAlignmentY(0.0F);
         playlistDirectoryTextField.setMaximumSize(null);
-        playlistDirectoryTextField.setPreferredSize(new java.awt.Dimension(210, 20));
+        playlistDirectoryTextField.setPreferredSize(new java.awt.Dimension(200, 20));
         playlistDirectoryTextField.setRequestFocusEnabled(false);
         jPanel6.add(playlistDirectoryTextField);
 
