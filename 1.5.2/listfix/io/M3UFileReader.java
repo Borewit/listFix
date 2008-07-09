@@ -31,9 +31,12 @@ package listfix.io;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -52,15 +55,23 @@ public class M3UFileReader
 
     public M3UFileReader(File in) throws FileNotFoundException
     {
-        buffer = new BufferedReader(new FileReader(in));
-        fileLength = in.length();
+		try
+		{
+			buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in), "UTF8"));
+			fileLength = in.length();
+		}
+		catch (UnsupportedEncodingException ex)
+		{
+			buffer = new BufferedReader(new FileReader(in));
+			fileLength = in.length();
+		}
     }
 
     public Vector<PlaylistEntry> readM3U(Task input) throws IOException, UnsupportedPlaylistFormat
     {
         StringBuilder cache = new StringBuilder();
         String line1 = buffer.readLine(); // ignore line 1
-		if (!line1.startsWith("#EXTM3U"))
+		if (!line1.contains("#EXTM3U"))
 		{
 			throw new UnsupportedPlaylistFormat("Playlist is not in M3U format.");
 		}

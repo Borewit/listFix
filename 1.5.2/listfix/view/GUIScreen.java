@@ -1656,12 +1656,11 @@ public class GUIScreen extends JFrame
 }//GEN-LAST:event_replaceFileRCMenuItemActionPerformed
 
     private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appOptionsMenuItemActionPerformed
-        AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
+        String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
         AppOptions options = optDialog.showDialog();
         if (optDialog.getResultCode() == AppOptionsDialog.OK)
         {
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();
 			guiDriver.setAppOptions(options);
             (new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
 			guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
