@@ -17,88 +17,110 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
-
 package listfix.model;
 
 import java.util.Vector;
 
-public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel 
-{    
-        private final String [] columnNames = { "File Name", "# of keyword matches" };
-        private Object[][] data;
-        private final boolean[] canEdit = new boolean [] { false, false };
-        private final Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
-            };
+public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
+{
+	private static final long serialVersionUID = -1888652455638101278L;
+	private final String[] columnNames = {"File Name", "Score"};
+	private Object[][] data;
+	private final boolean[] canEdit = new boolean[]{false, false};
+	private final Class<?>[] types = new Class<?>[]{
+		java.lang.String.class, java.lang.String.class
+	};
 
-        public MatchedFileTableModel(Object[][] input)
+	public MatchedFileTableModel(Object[][] input)
+	{
+		data = input;
+	}
+
+	public MatchedFileTableModel(Vector<MatchedPlaylistEntry> input)
+	{
+		int n = input.size();
+		String[][] tempData = new String[n][2];
+		for (int i = 0; i < n; i++)
+		{
+			tempData[i][0] = input.elementAt(i).getPlaylistFile().getFileName();
+			tempData[i][1] = input.elementAt(i).getCount() + "";
+		}
+		data = tempData;
+	}
+
+	public MatchedFileTableModel()
+	{
+		Object[][] result = new Object[50][2];
+		for (int i = 1; i < 50; i++)
+		{
+			for (int j = 1; j < 3; j++)
+			{
+				result[i][j] = null;
+			}
+		}
+		data = result;
+	}
+
+	public void updateData(Object[][] input)
+	{
+		data = input;
+		this.fireTableDataChanged();
+	}
+
+	public int getColumnCount()
+	{
+		return columnNames.length;
+	}
+
+	public int getRowCount()
+	{
+		return data.length;
+	}
+
+	@Override
+	public String getColumnName(int col)
+	{
+		return columnNames[col];
+	}
+
+	public java.lang.Object getValueAt(int row, int col)
+	{
+		return data[row][col];
+	}
+
+	@Override
+	public Class<?> getColumnClass(int c)
+	{
+		return types[c];
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex)
+	{
+		return canEdit[columnIndex];
+	}
+	
+	public Object[] longestValues()
+    {
+        String[] result = new String[2];
+        if (data.length > 0)
         {
-            data = input;
-        }
-        
-        public MatchedFileTableModel(Vector input)
-        {
-            int n = input.size();
-            String [][] tempData = new String[n][2];
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < data.length; i++)
             {
-                tempData[i][0] = ((MatchedPlaylistEntry)input.elementAt(i)).getPlaylistFile().getFileName();
-                tempData[i][1] = ((MatchedPlaylistEntry)input.elementAt(i)).getCount() + "";
-            }
-            data = tempData;
-        }
-        
-        public MatchedFileTableModel()
-        {
-            Object[][] result = new Object[50][2];
-            for (int i = 1; i < 50; i++)
-            {
-                for (int j = 1; j < 3; j++)
+                for (int j = 0; j < data[i].length; j++)
                 {
-                    result[i][j] = null;
+                    if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
+                    {
+                        result[j] = (String) data[i][j];
+                    }
                 }
             }
-            data = result;
         }
-        
-        public void updateData(Object[][] input)
+        else
         {
-            data = input;
-            this.fireTableDataChanged();
+            result[0] = "";
+            result[1] = "";
         }
-        
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-        
-        public int getRowCount() {
-            return data.length;
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-        
-        public java.lang.Object getValueAt(int row, int col) {
-            return data[row][col];
-        }
-
-        /*
-         * JTable uses this method to determine the default renderer/
-         * editor for each cell.  If we didn't implement this method,
-         * then the last column would contain text ("true"/"false"),
-         * rather than a check box.
-         */
-        public Class getColumnClass(int c) {
-            return types[c];
-        }
-
-        /*
-         * Don't need to implement this method unless your table's
-         * editable.
-         */
-        public boolean isCellEditable(int rowIndex, int columnIndex) 
-        { 
-            return canEdit [columnIndex]; 
-        }
+        return result;
+    }
 }

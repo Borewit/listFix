@@ -22,12 +22,10 @@ package listfix.comparators;
 
 import listfix.model.*;
 
-public class PlaylistEntryPositionFileNameComparator implements java.util.Comparator
+public class PlaylistEntryPositionFileNameComparator implements java.util.Comparator<PlaylistEntryPosition>
 {
-    public int compare(Object a, Object b)
+    public int compare(PlaylistEntryPosition aa, PlaylistEntryPosition bb)
     {
-        PlaylistEntryPosition aa = (PlaylistEntryPosition)a;
-        PlaylistEntryPosition bb = (PlaylistEntryPosition)b;
         return aa.getPlaylistEntry().getFileName().compareTo(bb.getPlaylistEntry().getFileName());
     }    
 }

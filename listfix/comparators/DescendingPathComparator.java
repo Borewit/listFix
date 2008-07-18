@@ -22,12 +22,10 @@ package listfix.comparators;
 
 import listfix.model.*;
 
-public class DescendingPathComparator implements java.util.Comparator
+public class DescendingPathComparator implements java.util.Comparator<PlaylistEntry>
 {
-    public int compare(Object a, Object b)
+    public int compare(PlaylistEntry aa, PlaylistEntry bb)
     {
-        PlaylistEntry aa = (PlaylistEntry)a;
-        PlaylistEntry bb = (PlaylistEntry)b;
         if (aa.getPath().compareToIgnoreCase(bb.getPath()) < 0)
         {
             return 1;

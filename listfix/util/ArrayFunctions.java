@@ -25,7 +25,7 @@ package listfix.util;
 = Author:   Jeremy Caron
 = File:     ArrayFunctions.java
 = Purpose:  A compilation of commonly used array functions, including
-=           several which mimic Vector functions.
+=           several which mimic Vector functionality.
 ============================================================================
 */
 
@@ -141,14 +141,14 @@ public class ArrayFunctions
         return cArray;
     }
     
-    public static boolean ContainsStringWithPrefix(String[] a, String b)
+    public static boolean ContainsStringWithPrefix(String[] a, String b, boolean ignoreCase)
     {        
         boolean result = false;
         if (a != null && a.length > 0)
         {
             for (int i = 0; i < a.length; i++)
             {
-                if (b.startsWith(a[i]))
+                if (ignoreCase ? b.toLowerCase().startsWith(a[i].toLowerCase()) : b.startsWith(a[i]))
                 {
                     result = true;
                     break;                            
@@ -159,13 +159,13 @@ public class ArrayFunctions
         return result;
     }
     
-    public static String[] convertVectorToStringArray(Vector v)
+    public static String[] convertVectorToStringArray(Vector<String> v)
     {
         int size = v.size();
         String[] result = new String[size];
         for (int i = 0; i < size; i++)
         {
-            result[i] = (String)v.elementAt(i);
+            result[i] = v.elementAt(i);
         }
         return result;
     }

@@ -22,12 +22,10 @@ package listfix.comparators;
 
 import listfix.model.*;
 
-public class DescendingFilenameComparator implements java.util.Comparator
+public class DescendingFilenameComparator implements java.util.Comparator<PlaylistEntry>
 {
-    public int compare(Object a, Object b)
+    public int compare(PlaylistEntry aa, PlaylistEntry bb)
     {
-        PlaylistEntry aa = (PlaylistEntry)a;
-        PlaylistEntry bb = (PlaylistEntry)b;
         if (aa.getFileName().compareToIgnoreCase(bb.getFileName()) < 0)
         {
             return 1;

@@ -27,7 +27,8 @@ import javax.swing.*;
 
 public class ProgressPopup extends JDialog implements IProgressObserver
 {
-    private JProgressBar bar;
+	private static final long serialVersionUID = -7397347218289763336L;
+	private JProgressBar bar;
     private JLabel label,  iconLabel;
     private JPanel _main;
 

@@ -26,8 +26,6 @@ package listfix.tasks;
  * @version 
  */
 import listfix.io.*;
-import listfix.model.*;
-import listfix.util.*;
 import listfix.controller.*;
 
 public class UpdateMediaLibraryTask extends listfix.controller.Task 
@@ -61,7 +59,7 @@ public class UpdateMediaLibraryTask extends listfix.controller.Task
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
             this.notifyObservers(100);
-            FileWriter.writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+            (new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
         }
     }   
 }

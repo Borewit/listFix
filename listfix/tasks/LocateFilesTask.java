@@ -25,19 +25,19 @@ package listfix.tasks;
  * @author  jcaron
  * @version 
  */
-import listfix.model.PlaylistEntry;
 import java.util.Vector;
+import listfix.model.PlaylistEntry;
 
 public class LocateFilesTask extends listfix.controller.Task 
 {
-    private Vector entries;
+    private Vector<PlaylistEntry> entries;
     private String[] mediaLibraryFileList;
     
     /** Creates new LocateFilesTask */
-    public LocateFilesTask(Vector x, String[] y) 
+    public LocateFilesTask(Vector<PlaylistEntry> playlistEntries, String[] files) 
     {
-        entries = x;
-        mediaLibraryFileList = y;
+        entries = playlistEntries;
+        mediaLibraryFileList = files;
     }
 
     /** Run the task. This method is the body of the thread for this task.  */
@@ -46,7 +46,7 @@ public class LocateFilesTask extends listfix.controller.Task
         PlaylistEntry tempEntry = null;
         for (int i = 0; i < entries.size(); i++)
         {
-            tempEntry = (PlaylistEntry) entries.elementAt(i);
+            tempEntry = entries.elementAt(i);
             if (!tempEntry.isURL())
             {
                 if (tempEntry.exists())
@@ -63,7 +63,7 @@ public class LocateFilesTask extends listfix.controller.Task
         this.notifyObservers(100);
     }
     
-    public Vector locateFiles()
+    public Vector<PlaylistEntry> locateFiles()
     {
         return entries;
     }

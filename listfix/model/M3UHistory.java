@@ -29,7 +29,7 @@ import java.io.File;
 
 public class M3UHistory {
     
-    private Vector playlists = new Vector();
+    private Vector<String> playlists = new Vector<String>();
     private int limit = 0;
     
     /** Creates a new instance of M3UHistory */
@@ -52,7 +52,7 @@ public class M3UHistory {
     	return limit;
     }
     
-    protected Vector getPlaylists() // added to assist testing
+    protected Vector<String> getPlaylists() // added to assist testing
     {
     	return playlists;
     }
@@ -79,7 +79,7 @@ public class M3UHistory {
             int index = playlists.indexOf(filename);
             if (index > -1)
             {
-                Object temp = playlists.remove(index);
+                String temp = playlists.remove(index);
                 playlists.insertElementAt(temp, 0);
             }
             else

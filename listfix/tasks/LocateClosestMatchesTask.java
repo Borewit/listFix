@@ -34,7 +34,7 @@ public class LocateClosestMatchesTask extends listfix.controller.Task
 {
     private PlaylistEntry entry;
     private String[] mediaLibraryFileList;
-    private Vector results = new Vector();
+    private Vector<MatchedPlaylistEntry> results = new Vector<MatchedPlaylistEntry>();
     
     public LocateClosestMatchesTask(PlaylistEntry x, String[] y) 
     {
@@ -60,7 +60,7 @@ public class LocateClosestMatchesTask extends listfix.controller.Task
         }
     }
     
-    public Vector locateClosestMatches()
+    public Vector<MatchedPlaylistEntry> locateClosestMatches()
     {
         return results;
     }

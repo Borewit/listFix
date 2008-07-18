@@ -28,11 +28,12 @@ import listfix.model.EditFilenameResult;
 import java.awt.Point;
 
 public class EditFilenameDialog extends javax.swing.JDialog 
-{    
-    private int resultCode;
-    private String fileName;
+{
+	private static final long serialVersionUID = 1825443635993970657L;	
     public static final int OK = 0;
     public static final int CANCEL = 1;
+	private int resultCode = CANCEL;
+    private String fileName;
     
     /** Creates new form EditFilenameDialog */
     public EditFilenameDialog(java.awt.Frame parent, String title, boolean modal, String filename) 

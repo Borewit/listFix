@@ -21,14 +21,11 @@
 package listfix.comparators;
 
 import listfix.model.PlaylistEntryPosition;
-import listfix.model.*;
 
-public class PlaylistEntryPositionIndexComparator implements java.util.Comparator
+public class PlaylistEntryPositionIndexComparator implements java.util.Comparator<PlaylistEntryPosition>
 {
-    public int compare(Object a, Object b)
+    public int compare(PlaylistEntryPosition aa, PlaylistEntryPosition bb)
     {
-        PlaylistEntryPosition aa = (PlaylistEntryPosition)a;
-        PlaylistEntryPosition bb = (PlaylistEntryPosition)b;
         if (aa.getPosition() < bb.getPosition())
         {
             return -1;

@@ -25,7 +25,7 @@ import java.util.*;
 
 public class FileNameTokenizer
 {
-    public static final Vector ignoreList = new Vector();
+    public static final Vector<String> ignoreList = new Vector<String>();
     static
     {
         ignoreList.add("an");
@@ -55,7 +55,7 @@ public class FileNameTokenizer
         fileName = removeExtensionFromFileName(fileName);
         StringTokenizer tokenMaker = new StringTokenizer(fileName, " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;");
         int tokenCount = tokenMaker.countTokens();
-        Vector tempResult = new Vector();
+        Vector<String> tempResult = new Vector<String>();
         for (int i = 0; i < tokenCount; i++)
         {
             String token = tokenMaker.nextToken();

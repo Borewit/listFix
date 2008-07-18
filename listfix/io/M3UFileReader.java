@@ -29,20 +29,21 @@ package listfix.io;
 ============================================================================
 */
 
-import listfix.controller.Task;
-import listfix.exceptions.UnsupportedPlaylistFormat;
-import listfix.model.PlaylistEntry;
-import listfix.view.support.*;
-import listfix.tasks.*;
-
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import listfix.exceptions.UnsupportedPlaylistFormat;
+import listfix.controller.Task;
+import listfix.model.PlaylistEntry;
 
 public class M3UFileReader
 {
@@ -52,17 +53,49 @@ public class M3UFileReader
     private Vector results = new Vector();
     private long fileLength = 0;
 
-    public M3UFileReader(File in_data) throws FileNotFoundException
+    public M3UFileReader(File in) throws FileNotFoundException
     {
-        buffer = new BufferedReader(new FileReader(in_data));
-        fileLength = in_data.length();
+		try
+		{
+			// determine encoding
+			byte[] utf8FirstBytes = {-17, -69, -65};
+			FileInputStream tempBuffer = new FileInputStream(in);
+			byte[] bytes = new byte[3];
+			tempBuffer.read(bytes);
+			boolean arraysEqual = true;
+			for (int i = 0; i < 3; i++)
+			{
+				if (utf8FirstBytes[i] != bytes[i])
+				{
+					arraysEqual = false;
+					break;
+				}
+			}			
+			
+			if (arraysEqual)
+			{
+				buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in), "UTF8"));
+			}
+			else
+			{
+				buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
+			}
+			tempBuffer.close();
+			tempBuffer = null;			
+			fileLength = in.length();
+		}
+		catch (Exception e)
+		{
+			buffer = new BufferedReader(new FileReader(in));
+			fileLength = in.length();
+		}
     }
 
-    public Vector readM3U(Task input) throws IOException, UnsupportedPlaylistFormat
+    public Vector<PlaylistEntry> readM3U(Task input) throws IOException, UnsupportedPlaylistFormat
     {
         StringBuilder cache = new StringBuilder();
-        String line1 = buffer.readLine();
-		if (!line1.startsWith("#EXTM3U"))
+        String line1 = buffer.readLine(); // ignore line 1
+		if (!line1.contains("#EXTM3U"))
 		{
 			throw new UnsupportedPlaylistFormat("Playlist is not in M3U format.");
 		}
@@ -90,11 +123,15 @@ public class M3UFileReader
             }        
             while (line1 != null)
             {
-                processEntry(line1, line2);
-                input.notifyObservers((int)((double)cache.length()/(double)(fileLength + 1.0) * 100.0));
+				if (!line2.equals(""))
+				{
+					processEntry(line1, line2);
+				}
+                input.notifyObservers((int)((double)cache.toString().getBytes().length/(double)(fileLength) * 100.0));
                 line1 = buffer.readLine();
                 if (line1 != null)
                 {
+					cache.append(line1);
                     if (!line1.startsWith("#"))
                     {
                         line2 = line1;
@@ -117,7 +154,7 @@ public class M3UFileReader
         return results;
     }
     
-    public Vector readM3U() throws IOException, UnsupportedPlaylistFormat
+    public Vector<PlaylistEntry> readM3U() throws IOException, UnsupportedPlaylistFormat
     {
         String line1 = buffer.readLine(); // ignore line 1
 		if (!line1.startsWith("#EXTM3U"))
@@ -178,7 +215,7 @@ public class M3UFileReader
         }
         else if (fs.equalsIgnoreCase("/")) //OS Specific Hack
         {
-            if (!L2.startsWith("\\\\"))
+            if (!L2.startsWith("\\\\") && !L2.startsWith("."))
             {
                 path.append("/");
             }
@@ -208,9 +245,9 @@ public class M3UFileReader
 
             String firstToken = "";
             int tokenNumber = 0;
+			File firstPathToExist = null;
             while (pathTokenizer.hasMoreTokens())
-            {
-                File firstPathToExist = null;
+            {                
                 String word = pathTokenizer.nextToken();
                 if (tokenNumber == 0)
                 {

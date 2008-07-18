@@ -20,6 +20,7 @@
 
 package listfix.model;
 
+import java.io.File;
 import java.util.Hashtable;
 import javax.swing.UIManager;
 
@@ -29,11 +30,15 @@ import javax.swing.UIManager;
  */
 public class AppOptions 
 {
+	private static final String EMPTY_STRING = "None Selected";
+	
     private boolean savePlaylistsWithRelativePaths = false;
     private boolean autoLocateEntriesOnPlaylistLoad = false;
 	private boolean autoRefreshMediaLibraryOnStartup = false;
+	private boolean alwaysUseUNCPaths = false;
     private int maxPlaylistHistoryEntries = 5;
-	private String lookAndFeel = UIManager.getInstalledLookAndFeels()[0].getClassName();
+	private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+	private String playlistsDirectory = EMPTY_STRING;
 	
     public static final Hashtable<String,Integer> optionEnumTable = new Hashtable<String,Integer>();    
     static
@@ -43,6 +48,8 @@ public class AppOptions
         optionEnumTable.put("MAX_PLAYLIST_HISTORY_SIZE", AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE);
 		optionEnumTable.put("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD", AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD);
 		optionEnumTable.put("LOOK_AND_FEEL", AppOptionsEnum.LOOK_AND_FEEL);
+		optionEnumTable.put("ALWAYS_USE_UNC_PATHS", AppOptionsEnum.ALWAYS_USE_UNC_PATHS);
+		optionEnumTable.put("PLAYLISTS_DIRECTORY", AppOptionsEnum.PLAYLISTS_DIRECTORY);
     }
     
     public AppOptions()
@@ -51,13 +58,14 @@ public class AppOptions
     }
     
     public AppOptions(int maxPlaylistHistoryEntries, boolean autoLocateEntriesOnPlaylistLoad, 
-			boolean savePlaylistsWithRelativePaths, boolean autoRefreshMediaLibraryOnStartup, String lookAndFeel)
+			boolean savePlaylistsWithRelativePaths, boolean autoRefreshMediaLibraryOnStartup, String lookAndFeel, boolean alwaysUseUNCPaths)
     {
         this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
         this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
         this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
 		this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
 		this.lookAndFeel = lookAndFeel;
+		this.alwaysUseUNCPaths = alwaysUseUNCPaths;
     }
     
     public boolean getAutoLocateEntriesOnPlaylistLoad()
@@ -108,5 +116,28 @@ public class AppOptions
     public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths)
     {
         this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
-    }	
+    }
+
+	public boolean getAlwaysUseUNCPaths()
+	{
+		return alwaysUseUNCPaths;
+	}
+
+	public void setAlwaysUseUNCPaths(boolean alwaysUseUNCPaths)
+	{
+		this.alwaysUseUNCPaths = alwaysUseUNCPaths;
+	}
+
+	public String getPlaylistsDirectory()
+	{
+		return playlistsDirectory;
+	}
+
+	public void setPlaylistsDirectory(String playlistsDirectory)
+	{
+		if (new File(playlistsDirectory).exists())
+		{
+			this.playlistsDirectory = playlistsDirectory;
+		}
+	}
 }

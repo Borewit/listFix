@@ -20,30 +20,20 @@
 
 package listfix.model;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 import listfix.util.*;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PlaylistEntry.java
-= Purpose:  To encapsulate all of the information about a playlist entry.
-=           Provides methods for setting and getting the path to the
-=           file, determining if the file exists, searching for
-=           the file in a list of directories, and finding a closest
-=           match to the file name.
-============================================================================
-*/
-
-import java.io.File;
-
-public class PlaylistEntry
+public class PlaylistEntry implements Cloneable
 {    
     private final static String fs = System.getProperty("file.separator");    
     private final static String br = System.getProperty("line.separator");
-    public static Vector emptyDirectories = new Vector();
+	private static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+    public static Vector<String> emptyDirectories = new Vector<String>();
     public static String basePath = "";
     
     private String path = "";
@@ -51,7 +41,6 @@ public class PlaylistEntry
     private String fileName = "";
     private File thisFile = null;
     private File absoluteFile = null;
-
     private URI thisURI = null;
     private String message = "Unknown";
     private boolean found = false;
@@ -77,10 +66,14 @@ public class PlaylistEntry
         {
             message = "Found!";
             found = true;
-            if (!thisFile.isAbsolute())
+            if (thisFile.isAbsolute())
             {
                 absoluteFile = thisFile;
             }
+			else
+			{
+				absoluteFile = new File(thisFile.getAbsolutePath());
+			}
         }
         else
         {
@@ -118,7 +111,7 @@ public class PlaylistEntry
         {
             message = "Found!";
             found = true;
-            if (!thisFile.isAbsolute())
+            if (thisFile.isAbsolute())
             {
                 absoluteFile = thisFile;
             }
@@ -208,7 +201,31 @@ public class PlaylistEntry
         }
         try
         {
-            Runtime.getRuntime().exec(cmdLine);
+            Process proc = Runtime.getRuntime().exec(cmdLine);
+			System.out.println("command was: " + cmdLine);
+			synchronized(proc)
+			{
+				proc.wait(500);
+			}
+			InputStream stream = proc.getErrorStream();
+			BufferedReader streamTwo = new BufferedReader(new InputStreamReader(stream));
+			String line = null;
+			if (streamTwo.ready())
+			{
+				line = streamTwo.readLine();
+			}
+			while (line != null)
+			{
+				System.out.println(line);
+				if (streamTwo.ready())
+				{
+					line = streamTwo.readLine();
+				}
+				else
+				{
+					line = null;
+				}
+			}					
         }
         catch (Exception e)
         {
@@ -288,10 +305,10 @@ public class PlaylistEntry
     public void findNewLocationFromFileList(String[] fileList)
     {
         int searchResult = -1;
-        String trimmedFileName = fileName.trim();
+        String trimmedFileName = fileSystemIsCaseSensitive ? fileName.trim() : fileName.trim().toLowerCase();
         for (int i = 0; i < fileList.length; i++)
         {
-            if (fileList[i].endsWith(trimmedFileName))
+            if (fileSystemIsCaseSensitive ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
             {
                 searchResult = i;
                 break;
@@ -313,7 +330,7 @@ public class PlaylistEntry
     {
         String[] emptyPaths = new String[emptyDirectories.size()];
         emptyDirectories.copyInto(emptyPaths);
-        return found == true || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path);        
+        return found == true || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);      
     }
     
     public boolean isFound()
@@ -334,6 +351,15 @@ public class PlaylistEntry
     @Override
     public Object clone()
     {
+		try
+		{
+			super.clone();
+		}
+		catch (Exception e)
+		{
+			//eat the error for now.
+			e.printStackTrace();
+		}
         PlaylistEntry result = null;
         if (!this.isURL())
         {

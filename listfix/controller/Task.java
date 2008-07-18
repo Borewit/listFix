@@ -21,17 +21,18 @@
 package listfix.controller;
 
 import listfix.view.support.*;
+
 import java.util.Enumeration;
 import java.util.Vector;
 
 public abstract class Task extends Thread
 {
-    private Vector observers;
+    private Vector<IProgressObserver> observers;
     private int progress = 0;
 
     public Task()
     {
-        observers = new Vector();
+        observers = new Vector<IProgressObserver>();
     }
 
     @Override
@@ -59,10 +60,10 @@ public abstract class Task extends Thread
         }
         progress = percent;
 
-        Enumeration e = observers.elements();
+        Enumeration<IProgressObserver> e = observers.elements();
         while (e.hasMoreElements())
         {
-            ((IProgressObserver) e.nextElement()).setProgress(percent);
+            e.nextElement().setProgress(percent);
         }
     }
     
@@ -73,7 +74,7 @@ public abstract class Task extends Thread
     
     public void setMessage(String message)
     {
-        Enumeration e = observers.elements();
+        Enumeration<IProgressObserver> e = observers.elements();
         while (e.hasMoreElements())
         {
             ((ProgressPopup)e.nextElement()).setMessage(message);

@@ -38,8 +38,8 @@ import listfix.controller.Task;
 
 public class DirectoryScanner
 {    
-    private Vector thisDirList;
-    private Vector thisFileList;
+    private Vector<String> thisDirList;
+    private Vector<String> thisFileList;
     private final String fs = System.getProperty("file.separator");
     private int recursiveCount = 0;
     
@@ -148,8 +148,8 @@ public class DirectoryScanner
     public void reset()
     {
         recursiveCount = 0;
-        thisDirList = new Vector();
-        thisFileList = new Vector();
+        thisDirList = new Vector<String>();
+        thisFileList = new Vector<String>();
     }
     
     public String[] getFileList()

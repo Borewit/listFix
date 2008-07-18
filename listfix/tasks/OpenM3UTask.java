@@ -25,19 +25,18 @@ package listfix.tasks;
  * @author  jcaron
  * @version 
  */
-import listfix.io.*;
-import listfix.model.*;
-import listfix.util.*;
-import listfix.controller.*;
 import java.io.File;
 import java.util.*;
+
+import listfix.controller.*;
 import listfix.exceptions.UnsupportedPlaylistFormat;
+import listfix.io.*;
+import listfix.model.Playlist;
 
 public class OpenM3UTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
     private File input; 
-    private Vector entries = new Vector();
 	public boolean notM3UFormat = false;
     
     public OpenM3UTask(GUIDriver gd, File f) 
@@ -48,16 +47,12 @@ public class OpenM3UTask extends listfix.controller.Task
     
     /** Run the task. This method is the body of the thread for this task.  */
     public void run() 
-    {
-        try
-        {
-            guiDriver.setCurrentPlaylist(input);
-            guiDriver.getHistory().add(input.getCanonicalPath());
-            M3UFileReader playlistProcessor = new M3UFileReader(input);
-            entries = playlistProcessor.readM3U(this);
-            guiDriver.setEntries(entries);
-            playlistProcessor.closeFile();
-            FileWriter.writeMruM3Us(guiDriver.getHistory());
+    {	
+		try
+		{
+			guiDriver.setCurrentList(new Playlist(input, this));
+			guiDriver.getHistory().add(input.getCanonicalPath());
+			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
         }
 		catch(UnsupportedPlaylistFormat upf)
 		{
