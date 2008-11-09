@@ -1981,7 +1981,7 @@ public class GUIScreen extends JFrame
         while(columns.hasMoreElements())
         {
             TableColumn column = columns.nextElement();            
-            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);            
+            comp = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);            
             headerWidth = comp.getPreferredSize().width;
             if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
             {
