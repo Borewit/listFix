@@ -20,10 +20,6 @@
 
 package listfix.view;
 
-/**
- *
- * @author  jcaron
- */
 import java.awt.Component;
 import java.awt.Point;
 import java.util.Enumeration;
@@ -73,15 +69,15 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
     }
     
     public void center()
-  {
-      Point parentLocation = this.getParent().getLocationOnScreen();
-      double x = parentLocation.getX();
-      double y = parentLocation.getY();
-      int width = this.getParent().getWidth();
-      int height = this.getParent().getHeight();
+    {
+        Point parentLocation = this.getParent().getLocationOnScreen();
+        double x = parentLocation.getX();
+        double y = parentLocation.getY();
+        int width = this.getParent().getWidth();
+        int height = this.getParent().getHeight();
       
-      this.setLocation((int)x + (width - this.getWidth())/2, (int)y + (height - this.getHeight())/2);
-  }
+        this.setLocation((int)x + (width - this.getWidth())/2, (int)y + (height - this.getHeight())/2);
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -195,7 +191,8 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         new ClosestMatchChooserDialog(new javax.swing.JFrame(), null, true).setVisible(true);
     }
 	
@@ -211,7 +208,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         while(columns.hasMoreElements())
         {
             TableColumn column = columns.nextElement();            
-            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);            
+            comp = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);
             headerWidth = comp.getPreferredSize().width;
             if ( ((String)column.getHeaderValue()).equalsIgnoreCase("score") )
             {

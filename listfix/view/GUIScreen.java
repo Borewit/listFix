@@ -47,72 +47,73 @@ public class GUIScreen extends JFrame
 	private final JFileChooser jMediaDirChooser;
 	private final JFileChooser jCopyToDirChooser;
 	private final JFileChooser jSaveFileChooser;	
-    private final listfix.view.support.ProgressPopup locateProgressDialog;
-    private final listfix.view.support.ProgressPopup copyFilesProgressDialog;
-    private final listfix.view.support.ProgressPopup updateMediaLibraryProgressDialog;    
-    private final listfix.view.support.ProgressPopup openM3UProgressDialog;
-    private GUIDriver guiDriver = null;
-    private int currentlySelectedRow;
-    private int currentRightClick;
+	private final listfix.view.support.ProgressPopup locateProgressDialog;
+	private final listfix.view.support.ProgressPopup copyFilesProgressDialog;
+	private final listfix.view.support.ProgressPopup updateMediaLibraryProgressDialog;    
+	private final listfix.view.support.ProgressPopup openM3UProgressDialog;
+	private GUIDriver guiDriver = null;
+	private int currentlySelectedRow;
+	private int currentRightClick;
 
-    /** Creates new form GUIScreen */
-    public GUIScreen() 
-    {		 
-        guiDriver = new GUIDriver();
-        initComponents();
-        jM3UChooser = new JFileChooser();
-        jFileChooser = new JFileChooser();
-        jMediaDirChooser = new JFileChooser();
-        jCopyToDirChooser = new JFileChooser();
-        jSaveFileChooser = new JFileChooser();
-        locateProgressDialog = new listfix.view.support.ProgressPopup(this, "Finding Files", true, 250, 25, false);
-        copyFilesProgressDialog = new listfix.view.support.ProgressPopup(this, "Copying Files", true, 250, 25, false);
-        updateMediaLibraryProgressDialog = new listfix.view.support.ProgressPopup(this, "Updating Media Library", true, 450, 40, true); 
-        openM3UProgressDialog = new listfix.view.support.ProgressPopup(this, "Opening Playlist", true, 250, 25, false);
+	/** Creates new form GUIScreen */
+	public GUIScreen() 
+	{		 
+		guiDriver = new GUIDriver();
+		initComponents();
+		jM3UChooser = new JFileChooser();
+		jFileChooser = new JFileChooser();
+		jMediaDirChooser = new JFileChooser();
+		jCopyToDirChooser = new JFileChooser();
+		jSaveFileChooser = new JFileChooser();
+		locateProgressDialog = new listfix.view.support.ProgressPopup(this, "Finding Files", true, 250, 25, false);
+		copyFilesProgressDialog = new listfix.view.support.ProgressPopup(this, "Copying Files", true, 250, 25, false);
+		updateMediaLibraryProgressDialog = new listfix.view.support.ProgressPopup(this, "Updating Media Library", true, 450, 40, true); 
+		openM3UProgressDialog = new listfix.view.support.ProgressPopup(this, "Opening Playlist", true, 250, 25, false);
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
-        jM3UChooser.setDialogTitle("Choose a Playlist...");
-        jM3UChooser.setAcceptAllFileFilterUsed(false);
-        jM3UChooser.setFileFilter(new M3UFileChooserFilter());
-        jFileChooser.setDialogTitle("Choose a file to append");
-        jFileChooser.setAcceptAllFileFilterUsed(false);
-        jFileChooser.setFileFilter(new ValidM3UFileRefFileChooserFilter());
-        jMediaDirChooser.setDialogTitle("Specify a media directory...");
-        jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-        jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jCopyToDirChooser.setDialogTitle("Choose a destination directory...");
-        jCopyToDirChooser.setAcceptAllFileFilterUsed(false);
-        jCopyToDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jSaveFileChooser.setDialogTitle("Save File:");
-        jSaveFileChooser.setAcceptAllFileFilterUsed(false);
-        jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jSaveFileChooser.setFileFilter(new M3UFileChooserFilter()); 
-        playlistTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        playlistTable.setModel(new PlaylistTableModel());
-        playlistTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
-        if (guiDriver.getShowMediaDirWindow())
-        {
-            JOptionPane.showMessageDialog(this, "You need to add a media directory before you can find the new locations of your files.  See help for more information.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
-        }
-        else
-        {
-            mediaLibraryList.setListData(guiDriver.getMediaDirs());
-        }
-        updateButtons();
-        updateRecentMenu();
-        updateStatusLabel();
+		jM3UChooser.setDialogTitle("Choose a Playlist...");
+		jM3UChooser.setAcceptAllFileFilterUsed(false);
+		jM3UChooser.setFileFilter(new M3UFileChooserFilter());
+		jFileChooser.setDialogTitle("Choose a file to append");
+		jFileChooser.setAcceptAllFileFilterUsed(false);
+		jFileChooser.setFileFilter(new ValidM3UFileRefFileChooserFilter());
+		jMediaDirChooser.setDialogTitle("Specify a media directory...");
+		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		jCopyToDirChooser.setDialogTitle("Choose a destination directory...");
+		jCopyToDirChooser.setAcceptAllFileFilterUsed(false);
+		jCopyToDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		jSaveFileChooser.setDialogTitle("Save File:");
+		jSaveFileChooser.setAcceptAllFileFilterUsed(false);
+		jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jSaveFileChooser.setFileFilter(new M3UFileChooserFilter()); 
+		playlistTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		playlistTable.setModel(new PlaylistTableModel());
+		playlistTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
+		if (guiDriver.getShowMediaDirWindow())
+		{
+			JOptionPane.showMessageDialog(this, "You need to add a media directory before you can find the new locations of your files.  See help for more information.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else
+		{
+			mediaLibraryList.setListData(guiDriver.getMediaDirs());
+		}
+		updateButtons();
+		updateRecentMenu();
+		updateStatusLabel();
 		(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
-    }
+	}
 	
 	public AppOptions getOptions()
 	{
 		return guiDriver.getAppOptions();
 	}
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
+	/** This method is called from within the constructor to
+	 * initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is
+	 * always regenerated by the Form Editor.
+	 */
+	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -123,6 +124,8 @@ public class GUIScreen extends JFrame
         closestMatchesRCMenuItem = new javax.swing.JMenuItem();
         replaceFileRCMenuItem = new javax.swing.JMenuItem();
         openRCMenuItem = new javax.swing.JMenuItem();
+        playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
+        repairPlaylistMenuItem = new javax.swing.JMenuItem();
         buttonPanel = new javax.swing.JPanel();
         openIconButton = new javax.swing.JButton();
         closeIconButton = new javax.swing.JButton();
@@ -145,23 +148,6 @@ public class GUIScreen extends JFrame
         playlistDirectoryPanel = new javax.swing.JPanel();
         treeScrollPane = new javax.swing.JScrollPane();
         playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
-        MouseListener ml = new MouseAdapter()
-        {
-            public void mousePressed(MouseEvent e)
-            {
-                int selRow = playlistDirectoryTree.getRowForLocation(e.getX(), e.getY());
-                TreePath selPath = playlistDirectoryTree.getPathForLocation(e.getX(), e.getY());
-                if(selRow != -1)
-                {
-                    if(e.getClickCount() == 2)
-                    {
-                        treeNodeDoubleClick(selRow, selPath);
-                    }
-                }
-            }
-        };
-
-        playlistDirectoryTree.addMouseListener(ml);
         playlistPanel = new javax.swing.JPanel();
         playlistButtonPanel = new javax.swing.JPanel();
         locateButton = new javax.swing.JButton();
@@ -269,6 +255,17 @@ public class GUIScreen extends JFrame
             }
         });
         entryRightClickMenu.add(openRCMenuItem);
+
+        playlistTreeRightClickMenu.setPreferredSize(new java.awt.Dimension(160, 28));
+
+        repairPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        repairPlaylistMenuItem.setText("Repair Playlist(s)");
+        repairPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                repairPlaylistMenuItemActionPerformed(evt);
+            }
+        });
+        playlistTreeRightClickMenu.add(repairPlaylistMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("listFix( ) - v1.5.2");
@@ -423,7 +420,7 @@ public class GUIScreen extends JFrame
         leftSplitPane.setMaximumSize(null);
         leftSplitPane.setOneTouchExpandable(true);
 
-        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9)));
+        mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         mediaLibraryPanel.setAlignmentX(0.0F);
         mediaLibraryPanel.setAlignmentY(0.0F);
         mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
@@ -477,11 +474,19 @@ public class GUIScreen extends JFrame
 
         leftSplitPane.setBottomComponent(mediaLibraryPanel);
 
-        playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9)));
+        playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         playlistDirectoryPanel.setAlignmentX(0.0F);
         playlistDirectoryPanel.setAlignmentY(0.0F);
         playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
+        playlistDirectoryTree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                playlistDirectoryTreeMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                playlistDirectoryTreeMousePressed(evt);
+            }
+        });
         treeScrollPane.setViewportView(playlistDirectoryTree);
 
         playlistDirectoryPanel.add(treeScrollPane, java.awt.BorderLayout.CENTER);
@@ -490,7 +495,7 @@ public class GUIScreen extends JFrame
 
         splitPane.setLeftComponent(leftSplitPane);
 
-        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
+        playlistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlist Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         playlistPanel.setLayout(new java.awt.BorderLayout());
 
         locateButton.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -528,7 +533,7 @@ public class GUIScreen extends JFrame
         playlistScrollPanel.setPreferredSize(new java.awt.Dimension(600, 400));
 
         playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
-        playlistTable.setModel(new PlaylistTableModel());
+        playlistTable.setModel(new listfix.model.PlaylistTableModel());
         playlistTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
         playlistTable.setGridColor(new java.awt.Color(153, 153, 153));
         playlistTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
@@ -956,7 +961,7 @@ public class GUIScreen extends JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	private void treeNodeDoubleClick(int selRow, TreePath selPath)
+	private void playlistDirectoryTreeNodeDoubleClicked(TreePath selPath)
 	{
 		File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
 		if (!toOpen.isDirectory() && toOpen.exists())
@@ -965,203 +970,203 @@ public class GUIScreen extends JFrame
 		}
 	}
 	
-    private void insertFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertFileMenuItemActionPerformed
-        int response = jFileChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
-                File fileToInsert = jFileChooser.getSelectedFile();
-                if(playlistTable.getSelectedRowCount() != 0)
-                {
-                    int entryIndex = playlistTable.getSelectedRow();
-                    ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.insertFile(fileToInsert, entryIndex) );
-                    updateButtons();
-                    updateStatusLabel();
-                }
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, file was not inserted.");
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-}//GEN-LAST:event_insertFileMenuItemActionPerformed
+	private void insertFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertFileMenuItemActionPerformed
+		int response = jFileChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File fileToInsert = jFileChooser.getSelectedFile();
+				if(playlistTable.getSelectedRowCount() != 0)
+				{
+					int entryIndex = playlistTable.getSelectedRow();
+					((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.insertFile(fileToInsert, entryIndex) );
+					updateButtons();
+					updateStatusLabel();
+				}
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, file was not inserted.");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+	}//GEN-LAST:event_insertFileMenuItemActionPerformed
 
-    private void insertPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertPlaylistMenuItemActionPerformed
-        int response = jM3UChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
-                File m3uToInsert = jM3UChooser.getSelectedFile();
-                if(playlistTable.getSelectedRowCount() != 0)
-                {
-                    int entryIndex = playlistTable.getSelectedRow();
-                    ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.insertPlaylist(m3uToInsert, entryIndex) );
-                    updateButtons();
-                    updateStatusLabel();
-                }
-            }
+	private void insertPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertPlaylistMenuItemActionPerformed
+		int response = jM3UChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File m3uToInsert = jM3UChooser.getSelectedFile();
+				if(playlistTable.getSelectedRowCount() != 0)
+				{
+					int entryIndex = playlistTable.getSelectedRow();
+					((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.insertPlaylist(m3uToInsert, entryIndex) );
+					updateButtons();
+					updateStatusLabel();
+				}
+			}
 			catch (UnsupportedPlaylistFormat upf)
 			{
 				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
-                upf.printStackTrace();
+				upf.printStackTrace();
 			}
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, playlist was not inserted.");
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-    }//GEN-LAST:event_insertPlaylistMenuItemActionPerformed
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, playlist was not inserted.");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+	}//GEN-LAST:event_insertPlaylistMenuItemActionPerformed
 
-    private void clearHistoryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHistoryMenuItemActionPerformed
-        guiDriver.clearM3UHistory();
-        updateRecentMenu();
-    }//GEN-LAST:event_clearHistoryMenuItemActionPerformed
+	private void clearHistoryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHistoryMenuItemActionPerformed
+		guiDriver.clearM3UHistory();
+		updateRecentMenu();
+	}//GEN-LAST:event_clearHistoryMenuItemActionPerformed
 
-    private void removeDuplicatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDuplicatesMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.removeDuplicates() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_removeDuplicatesMenuItemActionPerformed
+	private void removeDuplicatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDuplicatesMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.removeDuplicates() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_removeDuplicatesMenuItemActionPerformed
 
-    private void reverseMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reverseMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.reversePlaylist() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_reverseMenuItemActionPerformed
+	private void reverseMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reverseMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.reversePlaylist() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_reverseMenuItemActionPerformed
 
-    private void copyToDirMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyToDirMenuItemActionPerformed
-        int response = jCopyToDirChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
-                File destDir = jCopyToDirChooser.getSelectedFile();                      
-                copyFilesProgressDialog.go();
-                CopyFilesTask thisTask = new CopyFilesTask(guiDriver.getEntries(), destDir);
-                copyFilesProgressDialog.track(thisTask);
-                guiDriver.copyFilesToNewNewDirectory(thisTask);
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, 1 or more files were not copied.");
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            jMediaDirChooser.cancelSelection();
-        }
-        if (copyFilesProgressDialog.isEnabled())
-        {                            
-            copyFilesProgressDialog.setEnabled(false);
-        }
-    }//GEN-LAST:event_copyToDirMenuItemActionPerformed
+	private void copyToDirMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyToDirMenuItemActionPerformed
+		int response = jCopyToDirChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File destDir = jCopyToDirChooser.getSelectedFile();                      
+				copyFilesProgressDialog.go();
+				CopyFilesTask thisTask = new CopyFilesTask(guiDriver.getEntries(), destDir);
+				copyFilesProgressDialog.track(thisTask);
+				guiDriver.copyFilesToNewNewDirectory(thisTask);
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, 1 or more files were not copied.");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			jMediaDirChooser.cancelSelection();
+		}
+		if (copyFilesProgressDialog.isEnabled())
+		{                            
+			copyFilesProgressDialog.setEnabled(false);
+		}
+	}//GEN-LAST:event_copyToDirMenuItemActionPerformed
 
-    private void descendingPathMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descendingPathMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.descendingPathSort() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_descendingPathMenuItemActionPerformed
+	private void descendingPathMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descendingPathMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.descendingPathSort() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_descendingPathMenuItemActionPerformed
 
-    private void ascendingPathMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ascendingPathMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.ascendingPathSort() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_ascendingPathMenuItemActionPerformed
+	private void ascendingPathMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ascendingPathMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.ascendingPathSort() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_ascendingPathMenuItemActionPerformed
 
-    private void descendingStatusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descendingStatusMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.descendingStatusSort() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_descendingStatusMenuItemActionPerformed
+	private void descendingStatusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descendingStatusMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.descendingStatusSort() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_descendingStatusMenuItemActionPerformed
 
-    private void ascendingStatusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ascendingStatusMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.ascendingStatusSort() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_ascendingStatusMenuItemActionPerformed
+	private void ascendingStatusMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ascendingStatusMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.ascendingStatusSort() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_ascendingStatusMenuItemActionPerformed
 
-    private void descendingFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descendingFilenameMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.descendingFilenameSort() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_descendingFilenameMenuItemActionPerformed
+	private void descendingFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descendingFilenameMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.descendingFilenameSort() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_descendingFilenameMenuItemActionPerformed
 
-    private void ascendingFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ascendingFilenameMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.ascendingFilenameSort() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_ascendingFilenameMenuItemActionPerformed
+	private void ascendingFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ascendingFilenameMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.ascendingFilenameSort() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_ascendingFilenameMenuItemActionPerformed
 
-    private void removeMissingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMissingMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.removeMissing() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_removeMissingMenuItemActionPerformed
+	private void removeMissingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMissingMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.removeMissing() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_removeMissingMenuItemActionPerformed
 
-    private void randomizeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomizeMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.randomizePlaylist() );
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_randomizeMenuItemActionPerformed
+	private void randomizeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomizeMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.randomizePlaylist() );
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_randomizeMenuItemActionPerformed
 
-    private void deleteRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRCMenuItemActionPerformed
-        deleteIconButtonActionPerformed(evt);
-        updateStatusLabel();
-}//GEN-LAST:event_deleteRCMenuItemActionPerformed
+	private void deleteRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRCMenuItemActionPerformed
+		deleteIconButtonActionPerformed(evt);
+		updateStatusLabel();
+	}//GEN-LAST:event_deleteRCMenuItemActionPerformed
 
-    private void closestMatchesRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closestMatchesRCMenuItemActionPerformed
-        findClosestMatchesMenuItemActionPerformed(evt);
-        updateStatusLabel();
-}//GEN-LAST:event_closestMatchesRCMenuItemActionPerformed
+	private void closestMatchesRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closestMatchesRCMenuItemActionPerformed
+		findClosestMatchesMenuItemActionPerformed(evt);
+		updateStatusLabel();
+	}//GEN-LAST:event_closestMatchesRCMenuItemActionPerformed
 
-    private void editFileNameRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFileNameRCMenuItemActionPerformed
-        editFilenameMenuItemActionPerformed(evt);
-        updateStatusLabel();
-}//GEN-LAST:event_editFileNameRCMenuItemActionPerformed
+	private void editFileNameRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFileNameRCMenuItemActionPerformed
+		editFilenameMenuItemActionPerformed(evt);
+		updateStatusLabel();
+	}//GEN-LAST:event_editFileNameRCMenuItemActionPerformed
 
-    private void playlistTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseClicked
-        if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
-        {
-            int releasedRow = playlistTable.rowAtPoint(evt.getPoint());    
-            if ((currentRightClick == releasedRow) && (releasedRow != -1))
-            {
-                entryRightClickMenu.show(playlistTable, (int)evt.getPoint().getX(), (int)evt.getPoint().getY());
-            }
-        }
-        updateButtons();        
-        updateStatusLabel();
-}//GEN-LAST:event_playlistTableMouseClicked
+	private void playlistTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseClicked
+		if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
+		{
+			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());    
+			if ((currentRightClick == releasedRow) && (releasedRow != -1))
+			{
+				entryRightClickMenu.show(playlistTable, (int)evt.getPoint().getX(), (int)evt.getPoint().getY());
+			}
+		}
+		updateButtons();        
+		updateStatusLabel();
+	}//GEN-LAST:event_playlistTableMouseClicked
 
-    private void playlistTableMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseDragged
-        if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-        {
-            int releasedRow = playlistTable.rowAtPoint(evt.getPoint());    
-            if ((currentlySelectedRow != releasedRow) && (releasedRow != -1) && (releasedRow < guiDriver.getPlaylist().getEntryCount()))
-            {
-                ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) );
-                currentlySelectedRow = releasedRow;
-            }        
-            updateStatusLabel();
-        }
-}//GEN-LAST:event_playlistTableMouseDragged
+	private void playlistTableMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseDragged
+		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());    
+			if ((currentlySelectedRow != releasedRow) && (releasedRow != -1) && (releasedRow < guiDriver.getPlaylist().getEntryCount()))
+			{
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) );
+				currentlySelectedRow = releasedRow;
+			}        
+			updateStatusLabel();
+		}
+	}//GEN-LAST:event_playlistTableMouseDragged
 
-    private void findClosestMatchesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findClosestMatchesMenuItemActionPerformed
-        locateProgressDialog.go();
-        int row = playlistTable.getSelectedRow();
-        PlaylistEntry entryToFind = guiDriver.getEntryAt(row);
+	private void findClosestMatchesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findClosestMatchesMenuItemActionPerformed
+		locateProgressDialog.go();
+		int row = playlistTable.getSelectedRow();
+		PlaylistEntry entryToFind = guiDriver.getEntryAt(row);
 		if (guiDriver.getMediaDirs().length > 0)
 		{
 			LocateClosestMatchesTask thisTask = new LocateClosestMatchesTask(entryToFind, guiDriver.getMediaLibraryFileList());
@@ -1178,211 +1183,211 @@ public class GUIScreen extends JFrame
 			updateButtons();
 			updateStatusLabel();
 		}
-    }//GEN-LAST:event_findClosestMatchesMenuItemActionPerformed
+	}//GEN-LAST:event_findClosestMatchesMenuItemActionPerformed
 
-    private void editFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFilenameMenuItemActionPerformed
-        int row = playlistTable.getSelectedRow();
-        EditFilenameResult response = EditFilenameDialog.showDialog(this, "Edit Filename", true, guiDriver.getEntryFileName(row));
-        if (response.getResultCode() == EditFilenameDialog.OK)
-        {
-            try
-            {
-                ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.updateFileName(row, response.getFileName()) );
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, filename was not changed.");
-                e.printStackTrace();
-            }
-            updateButtons();
-            updateStatusLabel();
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-    }//GEN-LAST:event_editFilenameMenuItemActionPerformed
+	private void editFilenameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editFilenameMenuItemActionPerformed
+		int row = playlistTable.getSelectedRow();
+		EditFilenameResult response = EditFilenameDialog.showDialog(this, "Edit Filename", true, guiDriver.getEntryFileName(row));
+		if (response.getResultCode() == EditFilenameDialog.OK)
+		{
+			try
+			{
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.updateFileName(row, response.getFileName()) );
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, filename was not changed.");
+				e.printStackTrace();
+			}
+			updateButtons();
+			updateStatusLabel();
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+	}//GEN-LAST:event_editFilenameMenuItemActionPerformed
 
-    private void appendPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appendPlaylistMenuItemActionPerformed
-        int response = jM3UChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
-                File m3uToAppend = jM3UChooser.getSelectedFile();
-                ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.appendPlaylist(m3uToAppend) );                
-            }
+	private void appendPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appendPlaylistMenuItemActionPerformed
+		int response = jM3UChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File m3uToAppend = jM3UChooser.getSelectedFile();
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.appendPlaylist(m3uToAppend) );                
+			}
 			catch (UnsupportedPlaylistFormat upf)
 			{
 				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
 				upf.printStackTrace();
 			}
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, playlist was not appended.");
-                e.printStackTrace();
-            }
-            updateButtons();
-            updateStatusLabel();
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-        updateStatusLabel();
-    }//GEN-LAST:event_appendPlaylistMenuItemActionPerformed
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, playlist was not appended.");
+				e.printStackTrace();
+			}
+			updateButtons();
+			updateStatusLabel();
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+		updateStatusLabel();
+	}//GEN-LAST:event_appendPlaylistMenuItemActionPerformed
 
-    private void deleteIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteIconButtonActionPerformed
-        if(playlistTable.getSelectedRowCount() != 0)
-        {
-            int entryIndex = playlistTable.getSelectedRow();
-            ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.delete(entryIndex) );
-            updateButtons();
-            updateStatusLabel();
-        }
-    }//GEN-LAST:event_deleteIconButtonActionPerformed
+	private void deleteIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteIconButtonActionPerformed
+		if(playlistTable.getSelectedRowCount() != 0)
+		{
+			int entryIndex = playlistTable.getSelectedRow();
+			((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.delete(entryIndex) );
+			updateButtons();
+			updateStatusLabel();
+		}
+	}//GEN-LAST:event_deleteIconButtonActionPerformed
 
-    private void downIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downIconButtonActionPerformed
-        if(playlistTable.getSelectedRowCount() != 0)
-        {
-            int entryIndex = playlistTable.getSelectedRow();            
-            ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveDown(entryIndex) );
-            playlistTable.changeSelection(entryIndex + 1, 0, false, false);
-            updateButtons();
-            updateStatusLabel();
-        }
-    }//GEN-LAST:event_downIconButtonActionPerformed
+	private void downIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downIconButtonActionPerformed
+		if(playlistTable.getSelectedRowCount() != 0)
+		{
+			int entryIndex = playlistTable.getSelectedRow();            
+			((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveDown(entryIndex) );
+			playlistTable.changeSelection(entryIndex + 1, 0, false, false);
+			updateButtons();
+			updateStatusLabel();
+		}
+	}//GEN-LAST:event_downIconButtonActionPerformed
 
-    private void upIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upIconButtonActionPerformed
-        if(playlistTable.getSelectedRowCount() != 0)
-        {
-            int entryIndex = playlistTable.getSelectedRow();            
-            ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveUp(entryIndex) );
-            playlistTable.changeSelection(entryIndex - 1, 0, false, false);
-            updateButtons();
-            updateStatusLabel();
-        }
-    }//GEN-LAST:event_upIconButtonActionPerformed
+	private void upIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upIconButtonActionPerformed
+		if(playlistTable.getSelectedRowCount() != 0)
+		{
+			int entryIndex = playlistTable.getSelectedRow();            
+			((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveUp(entryIndex) );
+			playlistTable.changeSelection(entryIndex - 1, 0, false, false);
+			updateButtons();
+			updateStatusLabel();
+		}
+	}//GEN-LAST:event_upIconButtonActionPerformed
 
-    private void appendFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appendFileMenuItemActionPerformed
-        int response = jFileChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
-                File fileToAppend = jFileChooser.getSelectedFile();
-                ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.addEntry(fileToAppend) );                
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, file was not appended.");
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-        updateButtons(); 
-        updateStatusLabel();
-        updateTableSize();
-}//GEN-LAST:event_appendFileMenuItemActionPerformed
+	private void appendFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appendFileMenuItemActionPerformed
+		int response = jFileChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File fileToAppend = jFileChooser.getSelectedFile();
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.addEntry(fileToAppend) );                
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, file was not appended.");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+		updateButtons(); 
+		updateStatusLabel();
+		updateTableSize();
+	}//GEN-LAST:event_appendFileMenuItemActionPerformed
 
-    private void playlistTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMousePressed
-        if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-        {
-            currentlySelectedRow = playlistTable.rowAtPoint(evt.getPoint());
-        }
-        else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
-        {
-            currentRightClick = playlistTable.rowAtPoint(evt.getPoint());
-        }
-        updateButtons();
-        updateStatusLabel();
-}//GEN-LAST:event_playlistTableMousePressed
+	private void playlistTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMousePressed
+		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			currentlySelectedRow = playlistTable.rowAtPoint(evt.getPoint());
+		}
+		else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
+		{
+			currentRightClick = playlistTable.rowAtPoint(evt.getPoint());
+		}
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_playlistTableMousePressed
 
-    private void playlistTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseReleased
-        if (evt.getModifiers() == java.awt.event.MouseEvent.BUTTON1_MASK)
-        {
-            int releasedRow = playlistTable.rowAtPoint(evt.getPoint());                
-            // if this point is in a row different than where it was clicked, move the row...
-            if ((currentlySelectedRow != releasedRow) && (releasedRow != -1))
-            {
-                ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) ); 
-                currentlySelectedRow = releasedRow;           
-            }
-        }
-        updateButtons();        
-        updateStatusLabel();
-}//GEN-LAST:event_playlistTableMouseReleased
+	private void playlistTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistTableMouseReleased
+		if (evt.getModifiers() == java.awt.event.MouseEvent.BUTTON1_MASK)
+		{
+			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());                
+			// if this point is in a row different than where it was clicked, move the row...
+			if ((currentlySelectedRow != releasedRow) && (releasedRow != -1))
+			{
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) ); 
+				currentlySelectedRow = releasedRow;           
+			}
+		}
+		updateButtons();        
+		updateStatusLabel();
+	}//GEN-LAST:event_playlistTableMouseReleased
 
-    private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
-        jSaveFileChooser.setSelectedFile(guiDriver.getPlaylist().getFile());
-        int response = jSaveFileChooser.showSaveDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
+	private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
+		jSaveFileChooser.setSelectedFile(guiDriver.getPlaylist().getFile());
+		int response = jSaveFileChooser.showSaveDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                File playlist = jSaveFileChooser.getSelectedFile();
+				File playlist = jSaveFileChooser.getSelectedFile();
 				// Add .m3u to the end of the name if the user didn't add it themselves.  
 				// Check w/ indexOf to support .m3u8
-                if (playlist.getName().indexOf(".m3u") < 0)
-                {
-                    playlist = new File(playlist.getPath() + ".m3u");
-                }				
+				if (playlist.getName().indexOf(".m3u") < 0)
+				{
+					playlist = new File(playlist.getPath() + ".m3u");
+				}				
 				PlaylistEntry.basePath = playlist.getParent();
-                guiDriver.saveM3U(playlist);                
-                guiDriver.setPlaylistFile(playlist);
+				guiDriver.saveM3U(playlist);                
+				guiDriver.setPlaylistFile(playlist);
 				((PlaylistTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
-                updateRecentMenu();
-                updateButtons();
+				updateRecentMenu();
+				updateButtons();
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-            catch (Exception e)
-            {            
+			}
+			catch (Exception e)
+			{            
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");                
-            }
-        }
-        else
-        {
-            jSaveFileChooser.cancelSelection();
-        }
-        updateStatusLabel();
-    }//GEN-LAST:event_saveAsMenuItemActionPerformed
+				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");                
+			}
+		}
+		else
+		{
+			jSaveFileChooser.cancelSelection();
+		}
+		updateStatusLabel();
+	}//GEN-LAST:event_saveAsMenuItemActionPerformed
 
-    private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.closePlaylist() );
-        PlaylistEntry.basePath = "";
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_closeMenuItemActionPerformed
+	private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.closePlaylist() );
+		PlaylistEntry.basePath = "";
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_closeMenuItemActionPerformed
 
-    private void closeIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeIconButtonActionPerformed
-        ((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.closePlaylist() );
-        PlaylistEntry.basePath = "";
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_closeIconButtonActionPerformed
+	private void closeIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeIconButtonActionPerformed
+		((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.closePlaylist() );
+		PlaylistEntry.basePath = "";
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_closeIconButtonActionPerformed
 
-    private void openIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openIconButtonActionPerformed
-        if (guiDriver.getPlaylist() != null)
-        {
-            jM3UChooser.setSelectedFile(guiDriver.getPlaylist().getFile());
-        }
-        int response = jM3UChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {			
-            File playlist = jM3UChooser.getSelectedFile();
+	private void openIconButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openIconButtonActionPerformed
+		if (guiDriver.getPlaylist() != null)
+		{
+			jM3UChooser.setSelectedFile(guiDriver.getPlaylist().getFile());
+		}
+		int response = jM3UChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{			
+			File playlist = jM3UChooser.getSelectedFile();
 			this.openPlaylist(playlist);
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-    }//GEN-LAST:event_openIconButtonActionPerformed
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+	}//GEN-LAST:event_openIconButtonActionPerformed
 
 	private void openPlaylist(File playlist)	
 	{
@@ -1420,13 +1425,13 @@ public class GUIScreen extends JFrame
 		}
 	}
 	
-    private void addMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMediaDirButtonActionPerformed
-        int response = jMediaDirChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {                
-                UNCFile mediaDir = new UNCFile(jMediaDirChooser.getSelectedFile());
+	private void addMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMediaDirButtonActionPerformed
+		int response = jMediaDirChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{                
+				UNCFile mediaDir = new UNCFile(jMediaDirChooser.getSelectedFile());
 				if (guiDriver.getAppOptions().getAlwaysUseUNCPaths())
 				{					
 					if (mediaDir.onNetworkDrive())
@@ -1434,89 +1439,89 @@ public class GUIScreen extends JFrame
 						mediaDir = new UNCFile(mediaDir.getUNCPath());
 					}
 				}
-                String dir = mediaDir.getPath();     
-                if (mediaDir != null)
-                {
-                    // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-                    if (ArrayFunctions.ContainsStringWithPrefix(guiDriver.getMediaDirs(), dir, !guiDriver.fileSystemIsCaseSensitive))
-                    {                
-                        JOptionPane.showMessageDialog(this, "The directory you attempted to add is a subdirectory of one already in your media library, no change was made.", "Reminder", JOptionPane.INFORMATION_MESSAGE);                        
-                        return;
-                    }
-                    else
-                    {
-                        // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.                        
-                        String[] dirsToCheck = guiDriver.getMediaDirs();
-                        for (int i = 0; i < dirsToCheck.length; i++)
-                        {
-                            int matchCount = 0;
-                            if (dirsToCheck[i].startsWith(dir))
-                            {
-                                if (matchCount == 0)
-                                {
-                                    JOptionPane.showMessageDialog(this, "One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically.", "Reminder", JOptionPane.INFORMATION_MESSAGE);                        
-                                }
-                                removeMediaDirByIndex(evt, i);
-                                matchCount++;
-                            }
-                        }
-                    }
-                }
-                updateMediaLibraryProgressDialog.go();          
-                AddMediaDirectoryTask thisTask = new AddMediaDirectoryTask(dir, guiDriver);
-                updateMediaLibraryProgressDialog.setBusyCursor(true);
-                updateMediaLibraryProgressDialog.track(thisTask);
-                updateMediaLibraryProgressDialog.setBusyCursor(false);
-                updateMediaLibraryProgressDialog.setEnabled(false);
-                mediaLibraryList.setListData(guiDriver.getMediaDirs());
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, media directory could not be added.");
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            jMediaDirChooser.cancelSelection();
-        }
-        updateButtons();    
-}//GEN-LAST:event_addMediaDirButtonActionPerformed
+				String dir = mediaDir.getPath();     
+				if (mediaDir != null)
+				{
+					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
+					if (ArrayFunctions.ContainsStringWithPrefix(guiDriver.getMediaDirs(), dir, !guiDriver.fileSystemIsCaseSensitive))
+					{                
+						JOptionPane.showMessageDialog(this, "The directory you attempted to add is a subdirectory of one already in your media library, no change was made.", "Reminder", JOptionPane.INFORMATION_MESSAGE);                        
+						return;
+					}
+					else
+					{
+						// Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.                        
+						String[] dirsToCheck = guiDriver.getMediaDirs();
+						for (int i = 0; i < dirsToCheck.length; i++)
+						{
+							int matchCount = 0;
+							if (dirsToCheck[i].startsWith(dir))
+							{
+								if (matchCount == 0)
+								{
+									JOptionPane.showMessageDialog(this, "One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically.", "Reminder", JOptionPane.INFORMATION_MESSAGE);                        
+								}
+								removeMediaDirByIndex(evt, i);
+								matchCount++;
+							}
+						}
+					}
+				}
+				updateMediaLibraryProgressDialog.go();          
+				AddMediaDirectoryTask thisTask = new AddMediaDirectoryTask(dir, guiDriver);
+				updateMediaLibraryProgressDialog.setBusyCursor(true);
+				updateMediaLibraryProgressDialog.track(thisTask);
+				updateMediaLibraryProgressDialog.setBusyCursor(false);
+				updateMediaLibraryProgressDialog.setEnabled(false);
+				mediaLibraryList.setListData(guiDriver.getMediaDirs());
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, media directory could not be added.");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			jMediaDirChooser.cancelSelection();
+		}
+		updateButtons();    
+	}//GEN-LAST:event_addMediaDirButtonActionPerformed
 
-    private void removeMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMediaDirButtonActionPerformed
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        try
-        {
-            mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getSelectedValue()));            
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-        catch (Exception e)
-        {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
-            e.printStackTrace();
-        }
-        updateButtons();
-    }//GEN-LAST:event_removeMediaDirButtonActionPerformed
+	private void removeMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMediaDirButtonActionPerformed
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		try
+		{
+			mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getSelectedValue()));            
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		catch (Exception e)
+		{
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
+			e.printStackTrace();
+		}
+		updateButtons();
+	}//GEN-LAST:event_removeMediaDirButtonActionPerformed
 
-    private void removeMediaDirByIndex(java.awt.event.ActionEvent evt, int index) {                                                     
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        try
-        {
-            mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getModel().getElementAt(index)));            
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-        catch (Exception e)
-        {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
-            e.printStackTrace();
-        }
-        updateButtons();
-    }                        
-    
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        try
+	private void removeMediaDirByIndex(java.awt.event.ActionEvent evt, int index) {                                                     
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		try
+		{
+			mediaLibraryList.setListData(guiDriver.removeMediaDir((String)mediaLibraryList.getModel().getElementAt(index)));            
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+		catch (Exception e)
+		{
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
+			e.printStackTrace();
+		}
+		updateButtons();
+	}                        
+	
+	private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+		try
 		{
 			if (guiDriver.getPlaylist() != null && guiDriver.getPlaylist().getFile() != null)
 			{			
@@ -1539,130 +1544,130 @@ public class GUIScreen extends JFrame
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 		}
-    }//GEN-LAST:event_saveButtonActionPerformed
+	}//GEN-LAST:event_saveButtonActionPerformed
 
-    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        JOptionPane.showMessageDialog(this, "listFix( ) v1.5.2\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_aboutMenuItemActionPerformed
+	private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+		JOptionPane.showMessageDialog(this, "listFix( ) v1.5.2\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
+	}//GEN-LAST:event_aboutMenuItemActionPerformed
 
-    private void locateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locateButtonActionPerformed
-        locateProgressDialog.go();
-        LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
-        locateProgressDialog.track(thisTask);
-        if(!guiDriver.getPlaylist().isListEmpty())
-        {
-            String[][] dataModel = guiDriver.locateFiles(thisTask);
-            ((PlaylistTableModel)playlistTable.getModel()).updateData( dataModel );       
-        }
-        locateProgressDialog.setEnabled(false);
-        updateButtons();
-        updateStatusLabel();
-    }//GEN-LAST:event_locateButtonActionPerformed
+	private void locateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locateButtonActionPerformed
+		locateProgressDialog.go();
+		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
+		locateProgressDialog.track(thisTask);
+		if(!guiDriver.getPlaylist().isListEmpty())
+		{
+			String[][] dataModel = guiDriver.locateFiles(thisTask);
+			((PlaylistTableModel)playlistTable.getModel()).updateData( dataModel );       
+		}
+		locateProgressDialog.setEnabled(false);
+		updateButtons();
+		updateStatusLabel();
+	}//GEN-LAST:event_locateButtonActionPerformed
 
 	private void locateButtonActionPerformed() {                                             
-        locateProgressDialog.go();
-        LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
-        locateProgressDialog.track(thisTask);
-        if(!guiDriver.getPlaylist().isListEmpty())
-        {
-            String[][] dataModel = guiDriver.locateFiles(thisTask);
-            ((PlaylistTableModel)playlistTable.getModel()).updateData( dataModel );       
-        }
-        locateProgressDialog.setEnabled(false);
-        updateButtons();
-        updateStatusLabel();
-    }         
+		locateProgressDialog.go();
+		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
+		locateProgressDialog.track(thisTask);
+		if(!guiDriver.getPlaylist().isListEmpty())
+		{
+			String[][] dataModel = guiDriver.locateFiles(thisTask);
+			((PlaylistTableModel)playlistTable.getModel()).updateData( dataModel );       
+		}
+		locateProgressDialog.setEnabled(false);
+		updateButtons();
+		updateStatusLabel();
+	}         
 	
-    private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_exitActionPerformed
+	private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
+		System.exit(0);
+	}//GEN-LAST:event_exitActionPerformed
 
-    /** Exit the Application */
-    private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
-        System.exit(0);
-    }//GEN-LAST:event_exitForm
+	/** Exit the Application */
+	private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
+		System.exit(0);
+	}//GEN-LAST:event_exitForm
 
-    private void refreshMediaDirsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshMediaDirsButtonActionPerformed
-        updateMediaLibraryProgressDialog.go();
-        UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
-        updateMediaLibraryProgressDialog.setBusyCursor(true);
-        updateMediaLibraryProgressDialog.track(thisTask);
-        updateMediaLibraryProgressDialog.setBusyCursor(false);
-}//GEN-LAST:event_refreshMediaDirsButtonActionPerformed
+	private void refreshMediaDirsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshMediaDirsButtonActionPerformed
+		updateMediaLibraryProgressDialog.go();
+		UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
+		updateMediaLibraryProgressDialog.setBusyCursor(true);
+		updateMediaLibraryProgressDialog.track(thisTask);
+		updateMediaLibraryProgressDialog.setBusyCursor(false);
+	}//GEN-LAST:event_refreshMediaDirsButtonActionPerformed
 
 	private void refreshMediaDirs() 
 	{                                                       
-        updateMediaLibraryProgressDialog.go();
-        UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
-        updateMediaLibraryProgressDialog.setBusyCursor(true);
-        updateMediaLibraryProgressDialog.track(thisTask);
-        updateMediaLibraryProgressDialog.setBusyCursor(false);
+		updateMediaLibraryProgressDialog.go();
+		UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
+		updateMediaLibraryProgressDialog.setBusyCursor(true);
+		updateMediaLibraryProgressDialog.track(thisTask);
+		updateMediaLibraryProgressDialog.setBusyCursor(false);
 	} 
 	
-    private void openRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openRCMenuItemActionPerformed
-        int row = playlistTable.getSelectedRow();
-        PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
-        try
-        {
-            entryToPlay.play();
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
-        }
-}//GEN-LAST:event_openRCMenuItemActionPerformed
+	private void openRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openRCMenuItemActionPerformed
+		int row = playlistTable.getSelectedRow();
+		PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
+		try
+		{
+			entryToPlay.play();
+		}
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
+		}
+	}//GEN-LAST:event_openRCMenuItemActionPerformed
 
-    private void openPlaylistButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openPlaylistButtonActionPerformed
-        guiDriver.playPlaylist();
-}//GEN-LAST:event_openPlaylistButtonActionPerformed
+	private void openPlaylistButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openPlaylistButtonActionPerformed
+		guiDriver.playPlaylist();
+	}//GEN-LAST:event_openPlaylistButtonActionPerformed
 
-    private void removeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMenuItemActionPerformed
-        deleteIconButtonActionPerformed(evt);
-    }//GEN-LAST:event_removeMenuItemActionPerformed
+	private void removeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMenuItemActionPerformed
+		deleteIconButtonActionPerformed(evt);
+	}//GEN-LAST:event_removeMenuItemActionPerformed
 
-    private void playFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFileMenuItemActionPerformed
-        openRCMenuItemActionPerformed(evt);
-}//GEN-LAST:event_playFileMenuItemActionPerformed
+	private void playFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFileMenuItemActionPerformed
+		openRCMenuItemActionPerformed(evt);
+	}//GEN-LAST:event_playFileMenuItemActionPerformed
 
-    private void replaceFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceFileMenuItemActionPerformed
-        int response = jFileChooser.showOpenDialog(this);
-        if (response == JFileChooser.APPROVE_OPTION)
-        {
-            try
-            {
-                File fileToInsert = jFileChooser.getSelectedFile();
-                if (playlistTable.getSelectedRowCount() != 0)
-                {
-                    int entryIndex = playlistTable.getSelectedRow();
-                    ((PlaylistTableModel) playlistTable.getModel()).updateData(guiDriver.replaceFile(fileToInsert, entryIndex));
-                    updateButtons();
-                    updateStatusLabel();
-                }
-            }
-            catch (Exception e)
-            {
-                JOptionPane.showMessageDialog(this, "An error has occured, file was not inserted.");
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            jM3UChooser.cancelSelection();
-        }
-}//GEN-LAST:event_replaceFileMenuItemActionPerformed
+	private void replaceFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceFileMenuItemActionPerformed
+		int response = jFileChooser.showOpenDialog(this);
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File fileToInsert = jFileChooser.getSelectedFile();
+				if (playlistTable.getSelectedRowCount() != 0)
+				{
+					int entryIndex = playlistTable.getSelectedRow();
+					((PlaylistTableModel) playlistTable.getModel()).updateData(guiDriver.replaceFile(fileToInsert, entryIndex));
+					updateButtons();
+					updateStatusLabel();
+				}
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(this, "An error has occured, file was not inserted.");
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+	}//GEN-LAST:event_replaceFileMenuItemActionPerformed
 
-    private void replaceFileRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceFileRCMenuItemActionPerformed
-        replaceFileMenuItemActionPerformed(evt);
-}//GEN-LAST:event_replaceFileRCMenuItemActionPerformed
+	private void replaceFileRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceFileRCMenuItemActionPerformed
+		replaceFileMenuItemActionPerformed(evt);
+	}//GEN-LAST:event_replaceFileRCMenuItemActionPerformed
 
-    private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appOptionsMenuItemActionPerformed
-        String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
-        AppOptions options = optDialog.showDialog();
-        if (optDialog.getResultCode() == AppOptionsDialog.OK)
-        {
+	private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_appOptionsMenuItemActionPerformed
+		String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
+		AppOptions options = optDialog.showDialog();
+		if (optDialog.getResultCode() == AppOptionsDialog.OK)
+		{
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			guiDriver.setAppOptions(options);
-            (new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
+			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
 			guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
 			if (options.getAlwaysUseUNCPaths())
 			{
@@ -1676,338 +1681,367 @@ public class GUIScreen extends JFrame
 			updateRecentMenu();
 			this.setLookAndFeel(options.getLookAndFeel());
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-}//GEN-LAST:event_appOptionsMenuItemActionPerformed
+		}
+	}//GEN-LAST:event_appOptionsMenuItemActionPerformed
 
 	private void locateRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locateRCMenuItemActionPerformed
-        int row = playlistTable.getSelectedRow();
+		int row = playlistTable.getSelectedRow();
 		((PlaylistTableModel)playlistTable.getModel()).updateData(guiDriver.locateFile(row));
 		updateButtons();
 		updateStatusLabel();
-}//GEN-LAST:event_locateRCMenuItemActionPerformed
+	}//GEN-LAST:event_locateRCMenuItemActionPerformed
 
-    private void updateButtons()
-    {
-        if (guiDriver.getPlaylist().getFile() == null)
+    private void playlistDirectoryTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistDirectoryTreeMouseClicked
+        if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
+		{
+			playlistTreeRightClickMenu.show(playlistDirectoryTree, (int)evt.getPoint().getX(), (int)evt.getPoint().getY());
+		}
+    }//GEN-LAST:event_playlistDirectoryTreeMouseClicked
+
+    private void repairPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_repairPlaylistMenuItemActionPerformed
+        TreePath[] paths = playlistDirectoryTree.getSelectionPaths();
+        for (TreePath path : paths)
         {
-            closeMenuItem.setEnabled(false);
-            closeIconButton.setEnabled(false);            
-            appendPlaylistMenuItem.setEnabled(false);
-            openPlaylistButton.setEnabled(false);
+            File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
+            System.out.println(toOpen.getAbsolutePath());
         }
-        else if(guiDriver.getPlaylist().playlistModified())
-        {
-            closeMenuItem.setEnabled(true);
-            closeIconButton.setEnabled(true);            
-            appendPlaylistMenuItem.setEnabled(true);
+    }//GEN-LAST:event_repairPlaylistMenuItemActionPerformed
+
+    private void playlistDirectoryTreeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlistDirectoryTreeMousePressed
+        int selRow = playlistDirectoryTree.getRowForLocation(evt.getX(), evt.getY());
+        TreePath selPath = playlistDirectoryTree.getPathForLocation(evt.getX(), evt.getY());
+        if(selRow != -1)
+		{
+            if(evt.getClickCount() == 2)
+			{
+				playlistDirectoryTreeNodeDoubleClicked(selPath);
+            }
+        }
+    }//GEN-LAST:event_playlistDirectoryTreeMousePressed
+
+	private void updateButtons()
+	{
+		if (guiDriver.getPlaylist().getFile() == null)
+		{
+			closeMenuItem.setEnabled(false);
+			closeIconButton.setEnabled(false);            
+			appendPlaylistMenuItem.setEnabled(false);
 			openPlaylistButton.setEnabled(false);
-        }
-        else
-        {
-            closeMenuItem.setEnabled(true);
-            closeIconButton.setEnabled(true);            
-            appendPlaylistMenuItem.setEnabled(true);
-            openPlaylistButton.setEnabled(true);
-        }
-        if (guiDriver.getPlaylist().getEntryCount() == 0)
-        {                        
-            upIconButton.setEnabled(false);
-            downIconButton.setEnabled(false);
-            removeMenuItem.setEnabled(false);
-            deleteIconButton.setEnabled(false);
-            playFileMenuItem.setEnabled(false);
-            deleteRCMenuItem.setEnabled(false);
+		}
+		else if(guiDriver.getPlaylist().playlistModified())
+		{
+			closeMenuItem.setEnabled(true);
+			closeIconButton.setEnabled(true);            
+			appendPlaylistMenuItem.setEnabled(true);
+			openPlaylistButton.setEnabled(false);
+		}
+		else
+		{
+			closeMenuItem.setEnabled(true);
+			closeIconButton.setEnabled(true);            
+			appendPlaylistMenuItem.setEnabled(true);
+			openPlaylistButton.setEnabled(true);
+		}
+		if (guiDriver.getPlaylist().getEntryCount() == 0)
+		{                        
+			upIconButton.setEnabled(false);
+			downIconButton.setEnabled(false);
+			removeMenuItem.setEnabled(false);
+			deleteIconButton.setEnabled(false);
+			playFileMenuItem.setEnabled(false);
+			deleteRCMenuItem.setEnabled(false);
 			locateRCMenuItem.setEnabled(false);
-            locateButton.setEnabled(false);
-            randomizeMenuItem.setEnabled(false);
-            reverseMenuItem.setEnabled(false);
-            filenameSortMenu.setEnabled(false);
-            statusSortMenu.setEnabled(false);
-            pathSortMenu.setEnabled(false);
-            removeMissingMenuItem.setEnabled(false);
-            removeDuplicatesMenuItem.setEnabled(false);
-            copyToDirMenuItem.setEnabled(false);
-            editFileNameRCMenuItem.setEnabled(false);
-            openRCMenuItem.setEnabled(false);
-            closestMatchesRCMenuItem.setEnabled(false);
-            findClosestMatchesMenuItem.setEnabled(false);
-            insertFileMenuItem.setEnabled(false);
-        }
-        else
-        {            
-            upIconButton.setEnabled(true);
-            downIconButton.setEnabled(true);
-            if (playlistTable.getSelectedRow() == 0)
-            {
-                upIconButton.setEnabled(false);
-            }
-            if (playlistTable.getSelectedRow() == guiDriver.getPlaylist().getEntryCount() - 1)
-            {
-                downIconButton.setEnabled(false);
-            }
-            removeMenuItem.setEnabled(true);
-            deleteIconButton.setEnabled(true);
-            playFileMenuItem.setEnabled(true);
-            deleteRCMenuItem.setEnabled(true);
+			locateButton.setEnabled(false);
+			randomizeMenuItem.setEnabled(false);
+			reverseMenuItem.setEnabled(false);
+			filenameSortMenu.setEnabled(false);
+			statusSortMenu.setEnabled(false);
+			pathSortMenu.setEnabled(false);
+			removeMissingMenuItem.setEnabled(false);
+			removeDuplicatesMenuItem.setEnabled(false);
+			copyToDirMenuItem.setEnabled(false);
+			editFileNameRCMenuItem.setEnabled(false);
+			openRCMenuItem.setEnabled(false);
+			closestMatchesRCMenuItem.setEnabled(false);
+			findClosestMatchesMenuItem.setEnabled(false);
+			insertFileMenuItem.setEnabled(false);
+		}
+		else
+		{            
+			upIconButton.setEnabled(true);
+			downIconButton.setEnabled(true);
+			if (playlistTable.getSelectedRow() == 0)
+			{
+				upIconButton.setEnabled(false);
+			}
+			if (playlistTable.getSelectedRow() == guiDriver.getPlaylist().getEntryCount() - 1)
+			{
+				downIconButton.setEnabled(false);
+			}
+			removeMenuItem.setEnabled(true);
+			deleteIconButton.setEnabled(true);
+			playFileMenuItem.setEnabled(true);
+			deleteRCMenuItem.setEnabled(true);
 			locateRCMenuItem.setEnabled(true);
-            locateButton.setEnabled(true); 
-            randomizeMenuItem.setEnabled(true);
-            reverseMenuItem.setEnabled(true);
-            filenameSortMenu.setEnabled(true);
-            statusSortMenu.setEnabled(true);
-            pathSortMenu.setEnabled(true);
-            removeMissingMenuItem.setEnabled(true);
-            removeDuplicatesMenuItem.setEnabled(true);
-            copyToDirMenuItem.setEnabled(true);
-            editFileNameRCMenuItem.setEnabled(true);
-            openRCMenuItem.setEnabled(true);
-            closestMatchesRCMenuItem.setEnabled(true);
-            findClosestMatchesMenuItem.setEnabled(true);
-            insertFileMenuItem.setEnabled(true);
-        }
-        if (playlistTable.getSelectedRowCount() == 0)
-        {
-            upIconButton.setEnabled(false);
-            removeMenuItem.setEnabled(false);
-            deleteIconButton.setEnabled(false);
-            playFileMenuItem.setEnabled(false);
-            deleteRCMenuItem.setEnabled(false);
+			locateButton.setEnabled(true); 
+			randomizeMenuItem.setEnabled(true);
+			reverseMenuItem.setEnabled(true);
+			filenameSortMenu.setEnabled(true);
+			statusSortMenu.setEnabled(true);
+			pathSortMenu.setEnabled(true);
+			removeMissingMenuItem.setEnabled(true);
+			removeDuplicatesMenuItem.setEnabled(true);
+			copyToDirMenuItem.setEnabled(true);
+			editFileNameRCMenuItem.setEnabled(true);
+			openRCMenuItem.setEnabled(true);
+			closestMatchesRCMenuItem.setEnabled(true);
+			findClosestMatchesMenuItem.setEnabled(true);
+			insertFileMenuItem.setEnabled(true);
+		}
+		if (playlistTable.getSelectedRowCount() == 0)
+		{
+			upIconButton.setEnabled(false);
+			removeMenuItem.setEnabled(false);
+			deleteIconButton.setEnabled(false);
+			playFileMenuItem.setEnabled(false);
+			deleteRCMenuItem.setEnabled(false);
 			locateRCMenuItem.setEnabled(false);
-            editFileNameRCMenuItem.setEnabled(false);
-            openRCMenuItem.setEnabled(false);
-            closestMatchesRCMenuItem.setEnabled(false);
-            findClosestMatchesMenuItem.setEnabled(false);
-            insertPlaylistMenuItem.setEnabled(false);
-            insertFileMenuItem.setEnabled(false);
-            replaceFileMenuItem.setEnabled(false);
-            replaceFileRCMenuItem.setEnabled(false);
-        }
-        else if ((playlistTable.getSelectedRowCount() != 0) && (guiDriver.getPlaylist().getEntryCount() != 0))
-        {
-            upIconButton.setEnabled(true);
-            downIconButton.setEnabled(true);
-            if (playlistTable.getSelectedRow() == 0)
-            {
-                upIconButton.setEnabled(false);
-            }
-            if (playlistTable.getSelectedRow() == guiDriver.getPlaylist().getEntryCount() - 1)
-            {
-                downIconButton.setEnabled(false);
-            }
-            removeMenuItem.setEnabled(true);
-            deleteRCMenuItem.setEnabled(true);
+			editFileNameRCMenuItem.setEnabled(false);
+			openRCMenuItem.setEnabled(false);
+			closestMatchesRCMenuItem.setEnabled(false);
+			findClosestMatchesMenuItem.setEnabled(false);
+			insertPlaylistMenuItem.setEnabled(false);
+			insertFileMenuItem.setEnabled(false);
+			replaceFileMenuItem.setEnabled(false);
+			replaceFileRCMenuItem.setEnabled(false);
+		}
+		else if ((playlistTable.getSelectedRowCount() != 0) && (guiDriver.getPlaylist().getEntryCount() != 0))
+		{
+			upIconButton.setEnabled(true);
+			downIconButton.setEnabled(true);
+			if (playlistTable.getSelectedRow() == 0)
+			{
+				upIconButton.setEnabled(false);
+			}
+			if (playlistTable.getSelectedRow() == guiDriver.getPlaylist().getEntryCount() - 1)
+			{
+				downIconButton.setEnabled(false);
+			}
+			removeMenuItem.setEnabled(true);
+			deleteRCMenuItem.setEnabled(true);
 			locateRCMenuItem.setEnabled(true);
-            deleteIconButton.setEnabled(true);
-            playFileMenuItem.setEnabled(true);
-            if (!guiDriver.getEntryAt(playlistTable.getSelectedRow()).isURL())
-            {
-                editFileNameRCMenuItem.setEnabled(true);
-                editFilenameMenuItem.setEnabled(true);
-                closestMatchesRCMenuItem.setEnabled(true);
-                findClosestMatchesMenuItem.setEnabled(true);
-            }
-            else
-            {
-                editFileNameRCMenuItem.setEnabled(false);
-                editFilenameMenuItem.setEnabled(false);
-                closestMatchesRCMenuItem.setEnabled(false);
-                findClosestMatchesMenuItem.setEnabled(false);
+			deleteIconButton.setEnabled(true);
+			playFileMenuItem.setEnabled(true);
+			if (!guiDriver.getEntryAt(playlistTable.getSelectedRow()).isURL())
+			{
+				editFileNameRCMenuItem.setEnabled(true);
+				editFilenameMenuItem.setEnabled(true);
+				closestMatchesRCMenuItem.setEnabled(true);
+				findClosestMatchesMenuItem.setEnabled(true);
+			}
+			else
+			{
+				editFileNameRCMenuItem.setEnabled(false);
+				editFilenameMenuItem.setEnabled(false);
+				closestMatchesRCMenuItem.setEnabled(false);
+				findClosestMatchesMenuItem.setEnabled(false);
 				locateRCMenuItem.setEnabled(false);
-            }
-            openRCMenuItem.setEnabled(true);
-            insertPlaylistMenuItem.setEnabled(true);            
-            insertFileMenuItem.setEnabled(true);
-            replaceFileMenuItem.setEnabled(true);
-            replaceFileRCMenuItem.setEnabled(true);
-        }                
-        if (mediaLibraryList.getModel().getSize() == 0)
-        {
-            removeMediaDirButton.setEnabled(false);
-            refreshMediaDirsButton.setEnabled(false);
-        }
-        else if (mediaLibraryList.getModel().getSize() != 0)
-        {
-            removeMediaDirButton.setEnabled(true);
-            refreshMediaDirsButton.setEnabled(true);
-        }
-    }
-    
-    private void updateStatusLabel()
-    {
-        String filename = guiDriver.getPlaylist().getFilename();
-        if ( !filename.equals("") )
-        {
-            statusLabel.setText("Currently Open: " + filename + (guiDriver.getPlaylist().playlistModified() ? "*" : "" ) + "     Number of entries in list: " + guiDriver.getPlaylist().getEntryCount() + "     Number of lost entries: " + guiDriver.getPlaylist().getLostEntryCount() + "     Number of URLs: " + guiDriver.getPlaylist().getURLCount());            
-        }
-        else if ( filename.equals(""))
-        {
-            statusLabel.setText("Untitled List     Number of entries in list: " + guiDriver.getPlaylist().getEntryCount() + "     Number of lost entries: " + guiDriver.getPlaylist().getLostEntryCount() + "     Number of URLs: " + guiDriver.getPlaylist().getURLCount());
-        }
-    }
-    
-    private void updateTableSize()
-    {
-        if (playlistTable.getSize().height < playlistTablePanel.getSize().height)
-        {
-            playlistTable.setSize(new java.awt.Dimension(playlistScrollPanel.getSize().width, playlistScrollPanel.getSize().height - 20));
-            playlistTable.revalidate();
-        }
-        else
-        {
-            playlistTable.setSize(new java.awt.Dimension(0, 0));
-            playlistTable.revalidate();
-        }
-    }
-    
-    private void updateRecentMenu()
-    {
-        recentMenu.removeAll();
-        String[] files = guiDriver.getRecentM3Us();
-        if (files.length == 0)
-        {
-            JMenuItem temp = new JMenuItem("Empty");
-            temp.setEnabled(false);
-            recentMenu.add(temp);
-        }
-        else
-        {
-            for (int i = 0; i < files.length; i++)
-            {
-                JMenuItem temp = new JMenuItem(files[i]);
-                temp.setFont(new java.awt.Font("Verdana", 0, 9));
-                temp.addActionListener(new java.awt.event.ActionListener()
-                {
-                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                    {
-                        recentPlaylistActionPerformed(evt);
-                    }
-                });
-                recentMenu.add(temp);
-            }
-        }
-    }
-    
-    private void recentPlaylistActionPerformed(java.awt.event.ActionEvent evt)
-    {
-        JMenuItem temp = (JMenuItem)evt.getSource();
+			}
+			openRCMenuItem.setEnabled(true);
+			insertPlaylistMenuItem.setEnabled(true);            
+			insertFileMenuItem.setEnabled(true);
+			replaceFileMenuItem.setEnabled(true);
+			replaceFileRCMenuItem.setEnabled(true);
+		}                
+		if (mediaLibraryList.getModel().getSize() == 0)
+		{
+			removeMediaDirButton.setEnabled(false);
+			refreshMediaDirsButton.setEnabled(false);
+		}
+		else if (mediaLibraryList.getModel().getSize() != 0)
+		{
+			removeMediaDirButton.setEnabled(true);
+			refreshMediaDirsButton.setEnabled(true);
+		}
+	}
+	
+	private void updateStatusLabel()
+	{
+		String filename = guiDriver.getPlaylist().getFilename();
+		if ( !filename.equals("") )
+		{
+			statusLabel.setText("Currently Open: " + filename + (guiDriver.getPlaylist().playlistModified() ? "*" : "" ) + "     Number of entries in list: " + guiDriver.getPlaylist().getEntryCount() + "     Number of lost entries: " + guiDriver.getPlaylist().getLostEntryCount() + "     Number of URLs: " + guiDriver.getPlaylist().getURLCount());            
+		}
+		else if ( filename.equals(""))
+		{
+			statusLabel.setText("Untitled List     Number of entries in list: " + guiDriver.getPlaylist().getEntryCount() + "     Number of lost entries: " + guiDriver.getPlaylist().getLostEntryCount() + "     Number of URLs: " + guiDriver.getPlaylist().getURLCount());
+		}
+	}
+	
+	private void updateTableSize()
+	{
+		if (playlistTable.getSize().height < playlistTablePanel.getSize().height)
+		{
+			playlistTable.setSize(new java.awt.Dimension(playlistScrollPanel.getSize().width, playlistScrollPanel.getSize().height - 20));
+			playlistTable.revalidate();
+		}
+		else
+		{
+			playlistTable.setSize(new java.awt.Dimension(0, 0));
+			playlistTable.revalidate();
+		}
+	}
+	
+	private void updateRecentMenu()
+	{
+		recentMenu.removeAll();
+		String[] files = guiDriver.getRecentM3Us();
+		if (files.length == 0)
+		{
+			JMenuItem temp = new JMenuItem("Empty");
+			temp.setEnabled(false);
+			recentMenu.add(temp);
+		}
+		else
+		{
+			for (int i = 0; i < files.length; i++)
+			{
+				JMenuItem temp = new JMenuItem(files[i]);
+				temp.setFont(new java.awt.Font("Verdana", 0, 9));
+				temp.addActionListener(new java.awt.event.ActionListener()
+				{
+					public void actionPerformed(java.awt.event.ActionEvent evt)
+					{
+						recentPlaylistActionPerformed(evt);
+					}
+				});
+				recentMenu.add(temp);
+			}
+		}
+	}
+	
+	private void recentPlaylistActionPerformed(java.awt.event.ActionEvent evt)
+	{
+		JMenuItem temp = (JMenuItem)evt.getSource();
 		openM3UProgressDialog.go();
-        File playlist = new File(temp.getText());
-        OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
-        try
-        {
-            PlaylistEntry.basePath = playlist.getParent();
-            openM3UProgressDialog.track(thisTask);
-            openM3UProgressDialog.setEnabled(false);
-            ((PlaylistTableModel) playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
-            updateRecentMenu();
-            updateButtons();
-            updateStatusLabel();
-            this.initColumnSizes(playlistTable);
-            if (guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
-            {
-                locateButtonActionPerformed(evt);
-            }
-        }
-        catch (Exception e)
-        {
-            // eat the error and continue
-            PlaylistEntry.basePath = "";
-            JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
-            e.printStackTrace();
-        }
+		File playlist = new File(temp.getText());
+		OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
+		try
+		{
+			PlaylistEntry.basePath = playlist.getParent();
+			openM3UProgressDialog.track(thisTask);
+			openM3UProgressDialog.setEnabled(false);
+			((PlaylistTableModel) playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
+			updateRecentMenu();
+			updateButtons();
+			updateStatusLabel();
+			this.initColumnSizes(playlistTable);
+			if (guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+			{
+				locateButtonActionPerformed(evt);
+			}
+		}
+		catch (Exception e)
+		{
+			// eat the error and continue
+			PlaylistEntry.basePath = "";
+			JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
+			e.printStackTrace();
+		}
 		
 		if (thisTask.notM3UFormat)
 		{
 			JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
-        }
-    }
+		}
+	}
 
-    private void setLookAndFeel(String className)
-    {
-        try
-        {
-            UIManager.setLookAndFeel(className);
-            SwingUtilities.updateComponentTreeUI(this);
-            SwingUtilities.updateComponentTreeUI(jM3UChooser);
-            SwingUtilities.updateComponentTreeUI(jFileChooser);
-            SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
-            SwingUtilities.updateComponentTreeUI(jCopyToDirChooser);
-            SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
-            SwingUtilities.updateComponentTreeUI(locateProgressDialog);
-            SwingUtilities.updateComponentTreeUI(copyFilesProgressDialog);
-            SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);
-            SwingUtilities.updateComponentTreeUI(openM3UProgressDialog);
-            SwingUtilities.updateComponentTreeUI(entryRightClickMenu);
-        }
-        catch (ClassNotFoundException e)
-        {
-        }
-        catch (InstantiationException e)
-        {
-        }
-        catch (IllegalAccessException e)
-        {
-        }
-        catch (UnsupportedLookAndFeelException e)
-        {
-        }
-    }
-    
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) 
-    {
-        GUIScreen mainWindow = new GUIScreen();
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension labelSize = mainWindow.getPreferredSize();
-        mainWindow.setLocation(screenSize.width/2 - (labelSize.width / 2), screenSize.height / 2 - (labelSize.height / 2));
+	private void setLookAndFeel(String className)
+	{
+		try
+		{
+			UIManager.setLookAndFeel(className);
+			SwingUtilities.updateComponentTreeUI(this);
+			SwingUtilities.updateComponentTreeUI(jM3UChooser);
+			SwingUtilities.updateComponentTreeUI(jFileChooser);
+			SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
+			SwingUtilities.updateComponentTreeUI(jCopyToDirChooser);
+			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
+			SwingUtilities.updateComponentTreeUI(locateProgressDialog);
+			SwingUtilities.updateComponentTreeUI(copyFilesProgressDialog);
+			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);
+			SwingUtilities.updateComponentTreeUI(openM3UProgressDialog);
+			SwingUtilities.updateComponentTreeUI(entryRightClickMenu);
+            SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
+		}
+		catch (ClassNotFoundException e)
+		{
+		}
+		catch (InstantiationException e)
+		{
+		}
+		catch (IllegalAccessException e)
+		{
+		}
+		catch (UnsupportedLookAndFeelException e)
+		{
+		}
+	}
+	
+	/**
+	* @param args the command line arguments
+	*/
+	public static void main(String args[]) 
+	{
+		GUIScreen mainWindow = new GUIScreen();
+		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		java.awt.Dimension labelSize = mainWindow.getPreferredSize();
+		mainWindow.setLocation(screenSize.width/2 - (labelSize.width / 2), screenSize.height / 2 - (labelSize.height / 2));
 		mainWindow.setVisible(true);
 		if (mainWindow.getOptions().getAutoRefreshMediaLibraryOnStartup())
 		{
 			mainWindow.refreshMediaDirs();
 		}
 	}
-    
-    private void initColumnSizes(JTable table) 
-    {
-        PlaylistTableModel model = (PlaylistTableModel) table.getModel();
-        Component comp = null;
-        int headerWidth = 0;
-        int cellWidth = 0;
-        Object[] longValues = model.longestValues();
-        Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
-        TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
-        while(columns.hasMoreElements())
-        {
-            TableColumn column = columns.nextElement();            
-            comp = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);            
-            headerWidth = comp.getPreferredSize().width;
-            if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
-            {
-                comp = table.getDefaultRenderer(model.getColumnClass(1)).getTableCellRendererComponent(table, longValues[1], false, false, 0, 1);
-            }
-            else if ( ((String)column.getHeaderValue()).equalsIgnoreCase("file name") )
-            {
-                comp = table.getDefaultRenderer(model.getColumnClass(0)).getTableCellRendererComponent(table, longValues[0], false, false, 0, 0);
-            }
-            else
-            {
-                comp = table.getDefaultRenderer(model.getColumnClass(2)).getTableCellRendererComponent(table, longValues[2], false, false, 0, 2);
-            }            
-            cellWidth = comp.getPreferredSize().width;            
-            if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
-            {
-                column.setPreferredWidth(Math.max(headerWidth, cellWidth) + 40);
-            }
-            else
-            {
-                column.setPreferredWidth(Math.max(headerWidth, cellWidth)); 
-            }   
-        }
-    }
+	
+	private void initColumnSizes(JTable table) 
+	{
+		PlaylistTableModel model = (PlaylistTableModel) table.getModel();
+		Component comp = null;
+		int headerWidth = 0;
+		int cellWidth = 0;
+		Object[] longValues = model.longestValues();
+		Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
+		TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
+		while(columns.hasMoreElements())
+		{
+			TableColumn column = columns.nextElement();            
+			comp = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);            
+			headerWidth = comp.getPreferredSize().width;
+			if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
+			{
+				comp = table.getDefaultRenderer(model.getColumnClass(1)).getTableCellRendererComponent(table, longValues[1], false, false, 0, 1);
+			}
+			else if ( ((String)column.getHeaderValue()).equalsIgnoreCase("file name") )
+			{
+				comp = table.getDefaultRenderer(model.getColumnClass(0)).getTableCellRendererComponent(table, longValues[0], false, false, 0, 0);
+			}
+			else
+			{
+				comp = table.getDefaultRenderer(model.getColumnClass(2)).getTableCellRendererComponent(table, longValues[2], false, false, 0, 2);
+			}            
+			cellWidth = comp.getPreferredSize().width;            
+			if ( ((String)column.getHeaderValue()).equalsIgnoreCase("status") )
+			{
+				column.setPreferredWidth(Math.max(headerWidth, cellWidth) + 40);
+			}
+			else
+			{
+				column.setPreferredWidth(Math.max(headerWidth, cellWidth)); 
+			}   
+		}
+	}
 
-// <editor-fold defaultstate="collapsed" desc="Generated Code">
+	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenu actionsMenu;
@@ -2067,6 +2101,7 @@ public class GUIScreen extends JFrame
     private javax.swing.JScrollPane playlistScrollPanel;
     private javax.swing.JTable playlistTable;
     private javax.swing.JPanel playlistTablePanel;
+    private javax.swing.JPopupMenu playlistTreeRightClickMenu;
     private javax.swing.JMenuItem randomizeMenuItem;
     private javax.swing.JMenu recentMenu;
     private javax.swing.JButton refreshMediaDirsButton;
@@ -2074,6 +2109,7 @@ public class GUIScreen extends JFrame
     private javax.swing.JButton removeMediaDirButton;
     private javax.swing.JMenuItem removeMenuItem;
     private javax.swing.JMenuItem removeMissingMenuItem;
+    private javax.swing.JMenuItem repairPlaylistMenuItem;
     private javax.swing.JMenuItem replaceFileMenuItem;
     private javax.swing.JMenuItem replaceFileRCMenuItem;
     private javax.swing.JMenuItem reverseMenuItem;
@@ -2089,5 +2125,5 @@ public class GUIScreen extends JFrame
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JButton upIconButton;
     // End of variables declaration//GEN-END:variables
-// </editor-fold>
+	// </editor-fold>
 }
