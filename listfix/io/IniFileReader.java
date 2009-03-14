@@ -94,10 +94,7 @@ public class IniFileReader
         line = B1.readLine();
         while ( ( line != null) && ( !line.startsWith("[") ) )
         {
-			if (new File(line).exists())
-			{
-				tempVector.addElement(line);
-			}
+			tempVector.addElement(line);
             line = B1.readLine();
         }
         mediaDirs = new String[tempVector.size()];

@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.tasks;
+package listfix.controller.tasks;
 
 /**
  *
@@ -26,10 +26,8 @@ package listfix.tasks;
  * @version 
  */
 import java.io.File;
-import java.util.*;
 
 import listfix.controller.*;
-import listfix.exceptions.UnsupportedPlaylistFormat;
 import listfix.io.*;
 import listfix.model.Playlist;
 
@@ -37,7 +35,6 @@ public class OpenM3UTask extends listfix.controller.Task
 {
     private GUIDriver guiDriver;
     private File input; 
-	public boolean notM3UFormat = false;
     
     public OpenM3UTask(GUIDriver gd, File f) 
     {
@@ -54,10 +51,6 @@ public class OpenM3UTask extends listfix.controller.Task
 			guiDriver.getHistory().add(input.getCanonicalPath());
 			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
         }
-		catch(UnsupportedPlaylistFormat upf)
-		{
-			notM3UFormat = true;
-		}
         catch(Exception e)
         {
 			e.printStackTrace();

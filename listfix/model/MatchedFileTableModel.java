@@ -27,9 +27,14 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	private final String[] columnNames = {"File Name", "Score"};
 	private Object[][] data;
 	private final boolean[] canEdit = new boolean[]{false, false};
-	private final Class<?>[] types = new Class<?>[]{
+	private final Class<?>[] types = new Class<?>[]
+    {
 		java.lang.String.class, java.lang.String.class
 	};
+
+    public Integer sortCol = new Integer(1);
+    public Boolean isSortAsc = Boolean.FALSE;
+    public Vector<MatchedPlaylistEntry> vectorData = new Vector<MatchedPlaylistEntry>();
 
 	public MatchedFileTableModel(Object[][] input)
 	{
@@ -38,14 +43,8 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
 	public MatchedFileTableModel(Vector<MatchedPlaylistEntry> input)
 	{
-		int n = input.size();
-		String[][] tempData = new String[n][2];
-		for (int i = 0; i < n; i++)
-		{
-			tempData[i][0] = input.elementAt(i).getPlaylistFile().getFileName();
-			tempData[i][1] = input.elementAt(i).getCount() + "";
-		}
-		data = tempData;
+        vectorData = input;
+		updateData(vectorData);
 	}
 
 	public MatchedFileTableModel()
@@ -61,7 +60,20 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 		data = result;
 	}
 
-	public void updateData(Object[][] input)
+	public void updateData(Vector<MatchedPlaylistEntry> input)
+	{
+        int n = input.size();
+		String[][] tempData = new String[n][2];
+		for (int i = 0; i < n; i++)
+		{
+			tempData[i][0] = input.elementAt(i).getPlaylistFile().getFileName();
+			tempData[i][1] = input.elementAt(i).getCount() + "";
+		}
+		data = tempData;
+		this.fireTableDataChanged();
+	}
+
+    public void updateData(Object[][] input)
 	{
 		data = input;
 		this.fireTableDataChanged();
@@ -80,7 +92,12 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	@Override
 	public String getColumnName(int col)
 	{
-		return columnNames[col];
+        String suffix = "";
+        if (col == sortCol)
+        {
+            suffix += isSortAsc ? " >>" : " <<";
+        }
+		return columnNames[col] + suffix;
 	}
 
 	public java.lang.Object getValueAt(int row, int col)

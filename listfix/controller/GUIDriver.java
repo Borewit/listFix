@@ -22,14 +22,17 @@ package listfix.controller;
 
 import java.io.*;
 import java.util.*;
+
 import listfix.comparators.*;
+import listfix.controller.tasks.CopyFilesTask;
+import listfix.controller.tasks.LocateClosestMatchesTask;
+import listfix.controller.tasks.LocateFilesTask;
 import listfix.exceptions.*;
 import listfix.io.FileWriter;
 import listfix.io.IniFileReader;
 import listfix.io.M3UFileReader;
 import listfix.io.UNCFile;
 import listfix.model.*;
-import listfix.tasks.*;
 import listfix.util.ArrayFunctions;
 
 public class GUIDriver
@@ -53,14 +56,19 @@ public class GUIDriver
 			initReader.readIni();			
 			options = initReader.getAppOptions();
 			mediaDir = initReader.getMediaDirs();
-			if (mediaDir.length == 0)
-			{
-				showMediaDirWindow = true;
-			}
 			history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
 			history.initHistory(initReader.getHistory());
 			mediaLibraryDirectoryList = initReader.getMediaLibrary();
 			mediaLibraryFileList = initReader.getMediaLibraryFiles();
+
+            for (String dir : mediaDir)
+            {
+                if (!new File(dir).exists())
+                {
+                    this.removeMediaDir(dir);
+                }
+            }
+
 			if (mediaDir.length == 0)
 			{
 				showMediaDirWindow = true;
@@ -342,7 +350,7 @@ public class GUIDriver
 		return guiTableUpdate();
 	}
 
-    public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException, UnsupportedPlaylistFormat
+    public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
 		getCurrentList().getEntries().addAll(playlistProcessor.readM3U());
@@ -350,7 +358,7 @@ public class GUIDriver
 		return guiTableUpdate();
 	}
 
-    public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException, UnsupportedPlaylistFormat
+    public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
 		Vector<PlaylistEntry> temp = playlistProcessor.readM3U();

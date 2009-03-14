@@ -25,58 +25,66 @@ import java.awt.Point;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import listfix.model.*;
 
-public class ClosestMatchChooserDialog extends javax.swing.JDialog 
+import listfix.model.*;
+import listfix.view.support.ClosestMatchColumnListener;
+
+public class ClosestMatchChooserDialog extends javax.swing.JDialog
 {
-	private static final long serialVersionUID = -5374761780814261291L;	
     public static final int OK = 0;
     public static final int CANCEL = 1;
-	private Vector<MatchedPlaylistEntry> matchData;
+
+    private static final long serialVersionUID = -5374761780814261291L;
+    private Vector<MatchedPlaylistEntry> matchData;
     private int choice = -1;
     private int resultCode = CANCEL;
-    
+    private MatchedFileTableModel tableModel = null;
+
     /** Creates new form ClosestMatchChooserDialog */
-    public ClosestMatchChooserDialog(java.awt.Frame parent, Vector<MatchedPlaylistEntry> matches, boolean modal) 
+    public ClosestMatchChooserDialog(java.awt.Frame parent, Vector<MatchedPlaylistEntry> matches, boolean modal)
     {
         super(parent, modal);
         matchData = matches;
+        tableModel = new MatchedFileTableModel(matchData);
         initComponents();
-		initColumnSizes(resultsTable);
+        initColumnSizesAndSorting(resultsTable);
         resultsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
     }
-    
+
     public int getResultCode()
     {
         return resultCode;
     }
-    
+
     public void setResultCode(int i)
     {
         resultCode = i;
     }
-    
+
     public int getChoice()
     {
         return choice;
     }
-    
+
     public void setChoice(int i)
     {
         choice = i;
     }
-    
+
     public void center()
     {
         Point parentLocation = this.getParent().getLocationOnScreen();
+
         double x = parentLocation.getX();
         double y = parentLocation.getY();
+
         int width = this.getParent().getWidth();
         int height = this.getParent().getHeight();
-      
-        this.setLocation((int)x + (width - this.getWidth())/2, (int)y + (height - this.getHeight())/2);
+
+        this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
     }
 
     /** This method is called from within the constructor to
@@ -110,8 +118,8 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(453, 200));
 
-        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9));
-        resultsTable.setModel(new MatchedFileTableModel(matchData));
+        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        resultsTable.setModel(tableModel);
         resultsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 resultsTableMousePressed(evt);
@@ -167,19 +175,28 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         {
             jButton1.setEnabled(true);
         }
+
+        int currentlySelectedRow = resultsTable.getSelectedRow();
+        if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
+        {
+            setVisible(false);
+            setChoice(currentlySelectedRow);
+            dispose();
+            setResultCode(OK);
+        }
 }//GEN-LAST:event_resultsTableMousePressed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        setVisible(false);        
+        setVisible(false);
         dispose();
-        setResultCode( CANCEL );
+        setResultCode(CANCEL);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        setVisible(false);        
+        setVisible(false);
         setChoice(resultsTable.getSelectedRow());
         dispose();
-        setResultCode( OK );
+        setResultCode(OK);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /** Closes the dialog */
@@ -189,14 +206,14 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
     }//GEN-LAST:event_closeDialog
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[])
     {
         new ClosestMatchChooserDialog(new javax.swing.JFrame(), null, true).setVisible(true);
     }
-	
-	private void initColumnSizes(JTable table) 
+
+    private void initColumnSizesAndSorting(JTable table)
     {
         MatchedFileTableModel model = (MatchedFileTableModel) table.getModel();
         Component comp = null;
@@ -204,32 +221,36 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         int cellWidth = 0;
         Object[] longValues = model.longestValues();
         Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
-        TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
-        while(columns.hasMoreElements())
+
+        JTableHeader header = table.getTableHeader();
+        header.setUpdateTableInRealTime(false);
+        header.addMouseListener(new ClosestMatchColumnListener(resultsTable, model));
+
+        TableCellRenderer headerRenderer = header.getDefaultRenderer();
+        while (columns.hasMoreElements())
         {
-            TableColumn column = columns.nextElement();            
+            TableColumn column = columns.nextElement();
             comp = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);
             headerWidth = comp.getPreferredSize().width;
-            if ( ((String)column.getHeaderValue()).equalsIgnoreCase("score") )
+            if (((String) column.getHeaderValue()).toLowerCase().contains("score"))
             {
                 comp = table.getDefaultRenderer(model.getColumnClass(1)).getTableCellRendererComponent(table, longValues[1], false, false, 0, 1);
             }
             else
             {
                 comp = table.getDefaultRenderer(model.getColumnClass(0)).getTableCellRendererComponent(table, longValues[0], false, false, 0, 0);
-            }         
-            cellWidth = comp.getPreferredSize().width;            
-            if ( ((String)column.getHeaderValue()).equalsIgnoreCase("score") )
+            }
+            cellWidth = comp.getPreferredSize().width;
+            if (((String) column.getHeaderValue()).toLowerCase().contains("score"))
             {
                 column.setPreferredWidth(Math.max(headerWidth, cellWidth) + 40);
             }
             else
             {
-                column.setPreferredWidth(Math.max(headerWidth, cellWidth)); 
-            }   
+                column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+            }
         }
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -242,5 +263,4 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable resultsTable;
     // End of variables declaration//GEN-END:variables
-
 }

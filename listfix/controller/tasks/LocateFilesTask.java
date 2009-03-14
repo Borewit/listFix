@@ -18,13 +18,8 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.tasks;
+package listfix.controller.tasks;
 
-/**
- *
- * @author  jcaron
- * @version 
- */
 import java.util.Vector;
 import listfix.model.PlaylistEntry;
 

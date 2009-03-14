@@ -22,6 +22,15 @@ package listfix.comparators;
 
 import java.io.File;
 
+/*
+============================================================================
+= Author:   Jeremy Caron
+= File:     FileComparator.java
+= Purpose:  A poorly named class that sorts directories ahead of files,
+=           and then sorts files alphabetically (ignoring case).
+============================================================================
+*/
+
 public class FileComparator implements java.util.Comparator<File>
 {
 	public int compare(File a, File b)

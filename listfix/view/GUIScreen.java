@@ -30,13 +30,12 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
 
+import listfix.controller.GUIDriver;
+import listfix.controller.tasks.*;
 import listfix.io.*;
 import listfix.model.*;
-import listfix.tasks.*;
-import listfix.controller.GUIDriver;
-import listfix.exceptions.UnsupportedPlaylistFormat;
 import listfix.util.ArrayFunctions;
-import listfix.model.FileTreeNodeGenerator;
+import listfix.io.FileTreeNodeGenerator;
 
 public class GUIScreen extends JFrame 
 {
@@ -1012,11 +1011,6 @@ public class GUIScreen extends JFrame
 					updateStatusLabel();
 				}
 			}
-			catch (UnsupportedPlaylistFormat upf)
-			{
-				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
-				upf.printStackTrace();
-			}
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(this, "An error has occured, playlist was not inserted.");
@@ -1217,11 +1211,6 @@ public class GUIScreen extends JFrame
 				File m3uToAppend = jM3UChooser.getSelectedFile();
 				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.appendPlaylist(m3uToAppend) );                
 			}
-			catch (UnsupportedPlaylistFormat upf)
-			{
-				JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
-				upf.printStackTrace();
-			}
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(this, "An error has occured, playlist was not appended.");
@@ -1297,6 +1286,10 @@ public class GUIScreen extends JFrame
 		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
 		{
 			currentlySelectedRow = playlistTable.rowAtPoint(evt.getPoint());
+            if(currentlySelectedRow != -1 && evt.getClickCount() == 2)
+            {
+                playEntryAtSelectedRow();
+            }
 		}
 		else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
 		{
@@ -1417,11 +1410,6 @@ public class GUIScreen extends JFrame
 			PlaylistEntry.basePath = "";
 			JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
 			e.printStackTrace();
-		}
-
-		if (thisTask.notM3UFormat)
-		{
-			JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
 		}
 	}
 	
@@ -1564,7 +1552,8 @@ public class GUIScreen extends JFrame
 		updateStatusLabel();
 	}//GEN-LAST:event_locateButtonActionPerformed
 
-	private void locateButtonActionPerformed() {                                             
+	private void locateButtonActionPerformed()
+    {
 		locateProgressDialog.go();
 		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
 		locateProgressDialog.track(thisTask);
@@ -1602,19 +1591,34 @@ public class GUIScreen extends JFrame
 		updateMediaLibraryProgressDialog.setBusyCursor(true);
 		updateMediaLibraryProgressDialog.track(thisTask);
 		updateMediaLibraryProgressDialog.setBusyCursor(false);
-	} 
+	}
+
+    private void playEntryAtSelectedRow()
+    {
+        int row = playlistTable.getSelectedRow();
+        if (row > 0)
+        {
+            PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
+            if (entryToPlay.exists())
+            {
+                try
+                {
+                    entryToPlay.play();
+                }
+                catch (Exception e)
+                {
+                    JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "The entry you tried to play is missing and cannot be opened for playback.");
+            }
+        }
+    }
 	
 	private void openRCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openRCMenuItemActionPerformed
-		int row = playlistTable.getSelectedRow();
-		PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
-		try
-		{
-			entryToPlay.play();
-		}
-		catch (Exception e)
-		{
-			JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
-		}
+        playEntryAtSelectedRow();
 	}//GEN-LAST:event_openRCMenuItemActionPerformed
 
 	private void openPlaylistButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openPlaylistButtonActionPerformed
@@ -1703,7 +1707,18 @@ public class GUIScreen extends JFrame
         for (TreePath path : paths)
         {
             File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
-            System.out.println(toOpen.getAbsolutePath());
+            if (toOpen.isFile())
+            {
+                System.out.println(toOpen.getAbsolutePath());
+            }
+            else
+            {
+                java.util.List<File> files = PlaylistScanner.getAllPlaylists(toOpen);
+                for (File file : files)
+                {
+                    System.out.println(file.getAbsolutePath());
+                }
+            }
         }
     }//GEN-LAST:event_repairPlaylistMenuItemActionPerformed
 
@@ -1947,11 +1962,6 @@ public class GUIScreen extends JFrame
 			PlaylistEntry.basePath = "";
 			JOptionPane.showMessageDialog(this, "An error has occured, playlist could not be opened.");
 			e.printStackTrace();
-		}
-		
-		if (thisTask.notM3UFormat)
-		{
-			JOptionPane.showMessageDialog(this, "Playlist was not in M3U format.  Please check the file and try again.");
 		}
 	}
 

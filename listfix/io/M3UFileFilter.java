@@ -20,10 +20,13 @@
 
 package listfix.io;
 
-/**
- *
- * @author jcaron
- */
+/*
+============================================================================
+= Author:   Jeremy Caron
+= File:     M3UFileFilter.java
+= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
+============================================================================
+*/
 public class M3UFileFilter implements java.io.FileFilter
 {
 	public boolean accept(java.io.File file)

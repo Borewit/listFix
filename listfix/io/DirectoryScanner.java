@@ -24,9 +24,8 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     DirectoryScanner.java
-= Purpose:  To create and return a String array containing the absolute
-=           paths to all of the subdirectories in a list of input
-=           directories.
+= Purpose:  To create a list of the files and subdirectories contained in a
+=           list of input directories.
 ============================================================================
 */
 
@@ -56,7 +55,7 @@ public class DirectoryScanner
         }
     }
 
-    public static boolean endsWithIndexedExtension(String input)
+    private static boolean endsWithIndexedExtension(String input)
     {
         input = input.toLowerCase();
         return (input.endsWith(".mp3")  || input.endsWith(".wma")  ||

@@ -23,9 +23,8 @@ package listfix.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
-import listfix.exceptions.UnsupportedPlaylistFormat;
 import listfix.io.M3UFileReader;
-import listfix.tasks.OpenM3UTask;
+import listfix.controller.tasks.OpenM3UTask;
 
 /**
  *
@@ -41,7 +40,7 @@ public class Playlist
 	{
 	}
 	
-	public Playlist(File playlist, OpenM3UTask task) throws UnsupportedPlaylistFormat
+	public Playlist(File playlist, OpenM3UTask task)
 	{
 		try
 		{

@@ -32,10 +32,10 @@ import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import listfix.controller.tasks.WriteIniFileTask;
 import listfix.model.AppOptions;
 import listfix.model.M3UHistory;
 import listfix.model.PlaylistEntry;
-import listfix.tasks.WriteIniFileTask;
 
 public class FileWriter
 {
