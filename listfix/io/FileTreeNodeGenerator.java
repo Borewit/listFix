@@ -18,14 +18,13 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.io;
 
-import javax.swing.tree.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.tree.*;
+
 import listfix.comparators.FileComparator;
-import listfix.io.M3UFileFilter;
-import listfix.io.TreeNodeFile;
 
 public class FileTreeNodeGenerator
 {	
@@ -39,7 +38,7 @@ public class FileTreeNodeGenerator
 			DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(file);
 			curDir.setUserObject(file);
 			
-			// if we're creating the root node here use a regular file to get the full path to show.
+			// if we're creating the root node here, use a regular file to get the full path to show.
 			if (curTop == null)
 			{
 				curDir.setUserObject(new File(curPath));
@@ -95,6 +94,6 @@ public class FileTreeNodeGenerator
 	
 	public static String TreePathToFileSystemPath(TreePath node)
 	{		
-		return ((TreeNodeFile)((DefaultMutableTreeNode)node.getLastPathComponent()).getUserObject()).getPath();
+		return ((File)((DefaultMutableTreeNode)node.getLastPathComponent()).getUserObject()).getPath();
 	}
 }

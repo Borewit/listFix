@@ -23,7 +23,7 @@ package listfix.io;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     DirectoryFilter.java
+= File:     DirectoryFilenameFilter.java
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           directories.
 ============================================================================
@@ -31,10 +31,10 @@ package listfix.io;
 
 import java.io.File;
 
-public class DirectoryFilter implements java.io.FilenameFilter
+public class DirectoryFilenameFilter implements java.io.FilenameFilter
 {
     
-    public DirectoryFilter()
+    public DirectoryFilenameFilter()
     {
     
     }
