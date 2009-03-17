@@ -23,13 +23,10 @@ package listfix.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
-import listfix.io.M3UFileReader;
-import listfix.controller.tasks.OpenM3UTask;
 
-/**
- *
- * @author jcaron
- */
+import listfix.controller.tasks.OpenM3UTask;
+import listfix.io.M3UFileReader;
+
 public class Playlist
 {
     private File file;
@@ -46,6 +43,20 @@ public class Playlist
 		{
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
 			this.setEntries(playlistProcessor.readM3U(task));
+			file = playlist;
+		}
+		catch(IOException e)
+        {
+			e.printStackTrace();
+        }
+	}
+
+    public Playlist(File playlist)
+	{
+		try
+		{
+			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
+			this.setEntries(playlistProcessor.readM3U());
 			file = playlist;
 		}
 		catch(IOException e)
@@ -154,7 +165,7 @@ public class Playlist
         for (int i = 0; i < size; i++)
         {
             PlaylistEntry tempEntry = entries.elementAt(i);
-            if (!tempEntry.isFound() && !tempEntry.isURL() && (tempEntry.skipExistsCheck() || !tempEntry.exists()))
+            if (!tempEntry.isFound() && !tempEntry.isURL()) // && (tempEntry.skipExistsCheck() || !tempEntry.exists()))
             {
                 result++;
             }
@@ -174,5 +185,57 @@ public class Playlist
     public boolean isListEmpty()
     {
         return this.getEntryCount() == 0;
+    }
+
+    public void play()
+    {
+        try
+		{
+			String cmdLine = "";
+			String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
+			if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
+			{
+				cmdLine = "cmd.exe /c start ";
+				cmdLine += "\"" + file.getPath() + "\"";
+			}
+            else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
+			{
+				cmdLine = "cmd.exe /c ";
+				cmdLine += "\"" + file.getPath() + "\"";
+			}
+			else if (lowerCaseOpSysName.contains("windows"))
+			{
+				cmdLine = "start ";
+				cmdLine += "\"" + file.getPath() + "\"";
+			}
+			else
+			{
+				cmdLine = "open ";
+				cmdLine += file.getPath();
+			}
+			Runtime.getRuntime().exec(cmdLine);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+    }
+
+    public void batchRepair(String[] fileList)
+    {
+        for (PlaylistEntry entry : entries)
+        {
+            if (!entry.isURL())
+            {
+                if (entry.exists())
+                {
+                    entry.setMessage("Found!");
+                }
+                else
+                {
+                    entry.findNewLocationFromFileList(fileList);
+                }
+            }
+        }
     }
 }

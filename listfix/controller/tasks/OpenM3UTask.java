@@ -47,7 +47,7 @@ public class OpenM3UTask extends listfix.controller.Task
     {	
 		try
 		{
-			guiDriver.setCurrentList(new Playlist(input, this));
+			guiDriver.setPlaylist(new Playlist(input, this));
 			guiDriver.getHistory().add(input.getCanonicalPath());
 			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
         }

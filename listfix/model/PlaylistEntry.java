@@ -26,44 +26,76 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
+
 import listfix.util.*;
 
 public class PlaylistEntry implements Cloneable
-{    
-    private final static String fs = System.getProperty("file.separator");    
+{
+    // file separator
+    private final static String fs = System.getProperty("file.separator");
+
+    // line separator
     private final static String br = System.getProperty("line.separator");
+
+    // is the file system case sensitive?
 	private static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+
+    // The list of folders we know don't exist.
     public static Vector<String> emptyDirectories = new Vector<String>();
+
+    // The root folder all the entries in a relative playlist are relative to.
     public static String basePath = "";
-    
+
+    // This entry's path.
     private String path = "";
+
+    // This entry's extra info.
     private String extInf = "";
+
+    // This entry's file name.
     private String fileName = "";
+
+    // This entry's File object.
     private File thisFile = null;
+
+    // This entry's absolute file.
     private File absoluteFile = null;
+
+    // The entry's URI (for URLs).
     private URI thisURI = null;
+
+    // This entry's "lost/found" status as should be displyed in the UI.
     private String message = "Unknown";
+
+    // This entry's lost/found flag.
     private boolean found = false;
 
+    // Construct a URL entry.
     public PlaylistEntry(URI uri, String extra)
     {
         thisURI = uri;
         extInf = extra;
         message = "URL";
     }
-    
+
+    // Construct a file-based entry.
     public PlaylistEntry(String p, String f, String extra)
     {
         path = p;
         fileName = f;
         extInf = extra;
         thisFile = new File(path, fileName);
+
+        // should we skip the exists check?
         if (skipExistsCheck())
         {
             message = "Not Found";
         }
+
+        // if we should check, do so...
         else if (this.exists())
         {
+            // file was found in its current location
             message = "Found!";
             found = true;
             if (thisFile.isAbsolute())
@@ -72,13 +104,16 @@ public class PlaylistEntry implements Cloneable
             }
 			else
 			{
+                // this may be unreachable code...
 				absoluteFile = new File(thisFile.getAbsolutePath());
 			}
         }
         else
         {
+            // file was not found
             if (!thisFile.isAbsolute())
             {
+                // if the test file was relative, try making it absolute.
                 absoluteFile = new File(basePath, p + fs + f);
                 if (absoluteFile.exists())
                 {
@@ -96,7 +131,8 @@ public class PlaylistEntry implements Cloneable
             }
         }
     }
-    
+
+    // Same as above but with a file object as input
     public PlaylistEntry(File input, String extra)
     {
         fileName = input.getName();
@@ -162,7 +198,8 @@ public class PlaylistEntry implements Cloneable
     {
         return extInf;
     }
-    
+
+    // check the file system for existence if we don't already know the file exists.
     public boolean exists()
     {
         return found || thisFile.exists();
@@ -173,6 +210,58 @@ public class PlaylistEntry implements Cloneable
         return thisURI;
     }
 
+	public File getAbsoluteFile()
+	{
+		return absoluteFile;
+	}
+
+    public void setPath(String input)
+    {
+        path = input;
+        thisFile = new File(path, fileName);
+    }
+
+    public void setFileName(String input)
+    {
+        fileName = input;
+        thisFile = new File(path, fileName);
+    }
+
+    public void setMessage(String x)
+    {
+        message = x;
+    }
+
+    private void setFile(File input)
+    {
+        thisFile = input;
+        fileName = input.getName();
+        path = input.getPath().substring(0, input.getPath().indexOf(fileName));
+    }
+
+    public boolean skipExistsCheck()
+    {
+        String[] emptyPaths = new String[emptyDirectories.size()];
+        emptyDirectories.copyInto(emptyPaths);
+        return found || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);
+    }
+
+    public boolean isFound()
+    {
+        return found;
+    }
+
+    public boolean isURL()
+    {
+        return thisURI != null && thisFile == null;
+    }
+
+    public boolean isRelative()
+    {
+        return !this.isURL() && thisFile != null && !thisFile.isAbsolute();
+    }
+
+    // Try to open the file with the "default" MP3 player (only works on some systems).
     public void play() throws Exception
     {
         String cmdLine = "";
@@ -232,30 +321,6 @@ public class PlaylistEntry implements Cloneable
             e.printStackTrace();
             throw e;
         }
-    }
-    
-    public void setPath(String input)
-    {
-        path = input;
-        thisFile = new File(path, fileName);
-    }
-    
-    public void setFileName(String input)
-    {
-        fileName = input;
-        thisFile = new File(path, fileName);
-    }
-    
-    public void setMessage(String x)
-    {
-        message = x;
-    }
-    
-    private void setFile(File input)
-    {
-        thisFile = input;
-        fileName = input.getName();
-        path = input.getPath().substring(0, input.getPath().indexOf(fileName));
     }
     
     public String toM3UString()
@@ -326,28 +391,6 @@ public class PlaylistEntry implements Cloneable
         found = false;        
     }
     
-    public boolean skipExistsCheck()
-    {
-        String[] emptyPaths = new String[emptyDirectories.size()];
-        emptyDirectories.copyInto(emptyPaths);
-        return found == true || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);      
-    }
-    
-    public boolean isFound()
-    {
-        return found;
-    }
-    
-    public boolean isURL()
-    {
-        return thisURI != null && thisFile == null;
-    }
-    
-    public boolean isRelative()
-    {
-        return !this.isURL() && thisFile != null && !thisFile.isAbsolute();
-    }
-    
     @Override
     public Object clone()
     {
@@ -379,9 +422,4 @@ public class PlaylistEntry implements Cloneable
         }            
         return result;
     }
-	
-	public File getAbsoluteFile()
-	{
-		return absoluteFile;
-	}
 }   

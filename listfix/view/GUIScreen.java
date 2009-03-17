@@ -257,8 +257,8 @@ public class GUIScreen extends JFrame
 
         playlistTreeRightClickMenu.setPreferredSize(new java.awt.Dimension(160, 28));
 
-        repairPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        repairPlaylistMenuItem.setText("Repair Playlist(s)");
+        repairPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        repairPlaylistMenuItem.setText("Repair Playlist(s)...");
         repairPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 repairPlaylistMenuItemActionPerformed(evt);
@@ -267,7 +267,7 @@ public class GUIScreen extends JFrame
         playlistTreeRightClickMenu.add(repairPlaylistMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("listFix( ) - v1.5.2");
+        setTitle("listFix( ) - v1.5.3");
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -1048,7 +1048,7 @@ public class GUIScreen extends JFrame
 			{
 				File destDir = jCopyToDirChooser.getSelectedFile();                      
 				copyFilesProgressDialog.go();
-				CopyFilesTask thisTask = new CopyFilesTask(guiDriver.getEntries(), destDir);
+				CopyFilesTask thisTask = new CopyFilesTask(guiDriver.getPlaylist().getEntries(), destDir);
 				copyFilesProgressDialog.track(thisTask);
 				guiDriver.copyFilesToNewNewDirectory(thisTask);
 			}
@@ -1535,12 +1535,12 @@ public class GUIScreen extends JFrame
 	}//GEN-LAST:event_saveButtonActionPerformed
 
 	private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-		JOptionPane.showMessageDialog(this, "listFix( ) v1.5.2\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, "listFix( ) v1.5.3\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}//GEN-LAST:event_aboutMenuItemActionPerformed
 
 	private void locateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_locateButtonActionPerformed
 		locateProgressDialog.go();
-		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
+		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getPlaylist().getEntries(), guiDriver.getMediaLibraryFileList());
 		locateProgressDialog.track(thisTask);
 		if(!guiDriver.getPlaylist().isListEmpty())
 		{
@@ -1555,7 +1555,7 @@ public class GUIScreen extends JFrame
 	private void locateButtonActionPerformed()
     {
 		locateProgressDialog.go();
-		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getEntries(), guiDriver.getMediaLibraryFileList());
+		LocateFilesTask thisTask = new LocateFilesTask(guiDriver.getPlaylist().getEntries(), guiDriver.getMediaLibraryFileList());
 		locateProgressDialog.track(thisTask);
 		if(!guiDriver.getPlaylist().isListEmpty())
 		{
@@ -1714,10 +1714,11 @@ public class GUIScreen extends JFrame
             else
             {
                 java.util.List<File> files = PlaylistScanner.getAllPlaylists(toOpen);
-                for (File file : files)
-                {
-                    System.out.println(file.getAbsolutePath());
-                }
+                locateProgressDialog.go();
+                BatchPlaylistRepairTask thisTask = new BatchPlaylistRepairTask(files, guiDriver.getMediaLibraryFileList());
+                locateProgressDialog.track(thisTask);
+                java.util.List<RepairedPlaylistResult> results = thisTask.getResults();
+                locateProgressDialog.setEnabled(false);
             }
         }
     }//GEN-LAST:event_repairPlaylistMenuItemActionPerformed

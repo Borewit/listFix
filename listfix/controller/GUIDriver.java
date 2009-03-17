@@ -81,12 +81,12 @@ public class GUIDriver
 		}
 	}
 
-	public Playlist getCurrentList()
+	public Playlist getPlaylist()
 	{
 		return currentList;
 	}
 
-	public void setCurrentList(Playlist aCurrentList)
+	public void setPlaylist(Playlist aCurrentList)
 	{
 		currentList = aCurrentList;
 	}
@@ -140,49 +140,10 @@ public class GUIDriver
 	{
 		return history;
 	}
-
-	public Vector<PlaylistEntry> getEntries()
-	{
-		return getCurrentList().getEntries();
-	}
-
-	public Playlist getPlaylist()
-	{
-		return getCurrentList();
-	}
-
+    
 	public void playPlaylist()
 	{
-		try
-		{
-			String cmdLine = "";
-			String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
-			if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
-			{
-				cmdLine = "cmd.exe /c start ";
-				cmdLine += "\"" + getCurrentList().getFile().getPath() + "\"";
-			}
-            else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
-			{
-				cmdLine = "cmd.exe /c ";
-				cmdLine += "\"" + getCurrentList().getFile().getPath() + "\"";
-			}
-			else if (lowerCaseOpSysName.contains("windows"))
-			{
-				cmdLine = "start ";
-				cmdLine += "\"" + getCurrentList().getFile().getPath() + "\"";
-			}
-			else
-			{
-				cmdLine = "open ";
-				cmdLine += getCurrentList().getFile().getPath();
-			}
-			Runtime.getRuntime().exec(cmdLine);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+        currentList.play();
 	}
 
 	public void clearM3UHistory()
@@ -193,19 +154,19 @@ public class GUIDriver
 
 	public Object[][] closePlaylist()
 	{
-		setCurrentList(new Playlist());
+		setPlaylist(new Playlist());
 		Object[][] result = new Object[0][3];
 		return result;
 	}
 
 	public String[][] guiTableUpdate()
 	{
-		int size = getCurrentList().getEntries().size();
+		int size = currentList.getEntries().size();
 		String[][] result = null;
 		result = new String[size][3];
 		for (int i = 0; i < size; i++)
 		{
-			PlaylistEntry tempEntry = getCurrentList().getEntries().elementAt(i);
+			PlaylistEntry tempEntry = currentList.getEntries().elementAt(i);
 			if (!tempEntry.isURL())
 			{
 				result[i][0] = (i + 1) + ". " + tempEntry.getFileName();
@@ -312,7 +273,7 @@ public class GUIDriver
 
 	public String[][] moveUp(int entryIndex)
 	{
-		Vector<PlaylistEntry> entries = getCurrentList().getEntries();
+		Vector<PlaylistEntry> entries = currentList.getEntries();
 		PlaylistEntry temp = entries.elementAt(entryIndex);
 		entries.removeElementAt(entryIndex);
 		entries.insertElementAt(temp, entryIndex - 1);
@@ -321,7 +282,7 @@ public class GUIDriver
 
 	public String[][] moveDown(int entryIndex)
 	{
-		Vector<PlaylistEntry> entries = getCurrentList().getEntries();
+		Vector<PlaylistEntry> entries = currentList.getEntries();
 		PlaylistEntry temp = entries.elementAt(entryIndex);
 		entries.removeElementAt(entryIndex);
 		entries.insertElementAt(temp, entryIndex + 1);
@@ -330,7 +291,7 @@ public class GUIDriver
 
 	public String[][] moveTo(int initialPos, int finalPos)
 	{
-		Vector<PlaylistEntry> entries = getCurrentList().getEntries();
+		Vector<PlaylistEntry> entries = currentList.getEntries();
 		PlaylistEntry temp = entries.elementAt(initialPos);
 		entries.removeElementAt(initialPos);
 		entries.insertElementAt(temp, finalPos);
@@ -339,21 +300,21 @@ public class GUIDriver
 
 	public String[][] delete(int entryIndex)
 	{
-		getCurrentList().getEntries().removeElementAt(entryIndex);
+		currentList.getEntries().removeElementAt(entryIndex);
 		return guiTableUpdate();
 	}
 
 	public String[][] addEntry(File input)
 	{
 		PlaylistEntry entryToInsert = new PlaylistEntry(input, "");
-		getCurrentList().getEntries().add(entryToInsert);
+		currentList.getEntries().add(entryToInsert);
 		return guiTableUpdate();
 	}
 
     public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
-		getCurrentList().getEntries().addAll(playlistProcessor.readM3U());
+		currentList.getEntries().addAll(playlistProcessor.readM3U());
 		playlistProcessor.closeFile();
 		return guiTableUpdate();
 	}
@@ -365,7 +326,7 @@ public class GUIDriver
 		while (temp.size() > 0)
 		{
 			PlaylistEntry x = temp.remove(temp.size() - 1);
-			getCurrentList().getEntries().insertElementAt(x, index + 1);
+			currentList.getEntries().insertElementAt(x, index + 1);
 		}
 		playlistProcessor.closeFile();
 		return guiTableUpdate();
@@ -373,18 +334,18 @@ public class GUIDriver
 
 	public void setPlaylistFile(File input) throws java.io.FileNotFoundException, java.io.IOException
 	{
-		getCurrentList().setFile(input);
+		currentList.setFile(input);
 	}
 
 	public String[][] locateFiles(LocateFilesTask input)
 	{
-		getCurrentList().updateEntries(input.locateFiles());
+		currentList.updateEntries(input.locateFiles());
 		return guiTableUpdate();
 	}
 
 	public String[][] locateFile(int entryIndex)
 	{
-		PlaylistEntry entry = getCurrentList().getEntries().elementAt(entryIndex);
+		PlaylistEntry entry = currentList.getEntries().elementAt(entryIndex);
 		if (!entry.isURL())
 		{
 			if (entry.isFound() && !ArrayFunctions.ContainsStringWithPrefix(mediaDir, entry.getAbsoluteFile().getPath(), !fileSystemIsCaseSensitive))
@@ -408,21 +369,21 @@ public class GUIDriver
 
 	public String[][] updateEntryAt(int entryIndex, PlaylistEntry newEntry)
 	{
-		getCurrentList().getEntries().insertElementAt(newEntry, entryIndex);
-		getCurrentList().getEntries().removeElementAt(entryIndex + 1);
+		currentList.getEntries().insertElementAt(newEntry, entryIndex);
+		currentList.getEntries().removeElementAt(entryIndex + 1);
 		return guiTableUpdate();
 	}
 
 	public String[][] randomizePlaylist()
 	{
 		Vector<PlaylistEntry> result = new Vector<PlaylistEntry>();
-		while (getCurrentList().getEntries().size() > 0)
+		while (currentList.getEntries().size() > 0)
 		{
-			int index = (int)(Math.random() * getCurrentList().getEntries().size());
-			result.add(getCurrentList().getEntries().elementAt(index));
-			getCurrentList().getEntries().removeElementAt(index);
+			int index = (int)(Math.random() * currentList.getEntries().size());
+			result.add(currentList.getEntries().elementAt(index));
+			currentList.getEntries().removeElementAt(index);
 		}
-		getCurrentList().updateEntries(result);
+		currentList.updateEntries(result);
 		return guiTableUpdate();
 	}
 
@@ -431,61 +392,61 @@ public class GUIDriver
 		Stack<PlaylistEntry> temp = new Stack<PlaylistEntry>();
 		while (!currentList.getEntries().isEmpty())
 		{
-			temp.push(getCurrentList().getEntries().firstElement());
-			getCurrentList().getEntries().remove(0);
+			temp.push(currentList.getEntries().firstElement());
+			currentList.getEntries().remove(0);
 		}
 		while (!temp.empty())
 		{
-			getCurrentList().getEntries().add(temp.pop());
+			currentList.getEntries().add(temp.pop());
 		}
 		return guiTableUpdate();
 	}
 
 	public String[][] ascendingFilenameSort()
 	{
-		Collections.sort(getCurrentList().getEntries(), new AscendingFilenameComparator());
+		Collections.sort(currentList.getEntries(), new AscendingFilenameComparator());
 		return guiTableUpdate();
 	}
 
 	public String[][] descendingFilenameSort()
 	{
-		Collections.sort(getCurrentList().getEntries(), new DescendingFilenameComparator());
+		Collections.sort(currentList.getEntries(), new DescendingFilenameComparator());
 		return guiTableUpdate();
 	}
 
 	public String[][] ascendingStatusSort()
 	{
-		Collections.sort(getCurrentList().getEntries(), new AscendingStatusComparator());
+		Collections.sort(currentList.getEntries(), new AscendingStatusComparator());
 		return guiTableUpdate();
 	}
 
 	public String[][] descendingStatusSort()
 	{
-		Collections.sort(getCurrentList().getEntries(), new DescendingStatusComparator());
+		Collections.sort(currentList.getEntries(), new DescendingStatusComparator());
 		return guiTableUpdate();
 	}
 
 	public String[][] ascendingPathSort()
 	{
-		Collections.sort(getCurrentList().getEntries(), new AscendingPathComparator());
+		Collections.sort(currentList.getEntries(), new AscendingPathComparator());
 		return guiTableUpdate();
 	}
 
 	public String[][] descendingPathSort()
 	{
-		Collections.sort(getCurrentList().getEntries(), new DescendingPathComparator());
+		Collections.sort(currentList.getEntries(), new DescendingPathComparator());
 		return guiTableUpdate();
 	}
 
 	public String[][] removeMissing()
 	{
 		PlaylistEntry tempEntry = null;
-		for (int i = 0; i < getCurrentList().getEntries().size(); i++)
+		for (int i = 0; i < currentList.getEntries().size(); i++)
 		{
-			tempEntry = getCurrentList().getEntries().elementAt(i);
+			tempEntry = currentList.getEntries().elementAt(i);
 			if (!tempEntry.isURL() && !tempEntry.exists())
 			{
-				getCurrentList().getEntries().removeElementAt(i--);
+				currentList.getEntries().removeElementAt(i--);
 			}
 		}
 		return guiTableUpdate();
@@ -498,7 +459,7 @@ public class GUIDriver
 
 	public String[][] updateFileName(int entryIndex, String filename)
 	{
-		getCurrentList().getEntries().elementAt(entryIndex).setFileName(filename);
+		currentList.getEntries().elementAt(entryIndex).setFileName(filename);
 		return locateFile(entryIndex);
 	}
 
@@ -508,8 +469,8 @@ public class GUIDriver
 		int i = 0;
 		while (!currentList.getEntries().isEmpty())
 		{
-			sortingList.add(new PlaylistEntryPosition(getCurrentList().getEntries().firstElement(), i));
-			getCurrentList().getEntries().removeElementAt(0);
+			sortingList.add(new PlaylistEntryPosition(currentList.getEntries().firstElement(), i));
+			currentList.getEntries().removeElementAt(0);
 			i++;
 		}
 		// sort by fileName
@@ -530,7 +491,7 @@ public class GUIDriver
 		// copy back
 		while (!sortingList.isEmpty())
 		{
-			getCurrentList().getEntries().add(sortingList.firstElement().getPlaylistEntry());
+			currentList.getEntries().add(sortingList.firstElement().getPlaylistEntry());
 			sortingList.removeElementAt(0);
 		}
 		return guiTableUpdate();
@@ -538,25 +499,25 @@ public class GUIDriver
 
 	public String getEntryFileName(int entryIndex)
 	{
-		return getCurrentList().getEntries().elementAt(entryIndex).getFileName();
+		return currentList.getEntries().elementAt(entryIndex).getFileName();
 	}
 
 	public PlaylistEntry getEntryAt(int entryIndex)
 	{
-		return getCurrentList().getEntries().elementAt(entryIndex);
+		return currentList.getEntries().elementAt(entryIndex);
 	}
 
 	public void saveM3U() throws Exception
 	{
-		if (getCurrentList().getFile() != null)
+		if (currentList.getFile() != null)
 		{
 			if (options.getSavePlaylistsWithRelativePaths())
 			{
-				getCurrentList().setEntries((new FileWriter()).writeRelativeM3U(getCurrentList().getEntries(), getCurrentList().getFile()));
+				currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList.getEntries(), currentList.getFile()));
 			}
 			else
 			{
-				getCurrentList().setEntries((new FileWriter()).writeM3U(getCurrentList().getEntries(), getCurrentList().getFile()));
+				currentList.setEntries((new FileWriter()).writeM3U(currentList.getEntries(), currentList.getFile()));
 			}
 		}
 	}
@@ -565,40 +526,29 @@ public class GUIDriver
 	{
 		if (options.getSavePlaylistsWithRelativePaths())
 		{
-			getCurrentList().setEntries((new FileWriter()).writeRelativeM3U(getCurrentList().getEntries(), destination));
+			currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList.getEntries(), destination));
 		}
 		else
 		{
-			getCurrentList().setEntries((new FileWriter()).writeM3U(getCurrentList().getEntries(), destination));
+			currentList.setEntries((new FileWriter()).writeM3U(currentList.getEntries(), destination));
 		}
-		getCurrentList().setFile(destination);
+		currentList.setFile(destination);
 		history.add(destination.getCanonicalPath());
 		(new FileWriter()).writeMruM3Us(history);
-	}
-	
+	}	
 
-	/**
-	 * @param entryToInsert
-	 * @param entryIndex
-	 * @return
-	 */
 	public Object[][] insertFile(File fileToInsert, int entryIndex)
 	{
 		PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert, "");
-		getCurrentList().getEntries().insertElementAt(entryToInsert, entryIndex + 1);
+		currentList.getEntries().insertElementAt(entryToInsert, entryIndex + 1);
 		return guiTableUpdate();
 	}
 
-	/**
-	 * @param entryToInsert
-	 * @param entryIndex
-	 * @return
-	 */
 	public Object[][] replaceFile(File fileToInsert, int entryIndex)
 	{
 		PlaylistEntry entryToInsert = new PlaylistEntry(fileToInsert, "");
-		getCurrentList().getEntries().remove(entryIndex);
-		getCurrentList().getEntries().insertElementAt(entryToInsert, entryIndex);
+		currentList.getEntries().remove(entryIndex);
+		currentList.getEntries().insertElementAt(entryToInsert, entryIndex);
 		return guiTableUpdate();
 	}
 	
