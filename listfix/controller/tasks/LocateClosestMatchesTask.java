@@ -45,16 +45,14 @@ public class LocateClosestMatchesTask extends listfix.controller.Task
     /** Run the task. This method is the body of the thread for this task.  */
     public void run() 
     {
-        String[] fileToFindTokens = FileNameTokenizer.splitFileName(entry.getFileName().replaceAll("\'", ""));
         // implement tokenized file name matching procedure here...
         for (int i = 0; i < mediaLibraryFileList.length; i++)
         {
-            File mediaFile = new File(mediaLibraryFileList[i]);
-            String[] currentFileTokens = FileNameTokenizer.splitFileName(mediaFile.getName().replaceAll("\'", ""));             
-            int matchedTokens = FileNameTokenizer.countMatchingTokens(fileToFindTokens, currentFileTokens);
-            if (matchedTokens > 0)
+            File mediaFile = new File(mediaLibraryFileList[i]);           
+            int score = FileNameTokenizer.score(entry.getFileName().replaceAll("\'", ""), mediaFile.getName().replaceAll("\'", ""));
+            if (score > 0)
             {
-                results.add(new MatchedPlaylistEntry(mediaFile, matchedTokens));
+                results.add(new MatchedPlaylistEntry(mediaFile, score));
             }
             this.notifyObservers((int)((double)i/(double)(mediaLibraryFileList.length-1) * 100.0));
         }

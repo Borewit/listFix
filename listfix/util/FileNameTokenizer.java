@@ -21,6 +21,7 @@
 package listfix.util;
 
 import java.util.*;
+import java.util.List;
 
 public class FileNameTokenizer
 {
@@ -36,6 +37,11 @@ public class FileNameTokenizer
         ignoreList.add("and");
         ignoreList.add("to");
     }
+
+    public static int score(String filename1, String filename2)
+    {
+        return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
+    }
     
     private static String removeExtensionFromFileName(String name)
     {
@@ -48,40 +54,78 @@ public class FileNameTokenizer
         return result;
     }
     
-    public static String[] splitFileName(String fileName)
+    private static Vector<String> splitFileName(String fileName)
     {
-        String[] result = new String[0];
         fileName = removeExtensionFromFileName(fileName);
         StringTokenizer tokenMaker = new StringTokenizer(fileName, " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;");
         int tokenCount = tokenMaker.countTokens();
-        Vector<String> tempResult = new Vector<String>();
+        Vector<String> result = new Vector<String>();
         for (int i = 0; i < tokenCount; i++)
         {
             String token = tokenMaker.nextToken();
             if (token.length() > 1 && !ignoreList.contains(token.toLowerCase()))
             {
-                tempResult.add(token);
+                result.add(token);
             }
         }
-        result = new String[tempResult.size()];
-        tempResult.copyInto(result);
         return result;
     }
     
-    public static int countMatchingTokens(String[] array1, String[] array2)
+    private static int scoreMatchingTokens(Vector<String> array1, Vector<String> array2)
     {
-        int result = 0; int array1Size = array1.length; int array2Size = array2.length;
-        for (int i = 0; i < array1Size; i++)
+        HashMap<String, Integer> array1Counts = new HashMap<String, Integer>();
+        HashMap<String, Integer> array2Counts = new HashMap<String, Integer>();
+
+        for (String t : array1)
         {
-            for (int j = 0; j < array2Size; j++)
+            String token = t.toLowerCase();
+            if (array1Counts.containsKey(token))
             {
-                if (array1[i].equalsIgnoreCase(array2[j]))
+                array1Counts.put(token, new Integer(array1Counts.get(token).intValue() + 1));
+            }
+            else
+            {
+                array1Counts.put(token, new Integer(1));
+            }
+        }
+
+        for (String t : array2)
+        {
+            String token = t.toLowerCase();
+            if (array1Counts.containsKey(token))
+            {
+                if (array2Counts.containsKey(token))
                 {
-                    result++;
+                    array2Counts.put(token, new Integer(array2Counts.get(token).intValue() + 1));
+                }
+                else
+                {
+                    array2Counts.put(token, new Integer(1));
+                }
+            }
+        }        
+        
+        int result = 0;
+        if (array2Counts.keySet().size() > 0)
+        {
+            result = array2Counts.keySet().size() == 1 ? 1 : (int)Math.pow(3.0, (double)array2Counts.keySet().size());
+            Iterator<String> array2CountsIterator = array2Counts.keySet().iterator();
+            if (array2CountsIterator.hasNext())
+            {
+                String token = array2CountsIterator.next();
+                int array1Count = array1Counts.get(token).intValue();
+                int array2Count = array2Counts.get(token).intValue();
+                if (array1Count < array2Count)
+                {
+                    result = result + ((token.length() - 1) * array1Count);
+                }
+                else
+                {
+                    result = result + ((token.length() - 1) * array2Count);
                 }
             }
         }
+        
         return result;
-    }  
-    
+    }
 }
