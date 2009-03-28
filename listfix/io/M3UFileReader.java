@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -33,7 +33,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -42,6 +41,7 @@ import java.util.Vector;
 
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
+import listfix.io.UnicodeInputStream;
 
 public class M3UFileReader
 {
@@ -55,37 +55,12 @@ public class M3UFileReader
     {
 		try
 		{
-			// determine encoding
-			byte[] utf8FirstBytes = {-17, -69, -65};
-			FileInputStream tempBuffer = new FileInputStream(in);
-			byte[] bytes = new byte[3];
-			tempBuffer.read(bytes);
-			boolean arraysEqual = true;
-			for (int i = 0; i < 3; i++)
-			{
-				if (utf8FirstBytes[i] != bytes[i])
-				{
-					arraysEqual = false;
-					break;
-				}
-			}			
-			
-			if (arraysEqual)
-			{
-				buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in), "UTF8"));
-			}
-			else
-			{
-				buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
-			}
-			tempBuffer.close();
-			tempBuffer = null;			
+            buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in), "UTF-8"), "UTF8"));
 			fileLength = in.length();
 		}
 		catch (Exception e)
 		{
-			buffer = new BufferedReader(new FileReader(in));
-			fileLength = in.length();
+			e.printStackTrace();
 		}
     }
 

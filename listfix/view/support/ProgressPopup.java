@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -63,7 +63,7 @@ public class ProgressPopup extends JDialog implements IProgressObserver
         return (true);
     }
 
-    public ProgressPopup(Frame parent, String title, boolean modal, int labelWidth, int labelHeight, boolean messageOnlyMode)
+    public ProgressPopup(Frame parent, String title, boolean modal, int labelWidth, int labelHeight, boolean messageOnlyMode) //, boolean supportsCancel)
     {
         super(parent, title, modal);
         _init();

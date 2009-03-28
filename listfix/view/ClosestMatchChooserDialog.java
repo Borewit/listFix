@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -54,6 +54,11 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         resultsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
     }
 
+    public int getChoice()
+    {
+        return choice;
+    }
+
     public int getResultCode()
     {
         return resultCode;
@@ -62,16 +67,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
     public void setResultCode(int i)
     {
         resultCode = i;
-    }
-
-    public int getChoice()
-    {
-        return choice;
-    }
-
-    public void setChoice(int i)
-    {
-        choice = i;
     }
 
     public void center()
@@ -86,6 +81,14 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
     }
+
+    @Override
+    public void setVisible(boolean visible)
+    {
+        choice = CANCEL;
+        super.setVisible(visible);
+    }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -118,8 +121,9 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(453, 200));
 
-        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9));
         resultsTable.setModel(tableModel);
+        resultsTable.setFillsViewportHeight(true);
         resultsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 resultsTableMousePressed(evt);
@@ -180,7 +184,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
         {
             setVisible(false);
-            setChoice(currentlySelectedRow);
+            choice = currentlySelectedRow;
             dispose();
             setResultCode(OK);
         }
@@ -194,7 +198,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setVisible(false);
-        setChoice(resultsTable.getSelectedRow());
+        choice = resultsTable.getSelectedRow();
         dispose();
         setResultCode(OK);
     }//GEN-LAST:event_jButton1ActionPerformed

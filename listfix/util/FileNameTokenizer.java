@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -20,7 +20,6 @@
 
 package listfix.util;
 
-import java.util.StringTokenizer;
 import java.util.*;
 
 public class FileNameTokenizer

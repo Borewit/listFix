@@ -25,10 +25,6 @@
 package pspdash;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.*;
 
 /** On Windows systems, this class compiles a list of shared

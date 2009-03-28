@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -29,8 +29,6 @@ public class WriteIniFileTask extends listfix.controller.Task
     private final static String br = System.getProperty("line.separator");
     private final static String homeDir = System.getProperty("user.home");
     
-    private FileOutputStream outputStream;
-    private BufferedOutputStream output;
     private String[] mediaDir;
     private String[] mediaLibraryDirList;
     private String[] mediaLibraryFileList;
@@ -89,9 +87,10 @@ public class WriteIniFileTask extends listfix.controller.Task
                     buffer.append(mediaLibraryFileList[i]).append(br);
                 }
             }
-            outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
-            output = new BufferedOutputStream(outputStream);
-            output.write(buffer.toString().getBytes());
+            FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
+            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+            BufferedWriter output = new BufferedWriter(osw);
+            output.write(buffer.toString());
             output.close();
             outputStream.close();
         }

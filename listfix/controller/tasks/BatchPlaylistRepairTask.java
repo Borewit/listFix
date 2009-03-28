@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  *
  * This file is part of listFix().
  *
@@ -30,42 +30,46 @@ import listfix.model.RepairedPlaylistResult;
 
 public class BatchPlaylistRepairTask extends listfix.controller.Task
 {
-    private Vector<Playlist> playlists = new Vector<Playlist>();
+    private List<File> inputList = null;
     private String[] mediaLibraryFileList;
     private Vector<RepairedPlaylistResult> results = new Vector<RepairedPlaylistResult>();
     private FileWriter fw = new FileWriter();
+    private File destinationDirectory = null;
+    private String playlistsDir = "";
 
     /** Creates new LocateFilesTask */
-    public BatchPlaylistRepairTask(List<File> lists, String[] files)
+    public BatchPlaylistRepairTask(List<File> lists, String[] files, File destDir, String playlistsDirectory)
     {
-        for (File list : lists)
-        {
-            playlists.add(new Playlist(list));
-        }
+        inputList = lists;
         mediaLibraryFileList = files;
+        destinationDirectory = destDir;
+        playlistsDir = playlistsDirectory;
     }
 
     /** Run the task. This method is the body of the thread for this task.  */
     public void run()
     {
         int i = 0;
-        for (Playlist tempList : playlists)
+        Playlist tempList = null;
+        for (File list : inputList)
         {
+            tempList = new Playlist(list);
             int originalLostCount = tempList.getLostEntryCount();
             tempList.batchRepair(mediaLibraryFileList);
             int resultLostCount = tempList.getLostEntryCount();
             boolean writtenSuccessfully = false;
             try
             {
-                fw.writeM3U(tempList.getEntries(), tempList.getFile());
+                fw.writeM3U(tempList.getEntries(), new File(destinationDirectory.getPath() + tempList.getFile().getAbsolutePath().replace(playlistsDir, "")));
                 writtenSuccessfully = true;
             }
             catch (Exception ex)
             {
+                ex.printStackTrace();
                 writtenSuccessfully = false;
             }
             results.add(new RepairedPlaylistResult(tempList, originalLostCount, resultLostCount, writtenSuccessfully));
-            this.notifyObservers((int)((double)i/(double)(playlists.size()-1) * 100.0));
+            this.notifyObservers((int)((double)i/(double)(inputList.size()-1) * 100.0));
             i++;
         }
         this.notifyObservers(100);

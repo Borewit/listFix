@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -24,7 +24,6 @@ import java.io.*;
 import java.util.*;
 
 import listfix.comparators.*;
-import listfix.controller.tasks.CopyFilesTask;
 import listfix.controller.tasks.LocateClosestMatchesTask;
 import listfix.controller.tasks.LocateFilesTask;
 import listfix.exceptions.*;
@@ -444,17 +443,12 @@ public class GUIDriver
 		for (int i = 0; i < currentList.getEntries().size(); i++)
 		{
 			tempEntry = currentList.getEntries().elementAt(i);
-			if (!tempEntry.isURL() && !tempEntry.exists())
+			if (!tempEntry.isURL() && !tempEntry.isFound())
 			{
 				currentList.getEntries().removeElementAt(i--);
 			}
 		}
 		return guiTableUpdate();
-	}
-
-	public void copyFilesToNewNewDirectory(CopyFilesTask thisTask)
-	{
-		thisTask.run();
 	}
 
 	public String[][] updateFileName(int entryIndex, String filename)

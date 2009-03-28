@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -20,18 +20,19 @@
 
 package listfix.controller.tasks;
 
-import listfix.model.*;
-import listfix.io.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+import listfix.model.*;
+import listfix.io.*;
+
 public class CopyFilesTask extends listfix.controller.Task 
 {
-    private static Vector<PlaylistEntry> files;
-    private static File destination;
+    private Vector<PlaylistEntry> files;
+    private File destination;
     
     /** Creates new CopyFilesTask */
     public CopyFilesTask(Vector<PlaylistEntry> x, File y) 
@@ -53,7 +54,7 @@ public class CopyFilesTask extends listfix.controller.Task
             if (!tempEntry.isURL())
             {
                 fileToCopy = tempEntry.getFile();
-                if (tempEntry.isFound() && fileToCopy.exists())
+                if (tempEntry.isFound()) // && fileToCopy.exists())
                 {
                     dest = new File(destination.getPath() + fs + tempEntry.getFileName());
                     try

@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -42,8 +42,6 @@ public class FileWriter
     private final String br = System.getProperty("line.separator");
     private final String fs = System.getProperty("file.separator");
     private final String homeDir = System.getProperty("user.home");
-    private FileOutputStream outputStream;
-    private BufferedOutputStream output;
 
     public String getRelativePath(File file, File relativeTo)
     {
@@ -118,6 +116,9 @@ public class FileWriter
 
     public void writeDefaultIniFilesIfNeeded()
     {
+        BufferedOutputStream output;
+        FileOutputStream outputStream;
+
         File testFile = new File(homeDir + fs + "dirLists.ini");
         if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
         {
@@ -188,9 +189,17 @@ public class FileWriter
 				buffer.append(tempEntry.toM3UString() + br);
 			}
 		}
-		outputStream = new FileOutputStream(fileName);
-		output = new BufferedOutputStream(outputStream);
-		output.write(buffer.toString().getBytes());
+
+        File dirToSaveIn = fileName.getParentFile().getAbsoluteFile();
+        if (!dirToSaveIn.exists())
+        {
+            dirToSaveIn.mkdirs();
+        }
+
+		FileOutputStream outputStream = new FileOutputStream(fileName);
+        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+		BufferedWriter output = new BufferedWriter(osw);
+		output.write(buffer.toString());
 		output.close();
 		outputStream.close();
 		return entries;
@@ -221,9 +230,11 @@ public class FileWriter
 				buffer.append(tempEntry.toM3UString() + br);
 			}
 		}
-		outputStream = new FileOutputStream(fileName);
-		output = new BufferedOutputStream(outputStream);
-		output.write(buffer.toString().getBytes());
+        
+		FileOutputStream outputStream = new FileOutputStream(fileName);
+        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+		BufferedWriter output = new BufferedWriter(osw);
+		output.write(buffer.toString());
 		output.close();
 		outputStream.close();
 		return entries;
@@ -240,9 +251,10 @@ public class FileWriter
             {
                 buffer.append(filenames[i] + br);
             }			
-			outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
-			output = new BufferedOutputStream(outputStream);
-            output.write(buffer.toString().getBytes());
+			FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
+            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+            BufferedWriter output = new BufferedWriter(osw);
+            output.write(buffer.toString());
             output.close();
             outputStream.close();
         }

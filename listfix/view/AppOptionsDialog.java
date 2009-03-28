@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -28,6 +28,7 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -91,10 +92,26 @@ public class AppOptionsDialog extends javax.swing.JDialog
     {
         return resultCode;
     }
+
+    private LookAndFeelInfo[] getInstalledLookAndFeels()
+    {
+        LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+        Vector<LookAndFeelInfo> lafs = new Vector<LookAndFeelInfo>();
+        for(LookAndFeelInfo laf : plafs)
+        {
+            if (!laf.getName().toLowerCase().contains("nimbus"))
+            {
+                lafs.add(laf);
+            }
+        }
+        plafs = lafs.toArray(new LookAndFeelInfo[0]);
+        return plafs;
+    }
 	
 	private DefaultComboBoxModel getLookAndFeelMenuItems()
 	{
-		UIManager.LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
+
 		String[] model = new String[plafs.length];
 		for(int i=0; i< plafs.length; i++)
 		{
@@ -105,7 +122,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	
 	private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
 	{
-		UIManager.LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
 		if (index < plafs.length)
 		{
 			return plafs[index];
@@ -113,9 +130,9 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		return plafs[0];
 	}
 	
-		private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
+    private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
 	{
-		UIManager.LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
 		for (int i = 0; i < plafs.length; i++)
 		{
 			if (name.equals(plafs[i].getClassName()))

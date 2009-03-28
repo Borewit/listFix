@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2008 Jeremy Caron
+ * Copyright (C) 2001-2009 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -31,11 +31,14 @@ package listfix.io;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import listfix.model.AppOptions;
 import listfix.model.AppOptionsEnum;
 
@@ -53,7 +56,7 @@ public class IniFileReader
     private String[] mediaLibraryFiles = new String[0]; 
     private AppOptions options = new AppOptions();
 
-    public IniFileReader() throws FileNotFoundException
+    public IniFileReader() throws FileNotFoundException, UnsupportedEncodingException
     {
         fname1 = homeDir + fs + "dirLists.ini";
         fname2 = homeDir + fs + "listFixHistory.ini";
@@ -66,7 +69,7 @@ public class IniFileReader
         {
             throw new FileNotFoundException("File found, but was of zero size.");
         }
-        B1 = new BufferedReader(new FileReader(in_data1));
+        B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));
         
         File in_data2 = new File(fname2);
         if (!in_data2.exists())
@@ -77,7 +80,7 @@ public class IniFileReader
         {
             throw new FileNotFoundException("File found, but was of zero size.");
         }
-        B2 = new BufferedReader(new FileReader(in_data2));
+        B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
     }
 
     public AppOptions getAppOptions()

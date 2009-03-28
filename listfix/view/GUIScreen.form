@@ -90,7 +90,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <MenuItem class="javax.swing.JMenuItem" name="repairPlaylistMenuItem">
+        <MenuItem class="javax.swing.JMenuItem" name="batchPlaylistRepairMenuItem">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="9" style="0"/>
@@ -98,7 +98,7 @@
             <Property name="text" type="java.lang.String" value="Repair Playlist(s)..."/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="repairPlaylistMenuItemActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="batchPlaylistRepairMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
       </SubComponents>
@@ -1215,6 +1215,11 @@
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
                     <Component class="javax.swing.JTree" name="playlistDirectoryTree">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Verdana" size="9" style="0"/>
+                        </Property>
+                      </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="playlistDirectoryTreeMouseClicked"/>
                         <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="playlistDirectoryTreeMousePressed"/>
@@ -1340,6 +1345,7 @@
                           <Connection code="new listfix.model.PlaylistTableModel()" type="code"/>
                         </Property>
                         <Property name="autoResizeMode" type="int" value="3"/>
+                        <Property name="fillsViewportHeight" type="boolean" value="true"/>
                         <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="99" green="99" red="99" type="rgb"/>
                         </Property>
@@ -1363,9 +1369,6 @@
                         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="playlistTableMouseReleased"/>
                         <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="playlistTableMouseDragged"/>
                       </Events>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="playlistTable.setFillsViewportHeight(true);"/>
-                      </AuxValues>
                     </Component>
                   </SubComponents>
                 </Container>
