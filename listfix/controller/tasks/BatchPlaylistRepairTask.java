@@ -60,7 +60,7 @@ public class BatchPlaylistRepairTask extends listfix.controller.Task
             boolean writtenSuccessfully = false;
             try
             {
-                fw.writeM3U(tempList.getEntries(), new File(destinationDirectory.getPath() + tempList.getFile().getAbsolutePath().replace(playlistsDir, "")));
+                fw.writeM3U(tempList, new File(destinationDirectory.getPath() + tempList.getFile().getAbsolutePath().replace(playlistsDir, "")));
                 writtenSuccessfully = true;
             }
             catch (Exception ex)

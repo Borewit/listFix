@@ -24,10 +24,16 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import listfix.io.UnicodeInputStream;
 
 public class UnicodeUtils
@@ -118,5 +124,31 @@ public class UnicodeUtils
         {
             return null;
         }
+    }
+
+    public static String getEncoding(File input)
+    {
+        if (input.isDirectory() || !input.canRead())
+        {
+            return null;
+        }
+        else
+        {
+            String encoding = "";
+            UnicodeInputStream stream;
+            try
+            {
+                stream = new UnicodeInputStream(new FileInputStream(input), "ASCII");
+                encoding = stream.getEncoding();
+                stream.close();
+                return encoding;
+            }
+            catch (Exception ex)
+            {
+                Logger.getLogger(UnicodeUtils.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        }
+
     }
 }

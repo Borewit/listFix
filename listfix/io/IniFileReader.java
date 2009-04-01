@@ -95,7 +95,7 @@ public class IniFileReader
         // skip first line, contains header
         String line = B1.readLine();
         line = B1.readLine();
-        while ( ( line != null) && ( !line.startsWith("[") ) )
+        while ( ( line != null ) && ( !line.startsWith("[") ) )
         {
 			tempVector.addElement(line);
             line = B1.readLine();
@@ -109,7 +109,7 @@ public class IniFileReader
         if (line.startsWith("[Options]"))
         {
             line = B1.readLine().trim();    
-            while ( ( line != null) && ( !line.startsWith("[") ) )
+            while ( ( line != null ) && ( !line.startsWith("[") ) )
             {
                 StringTokenizer tempTizer = new StringTokenizer(line, "=");
                 String optionName = tempTizer.nextToken();
@@ -150,7 +150,9 @@ public class IniFileReader
             }        
             tempVector.clear();
         }
-        
+
+        // TODO: Cleanup performance-draining conyInto calls...
+
         // Read in media library directories
         // skip first line, contains header
         line = B1.readLine();
@@ -185,6 +187,7 @@ public class IniFileReader
         }
         history = new String[tempVector.size()];
         tempVector.copyInto(history);
+        tempVector.clear();
     }
 
     public void close_file() throws IOException

@@ -56,6 +56,7 @@ public class WriteIniFileTask extends listfix.controller.Task
                     buffer.append(mediaDir[i]).append(br);
                 }
             }
+
             if (options != null)
             {
                 buffer.append("[Options]").append(br);
@@ -71,6 +72,7 @@ public class WriteIniFileTask extends listfix.controller.Task
 				buffer.append("ALWAYS_USE_UNC_PATHS=" + options.getAlwaysUseUNCPaths()).append(br);
 				buffer.append("PLAYLISTS_DIRECTORY=" + options.getPlaylistsDirectory()).append(br);
             }
+
             if (mediaLibraryDirList != null)
             {
                 buffer.append("[Media Library Directories]").append(br);
@@ -79,6 +81,7 @@ public class WriteIniFileTask extends listfix.controller.Task
                     buffer.append(mediaLibraryDirList[i]).append(br);
                 }
             }
+
             if (mediaLibraryDirList != null)
             {
                 buffer.append("[Media Library Files]").append(br);
@@ -87,6 +90,7 @@ public class WriteIniFileTask extends listfix.controller.Task
                     buffer.append(mediaLibraryFileList[i]).append(br);
                 }
             }
+            
             FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
             Writer osw = new OutputStreamWriter(outputStream, "UTF8");
             BufferedWriter output = new BufferedWriter(osw);

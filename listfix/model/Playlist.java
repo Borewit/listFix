@@ -31,10 +31,12 @@ public class Playlist
 {
     private File file;
     private Vector<PlaylistEntry> entries = new Vector<PlaylistEntry>();
-    private Vector<PlaylistEntry> originalEntries = new Vector<PlaylistEntry>(); 
+    private Vector<PlaylistEntry> originalEntries = new Vector<PlaylistEntry>();
+    private boolean utfFormat = false;
 	
 	public Playlist()
 	{
+        
 	}
 	
 	public Playlist(File playlist, OpenM3UTask task)
@@ -44,6 +46,7 @@ public class Playlist
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
 			this.setEntries(playlistProcessor.readM3U(task));
 			file = playlist;
+            utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
 		}
 		catch(IOException e)
         {
@@ -58,6 +61,7 @@ public class Playlist
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
 			this.setEntries(playlistProcessor.readM3U());
 			file = playlist;
+            utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
 		}
 		catch(IOException e)
         {
@@ -237,5 +241,15 @@ public class Playlist
                 }
             }
         }
+    }
+
+    public boolean isUtfFormat()
+    {
+        return utfFormat;
+    }
+
+    public void setUtfFormat(boolean utfFormat)
+    {
+        this.utfFormat = utfFormat;
     }
 }

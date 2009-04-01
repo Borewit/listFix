@@ -41,7 +41,7 @@ import java.util.Vector;
 
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
-import listfix.io.UnicodeInputStream;
+import listfix.util.UnicodeUtils;
 
 public class M3UFileReader
 {
@@ -50,12 +50,22 @@ public class M3UFileReader
     private BufferedReader buffer;
     private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
     private long fileLength = 0;
+    private String encoding = "";
 
     public M3UFileReader(File in) throws FileNotFoundException
     {
 		try
 		{
-            buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in), "UTF-8"), "UTF8"));
+            encoding = UnicodeUtils.getEncoding(in);
+            if (encoding.equals("UTF-8") || in.getName().toLowerCase().endsWith(".m3u8"))
+            {
+                buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in), "UTF-8"), "UTF8"));
+                encoding = "UTF-8";
+            }
+            else
+            {
+                buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
+            }
 			fileLength = in.length();
 		}
 		catch (Exception e)
@@ -123,6 +133,7 @@ public class M3UFileReader
                 }
             }
         }
+        buffer.close();
         return results;
     }
     
@@ -173,6 +184,7 @@ public class M3UFileReader
                 }
             }
         }
+        buffer.close();
         return results;
     }
 
@@ -279,8 +291,13 @@ public class M3UFileReader
         }
     }
 
-    public void closeFile() throws IOException
+    public String getEncoding()
     {
-        buffer.close();
+        return encoding;
+    }
+
+    public void setEncoding(String encoding)
+    {
+        this.encoding = encoding;
     }
 }

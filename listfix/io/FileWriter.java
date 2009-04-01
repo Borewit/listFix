@@ -35,6 +35,7 @@ import java.util.Vector;
 import listfix.controller.tasks.WriteIniFileTask;
 import listfix.model.AppOptions;
 import listfix.model.M3UHistory;
+import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
 
 public class FileWriter
@@ -169,8 +170,9 @@ public class FileWriter
         }
     }
 
-    public Vector<PlaylistEntry> writeM3U(Vector<PlaylistEntry> entries, File fileName) throws Exception
+    public Vector<PlaylistEntry> writeM3U(Playlist list, File fileName) throws Exception
     {
+        Vector<PlaylistEntry> entries = list.getEntries();
         PlaylistEntry tempEntry = null;
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#EXTM3U" + br);
@@ -196,17 +198,31 @@ public class FileWriter
             dirToSaveIn.mkdirs();
         }
 
-		FileOutputStream outputStream = new FileOutputStream(fileName);
-        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-		BufferedWriter output = new BufferedWriter(osw);
-		output.write(buffer.toString());
-		output.close();
-		outputStream.close();
+        if (list.isUtfFormat() || fileName.getName().toLowerCase().endsWith("m3u8"))
+        {
+            FileOutputStream outputStream = new FileOutputStream(fileName);
+            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+            BufferedWriter output = new BufferedWriter(osw);
+            output.write(buffer.toString());
+            output.close();
+            outputStream.close();
+            list.setUtfFormat(true);
+        }
+        else
+        {
+            FileOutputStream outputStream = new FileOutputStream(fileName);
+            BufferedOutputStream output = new BufferedOutputStream(outputStream);
+            output.write(buffer.toString().getBytes());
+            output.close();
+            outputStream.close();
+            list.setUtfFormat(false);
+        }
 		return entries;
     }
 
-    public Vector<PlaylistEntry> writeRelativeM3U(Vector<PlaylistEntry> entries, File fileName) throws Exception
+    public Vector<PlaylistEntry> writeRelativeM3U(Playlist list, File fileName) throws Exception
     {
+        Vector<PlaylistEntry> entries = list.getEntries();
         PlaylistEntry tempEntry = null;
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#EXTM3U" + br);
@@ -231,12 +247,25 @@ public class FileWriter
 			}
 		}
         
-		FileOutputStream outputStream = new FileOutputStream(fileName);
-        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-		BufferedWriter output = new BufferedWriter(osw);
-		output.write(buffer.toString());
-		output.close();
-		outputStream.close();
+        if (list.isUtfFormat() || fileName.getName().toLowerCase().endsWith("m3u8"))
+        {
+            FileOutputStream outputStream = new FileOutputStream(fileName);
+            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+            BufferedWriter output = new BufferedWriter(osw);
+            output.write(buffer.toString());
+            output.close();
+            outputStream.close();
+            list.setUtfFormat(true);
+        }
+        else
+        {
+            FileOutputStream outputStream = new FileOutputStream(fileName);
+            BufferedOutputStream output = new BufferedOutputStream(outputStream);
+            output.write(buffer.toString().getBytes());
+            output.close();
+            outputStream.close();
+            list.setUtfFormat(false);
+        }
 		return entries;
     }
 

@@ -110,7 +110,7 @@ public class FileNameTokenizer
         {
             result = array2Counts.keySet().size() == 1 ? 1 : (int)Math.pow(3.0, (double)array2Counts.keySet().size());
             Iterator<String> array2CountsIterator = array2Counts.keySet().iterator();
-            if (array2CountsIterator.hasNext())
+            while (array2CountsIterator.hasNext())
             {
                 String token = array2CountsIterator.next();
                 int array1Count = array1Counts.get(token).intValue();

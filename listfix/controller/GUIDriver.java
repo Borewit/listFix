@@ -314,7 +314,6 @@ public class GUIDriver
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
 		currentList.getEntries().addAll(playlistProcessor.readM3U());
-		playlistProcessor.closeFile();
 		return guiTableUpdate();
 	}
 
@@ -327,7 +326,6 @@ public class GUIDriver
 			PlaylistEntry x = temp.remove(temp.size() - 1);
 			currentList.getEntries().insertElementAt(x, index + 1);
 		}
-		playlistProcessor.closeFile();
 		return guiTableUpdate();
 	}
 
@@ -507,11 +505,11 @@ public class GUIDriver
 		{
 			if (options.getSavePlaylistsWithRelativePaths())
 			{
-				currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList.getEntries(), currentList.getFile()));
+				currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList, currentList.getFile()));
 			}
 			else
 			{
-				currentList.setEntries((new FileWriter()).writeM3U(currentList.getEntries(), currentList.getFile()));
+				currentList.setEntries((new FileWriter()).writeM3U(currentList, currentList.getFile()));
 			}
 		}
 	}
@@ -520,11 +518,11 @@ public class GUIDriver
 	{
 		if (options.getSavePlaylistsWithRelativePaths())
 		{
-			currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList.getEntries(), destination));
+			currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList, destination));
 		}
 		else
 		{
-			currentList.setEntries((new FileWriter()).writeM3U(currentList.getEntries(), destination));
+			currentList.setEntries((new FileWriter()).writeM3U(currentList, destination));
 		}
 		currentList.setFile(destination);
 		history.add(destination.getCanonicalPath());
