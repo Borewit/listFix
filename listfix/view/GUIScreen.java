@@ -266,7 +266,7 @@ public class GUIScreen extends JFrame
         });
         playlistTreeRightClickMenu.add(batchPlaylistRepairMenuItem);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("listFix( ) - v1.5.3");
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -532,7 +532,7 @@ public class GUIScreen extends JFrame
         playlistScrollPanel.setOpaque(false);
         playlistScrollPanel.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
         playlistTable.setModel(new listfix.model.PlaylistTableModel());
         playlistTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
         playlistTable.setFillsViewportHeight(true);
@@ -1606,13 +1606,35 @@ public class GUIScreen extends JFrame
 	
 	private void exitActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_exitActionPerformed
 	{//GEN-HEADEREND:event_exitActionPerformed
-		System.exit(0);
+        if (this.guiDriver.getPlaylist().playlistModified())
+        {
+            int result = JOptionPane.showConfirmDialog(this, "The playlist you have loaded has been modified and has not yet been saved, do you really want to quit?!?", "Playlist Modified", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.OK_OPTION)
+            {
+                System.exit(0);
+            }
+        }
+        else
+        {
+            System.exit(0);
+        }
 	}//GEN-LAST:event_exitActionPerformed
 
 	/** Exit the Application */
 	private void exitForm(java.awt.event.WindowEvent evt)//GEN-FIRST:event_exitForm
 	{//GEN-HEADEREND:event_exitForm
-		System.exit(0);
+		if (this.guiDriver.getPlaylist().playlistModified())
+        {
+            int result = JOptionPane.showConfirmDialog(this, "The playlist you have loaded has been modified and has not yet been saved, do you really want to quit?!?", "Playlist Modified", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.OK_OPTION)
+            {
+                System.exit(0);
+            }
+        }
+        else
+        {
+            System.exit(0);
+        }
 	}//GEN-LAST:event_exitForm
 
 	private void refreshMediaDirsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_refreshMediaDirsButtonActionPerformed
