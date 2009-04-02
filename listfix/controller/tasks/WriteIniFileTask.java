@@ -22,6 +22,7 @@ package listfix.controller.tasks;
 
 import java.io.*;
 import listfix.model.*;
+import listfix.util.UnicodeUtils;
 
 public class WriteIniFileTask extends listfix.controller.Task 
 {
@@ -94,7 +95,7 @@ public class WriteIniFileTask extends listfix.controller.Task
             FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
             Writer osw = new OutputStreamWriter(outputStream, "UTF8");
             BufferedWriter output = new BufferedWriter(osw);
-            output.write(buffer.toString());
+            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
             output.close();
             outputStream.close();
         }

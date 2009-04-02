@@ -41,6 +41,7 @@ import java.util.Vector;
 
 import listfix.model.AppOptions;
 import listfix.model.AppOptionsEnum;
+import listfix.util.UnicodeUtils;
 
 public class IniFileReader
 {
@@ -69,7 +70,17 @@ public class IniFileReader
         {
             throw new FileNotFoundException("File found, but was of zero size.");
         }
-        B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));
+        
+        // converting these files to UTF-8, need to handle the old format for the conversion...
+        String encoding = UnicodeUtils.getEncoding(in_data1);
+        if (encoding.equals("UTF-8"))
+        {
+            B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));
+        }
+        else
+        {
+            B1 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data1)));
+        }
         
         File in_data2 = new File(fname2);
         if (!in_data2.exists())
@@ -80,7 +91,16 @@ public class IniFileReader
         {
             throw new FileNotFoundException("File found, but was of zero size.");
         }
-        B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
+
+        encoding = UnicodeUtils.getEncoding(in_data2);
+        if (encoding.equals("UTF-8"))
+        {
+            B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
+        }
+        else
+        {
+            B2 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data2)));
+        }
     }
 
     public AppOptions getAppOptions()
@@ -151,7 +171,7 @@ public class IniFileReader
             tempVector.clear();
         }
 
-        // TODO: Cleanup performance-draining conyInto calls...
+        // TODO: Cleanup performance-draining copyInto calls...
 
         // Read in media library directories
         // skip first line, contains header

@@ -44,9 +44,9 @@ public class Playlist
 		try
 		{
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
-			this.setEntries(playlistProcessor.readM3U(task));
-			file = playlist;
             utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+			file = playlist;
+			this.setEntries(playlistProcessor.readM3U(task));
 		}
 		catch(IOException e)
         {
@@ -59,9 +59,9 @@ public class Playlist
 		try
 		{
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
-			this.setEntries(playlistProcessor.readM3U());
-			file = playlist;
             utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+			file = playlist;
+			this.setEntries(playlistProcessor.readM3U());
 		}
 		catch(IOException e)
         {
@@ -86,6 +86,7 @@ public class Playlist
 
 	public void setEntries(Vector<PlaylistEntry> aEntries)
 	{
+        // TODO: Somehow track this part of the task
 		entries = aEntries;
 		originalEntries.clear();
         for (int i = 0; i < entries.size(); i++)

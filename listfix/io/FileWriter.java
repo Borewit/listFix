@@ -37,6 +37,7 @@ import listfix.model.AppOptions;
 import listfix.model.M3UHistory;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
+import listfix.util.UnicodeUtils;
 
 public class FileWriter
 {
@@ -117,7 +118,7 @@ public class FileWriter
 
     public void writeDefaultIniFilesIfNeeded()
     {
-        BufferedOutputStream output;
+        BufferedWriter output;
         FileOutputStream outputStream;
 
         File testFile = new File(homeDir + fs + "dirLists.ini");
@@ -128,7 +129,8 @@ public class FileWriter
                 StringBuffer buffer = new StringBuffer();
                 AppOptions options = new AppOptions();
                 outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
-                output = new BufferedOutputStream(outputStream);
+                Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+                output = new BufferedWriter(osw);
                 buffer.append("[Media Directories]" + br);
                 buffer.append("[Options]" + br);
                 buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad()) + br);
@@ -140,7 +142,7 @@ public class FileWriter
 				buffer.append("PLAYLISTS_DIRECTORY=" + options.getPlaylistsDirectory() + br);
                 buffer.append("[Media Library Directories]" + br);
                 buffer.append("[Media Library Files]" + br);
-                output.write(buffer.toString().getBytes());
+                output.write(buffer.toString());
                 output.close();
                 outputStream.close();
             }
@@ -157,8 +159,9 @@ public class FileWriter
             try
             {
                 outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
-                output = new BufferedOutputStream(outputStream);
-                output.write(new String("[Recent M3Us]" + br).getBytes());
+                Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+                output = new BufferedWriter(osw);
+                output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent M3Us]" + br);
                 output.close();
                 outputStream.close();
             }
@@ -203,7 +206,7 @@ public class FileWriter
             FileOutputStream outputStream = new FileOutputStream(fileName);
             Writer osw = new OutputStreamWriter(outputStream, "UTF8");
             BufferedWriter output = new BufferedWriter(osw);
-            output.write(buffer.toString());
+            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
             output.close();
             outputStream.close();
             list.setUtfFormat(true);
@@ -252,7 +255,7 @@ public class FileWriter
             FileOutputStream outputStream = new FileOutputStream(fileName);
             Writer osw = new OutputStreamWriter(outputStream, "UTF8");
             BufferedWriter output = new BufferedWriter(osw);
-            output.write(buffer.toString());
+            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
             output.close();
             outputStream.close();
             list.setUtfFormat(true);
@@ -283,7 +286,7 @@ public class FileWriter
 			FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
             Writer osw = new OutputStreamWriter(outputStream, "UTF8");
             BufferedWriter output = new BufferedWriter(osw);
-            output.write(buffer.toString());
+            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
             output.close();
             outputStream.close();
         }

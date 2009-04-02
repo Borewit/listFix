@@ -397,15 +397,6 @@ public class PlaylistEntry implements Cloneable
     @Override
     public Object clone()
     {
-		try
-		{
-			super.clone();
-		}
-		catch (Exception e)
-		{
-			//eat the error for now.
-			e.printStackTrace();
-		}
         PlaylistEntry result = null;
         if (!this.isURL())
         {

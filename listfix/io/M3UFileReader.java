@@ -131,6 +131,7 @@ public class M3UFileReader
 						}
                     }    
                 }
+                input.notifyObservers((int)((double)cache.toString().getBytes().length/(double)(fileLength) * 100.0));
             }
         }
         buffer.close();

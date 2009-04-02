@@ -70,26 +70,8 @@ public class DirectoryScanner
                 input.endsWith(".m4a")  || input.endsWith(".mp4")  ||
                 input.endsWith(".m4v")  || input.endsWith(".nsv")  ||
                 input.endsWith(".aiff") || input.endsWith(".au")   ||
-                input.endsWith(".wmv")  || input.endsWith(".asf"));
-//                input.endsWith(".vlb")  || input.endsWith(".b4s")  ||
-//                input.endsWith(".rmi")  || input.endsWith(".kar")  ||
-//                input.endsWith(".miz")  || input.endsWith(".mod")  ||
-//                input.endsWith(".mdz")  || input.endsWith(".nst")  ||
-//                input.endsWith(".stm")  || input.endsWith(".stz")  ||           
-//                input.endsWith(".s3m")  || input.endsWith(".s3z")  ||  
-//                input.endsWith(".it")   || input.endsWith(".itz")  ||  
-//                input.endsWith(".xm")   || input.endsWith(".xmz")  ||  
-//                input.endsWith(".mtm")  || input.endsWith(".ult")  ||  
-//                input.endsWith(".669")  || input.endsWith(".far")  ||
-//                input.endsWith(".okt")  || input.endsWith(".ptm")  ||
-//                input.endsWith(".avr")  || input.endsWith(".caf")  ||
-//                input.endsWith(".htk")  || input.endsWith(".iff")  ||
-//                input.endsWith(".mat")  || input.endsWith(".paf")  ||
-//                input.endsWith(".pvf")  || input.endsWith(".raw")  ||
-//                input.endsWith(".sd2")  || input.endsWith(".sds")  ||
-//                input.endsWith(".sf")   || input.endsWith(".voc")  ||
-//                input.endsWith(".w64")  || input.endsWith(".xi")   ||
-//                input.endsWith(".amf"));            
+                input.endsWith(".wmv")  || input.endsWith(".asf")  ||
+                input.endsWith(".mpc"));          
     }
     
     private void recursiveDir(String baseDir, Task task)
