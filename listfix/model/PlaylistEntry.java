@@ -41,7 +41,10 @@ public class PlaylistEntry implements Cloneable
 	private static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
 
     // The list of folders we know don't exist.
-    public static Vector<String> emptyDirectories = new Vector<String>();
+    public static Vector<String> nonExistentDirectories = new Vector<String>();
+    
+    // A list of folders we know DO exist.
+    public static Vector<String> existingDirectories = new Vector<String>();
 
     // The root folder all the entries in a relative playlist are relative to.
     public static String basePath = "";
@@ -241,8 +244,8 @@ public class PlaylistEntry implements Cloneable
 
     public boolean skipExistsCheck()
     {
-        String[] emptyPaths = new String[emptyDirectories.size()];
-        emptyDirectories.copyInto(emptyPaths);
+        String[] emptyPaths = new String[nonExistentDirectories.size()];
+        nonExistentDirectories.copyInto(emptyPaths);
         return found || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);
     }
 

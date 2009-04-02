@@ -232,36 +232,41 @@ public class M3UFileReader
             while (pathTokenizer.hasMoreTokens())
             {                
                 String word = pathTokenizer.nextToken();
+                String tempPath = path.toString() + word + fs;
                 if (tokenNumber == 0)
                 {
                     firstToken = word;
                 }
-                if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.emptyDirectories.contains(word + fs))
+                if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.nonExistentDirectories.contains(word + fs))
                 {
                     // This token is the closest thing we have to the notion of a 'drive' on any OS... 
                     // make a file out of this and see if it has any files.
-                    File testFile = new File(path.toString() + word + fs);
+                    File testFile = new File(tempPath);
                     if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
                     {
-                        PlaylistEntry.emptyDirectories.add(path.toString() + word + fs);
+                        PlaylistEntry.nonExistentDirectories.add(tempPath);
                     }
                 }
-                else if (L2.startsWith("\\\\") && !PlaylistEntry.emptyDirectories.contains(path.toString() + word + fs) && pathTokenizer.countTokens() >= 1)
+                else if (L2.startsWith("\\\\") && (!PlaylistEntry.nonExistentDirectories.contains("\\\\" + firstToken) && !PlaylistEntry.existingDirectories.contains(tempPath) && !PlaylistEntry.nonExistentDirectories.contains(tempPath)) && pathTokenizer.countTokens() >= 1)
                 {
                     // Handle UNC paths specially
-                    File testFile = new File(path.toString() + word + fs);
+                    File testFile = new File(tempPath);
                     boolean exists = testFile.exists();
-                    if (exists && firstPathToExist == null)
+                    if (exists)
                     {
-                        firstPathToExist = testFile;
-                    }
-                    if (!(exists && testFile.isDirectory() && testFile.list().length > 0) && pathTokenizer.countTokens() == 1)
-                    {
-                        PlaylistEntry.emptyDirectories.add(path.toString() + word + fs);
+                        PlaylistEntry.existingDirectories.add(tempPath);
                         if (firstPathToExist == null)
                         {
-                            PlaylistEntry.emptyDirectories.add("\\\\" + firstToken);
+                            firstPathToExist = testFile;
                         }
+                    }
+                    if (!exists && pathTokenizer.countTokens() == 1)
+                    {
+                        PlaylistEntry.nonExistentDirectories.add(tempPath);
+                    }
+                    else if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
+                    {
+                        PlaylistEntry.nonExistentDirectories.add("\\\\" + firstToken);
                     }
                 }
                 if (pathTokenizer.hasMoreTokens())
