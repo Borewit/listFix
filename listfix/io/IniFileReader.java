@@ -126,7 +126,7 @@ public class IniFileReader
         
         // Read in app options, but only if the file contains them in this spot...
         // skip first line, contains header
-        if (line.startsWith("[Options]"))
+        if (line != null && line.startsWith("[Options]"))
         {
             line = B1.readLine().trim();    
             while ( ( line != null ) && ( !line.startsWith("[") ) )

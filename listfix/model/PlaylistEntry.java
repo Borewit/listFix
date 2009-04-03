@@ -209,6 +209,12 @@ public class PlaylistEntry implements Cloneable
         return found || thisFile.exists();
     }
 
+    public boolean recheckFoundStatus()
+    {
+        found = thisFile.exists();
+        return found;
+    }
+
     public URI getURI()
     {
         return thisURI;
@@ -268,23 +274,27 @@ public class PlaylistEntry implements Cloneable
     // Try to open the file with the "default" MP3 player (only works on some systems).
     public void play() throws Exception
     {        
-        String goodURI = "";
         String goodAbsPath = "";
         if (this.isURL())
         {
-            goodURI = this.thisURI.toString();            
-        }
-        else if (this.isRelative())
-        {
-            goodAbsPath = this.absoluteFile.getAbsolutePath();
+            FileLauncher.launch(this.thisURI.toString());
         }
         else
         {
-            goodAbsPath = this.thisFile.getAbsolutePath();
-        }                
-              
-        // work in the following logic...
-        FileLauncher.launch(this.isURL() ? goodURI : goodAbsPath);
+            if (this.isFound())
+            {
+
+                if (this.isRelative())
+                {
+                    goodAbsPath = this.absoluteFile.getAbsolutePath();
+                }
+                else
+                {
+                    goodAbsPath = this.thisFile.getAbsolutePath();
+                }
+                FileLauncher.launch(goodAbsPath);
+            }
+        }              
     }
     
     public String toM3UString()

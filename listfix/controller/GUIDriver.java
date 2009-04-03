@@ -452,6 +452,7 @@ public class GUIDriver
 	public String[][] updateFileName(int entryIndex, String filename)
 	{
 		currentList.getEntries().elementAt(entryIndex).setFileName(filename);
+        currentList.getEntries().elementAt(entryIndex).recheckFoundStatus();
 		return locateFile(entryIndex);
 	}
 

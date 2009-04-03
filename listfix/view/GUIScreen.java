@@ -56,8 +56,11 @@ public class GUIScreen extends JFrame
 
 	/** Creates new form GUIScreen */
 	public GUIScreen() 
-	{		 
+	{
+        listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
+        splashScreen.setStatusBar("Loading Media Library & Options...");
 		guiDriver = new GUIDriver();
+        splashScreen.setStatusBar("Initializing UI...");
 		initComponents();
 		jM3UChooser = new JFileChooser();
 		jFileChooser = new JFileChooser();
@@ -88,6 +91,7 @@ public class GUIScreen extends JFrame
 		playlistTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		playlistTable.setModel(new PlaylistTableModel());
 		playlistTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
+        splashScreen.setVisible(false);
 		if (guiDriver.getShowMediaDirWindow())
 		{
 			JOptionPane.showMessageDialog(this, "You need to add a media directory before you can find the new locations of your files.  See help for more information.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
@@ -1492,7 +1496,6 @@ public class GUIScreen extends JFrame
 				updateButtons();
 				((PlaylistTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                updatePlaylistDirectoryPanel();
 			}
 			else
 			{
@@ -1600,20 +1603,13 @@ public class GUIScreen extends JFrame
         if (row >= 0)
         {
             PlaylistEntry entryToPlay = guiDriver.getEntryAt(row);
-            if (entryToPlay.exists())
+            try
             {
-                try
-                {
-                    entryToPlay.play();
-                }
-                catch (Exception e)
-                {
-                    JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
-                }
+                entryToPlay.play();
             }
-            else
+            catch (Exception e)
             {
-                JOptionPane.showMessageDialog(this, "The entry you tried to play is missing and cannot be opened for playback.");
+                JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + e.toString());
             }
         }
     }
