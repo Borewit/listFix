@@ -33,8 +33,8 @@ public class MatchedPlaylistEntryColumnSorterComparator implements java.util.Com
         }
         else
         {
-            int o1Count = ((MatchedPlaylistEntry)o1).getCount();
-            int o2Count = ((MatchedPlaylistEntry)o2).getCount();
+            int o1Count = ((MatchedPlaylistEntry)o1).getScore();
+            int o2Count = ((MatchedPlaylistEntry)o2).getScore();
             if (o1Count == o2Count)
                 return 0;
             else if (o1Count > o2Count)

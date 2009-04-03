@@ -26,11 +26,11 @@ public class MatchedPlaylistEntryComparator implements java.util.Comparator<Matc
 {
     public int compare(MatchedPlaylistEntry aa, MatchedPlaylistEntry bb)
     {
-        if (aa.getCount() < bb.getCount())
+        if (aa.getScore() < bb.getScore())
         {
             return 1;
         }
-        else if (aa.getCount() == bb.getCount())
+        else if (aa.getScore() == bb.getScore())
         {
             return 0;
         }

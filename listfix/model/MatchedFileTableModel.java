@@ -36,28 +36,10 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
     public Boolean isSortAsc = Boolean.FALSE;
     public Vector<MatchedPlaylistEntry> vectorData = new Vector<MatchedPlaylistEntry>();
 
-	public MatchedFileTableModel(Object[][] input)
-	{
-		data = input;
-	}
-
 	public MatchedFileTableModel(Vector<MatchedPlaylistEntry> input)
 	{
         vectorData = input;
 		updateData(vectorData);
-	}
-
-	public MatchedFileTableModel()
-	{
-		Object[][] result = new Object[50][2];
-		for (int i = 1; i < 50; i++)
-		{
-			for (int j = 1; j < 3; j++)
-			{
-				result[i][j] = null;
-			}
-		}
-		data = result;
 	}
 
 	public void updateData(Vector<MatchedPlaylistEntry> input)
@@ -67,15 +49,10 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 		for (int i = 0; i < n; i++)
 		{
 			tempData[i][0] = input.elementAt(i).getPlaylistFile().getFileName();
-			tempData[i][1] = input.elementAt(i).getCount() + "";
+			tempData[i][1] = input.elementAt(i).getScore() + "";
 		}
 		data = tempData;
-		this.fireTableDataChanged();
-	}
-
-    public void updateData(Object[][] input)
-	{
-		data = input;
+        vectorData = input;
 		this.fireTableDataChanged();
 	}
 

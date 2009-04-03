@@ -105,7 +105,7 @@ public class BatchPlaylistRepairResultsDialog extends javax.swing.JDialog
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        resultsTable = new javax.swing.JTable();
+        resultsTable = new listfix.view.support.ZebraJTable();
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
 
@@ -121,10 +121,13 @@ public class BatchPlaylistRepairResultsDialog extends javax.swing.JDialog
         jScrollPane1.setOpaque(false);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(750, 500));
 
-        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         resultsTable.setModel(tableModel);
         resultsTable.setFillsViewportHeight(true);
-        resultsTable.setPreferredSize(null);
+        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        resultsTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
+        resultsTable.setRowHeight(20);
+        resultsTable.setShowHorizontalLines(false);
+        resultsTable.setShowVerticalLines(false);
         jScrollPane1.setViewportView(resultsTable);
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -157,7 +160,8 @@ public class BatchPlaylistRepairResultsDialog extends javax.swing.JDialog
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable resultsTable;
+    private javax.swing.JScrollPane jScrollPane2;
+    private listfix.view.support.ZebraJTable resultsTable;
     // End of variables declaration//GEN-END:variables
 
 }

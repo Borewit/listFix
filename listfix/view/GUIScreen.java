@@ -153,7 +153,7 @@ public class GUIScreen extends JFrame
         saveButton = new javax.swing.JButton();
         playlistTablePanel = new javax.swing.JPanel();
         playlistScrollPanel = playlistScrollPanel = new javax.swing.JScrollPane(playlistTable);
-        playlistTable = new javax.swing.JTable();
+        playlistTable = new listfix.view.support.ZebraJTable();
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
@@ -532,16 +532,14 @@ public class GUIScreen extends JFrame
         playlistScrollPanel.setOpaque(false);
         playlistScrollPanel.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
         playlistTable.setModel(new listfix.model.PlaylistTableModel());
-        playlistTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
         playlistTable.setFillsViewportHeight(true);
+        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         playlistTable.setGridColor(new java.awt.Color(153, 153, 153));
         playlistTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
-        playlistTable.setMaximumSize(new java.awt.Dimension(32767, 32767));
-        playlistTable.setMinimumSize(new java.awt.Dimension(5, 5));
-        playlistTable.setPreferredSize(null);
         playlistTable.setRowHeight(20);
+        playlistTable.setShowHorizontalLines(false);
+        playlistTable.setShowVerticalLines(false);
         playlistTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 playlistTableMouseClicked(evt);
@@ -1148,34 +1146,6 @@ public class GUIScreen extends JFrame
 		updateStatusLabel();
 	}//GEN-LAST:event_editFileNameRCMenuItemActionPerformed
 
-	private void playlistTableMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMouseClicked
-	{//GEN-HEADEREND:event_playlistTableMouseClicked
-		if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
-		{
-			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());    
-			if ((currentRightClick == releasedRow) && (releasedRow != -1))
-			{
-				entryRightClickMenu.show(playlistTable, (int)evt.getPoint().getX(), (int)evt.getPoint().getY());
-			}
-		}
-		updateButtons();        
-		updateStatusLabel();
-	}//GEN-LAST:event_playlistTableMouseClicked
-
-	private void playlistTableMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMouseDragged
-	{//GEN-HEADEREND:event_playlistTableMouseDragged
-		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-		{
-			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());    
-			if ((currentlySelectedRow != releasedRow) && (releasedRow != -1) && (releasedRow < guiDriver.getPlaylist().getEntryCount()))
-			{
-				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) );
-				currentlySelectedRow = releasedRow;
-			}        
-			updateStatusLabel();
-		}
-	}//GEN-LAST:event_playlistTableMouseDragged
-
 	private void findClosestMatchesMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_findClosestMatchesMenuItemActionPerformed
 	{//GEN-HEADEREND:event_findClosestMatchesMenuItemActionPerformed
 		locateProgressDialog.go();
@@ -1308,40 +1278,6 @@ public class GUIScreen extends JFrame
 		updateTableSize();
 	}//GEN-LAST:event_appendFileMenuItemActionPerformed
 
-	private void playlistTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMousePressed
-	{//GEN-HEADEREND:event_playlistTableMousePressed
-		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-		{
-			currentlySelectedRow = playlistTable.rowAtPoint(evt.getPoint());
-            if(currentlySelectedRow != -1 && evt.getClickCount() == 2)
-            {
-                playEntryAtSelectedRow();
-            }
-		}
-		else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
-		{
-			currentRightClick = playlistTable.rowAtPoint(evt.getPoint());
-		}
-		updateButtons();
-		updateStatusLabel();
-	}//GEN-LAST:event_playlistTableMousePressed
-
-	private void playlistTableMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMouseReleased
-	{//GEN-HEADEREND:event_playlistTableMouseReleased
-		if (evt.getModifiers() == java.awt.event.MouseEvent.BUTTON1_MASK)
-		{
-			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());                
-			// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
-			if ((currentlySelectedRow != releasedRow) && (!this.entryRightClickMenu.isEnabled()) && (releasedRow != -1))
-			{
-				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) ); 
-				currentlySelectedRow = releasedRow;           
-			}
-		}
-		updateButtons();        
-		updateStatusLabel();
-	}//GEN-LAST:event_playlistTableMouseReleased
-
 	private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveAsMenuItemActionPerformed
 	{//GEN-HEADEREND:event_saveAsMenuItemActionPerformed
 		jSaveFileChooser.setSelectedFile(guiDriver.getPlaylist().getFile());
@@ -1378,6 +1314,7 @@ public class GUIScreen extends JFrame
 			jSaveFileChooser.cancelSelection();
 		}
 		updateStatusLabel();
+        updatePlaylistDirectoryPanel();
 	}//GEN-LAST:event_saveAsMenuItemActionPerformed
 
 	private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeMenuItemActionPerformed
@@ -1555,6 +1492,7 @@ public class GUIScreen extends JFrame
 				updateButtons();
 				((PlaylistTableModel)playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                updatePlaylistDirectoryPanel();
 			}
 			else
 			{
@@ -1567,6 +1505,7 @@ public class GUIScreen extends JFrame
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 		}
+
 	}//GEN-LAST:event_saveButtonActionPerformed
 
 	private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
@@ -1810,7 +1749,7 @@ public class GUIScreen extends JFrame
 			tempDialog.center();
 			tempDialog.setVisible(true);
 		}
-
+        updatePlaylistDirectoryPanel();
 	}//GEN-LAST:event_batchPlaylistRepairMenuItemActionPerformed
 
     private void playlistDirectoryTreeMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistDirectoryTreeMousePressed
@@ -1825,6 +1764,68 @@ public class GUIScreen extends JFrame
             }
         }
     }//GEN-LAST:event_playlistDirectoryTreeMousePressed
+
+    private void playlistTableMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMouseClicked
+    {//GEN-HEADEREND:event_playlistTableMouseClicked
+        if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
+        {
+            int releasedRow = playlistTable.rowAtPoint(evt.getPoint());
+            if ((currentRightClick == releasedRow) && (releasedRow != -1))
+            {
+                entryRightClickMenu.show(playlistTable, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
+            }
+        }
+        updateButtons();
+        updateStatusLabel();
+    }//GEN-LAST:event_playlistTableMouseClicked
+
+    private void playlistTableMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMouseDragged
+    {//GEN-HEADEREND:event_playlistTableMouseDragged
+		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());
+			if ((currentlySelectedRow != releasedRow) && (releasedRow != -1) && (releasedRow < guiDriver.getPlaylist().getEntryCount()))
+			{
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) );
+				currentlySelectedRow = releasedRow;
+			}
+			updateStatusLabel();
+		}
+    }//GEN-LAST:event_playlistTableMouseDragged
+
+    private void playlistTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMousePressed
+    {//GEN-HEADEREND:event_playlistTableMousePressed
+        if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+        {
+            currentlySelectedRow = playlistTable.rowAtPoint(evt.getPoint());
+            if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
+            {
+                playEntryAtSelectedRow();
+            }
+        }
+        else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
+        {
+            currentRightClick = playlistTable.rowAtPoint(evt.getPoint());
+        }
+        updateButtons();
+        updateStatusLabel();
+    }//GEN-LAST:event_playlistTableMousePressed
+
+    private void playlistTableMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistTableMouseReleased
+    {//GEN-HEADEREND:event_playlistTableMouseReleased
+		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			int releasedRow = playlistTable.rowAtPoint(evt.getPoint());
+			// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
+			if ((currentlySelectedRow != releasedRow) && (!this.entryRightClickMenu.isEnabled()) && (releasedRow != -1))
+			{
+				((PlaylistTableModel)playlistTable.getModel()).updateData( guiDriver.moveTo(currentlySelectedRow, releasedRow) );
+				currentlySelectedRow = releasedRow;
+			}
+		}
+		updateButtons();
+		updateStatusLabel();
+    }//GEN-LAST:event_playlistTableMouseReleased
 
 	private void updateButtons()
 	{
@@ -1971,6 +1972,13 @@ public class GUIScreen extends JFrame
 			refreshMediaDirsButton.setEnabled(true);
 		}
 	}
+
+    private void updatePlaylistDirectoryPanel()
+    {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
 	
 	private void updateStatusLabel()
 	{
@@ -2202,7 +2210,7 @@ public class GUIScreen extends JFrame
     private javax.swing.JTree playlistDirectoryTree;
     private javax.swing.JPanel playlistPanel;
     private javax.swing.JScrollPane playlistScrollPanel;
-    private javax.swing.JTable playlistTable;
+    private listfix.view.support.ZebraJTable playlistTable;
     private javax.swing.JPanel playlistTablePanel;
     private javax.swing.JPopupMenu playlistTreeRightClickMenu;
     private javax.swing.JMenuItem randomizeMenuItem;

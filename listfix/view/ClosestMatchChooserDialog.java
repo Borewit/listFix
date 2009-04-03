@@ -22,6 +22,7 @@ package listfix.view;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.JTable;
@@ -101,7 +102,17 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        resultsTable = new javax.swing.JTable();
+        resultsTable =
+        new listfix.view.support.ZebraJTable()
+        {
+            //Implement table cell tool tips.
+            public String getToolTipText(MouseEvent e)
+            {
+                return ((MatchedFileTableModel)this.getModel()).vectorData.get(rowAtPoint(e.getPoint())).getPlaylistFile().getPath();
+            }
+        }
+
+        ;
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -121,9 +132,12 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(453, 200));
 
-        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9));
         resultsTable.setModel(tableModel);
         resultsTable.setFillsViewportHeight(true);
+        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        resultsTable.setRowHeight(20);
+        resultsTable.setShowHorizontalLines(false);
+        resultsTable.setShowVerticalLines(false);
         resultsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 resultsTableMousePressed(evt);
@@ -174,22 +188,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	private void resultsTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultsTableMousePressed
-        if (resultsTable.getSelectedRowCount() > 0)
-        {
-            jButton1.setEnabled(true);
-        }
-
-        int currentlySelectedRow = resultsTable.getSelectedRow();
-        if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
-        {
-            setVisible(false);
-            choice = currentlySelectedRow;
-            dispose();
-            setResultCode(OK);
-        }
-}//GEN-LAST:event_resultsTableMousePressed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         setVisible(false);
         dispose();
@@ -208,6 +206,23 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         setVisible(false);
         dispose();
     }//GEN-LAST:event_closeDialog
+
+    private void resultsTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_resultsTableMousePressed
+    {//GEN-HEADEREND:event_resultsTableMousePressed
+        if (resultsTable.getSelectedRowCount() > 0)
+        {
+            jButton1.setEnabled(true);
+        }
+
+        int currentlySelectedRow = resultsTable.getSelectedRow();
+        if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
+        {
+            setVisible(false);
+            choice = currentlySelectedRow;
+            dispose();
+            setResultCode(OK);
+        }
+    }//GEN-LAST:event_resultsTableMousePressed
 
     /**
      * @param args the command line arguments
@@ -265,6 +280,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable resultsTable;
+    private listfix.view.support.ZebraJTable resultsTable;
     // End of variables declaration//GEN-END:variables
 }
