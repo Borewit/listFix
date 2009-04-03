@@ -42,7 +42,7 @@ public class FileLauncher
             tempFile.deleteOnExit();
 
             // write out the .bat file...
-            StringBuffer buffer = new StringBuffer("set myvar=\"");
+            StringBuffer buffer = new StringBuffer("chcp 1252\nset myvar=\"");
             buffer.append(toLaunch);
             buffer.append("\"\n");
             buffer.append("start \"\" %myvar%");
