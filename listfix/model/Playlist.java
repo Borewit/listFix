@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import listfix.controller.tasks.OpenM3UTask;
+import listfix.io.FileLauncher;
 import listfix.io.M3UFileReader;
 
 public class Playlist
@@ -196,31 +197,9 @@ public class Playlist
     {
         try
 		{
-			String cmdLine = "";
-			String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
-			if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
-			{
-				cmdLine = "cmd.exe /c start ";
-				cmdLine += "\"" + file.getPath() + "\"";
-			}
-            else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
-			{
-				cmdLine = "cmd.exe /c ";
-				cmdLine += "\"" + file.getPath() + "\"";
-			}
-			else if (lowerCaseOpSysName.contains("windows"))
-			{
-				cmdLine = "start ";
-				cmdLine += "\"" + file.getPath() + "\"";
-			}
-			else
-			{
-				cmdLine = "open ";
-				cmdLine += file.getPath();
-			}
-			Runtime.getRuntime().exec(cmdLine);
+			FileLauncher.launch(file.getPath());
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

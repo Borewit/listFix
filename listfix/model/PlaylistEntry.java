@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 
+import listfix.io.FileLauncher;
 import listfix.util.*;
 
 public class PlaylistEntry implements Cloneable
@@ -266,64 +267,24 @@ public class PlaylistEntry implements Cloneable
 
     // Try to open the file with the "default" MP3 player (only works on some systems).
     public void play() throws Exception
-    {
-        String cmdLine = "";
-        // try to figure out the OS so we can issue the correct command
-        // TODO: Lots of debugging on different OSes to make sure this works.
-        String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
-        if (lowerCaseOpSysName.contains("windows") && lowerCaseOpSysName.contains("nt"))
+    {        
+        String goodURI = "";
+        String goodAbsPath = "";
+        if (this.isURL())
         {
-            cmdLine = "cmd.exe /K start ";
-            cmdLine += "\"" + (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath()) ) + "\"";
+            goodURI = this.thisURI.toString();            
         }
-        else if (lowerCaseOpSysName.contains("windows") && (lowerCaseOpSysName.contains("vista") || lowerCaseOpSysName.contains("xp")))
+        else if (this.isRelative())
         {
-            cmdLine = "cmd.exe /K ";
-            cmdLine += "\"" + (this.isURL() ? "start " + this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath())) + "\"";
-        }
-        else if (lowerCaseOpSysName.contains("windows"))
-        {
-            cmdLine = "start ";
-            cmdLine += "\"" + (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath())) + "\"";
+            goodAbsPath = this.absoluteFile.getAbsolutePath();
         }
         else
         {
-            cmdLine = "open ";
-            cmdLine += (this.isURL() ? this.thisURI.toString() : (this.isRelative() ? this.absoluteFile.getAbsolutePath() : this.thisFile.getAbsolutePath()));
-        }
-        try
-        {
-            Process proc = Runtime.getRuntime().exec(cmdLine);
-			System.out.println("command was: " + cmdLine);
-			synchronized(proc)
-			{
-				proc.wait(500);
-			}
-			InputStream stream = proc.getErrorStream();
-			BufferedReader streamTwo = new BufferedReader(new InputStreamReader(stream));
-			String line = null;
-			if (streamTwo.ready())
-			{
-				line = streamTwo.readLine();
-			}
-			while (line != null)
-			{
-				System.out.println(line);
-				if (streamTwo.ready())
-				{
-					line = streamTwo.readLine();
-				}
-				else
-				{
-					line = null;
-				}
-			}					
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw e;
-        }
+            goodAbsPath = this.thisFile.getAbsolutePath();
+        }                
+              
+        // work in the following logic...
+        FileLauncher.launch(this.isURL() ? goodURI : goodAbsPath);
     }
     
     public String toM3UString()
