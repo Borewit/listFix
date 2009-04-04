@@ -1845,7 +1845,7 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }
 
 private void updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCheckMenuItemActionPerformed
-        BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");
+        BrowserLauncher.launch("http://sourceforge.net/projects/listfix/");
 }//GEN-LAST:event_updateCheckMenuItemActionPerformed
 
     private void updateButtons()
