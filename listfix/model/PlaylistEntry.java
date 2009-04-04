@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 
+import listfix.io.BrowserLauncher;
 import listfix.io.FileLauncher;
 import listfix.util.*;
 

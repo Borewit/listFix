@@ -57,7 +57,7 @@ public class FileLauncher
         }
         else
         {
-            cmdLine = "open " + toLaunch;
+            cmdLine = "gnome-open " + toLaunch.replaceAll(" ", "\\ ");
         }
 
         Process proc = Runtime.getRuntime().exec(cmdLine);

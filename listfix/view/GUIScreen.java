@@ -23,9 +23,12 @@ package listfix.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
@@ -201,6 +204,7 @@ public class GUIScreen extends JFrame
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
         helpMenuItem = new javax.swing.JMenuItem();
+        updateCheckMenuItem = new javax.swing.JMenuItem();
 
         deleteRCMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         deleteRCMenuItem.setText("Delete");
@@ -538,7 +542,7 @@ public class GUIScreen extends JFrame
 
         playlistTable.setModel(new listfix.model.PlaylistTableModel());
         playlistTable.setFillsViewportHeight(true);
-        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        playlistTable.setFont(new java.awt.Font("Verdana", 0, 9));
         playlistTable.setGridColor(new java.awt.Color(153, 153, 153));
         playlistTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
         playlistTable.setRowHeight(20);
@@ -950,11 +954,24 @@ public class GUIScreen extends JFrame
         helpMenu.add(aboutMenuItem);
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
-        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         helpMenuItem.setMnemonic('e');
         helpMenuItem.setText("Help");
-        helpMenuItem.setEnabled(false);
+        helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(helpMenuItem);
+
+        updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        updateCheckMenuItem.setText("Check For Updates");
+        updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateCheckMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(updateCheckMenuItem);
 
         mainMenuBar.add(helpMenu);
 
@@ -1823,13 +1840,21 @@ public class GUIScreen extends JFrame
 		updateStatusLabel();
     }//GEN-LAST:event_playlistTableMouseReleased
 
-	private void updateButtons()
-	{
-		if (guiDriver.getPlaylist().getFile() == null)
-		{
-			closeMenuItem.setEnabled(false);
-			closeIconButton.setEnabled(false);            
-			appendPlaylistMenuItem.setEnabled(false);
+private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
+        BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");//GEN-LAST:event_helpMenuItemActionPerformed
+}
+
+private void updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCheckMenuItemActionPerformed
+        BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");
+}//GEN-LAST:event_updateCheckMenuItemActionPerformed
+
+    private void updateButtons()
+    {
+        if (guiDriver.getPlaylist().getFile() == null)
+        {
+            closeMenuItem.setEnabled(false);
+            closeIconButton.setEnabled(false);
+            appendPlaylistMenuItem.setEnabled(false);
 			openPlaylistButton.setEnabled(false);
 		}
 		else if(guiDriver.getPlaylist().playlistModified())
@@ -2230,6 +2255,7 @@ public class GUIScreen extends JFrame
     private javax.swing.JMenu statusSortMenu;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JButton upIconButton;
+    private javax.swing.JMenuItem updateCheckMenuItem;
     // End of variables declaration//GEN-END:variables
 	// </editor-fold>
 }
