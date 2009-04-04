@@ -20,10 +20,7 @@
 
 package listfix.model;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 
@@ -108,8 +105,7 @@ public class PlaylistEntry implements Cloneable
                 absoluteFile = thisFile;
             }
 			else
-			{
-                // this may be unreachable code...
+			{                
 				absoluteFile = new File(thisFile.getAbsolutePath());
 			}
         }
@@ -155,7 +151,11 @@ public class PlaylistEntry implements Cloneable
             if (thisFile.isAbsolute())
             {
                 absoluteFile = thisFile;
-            }
+            }            
+			else
+			{                
+				absoluteFile = new File(thisFile.getAbsolutePath());
+			}
         }
         else
         {
@@ -275,25 +275,24 @@ public class PlaylistEntry implements Cloneable
     // Try to open the file with the "default" MP3 player (only works on some systems).
     public void play() throws Exception
     {        
-        String goodAbsPath = "";
+        File absFile = null;
         if (this.isURL())
         {
-            FileLauncher.launch(this.thisURI.toString());
+            BrowserLauncher.launch(this.thisURI.toString());
         }
         else
         {
             if (this.isFound())
             {
-
                 if (this.isRelative())
                 {
-                    goodAbsPath = this.absoluteFile.getAbsolutePath();
+                    absFile = this.absoluteFile.getCanonicalFile();
                 }
                 else
                 {
-                    goodAbsPath = this.thisFile.getAbsolutePath();
+                    absFile = this.thisFile.getCanonicalFile();
                 }
-                FileLauncher.launch(goodAbsPath);
+                FileLauncher.launch(absFile);
             }
         }              
     }

@@ -197,7 +197,7 @@ public class Playlist
     {
         try
 		{
-			FileLauncher.launch(file.getPath());
+			FileLauncher.launch(file);
 		}
 		catch (Exception e)
 		{

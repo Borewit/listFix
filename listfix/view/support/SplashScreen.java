@@ -36,7 +36,7 @@ public class SplashScreen extends JFrame
 
         statusBar = new JLabel(" ");
         statusBar.setBorder(BorderFactory.createBevelBorder(1));
-        //statusBar.setFont();
+        statusBar.setFont(new Font("Verdana", 0, 9));
         getContentPane().add(statusBar, BorderLayout.SOUTH);
 
         setUndecorated(true);
