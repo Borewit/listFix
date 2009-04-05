@@ -1692,13 +1692,13 @@ public class GUIScreen extends JFrame
 		{
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			guiDriver.setAppOptions(options);
-			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
 			guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
 			if (options.getAlwaysUseUNCPaths())
 			{
 				guiDriver.switchMediaLibraryToUNCPaths();
 				mediaLibraryList.setListData(guiDriver.getMediaDirs());
-			}
+			}            
+			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
 			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
 			{
 				playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
