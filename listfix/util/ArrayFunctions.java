@@ -159,13 +159,31 @@ public class ArrayFunctions
         return result;
     }
     
-    public static String[] convertVectorToStringArray(Vector<String> v)
+    public static boolean ContainsStringWithPrefix(Vector<String> a, String b, boolean ignoreCase)
+    {        
+        boolean result = false;
+        if (a != null && a.size() > 0)
+        {
+            for (int i = 0; i < a.size(); i++)
+            {
+                if (ignoreCase ? b.toLowerCase().startsWith(a.get(i).toLowerCase()) : b.startsWith(a.get(i)))
+                {
+                    result = true;
+                    break;                            
+                }
+                    
+            }
+        }
+        return result;
+    }
+    
+    public static String[] convertVectorToStringArray(Vector<Object> v)
     {
         int size = v.size();
         String[] result = new String[size];
         for (int i = 0; i < size; i++)
         {
-            result[i] = v.elementAt(i);
+            result[i] = v.elementAt(i).toString();
         }
         return result;
     }

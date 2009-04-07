@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
-
 package listfix.io;
 
 /*
@@ -27,8 +26,7 @@ package listfix.io;
 = Purpose:  Read in the playlist file and return a Vector containing 
 =           PlaylistEntries that represent the files in the playlist.
 ============================================================================
-*/
-
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,12 +39,14 @@ import java.util.Vector;
 
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
+import listfix.util.ArrayFunctions;
 import listfix.util.UnicodeUtils;
 
 public class M3UFileReader
 {
-	private final static String fs = System.getProperty("file.separator");
-	private final static String br = System.getProperty("line.separator");
+
+    private final static String fs = System.getProperty("file.separator");
+    private final static String br = System.getProperty("line.separator");
     private BufferedReader buffer;
     private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
     private long fileLength = 0;
@@ -54,8 +54,8 @@ public class M3UFileReader
 
     public M3UFileReader(File in) throws FileNotFoundException
     {
-		try
-		{
+        try
+        {
             encoding = UnicodeUtils.getEncoding(in);
             if (encoding.equals("UTF-8") || in.getName().toLowerCase().endsWith(".m3u8"))
             {
@@ -66,122 +66,128 @@ public class M3UFileReader
             {
                 buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
             }
-			fileLength = in.length();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+            fileLength = in.length();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public Vector<PlaylistEntry> readM3U(Task input) throws IOException
     {
         StringBuilder cache = new StringBuilder();
         String line1 = buffer.readLine();
-        cache.append(line1);
-        String line2 = "";
-        if (line1.contains("#EXTM3U"))
-        {
-            line1 = buffer.readLine();
-            cache.append(line1);
-        }
         if (line1 != null)
         {
-            if (!line1.startsWith("#"))
+            cache.append(line1);
+            String line2 = "";
+            if (line1.contains("#EXTM3U"))
             {
-                line2 = line1;
-                line1 = "";
-            }
-            else
-            {
-                line2 = buffer.readLine();
-                cache.append(line2);
-				while (line2.startsWith("#"))
-				{
-					line1 = line1 + br + line2;
-					line2 = buffer.readLine();
-					cache.append(line2);
-				}
-            }        
-            while (line1 != null)
-            {
-				if (!line2.equals(""))
-				{
-					processEntry(line1, line2);
-				}
-                input.notifyObservers((int)((double)cache.toString().getBytes().length/(double)(fileLength) * 100.0));
                 line1 = buffer.readLine();
-                if (line1 != null)
+                cache.append(line1);
+            }
+            if (line1 != null)
+            {
+                if (!line1.startsWith("#"))
                 {
-					cache.append(line1);
-                    if (!line1.startsWith("#"))
+                    line2 = line1;
+                    line1 = "";
+                }
+                else
+                {
+                    line2 = buffer.readLine();
+                    cache.append(line2);
+                    while (line2.startsWith("#"))
                     {
-                        line2 = line1;
-                        line1 = "";
-                    }
-                    else
-                    {
+                        line1 = line1 + br + line2;
                         line2 = buffer.readLine();
                         cache.append(line2);
-						while (line2.startsWith("#"))
-						{
-							line1 = line1 + br + line2;
-							line2 = buffer.readLine();
-							cache.append(line2);
-						}
-                    }    
+                    }
                 }
-                input.notifyObservers((int)((double)cache.toString().getBytes().length/(double)(fileLength) * 100.0));
+                while (line1 != null)
+                {
+                    if (!line2.equals(""))
+                    {
+                        processEntry(line1, line2);
+                    }
+                    input.notifyObservers((int) ((double) cache.toString().getBytes().length / (double) (fileLength) * 100.0));
+                    line1 = buffer.readLine();
+                    if (line1 != null)
+                    {
+                        cache.append(line1);
+                        if (!line1.startsWith("#"))
+                        {
+                            line2 = line1;
+                            line1 = "";
+                        }
+                        else
+                        {
+                            line2 = buffer.readLine();
+                            cache.append(line2);
+                            while (line2.startsWith("#"))
+                            {
+                                line1 = line1 + br + line2;
+                                line2 = buffer.readLine();
+                                cache.append(line2);
+                            }
+                        }
+                    }
+                    input.notifyObservers((int) ((double) cache.toString().getBytes().length / (double) (fileLength) * 100.0));
+                }
             }
         }
         buffer.close();
         return results;
     }
-    
+
     public Vector<PlaylistEntry> readM3U() throws IOException
     {
         String line1 = buffer.readLine();
-        String line2 = "";
-        if (line1.contains("#EXTM3U"))
-		{
-            line1 = buffer.readLine();
-        }
         if (line1 != null)
         {
-            if (!line1.startsWith("#"))
+            String line2 = "";
+            if (line1.contains("#EXTM3U"))
             {
-                line2 = line1;
-                line1 = "";
-            }
-            else
-            {
-                line2 = buffer.readLine();
-				while (line2.startsWith("#"))
-				{
-					line1 = line1 + br + line2;
-					line2 = buffer.readLine();
-				}
-            }        
-            while (line1 != null)
-            {
-                processEntry(line1, line2);
                 line1 = buffer.readLine();
-                if (line1 != null)
+            }
+            if (line1 != null)
+            {
+                if (!line1.startsWith("#"))
                 {
-                    if (!line1.startsWith("#"))
+                    line2 = line1;
+                    line1 = "";
+                }
+                else
+                {
+                    line2 = buffer.readLine();
+                    while (line2.startsWith("#"))
                     {
-                        line2 = line1;
-                        line1 = "";
-                    }
-                    else
-                    {
+                        line1 = line1 + br + line2;
                         line2 = buffer.readLine();
-						while (line2.startsWith("#"))
-						{
-							line1 = line1 + br + line2;
-							line2 = buffer.readLine();
-						}
-                    }    
+                    }
+                }
+                while (line1 != null)
+                {
+                    processEntry(line1, line2);
+                    line1 = buffer.readLine();
+                    if (line1 != null)
+                    {
+                        if (!line1.startsWith("#"))
+                        {
+                            line2 = line1;
+                            line1 = "";
+                        }
+                        else
+                        {
+                            line2 = buffer.readLine();
+                            while (line2.startsWith("#"))
+                            {
+                                line1 = line1 + br + line2;
+                                line2 = buffer.readLine();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -217,7 +223,7 @@ public class M3UFileReader
                 path.append("\\");
             }
         }
-        
+
         if (pathTokenizer != null)
         {
             String fileName = "";
@@ -229,9 +235,9 @@ public class M3UFileReader
 
             String firstToken = "";
             int tokenNumber = 0;
-			File firstPathToExist = null;
+            File firstPathToExist = null;
             while (pathTokenizer.hasMoreTokens())
-            {                
+            {
                 String word = pathTokenizer.nextToken();
                 String tempPath = path.toString() + word + fs;
                 if (tokenNumber == 0)
@@ -248,7 +254,10 @@ public class M3UFileReader
                         PlaylistEntry.nonExistentDirectories.add(tempPath);
                     }
                 }
-                else if (L2.startsWith("\\\\") && (!PlaylistEntry.nonExistentDirectories.contains("\\\\" + firstToken) && !PlaylistEntry.existingDirectories.contains(tempPath) && !PlaylistEntry.nonExistentDirectories.contains(tempPath)) && pathTokenizer.countTokens() >= 1)
+                else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1 &&
+                    !PlaylistEntry.nonExistentDirectories.contains("\\\\" + firstToken) 
+                    && !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.existingDirectories, tempPath, true) 
+                    && !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.nonExistentDirectories, tempPath, true))
                 {
                     // Handle UNC paths specially
                     File testFile = new File(tempPath);
@@ -265,7 +274,7 @@ public class M3UFileReader
                     {
                         PlaylistEntry.nonExistentDirectories.add(tempPath);
                     }
-                    else if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
+                    if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
                     {
                         PlaylistEntry.nonExistentDirectories.add("\\\\" + firstToken);
                     }
