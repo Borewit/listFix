@@ -1416,7 +1416,7 @@ public class GUIScreen extends JFrame
 					}
 				}
 				String dir = mediaDir.getPath();     
-				if (mediaDir != null)
+				if (guiDriver.getMediaDirs() != null && mediaDir != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
 					if (ArrayFunctions.ContainsStringWithPrefix(guiDriver.getMediaDirs(), dir, !guiDriver.fileSystemIsCaseSensitive))

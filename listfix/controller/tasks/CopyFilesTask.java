@@ -53,7 +53,7 @@ public class CopyFilesTask extends listfix.controller.Task
             tempEntry = files.elementAt(i);
             if (!tempEntry.isURL())
             {
-                fileToCopy = tempEntry.getFile();
+                fileToCopy = tempEntry.getAbsoluteFile();
                 if (tempEntry.isFound()) // && fileToCopy.exists())
                 {
                     dest = new File(destination.getPath() + fs + tempEntry.getFileName());
