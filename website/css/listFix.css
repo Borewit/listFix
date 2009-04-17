@@ -1,0 +1,87 @@
+a:hover 
+{
+	font-family: Verdana;
+	color: #FF9F00;
+}
+
+html, body 
+{ 
+	height: 100%; 
+}
+
+.boxHeader 
+{
+	font-family: Verdana;
+	font-size: 8pt;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+.boxText 
+{
+	font-family: Verdana;
+	font-size: 8pt;
+	color: #000000;
+}
+.callOutLinks 
+{
+	font-family: Verdana;
+	font-size: 13pt;
+	color: #FFCC33;
+	font-weight: normal
+}
+
+.copyright
+{  
+	font-family: Verdana; 
+	font-size: 8pt; 
+	color: #999999; 
+	font-weight: bold;
+}
+
+.fullScreen 
+{ 
+	height: 100%; 
+}
+
+
+.mainText 
+{
+	font-family: Verdana;
+	font-size: 10pt;
+}
+
+.netscapeFix 
+{  
+	clip: rect(); 
+	visibility: visible; 
+	background-position: center center; 
+	vertical-align: middle; 
+	position: relative; 
+	left: 50%; 
+	top: 10px
+}
+
+.tableBorder 
+{
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #003366;
+	border-right-color: #003366;
+	border-bottom-color: #003366;
+	border-left-color: #003366;
+}
+
+.topHeaderLinks 
+{  
+	font-family: Verdana; 
+	font-size: 8pt; 
+	color: #FFCC33; 
+	font-weight: bold
+}
+.redCallOut {
+	font-weight: bold;
+	color: #F00;
+}

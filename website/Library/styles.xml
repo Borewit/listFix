@@ -1,0 +1,9 @@
+<mm:style name="Bold" type="char" apply="add" bold />
+<mm:style name="Caption" format="p" align="center" apply="replace" font="Arial, Helvetica, sans-serif" size="2" color="#808080" bold italic />
+<mm:style name="Copyright" format="p" align="center" apply="replace" font="Georgia, Times New Roman, Times, serif" size="1" italic />
+<mm:style name="Emphasis, sans-serif" type="char" apply="replace" font="Verdana, Arial, Helvetica, sans-serif" bold />
+<mm:style name="Fixed-width" type="char" apply="replace" font="Courier New, Courier, mono" />
+<mm:style name="Headline" align="left" apply="replace" font="Verdana, Arial, Helvetica, sans-serif" size="+2" bold />
+<mm:style name="Normal" apply="replace" font="Georgia, Times New Roman, Times, serif" size="+1" />
+<mm:style name="Red" type="char" apply="add" color="#FF0000" />
+<mm:style name="Underline and bold" type="char" apply="replace" bold underline />
