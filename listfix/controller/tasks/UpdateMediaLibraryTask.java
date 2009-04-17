@@ -31,20 +31,20 @@ import listfix.controller.*;
 public class UpdateMediaLibraryTask extends listfix.controller.Task 
 {
     private GUIDriver guiDriver;
-    private String[] mediaDir;
+    private String[] mediaDirs;
     private String[] mediaLibraryDirectoryList;
     private String[] mediaLibraryFileList;  
     
     public UpdateMediaLibraryTask(GUIDriver gd) 
     {
         guiDriver = gd;
-        mediaDir = gd.getMediaDirs();
+        mediaDirs = gd.getMediaDirs();
     }
 
     /** Run the task. This method is the body of the thread for this task.  */
     public void run() 
     {
-        if(mediaDir != null)
+        if(mediaDirs != null)
         {
             DirectoryScanner ds = new DirectoryScanner();
             ds.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), this);
@@ -52,14 +52,14 @@ public class UpdateMediaLibraryTask extends listfix.controller.Task
             mediaLibraryDirectoryList = ds.getDirectoryList();
             mediaLibraryFileList = ds.getFileList();
             ds.reset();
-            java.util.Arrays.sort(mediaDir);
-            guiDriver.setMediaDirs(mediaDir);
+            java.util.Arrays.sort(mediaDirs);
+            guiDriver.setMediaDirs(mediaDirs);
             java.util.Arrays.sort(mediaLibraryDirectoryList);
             guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
             this.notifyObservers(100);
-            (new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+            (new FileWriter()).writeIni(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
         }
     }   
 }

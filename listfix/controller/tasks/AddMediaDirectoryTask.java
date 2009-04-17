@@ -87,8 +87,8 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
             guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
             java.util.Arrays.sort(mediaLibraryFileList);
             guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-            this.notifyObservers(100);
             (new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+            this.notifyObservers(100);
         }
     }   
 }
