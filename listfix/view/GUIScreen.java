@@ -147,7 +147,7 @@ public class GUIScreen extends JFrame
         removeMediaDirButton = new javax.swing.JButton();
         refreshMediaDirsButton = new javax.swing.JButton();
         mediaLibraryScrollPane = new javax.swing.JScrollPane();
-        mediaLibraryList = new javax.swing.JList();
+        mediaLibraryList = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
         playlistDirectoryPanel = new javax.swing.JPanel();
         treeScrollPane = new javax.swing.JScrollPane();
         playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
@@ -404,8 +404,8 @@ public class GUIScreen extends JFrame
         statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
-        statusLabel.setForeground(new java.awt.Color(153, 153, 153));
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        statusLabel.setForeground(new java.awt.Color(102, 102, 102));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
         statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
@@ -469,7 +469,7 @@ public class GUIScreen extends JFrame
 
         mediaLibraryPanel.add(mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
-        mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
+        mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         mediaLibraryList.setPreferredSize(null);
         mediaLibraryScrollPane.setViewportView(mediaLibraryList);
@@ -951,7 +951,7 @@ public class GUIScreen extends JFrame
         helpMenu.add(aboutMenuItem);
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
-        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         helpMenuItem.setMnemonic('e');
         helpMenuItem.setText("Help");
         helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -961,7 +961,7 @@ public class GUIScreen extends JFrame
         });
         helpMenu.add(helpMenuItem);
 
-        updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         updateCheckMenuItem.setText("Check For Updates");
         updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
