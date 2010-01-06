@@ -36,14 +36,16 @@ public class BatchPlaylistRepairTask extends listfix.controller.Task
     private FileWriter fw = new FileWriter();
     private File destinationDirectory = null;
     private String playlistsDir = "";
+    private boolean relative = false;
 
     /** Creates new LocateFilesTask */
-    public BatchPlaylistRepairTask(List<File> lists, String[] files, File destDir, String playlistsDirectory)
+    public BatchPlaylistRepairTask(List<File> lists, String[] files, File destDir, String playlistsDirectory, boolean saveRelative)
     {
         inputList = lists;
         mediaLibraryFileList = files;
         destinationDirectory = destDir;
         playlistsDir = playlistsDirectory;
+        relative = saveRelative;
     }
 
     /** Run the task. This method is the body of the thread for this task.  */
@@ -60,7 +62,18 @@ public class BatchPlaylistRepairTask extends listfix.controller.Task
             boolean writtenSuccessfully = false;
             try
             {
-                fw.writeM3U(tempList, new File(destinationDirectory.getPath() + tempList.getFile().getAbsolutePath().replace(playlistsDir, "")));
+                if (originalLostCount != resultLostCount)
+                {
+                    // only write the file out if we changed something...
+                    if (relative)
+                    {
+                        fw.writeRelativeM3U(tempList, new File(destinationDirectory.getPath() + tempList.getFile().getAbsolutePath().replace(playlistsDir, "")));
+                    }
+                    else
+                    {
+                        fw.writeM3U(tempList, new File(destinationDirectory.getPath() + tempList.getFile().getAbsolutePath().replace(playlistsDir, "")));
+                    }
+                }
                 writtenSuccessfully = true;
             }
             catch (Exception ex)

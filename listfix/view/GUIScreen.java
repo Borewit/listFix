@@ -1751,7 +1751,7 @@ public class GUIScreen extends JFrame
                 }
             }
             locateProgressDialog.go();
-            BatchPlaylistRepairTask thisTask = new BatchPlaylistRepairTask(files, guiDriver.getMediaLibraryFileList(), destDir, guiDriver.getAppOptions().getPlaylistsDirectory());
+            BatchPlaylistRepairTask thisTask = new BatchPlaylistRepairTask(files, guiDriver.getMediaLibraryFileList(), destDir, guiDriver.getAppOptions().getPlaylistsDirectory(), guiDriver.getAppOptions().getSavePlaylistsWithRelativePaths());
             locateProgressDialog.track(thisTask);
             java.util.List<RepairedPlaylistResult> results = thisTask.getResults();
             locateProgressDialog.setEnabled(false);
