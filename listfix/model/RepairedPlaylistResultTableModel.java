@@ -17,27 +17,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
+
 package listfix.model;
 
 import java.util.List;
 
 public class RepairedPlaylistResultTableModel extends javax.swing.table.AbstractTableModel
 {
-	private final String[] columnNames = {"File Name", "Total Entries", "Missing Entries Before", "Missing Entries After", "Updated Entries", "Saved"};
+	private final String[] columnNames =
+	{
+		"File Name", "Total Entries", "Missing Entries Before", "Missing Entries After", "Updated Entries", "Saved"
+	};
 	private Object[][] data;
-	private final boolean[] canEdit = new boolean[]{false, false, false, false, false, false};
+	private final boolean[] canEdit = new boolean[]
+	{
+		false, false, false, false, false, false
+	};
 	private final Class<?>[] types = new Class<?>[]
-    {
+	{
 		java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
 	};
-
-    public Integer sortCol = new Integer(1);
-    public Boolean isSortAsc = Boolean.FALSE;
-    public List<RepairedPlaylistResult> vectorData = null;
+	public Integer sortCol = new Integer(1);
+	public Boolean isSortAsc = Boolean.FALSE;
+	public List<RepairedPlaylistResult> vectorData = null;
 
 	public RepairedPlaylistResultTableModel(List<RepairedPlaylistResult> input)
 	{
-        vectorData = input;
+		vectorData = input;
 		updateData(vectorData);
 	}
 
@@ -56,33 +62,35 @@ public class RepairedPlaylistResultTableModel extends javax.swing.table.Abstract
 
 	public void updateData(List<RepairedPlaylistResult> input)
 	{
-        int n = input.size();
+		int n = input.size();
 		String[][] tempData = new String[n][6];
 		for (int i = 0; i < n; i++)
 		{
 			tempData[i][0] = input.get(i).getPlaylist().getFilename();
 			tempData[i][1] = input.get(i).getPlaylist().getEntryCount() + "";
-            tempData[i][2] = input.get(i).getStartLostCount() + "";
-            tempData[i][3] = input.get(i).getEndLostCount() + "";
-            tempData[i][4] = (input.get(i).getEndFoundCount() - input.get(i).getStartFoundCount()) + "";
-            tempData[i][5] = input.get(i).isWrittenSuccessfully() ? "YES" : "ERROR";
+			tempData[i][2] = input.get(i).getStartLostCount() + "";
+			tempData[i][3] = input.get(i).getEndLostCount() + "";
+			tempData[i][4] = (input.get(i).getEndFoundCount() - input.get(i).getStartFoundCount()) + "";
+			tempData[i][5] = input.get(i).isWrittenSuccessfully() ? "YES" : "ERROR";
 
 		}
 		data = tempData;
 		this.fireTableDataChanged();
 	}
 
-    public void updateData(Object[][] input)
+	public void updateData(Object[][] input)
 	{
 		data = input;
 		this.fireTableDataChanged();
 	}
 
+	@Override
 	public int getColumnCount()
 	{
 		return columnNames.length;
 	}
 
+	@Override
 	public int getRowCount()
 	{
 		return data.length;
@@ -99,6 +107,7 @@ public class RepairedPlaylistResultTableModel extends javax.swing.table.Abstract
 		return columnNames[col]; // + suffix;
 	}
 
+	@Override
 	public java.lang.Object getValueAt(int row, int col)
 	{
 		return data[row][col];
@@ -117,30 +126,30 @@ public class RepairedPlaylistResultTableModel extends javax.swing.table.Abstract
 	}
 
 	public Object[] longestValues()
-    {
-        String[] result = new String[6];
-        if (data.length > 0)
-        {
-            for (int i = 0; i < data.length; i++)
-            {
-                for (int j = 0; j < data[i].length; j++)
-                {
-                    if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
-                    {
-                        result[j] = (String) data[i][j];
-                    }
-                }
-            }
-        }
-        else
-        {
-            result[0] = "";
-            result[1] = "";
-            result[2] = "";
-            result[3] = "";
-            result[4] = "";
-            result[5] = "";
-        }
-        return result;
-    }
+	{
+		String[] result = new String[6];
+		if (data.length > 0)
+		{
+			for (int i = 0; i < data.length; i++)
+			{
+				for (int j = 0; j < data[i].length; j++)
+				{
+					if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
+					{
+						result[j] = (String) data[i][j];
+					}
+				}
+			}
+		}
+		else
+		{
+			result[0] = "";
+			result[1] = "";
+			result[2] = "";
+			result[3] = "";
+			result[4] = "";
+			result[5] = "";
+		}
+		return result;
+	}
 }

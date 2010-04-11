@@ -24,16 +24,17 @@ import listfix.model.*;
 
 public class MatchedPlaylistEntryComparator implements java.util.Comparator<MatchedPlaylistEntry>
 {
-    public int compare(MatchedPlaylistEntry aa, MatchedPlaylistEntry bb)
-    {
-        if (aa.getScore() < bb.getScore())
-        {
-            return 1;
-        }
-        else if (aa.getScore() == bb.getScore())
-        {
-            return 0;
-        }
-        return -1;
-    }    
+	@Override
+	public int compare(MatchedPlaylistEntry aa, MatchedPlaylistEntry bb)
+	{
+		if (aa.getScore() < bb.getScore())
+		{
+			return 1;
+		}
+		else if (aa.getScore() == bb.getScore())
+		{
+			return 0;
+		}
+		return -1;
+	}
 }

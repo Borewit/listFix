@@ -24,17 +24,18 @@ import listfix.model.*;
 
 public class DescendingPathComparator implements java.util.Comparator<PlaylistEntry>
 {
-    public int compare(PlaylistEntry aa, PlaylistEntry bb)
-    {
-        if (aa.getPath().compareToIgnoreCase(bb.getPath()) < 0)
-        {
-            return 1;
-        }
-        else if (aa.getPath().equals(bb.getPath()))
-        {
-            return 0;
-        }
-        return -1;
-    }    
+	@Override
+	public int compare(PlaylistEntry aa, PlaylistEntry bb)
+	{
+		if (aa.getPath().compareToIgnoreCase(bb.getPath()) < 0)
+		{
+			return 1;
+		}
+		else if (aa.getPath().equals(bb.getPath()))
+		{
+			return 0;
+		}
+		return -1;
+	}
 }
 

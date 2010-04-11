@@ -31,33 +31,34 @@ import listfix.controller.*;
 import listfix.io.*;
 import listfix.model.Playlist;
 
-public class OpenM3UTask extends listfix.controller.Task 
+public class OpenM3UTask extends listfix.controller.Task
 {
-    private GUIDriver guiDriver;
-    private File input; 
-    
-    public OpenM3UTask(GUIDriver gd, File f) 
-    {
-        guiDriver = gd;
-        input = f;
-    }
-    
-    /** Run the task. This method is the body of the thread for this task.  */
-    public void run() 
-    {	
+	private GUIDriver guiDriver;
+	private File input;
+
+	public OpenM3UTask(GUIDriver gd, File f)
+	{
+		guiDriver = gd;
+		input = f;
+	}
+
+	/** Run the task. This method is the body of the thread for this task.  */
+	@Override
+	public void run()
+	{
 		try
 		{
 			guiDriver.setPlaylist(new Playlist(input, this));
 			guiDriver.getHistory().add(input.getCanonicalPath());
 			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
-        }
-        catch(Exception e)
-        {
-			e.printStackTrace();
-        }
-		finally
-		{			
-            this.notifyObservers(100);
 		}
-    }   
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.notifyObservers(100);
+		}
+	}
 }

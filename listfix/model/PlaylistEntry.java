@@ -30,361 +30,347 @@ import listfix.util.*;
 
 public class PlaylistEntry implements Cloneable
 {
-    // file separator
-    private final static String fs = System.getProperty("file.separator");
-
-    // line separator
-    private final static String br = System.getProperty("line.separator");
-
-    // is the file system case sensitive?
+	// file separator
+	private final static String fs = System.getProperty("file.separator");
+	// line separator
+	private final static String br = System.getProperty("line.separator");
+	// is the file system case sensitive?
 	private static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+	// The list of folders we know don't exist.
+	public static Vector<String> nonExistentDirectories = new Vector<String>();
+	// A list of folders we know DO exist.
+	public static Vector<String> existingDirectories = new Vector<String>();
+	// The root folder all the entries in a relative playlist are relative to.
+	public static String basePath = "";
+	// This entry's path.
+	private String path = "";
+	// This entry's extra info.
+	private String extInf = "";
+	// This entry's file name.
+	private String fileName = "";
+	// This entry's File object.
+	private File thisFile = null;
+	// This entry's absolute file.
+	private File absoluteFile = null;
+	// The entry's URI (for URLs).
+	private URI thisURI = null;
+	// This entry's "lost/found" status as should be displyed in the UI.
+	private String message = "Unknown";
+	// This entry's lost/found flag.
+	private boolean found = false;
 
-    // The list of folders we know don't exist.
-    public static Vector<String> nonExistentDirectories = new Vector<String>();
-    
-    // A list of folders we know DO exist.
-    public static Vector<String> existingDirectories = new Vector<String>();
+	// Construct a URL entry.
+	public PlaylistEntry(URI uri, String extra)
+	{
+		thisURI = uri;
+		extInf = extra;
+		message = "URL";
+	}
 
-    // The root folder all the entries in a relative playlist are relative to.
-    public static String basePath = "";
+	// Construct a file-based entry.
+	public PlaylistEntry(String p, String f, String extra)
+	{
+		path = p;
+		fileName = f;
+		extInf = extra;
+		thisFile = new File(path, fileName);
 
-    // This entry's path.
-    private String path = "";
-
-    // This entry's extra info.
-    private String extInf = "";
-
-    // This entry's file name.
-    private String fileName = "";
-
-    // This entry's File object.
-    private File thisFile = null;
-
-    // This entry's absolute file.
-    private File absoluteFile = null;
-
-    // The entry's URI (for URLs).
-    private URI thisURI = null;
-
-    // This entry's "lost/found" status as should be displyed in the UI.
-    private String message = "Unknown";
-
-    // This entry's lost/found flag.
-    private boolean found = false;
-
-    // Construct a URL entry.
-    public PlaylistEntry(URI uri, String extra)
-    {
-        thisURI = uri;
-        extInf = extra;
-        message = "URL";
-    }
-
-    // Construct a file-based entry.
-    public PlaylistEntry(String p, String f, String extra)
-    {
-        path = p;
-        fileName = f;
-        extInf = extra;
-        thisFile = new File(path, fileName);
-
-        // should we skip the exists check?
-        if (skipExistsCheck())
-        {
-            message = "Not Found";
-        }
-
-        // if we should check, do so...
-        else if (this.exists())
-        {
-            // file was found in its current location
-            message = "Found!";
-            found = true;
-            if (thisFile.isAbsolute())
-            {
-                absoluteFile = thisFile;
-            }
+		// should we skip the exists check?
+		if (skipExistsCheck())
+		{
+			message = "Not Found";
+		}
+		// if we should check, do so...
+		else if (this.exists())
+		{
+			// file was found in its current location
+			message = "Found!";
+			found = true;
+			if (thisFile.isAbsolute())
+			{
+				absoluteFile = thisFile;
+			}
 			else
-			{                
+			{
 				absoluteFile = new File(thisFile.getAbsolutePath());
 			}
-        }
-        else
-        {
-            // file was not found
-            if (!thisFile.isAbsolute())
-            {
-                // if the test file was relative, try making it absolute.
-                absoluteFile = new File(basePath, p + fs + f);
-                if (absoluteFile.exists())
-                {
-                    message = "Found!";
-                    found = true;
-                }
-                else
-                {
-                    message = "Not Found";
-                }
-            }
-            else
-            {
-                message = "Not Found";
-            }
-        }
-    }
-
-    // Same as above but with a file object as input
-    public PlaylistEntry(File input, String extra)
-    {
-        fileName = input.getName();
-        path = input.getPath().substring(0, input.getPath().indexOf(fileName));
-        extInf = extra;
-        thisFile = input;
-        if (skipExistsCheck())
-        {
-            message = "Not Found";
-        }
-        else if (this.exists())
-        {
-            message = "Found!";
-            found = true;
-            if (thisFile.isAbsolute())
-            {
-                absoluteFile = thisFile;
-            }            
+		}
+		else
+		{
+			// file was not found
+			if (!thisFile.isAbsolute())
+			{
+				// if the test file was relative, try making it absolute.
+				absoluteFile = new File(basePath, p + fs + f);
+				if (absoluteFile.exists())
+				{
+					message = "Found!";
+					found = true;
+				}
+				else
+				{
+					message = "Not Found";
+				}
+			}
 			else
-			{                
+			{
+				message = "Not Found";
+			}
+		}
+	}
+
+	// Same as above but with a file object as input
+	public PlaylistEntry(File input, String extra)
+	{
+		fileName = input.getName();
+		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
+		extInf = extra;
+		thisFile = input;
+		if (skipExistsCheck())
+		{
+			message = "Not Found";
+		}
+		else if (this.exists())
+		{
+			message = "Found!";
+			found = true;
+			if (thisFile.isAbsolute())
+			{
+				absoluteFile = thisFile;
+			}
+			else
+			{
 				absoluteFile = new File(thisFile.getAbsolutePath());
 			}
-        }
-        else
-        {
-            if (!thisFile.isAbsolute())
-            {
-                absoluteFile = new File(basePath, input.getPath());
-                if (absoluteFile.exists())
-                {
-                    message = "Found!";
-                    found = true;
-                }
-                else
-                {
-                    message = "Not Found";
-                }
-            }
-            else
-            {
-                message = "Not Found";
-            }
-        }
-    }
-    
-    public String getMessage()
-    {
-        return message;
-    }
-    
-    public String getPath()
-    {
-        return this.isURL() ? "" : path;
-    }
-    
-    public File getFile()
-    {
-        return thisFile;
-    }
-    
-    public String getFileName()
-    {
-        return this.isURL() ? thisURI.toString() : fileName;
-    }
-    
-    public String getExtInf()
-    {
-        return extInf;
-    }
+		}
+		else
+		{
+			if (!thisFile.isAbsolute())
+			{
+				absoluteFile = new File(basePath, input.getPath());
+				if (absoluteFile.exists())
+				{
+					message = "Found!";
+					found = true;
+				}
+				else
+				{
+					message = "Not Found";
+				}
+			}
+			else
+			{
+				message = "Not Found";
+			}
+		}
+	}
 
-    // check the file system for existence if we don't already know the file exists.
-    public boolean exists()
-    {
-        return found || thisFile.exists();
-    }
+	public String getMessage()
+	{
+		return message;
+	}
 
-    public boolean recheckFoundStatus()
-    {
-        found = thisFile.exists();
-        return found;
-    }
+	public String getPath()
+	{
+		return this.isURL() ? "" : path;
+	}
 
-    public URI getURI()
-    {
-        return thisURI;
-    }
+	public File getFile()
+	{
+		return thisFile;
+	}
+
+	public String getFileName()
+	{
+		return this.isURL() ? thisURI.toString() : fileName;
+	}
+
+	public String getExtInf()
+	{
+		return extInf;
+	}
+
+	// check the file system for existence if we don't already know the file exists.
+	public boolean exists()
+	{
+		return found || thisFile.exists();
+	}
+
+	public boolean recheckFoundStatus()
+	{
+		found = thisFile.exists();
+		return found;
+	}
+
+	public URI getURI()
+	{
+		return thisURI;
+	}
 
 	public File getAbsoluteFile()
 	{
 		return absoluteFile;
 	}
 
-    public void setPath(String input)
-    {
-        path = input;
-        thisFile = new File(path, fileName);
-    }
+	public void setPath(String input)
+	{
+		path = input;
+		thisFile = new File(path, fileName);
+	}
 
-    public void setFileName(String input)
-    {
-        fileName = input;
-        thisFile = new File(path, fileName);
-    }
+	public void setFileName(String input)
+	{
+		fileName = input;
+		thisFile = new File(path, fileName);
+	}
 
-    public void setMessage(String x)
-    {
-        message = x;
-    }
+	public void setMessage(String x)
+	{
+		message = x;
+	}
 
-    private void setFile(File input)
-    {
-        thisFile = input;
-        fileName = input.getName();
-        path = input.getPath().substring(0, input.getPath().indexOf(fileName));
-    }
+	private void setFile(File input)
+	{
+		thisFile = input;
+		fileName = input.getName();
+		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
+	}
 
-    public boolean skipExistsCheck()
-    {
-        String[] emptyPaths = new String[nonExistentDirectories.size()];
-        nonExistentDirectories.copyInto(emptyPaths);
-        return found || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);
-    }
+	public boolean skipExistsCheck()
+	{
+		String[] emptyPaths = new String[nonExistentDirectories.size()];
+		nonExistentDirectories.copyInto(emptyPaths);
+		return found || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);
+	}
 
-    public boolean isFound()
-    {
-        return found;
-    }
+	public boolean isFound()
+	{
+		return found;
+	}
 
-    public boolean isURL()
-    {
-        return thisURI != null && thisFile == null;
-    }
+	public boolean isURL()
+	{
+		return thisURI != null && thisFile == null;
+	}
 
-    public boolean isRelative()
-    {
-        return !this.isURL() && thisFile != null && !thisFile.isAbsolute();
-    }
+	public boolean isRelative()
+	{
+		return !this.isURL() && thisFile != null && !thisFile.isAbsolute();
+	}
 
-    // Try to open the file with the "default" MP3 player (only works on some systems).
-    public void play() throws Exception
-    {        
-        File absFile = null;
-        if (this.isURL())
-        {
-            BrowserLauncher.launch(this.thisURI.toString());
-        }
-        else
-        {
-            if (this.isFound())
-            {
-                if (this.isRelative())
-                {
-                    absFile = this.absoluteFile.getCanonicalFile();
-                }
-                else
-                {
-                    absFile = this.thisFile.getCanonicalFile();
-                }
-                FileLauncher.launch(absFile);
-            }
-        }              
-    }
-    
-    public String toM3UString()
-    {
-        StringBuilder result = new StringBuilder();        
-        if (!(this.getExtInf() == null) && !(this.getExtInf().equals(""))) 
-        {
-            result.append(this.getExtInf());
-            result.append(br);
-        }
-        if (!this.isURL())
-        {
-            if (!this.isRelative())
-            {
-                if (this.getPath().endsWith(fs))
-                {
-                    result.append(this.getPath());
-                    result.append(this.getFileName());
-                }
-                else
-                {
-                    result.append(this.getPath());
-                    result.append(fs);
-                    result.append(this.getFileName());
-                }
-            }
-            else
-            {
-                String tempPath = thisFile.getPath();
-                if (tempPath.substring(0, tempPath.indexOf(fileName)).equals(fs))
-                {
-                    result.append(fileName);
-                }
-                else
-                {
-                    result.append(thisFile.getPath());
-                }
-            }
-        }
-        else
-        {
-            result.append(thisURI.toString());
-        }
-        return result.toString();
-    }
-    
-    public void findNewLocationFromFileList(String[] fileList)
-    {
-        int searchResult = -1;
-        String trimmedFileName = fileSystemIsCaseSensitive ? fileName.trim() : fileName.trim().toLowerCase();
-        for (int i = 0; i < fileList.length; i++)
-        {
-            if (fileSystemIsCaseSensitive ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
-            {
-                searchResult = i;
-                break;
-            }
-        }
-        if (searchResult >= 0)
-        {
-            File foundFile = new File(fileList[searchResult]);
-            this.setFile(foundFile);
-            this.setMessage("Found!");  
-            found = true;
-            return;
-        }   
-        this.setMessage("Not Found");
-        found = false;        
-    }
-    
-    @Override
-    public Object clone()
-    {
-        PlaylistEntry result = null;
-        if (!this.isURL())
-        {
-            result = new PlaylistEntry(new File(this.getFile().getPath()), this.getExtInf());
-        }
-        else
-        {
-            try
-            {
-                result = new PlaylistEntry(new URI(this.getURI().toString()), this.getExtInf());
-            }
-            catch (Exception e)
-            {
-                //eat the error for now.
-                e.printStackTrace();
-            }
-        }            
-        return result;
-    }
-}   
+	// Try to open the file with the "default" MP3 player (only works on some systems).
+	public void play() throws Exception
+	{
+		File absFile = null;
+		if (this.isURL())
+		{
+			BrowserLauncher.launch(this.thisURI.toString());
+		}
+		else
+		{
+			if (this.isFound())
+			{
+				if (this.isRelative())
+				{
+					absFile = this.absoluteFile.getCanonicalFile();
+				}
+				else
+				{
+					absFile = this.thisFile.getCanonicalFile();
+				}
+				FileLauncher.launch(absFile);
+			}
+		}
+	}
+
+	public String toM3UString()
+	{
+		StringBuilder result = new StringBuilder();
+		if (!(this.getExtInf() == null) && !(this.getExtInf().equals("")))
+		{
+			result.append(this.getExtInf());
+			result.append(br);
+		}
+		if (!this.isURL())
+		{
+			if (!this.isRelative())
+			{
+				if (this.getPath().endsWith(fs))
+				{
+					result.append(this.getPath());
+					result.append(this.getFileName());
+				}
+				else
+				{
+					result.append(this.getPath());
+					result.append(fs);
+					result.append(this.getFileName());
+				}
+			}
+			else
+			{
+				String tempPath = thisFile.getPath();
+				if (tempPath.substring(0, tempPath.indexOf(fileName)).equals(fs))
+				{
+					result.append(fileName);
+				}
+				else
+				{
+					result.append(thisFile.getPath());
+				}
+			}
+		}
+		else
+		{
+			result.append(thisURI.toString());
+		}
+		return result.toString();
+	}
+
+	public void findNewLocationFromFileList(String[] fileList)
+	{
+		int searchResult = -1;
+		String trimmedFileName = fileSystemIsCaseSensitive ? fileName.trim() : fileName.trim().toLowerCase();
+		for (int i = 0; i < fileList.length; i++)
+		{
+			if (fileSystemIsCaseSensitive ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
+			{
+				searchResult = i;
+				break;
+			}
+		}
+		if (searchResult >= 0)
+		{
+			File foundFile = new File(fileList[searchResult]);
+			this.setFile(foundFile);
+			this.setMessage("Found!");
+			found = true;
+			return;
+		}
+		this.setMessage("Not Found");
+		found = false;
+	}
+
+	@Override
+	public Object clone()
+	{
+		PlaylistEntry result = null;
+		if (!this.isURL())
+		{
+			result = new PlaylistEntry(new File(this.getFile().getPath()), this.getExtInf());
+		}
+		else
+		{
+			try
+			{
+				result = new PlaylistEntry(new URI(this.getURI().toString()), this.getExtInf());
+			}
+			catch (Exception e)
+			{
+				//eat the error for now.
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+}

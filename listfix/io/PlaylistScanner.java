@@ -20,6 +20,10 @@
 
 package listfix.io;
 
+import java.io.File;
+import java.util.List;
+import java.util.Vector;
+
 /*
 ============================================================================
 = Author:   Jeremy Caron
@@ -27,32 +31,27 @@ package listfix.io;
 = Purpose:  To create a list of all of the playlists found in a given
 =           directory and its subdirectories.
 ============================================================================
-*/
-
-import java.io.File;
-import java.util.List;
-import java.util.Vector;
-
+ */
 public class PlaylistScanner
 {
-    public static List<File> getAllPlaylists(File directory)
-    {
-        Vector<File> result = new Vector<File>();
-        if (directory.exists() && directory.isDirectory())
-        {
-            File[] inodes = directory.listFiles(new M3UFileFilter());
-            for (File inode : inodes)
-            {
-                if (inode.isFile())
-                {
-                    result.add(inode);
-                }
-                else
-                {
-                    result.addAll(getAllPlaylists(inode));
-                }
-            }
-        }
-        return result;
-    }
+	public static List<File> getAllPlaylists(File directory)
+	{
+		Vector<File> result = new Vector<File>();
+		if (directory.exists() && directory.isDirectory())
+		{
+			File[] inodes = directory.listFiles(new M3UFileFilter());
+			for (File inode : inodes)
+			{
+				if (inode.isFile())
+				{
+					result.add(inode);
+				}
+				else
+				{
+					result.addAll(getAllPlaylists(inode));
+				}
+			}
+		}
+		return result;
+	}
 }

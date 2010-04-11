@@ -30,7 +30,7 @@ public class TreeNodeFile extends java.io.File
 	{
 		super(filename);
 	}
-	
+
 	@Override
 	public String toString()
 	{

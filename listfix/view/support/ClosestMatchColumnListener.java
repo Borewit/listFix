@@ -32,46 +32,46 @@ import listfix.model.MatchedFileTableModel;
 
 public class ClosestMatchColumnListener extends java.awt.event.MouseAdapter
 {
-    private JTable table;
-    private MatchedFileTableModel tableModel;
+	private JTable table;
+	private MatchedFileTableModel tableModel;
 
-    public ClosestMatchColumnListener(JTable t, MatchedFileTableModel tm)
-    {
-        table = t;
-        tableModel = tm;
-    }
+	public ClosestMatchColumnListener(JTable t, MatchedFileTableModel tm)
+	{
+		table = t;
+		tableModel = tm;
+	}
 
-    @Override
-    public void mouseClicked(MouseEvent e)
-    {
-        TableColumnModel colModel = table.getColumnModel();
-        int columnModelIndex = colModel.getColumnIndexAtX(e.getX());
-        int modelIndex = colModel.getColumn(columnModelIndex).getModelIndex();
+	@Override
+	public void mouseClicked(MouseEvent e)
+	{
+		TableColumnModel colModel = table.getColumnModel();
+		int columnModelIndex = colModel.getColumnIndexAtX(e.getX());
+		int modelIndex = colModel.getColumn(columnModelIndex).getModelIndex();
 
-        if (modelIndex < 0)
-        {
-            return;
-        }
-        if (tableModel.sortCol == modelIndex)
-        {
-            tableModel.isSortAsc = !tableModel.isSortAsc;
-        }
-        else
-        {
-            tableModel.sortCol = modelIndex;
-        }
+		if (modelIndex < 0)
+		{
+			return;
+		}
+		if (tableModel.sortCol == modelIndex)
+		{
+			tableModel.isSortAsc = !tableModel.isSortAsc;
+		}
+		else
+		{
+			tableModel.sortCol = modelIndex;
+		}
 
-        for (int i = 0; i < 2; i++)
-        {
-            TableColumn column = colModel.getColumn(i);
-            column.setHeaderValue(tableModel.getColumnName(column.getModelIndex()));
-        }
-        table.getTableHeader().repaint();
+		for (int i = 0; i < 2; i++)
+		{
+			TableColumn column = colModel.getColumn(i);
+			column.setHeaderValue(tableModel.getColumnName(column.getModelIndex()));
+		}
+		table.getTableHeader().repaint();
 
-        Collections.sort(tableModel.vectorData, new MatchedPlaylistEntryColumnSorterComparator(tableModel.isSortAsc, tableModel.sortCol));
-        tableModel.updateData(tableModel.vectorData);
+		Collections.sort(tableModel.vectorData, new MatchedPlaylistEntryColumnSorterComparator(tableModel.isSortAsc, tableModel.sortCol));
+		tableModel.updateData(tableModel.vectorData);
 
-        table.tableChanged(new TableModelEvent(table.getModel()));
-        table.repaint();
-    }
+		table.tableChanged(new TableModelEvent(table.getModel()));
+		table.repaint();
+	}
 }

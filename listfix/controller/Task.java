@@ -27,57 +27,57 @@ import java.util.Vector;
 
 public abstract class Task extends Thread
 {
-    private Vector<IProgressObserver> observers;
-    private int progress = 0;
+	private Vector<IProgressObserver> observers;
+	private int progress = 0;
 
-    public Task()
-    {
-        observers = new Vector<IProgressObserver>();
-    }
+	public Task()
+	{
+		observers = new Vector<IProgressObserver>();
+	}
 
-    @Override
-    public abstract void run();
+	@Override
+	public abstract void run();
 
-    public final void addProgressObserver(IProgressObserver observer)
-    {
-        observers.addElement(observer);
-    }
+	public final void addProgressObserver(IProgressObserver observer)
+	{
+		observers.addElement(observer);
+	}
 
-    public final void removeProgressObserver(IProgressObserver observer)
-    {
-        observers.removeElement(observer);
-    }
+	public final void removeProgressObserver(IProgressObserver observer)
+	{
+		observers.removeElement(observer);
+	}
 
-    public final void notifyObservers(int percent)
-    {
-        if (percent < 0)
-        {
-            percent = 0;
-        }
-        else if (percent > 100)
-        {
-            percent = 100;
-        }
-        progress = percent;
+	public final void notifyObservers(int percent)
+	{
+		if (percent < 0)
+		{
+			percent = 0;
+		}
+		else if (percent > 100)
+		{
+			percent = 100;
+		}
+		progress = percent;
 
-        Enumeration<IProgressObserver> e = observers.elements();
-        while (e.hasMoreElements())
-        {
-            e.nextElement().setProgress(percent);
-        }
-    }
-    
-    public int getProgress()
-    {
-        return progress;
-    }
-    
-    public void setMessage(String message)
-    {
-        Enumeration<IProgressObserver> e = observers.elements();
-        while (e.hasMoreElements())
-        {
-            ((ProgressPopup)e.nextElement()).setMessage(message);
-        }
-    }
+		Enumeration<IProgressObserver> e = observers.elements();
+		while (e.hasMoreElements())
+		{
+			e.nextElement().setProgress(percent);
+		}
+	}
+
+	public int getProgress()
+	{
+		return progress;
+	}
+
+	public void setMessage(String message)
+	{
+		Enumeration<IProgressObserver> e = observers.elements();
+		while (e.hasMoreElements())
+		{
+			((ProgressPopup) e.nextElement()).setMessage(message);
+		}
+	}
 }

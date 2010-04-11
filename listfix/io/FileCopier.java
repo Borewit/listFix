@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
+
 package listfix.io;
 
 import java.io.BufferedInputStream;
@@ -64,14 +65,14 @@ public class FileCopier
 				{
 					out.close();
 				}
-                if (src != null)
-                {
-                    src.close();
-                }
-                if (dest != null)
-                {
-                    dest.close();
-                }
+				if (src != null)
+				{
+					src.close();
+				}
+				if (dest != null)
+				{
+					dest.close();
+				}
 			}
 			catch (Exception ex)
 			{

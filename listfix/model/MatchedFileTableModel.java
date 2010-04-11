@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
+
 package listfix.model;
 
 import java.util.Vector;
@@ -24,27 +25,32 @@ import java.util.Vector;
 public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 {
 	private static final long serialVersionUID = -1888652455638101278L;
-	private final String[] columnNames = {"File Name", "Score"};
+	private final String[] columnNames =
+	{
+		"File Name", "Score"
+	};
 	private Object[][] data;
-	private final boolean[] canEdit = new boolean[]{false, false};
+	private final boolean[] canEdit = new boolean[]
+	{
+		false, false
+	};
 	private final Class<?>[] types = new Class<?>[]
-    {
+	{
 		java.lang.String.class, java.lang.String.class
 	};
-
-    public Integer sortCol = new Integer(1);
-    public Boolean isSortAsc = Boolean.FALSE;
-    public Vector<MatchedPlaylistEntry> vectorData = new Vector<MatchedPlaylistEntry>();
+	public Integer sortCol = new Integer(1);
+	public Boolean isSortAsc = Boolean.FALSE;
+	public Vector<MatchedPlaylistEntry> vectorData = new Vector<MatchedPlaylistEntry>();
 
 	public MatchedFileTableModel(Vector<MatchedPlaylistEntry> input)
 	{
-        vectorData = input;
+		vectorData = input;
 		updateData(vectorData);
 	}
 
 	public void updateData(Vector<MatchedPlaylistEntry> input)
 	{
-        int n = input.size();
+		int n = input.size();
 		String[][] tempData = new String[n][2];
 		for (int i = 0; i < n; i++)
 		{
@@ -52,7 +58,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 			tempData[i][1] = input.elementAt(i).getScore() + "";
 		}
 		data = tempData;
-        vectorData = input;
+		vectorData = input;
 		this.fireTableDataChanged();
 	}
 
@@ -69,11 +75,11 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	@Override
 	public String getColumnName(int col)
 	{
-        String suffix = "";
-        if (col == sortCol)
-        {
-            suffix += isSortAsc ? " >>" : " <<";
-        }
+		String suffix = "";
+		if (col == sortCol)
+		{
+			suffix += isSortAsc ? " >>" : " <<";
+		}
 		return columnNames[col] + suffix;
 	}
 
@@ -93,28 +99,28 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	{
 		return canEdit[columnIndex];
 	}
-	
+
 	public Object[] longestValues()
-    {
-        String[] result = new String[2];
-        if (data.length > 0)
-        {
-            for (int i = 0; i < data.length; i++)
-            {
-                for (int j = 0; j < data[i].length; j++)
-                {
-                    if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
-                    {
-                        result[j] = (String) data[i][j];
-                    }
-                }
-            }
-        }
-        else
-        {
-            result[0] = "";
-            result[1] = "";
-        }
-        return result;
-    }
+	{
+		String[] result = new String[2];
+		if (data.length > 0)
+		{
+			for (int i = 0; i < data.length; i++)
+			{
+				for (int j = 0; j < data[i].length; j++)
+				{
+					if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
+					{
+						result[j] = (String) data[i][j];
+					}
+				}
+			}
+		}
+		else
+		{
+			result[0] = "";
+			result[1] = "";
+		}
+		return result;
+	}
 }

@@ -27,28 +27,28 @@ package listfix.io;
 = Purpose:  Simple instance of FilenameFilter that displays only
 =           audio files or directories.
 ============================================================================
-*/
-
+ */
 public class ValidM3UFileRefFileChooserFilter extends javax.swing.filechooser.FileFilter
 {
-    private boolean endsWithValidExtension(String fileName)
-    {
-        // disallow nested playlists
-        return !fileName.endsWith(".m3u");
-    }
-    
-    public ValidM3UFileRefFileChooserFilter()
-    {
+	private boolean endsWithValidExtension(String fileName)
+	{
+		// disallow nested playlists
+		return !fileName.toLowerCase().endsWith(".m3u");
+	}
 
-    }
-    
-    public boolean accept(java.io.File file) 
-    {
-        return (endsWithValidExtension(file.getName().toLowerCase()) || file.isDirectory());
-    }
-    
-    public String getDescription() 
-    {
-        return "All Files (except M3Us)";
-    }    
+	public ValidM3UFileRefFileChooserFilter()
+	{
+	}
+
+	@Override
+	public boolean accept(java.io.File file)
+	{
+		return (endsWithValidExtension(file.getName().toLowerCase()) || file.isDirectory());
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "All Files (except M3Us)";
+	}
 }

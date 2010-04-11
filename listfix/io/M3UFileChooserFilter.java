@@ -36,11 +36,13 @@ public class M3UFileChooserFilter extends javax.swing.filechooser.FileFilter
 
 	}
 
+	@Override
 	public boolean accept(java.io.File file)
 	{
-		return (file.getName().endsWith(".m3u") || file.getName().endsWith(".m3u8") || file.isDirectory());
+		return (file.getName().toLowerCase().endsWith(".m3u") || file.getName().toLowerCase().endsWith(".m3u8") || file.isDirectory());
 	}
 
+	@Override
 	public String getDescription()
 	{
 		return "Playlist Files (*.m3u, *.m3u8)";

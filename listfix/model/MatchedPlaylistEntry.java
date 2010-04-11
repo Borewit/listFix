@@ -24,28 +24,28 @@ import java.io.*;
 
 public class MatchedPlaylistEntry
 {
-    private PlaylistEntry thisEntry = null;
-    private int score = 0;
-    
-    public MatchedPlaylistEntry(String path, String fileName, int c)
-    {
-        thisEntry = new PlaylistEntry(path, fileName, "");
-        score = c;
-    }
-    
-    public MatchedPlaylistEntry(File f, int c)
-    {
-        thisEntry = new PlaylistEntry(f, "");
-        score = c;
-    }
-    
-    public int getScore()
-    {
-        return score;
-    }
-    
-    public PlaylistEntry getPlaylistFile()
-    {
-        return thisEntry;
-    }
+	private PlaylistEntry thisEntry = null;
+	private int score = 0;
+
+	public MatchedPlaylistEntry(String path, String fileName, int c)
+	{
+		thisEntry = new PlaylistEntry(path, fileName, "");
+		score = c;
+	}
+
+	public MatchedPlaylistEntry(File f, int c)
+	{
+		thisEntry = new PlaylistEntry(f, "");
+		score = c;
+	}
+
+	public int getScore()
+	{
+		return score;
+	}
+
+	public PlaylistEntry getPlaylistFile()
+	{
+		return thisEntry;
+	}
 }

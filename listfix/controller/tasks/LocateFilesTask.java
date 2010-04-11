@@ -23,43 +23,44 @@ package listfix.controller.tasks;
 import java.util.Vector;
 import listfix.model.PlaylistEntry;
 
-public class LocateFilesTask extends listfix.controller.Task 
+public class LocateFilesTask extends listfix.controller.Task
 {
-    private Vector<PlaylistEntry> entries;
-    private String[] mediaLibraryFileList;
-    
-    /** Creates new LocateFilesTask */
-    public LocateFilesTask(Vector<PlaylistEntry> playlistEntries, String[] files) 
-    {
-        entries = playlistEntries;
-        mediaLibraryFileList = files;
-    }
+	private Vector<PlaylistEntry> entries;
+	private String[] mediaLibraryFileList;
 
-    /** Run the task. This method is the body of the thread for this task.  */
-    public void run() 
-    {
-        PlaylistEntry tempEntry = null;
-        for (int i = 0; i < entries.size(); i++)
-        {
-            tempEntry = entries.elementAt(i);
-            if (!tempEntry.isURL())
-            {
-                if (tempEntry.exists())
-                {
-                    tempEntry.setMessage("Found!");
-                }
-                else
-                {
-                    tempEntry.findNewLocationFromFileList(mediaLibraryFileList);
-                }            
-            }
-            this.notifyObservers((int)((double)i/(double)(entries.size()-1) * 100.0));
-        }
-        this.notifyObservers(100);
-    }
-    
-    public Vector<PlaylistEntry> locateFiles()
-    {
-        return entries;
-    }
+	/** Creates new LocateFilesTask */
+	public LocateFilesTask(Vector<PlaylistEntry> playlistEntries, String[] files)
+	{
+		entries = playlistEntries;
+		mediaLibraryFileList = files;
+	}
+
+	/** Run the task. This method is the body of the thread for this task.  */
+	@Override
+	public void run()
+	{
+		PlaylistEntry tempEntry = null;
+		for (int i = 0; i < entries.size(); i++)
+		{
+			tempEntry = entries.elementAt(i);
+			if (!tempEntry.isURL())
+			{
+				if (tempEntry.exists())
+				{
+					tempEntry.setMessage("Found!");
+				}
+				else
+				{
+					tempEntry.findNewLocationFromFileList(mediaLibraryFileList);
+				}
+			}
+			this.notifyObservers((int) ((double) i / (double) (entries.size() - 1) * 100.0));
+		}
+		this.notifyObservers(100);
+	}
+
+	public Vector<PlaylistEntry> locateFiles()
+	{
+		return entries;
+	}
 }

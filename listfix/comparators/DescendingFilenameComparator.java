@@ -24,16 +24,17 @@ import listfix.model.*;
 
 public class DescendingFilenameComparator implements java.util.Comparator<PlaylistEntry>
 {
-    public int compare(PlaylistEntry aa, PlaylistEntry bb)
-    {
-        if (aa.getFileName().compareToIgnoreCase(bb.getFileName()) < 0)
-        {
-            return 1;
-        }
-        else if (aa.getFileName().equals(bb.getFileName()))
-        {
-            return 0;
-        }
-        return -1;
-    }    
+	@Override
+	public int compare(PlaylistEntry aa, PlaylistEntry bb)
+	{
+		if (aa.getFileName().compareToIgnoreCase(bb.getFileName()) < 0)
+		{
+			return 1;
+		}
+		else if (aa.getFileName().equals(bb.getFileName()))
+		{
+			return 0;
+		}
+		return -1;
+	}
 }

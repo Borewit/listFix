@@ -22,12 +22,14 @@
 // Hill AFB, UT 84056-5843
 //
 // E-Mail POC:  processdash-devel@lists.sourceforge.net
+
 package pspdash;
 
 import java.io.*;
 import java.util.*;
 
-/** On Windows systems, this class compiles a list of shared
+/**
+ * On Windows systems, this class compiles a list of shared
  * directories and drive letters that are mapped to network drives,
  * along with the UNC names they are mapped to. It can then be used to
  * translate filenames back and forth between drive letter syntax and
@@ -35,7 +37,6 @@ import java.util.*;
  */
 public class NetworkDriveList
 {
-
 	private volatile boolean successful = false;
 	private Map networkDrives = new TreeMap();
 	private volatile Process subprocess = null;
@@ -60,7 +61,6 @@ public class NetworkDriveList
 		{
 			Thread t = new Thread()
 			{
-
 				public void run()
 				{
 					getList();
@@ -387,8 +387,8 @@ public class NetworkDriveList
 		}
 
 		// is it already a drive letter?
-		if (filename.length() == 1 &&
-				"ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(filename.charAt(0)) != -1)
+		if (filename.length() == 1
+			&& "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(filename.charAt(0)) != -1)
 		{
 			return filename;
 		}

@@ -29,10 +29,10 @@ import java.io.File;
 = Purpose:  A poorly named class that sorts directories ahead of files,
 =           and then sorts files alphabetically (ignoring case).
 ============================================================================
-*/
-
+ */
 public class FileComparator implements java.util.Comparator<File>
 {
+	@Override
 	public int compare(File a, File b)
 	{
 		if (!a.isDirectory() && b.isDirectory())

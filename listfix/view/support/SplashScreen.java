@@ -15,6 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 package listfix.view.support;
 
 import java.awt.*;
@@ -23,38 +24,38 @@ import javax.swing.*;
 
 public class SplashScreen extends JFrame
 {
-    private JLabel statusBar;
+	private JLabel statusBar;
 
-    public SplashScreen(String imageResourcePath)
-    {
+	public SplashScreen(String imageResourcePath)
+	{
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
+		ClassLoader cl = this.getClass().getClassLoader();
+		ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(new JLabel(image));
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(new JLabel(image));
 
-        statusBar = new JLabel(" ");
-        statusBar.setBorder(BorderFactory.createBevelBorder(1));
-        statusBar.setFont(new Font("Verdana", 0, 9));
-        getContentPane().add(statusBar, BorderLayout.SOUTH);
+		statusBar = new JLabel(" ");
+		statusBar.setBorder(BorderFactory.createBevelBorder(1));
+		statusBar.setFont(new Font("Verdana", 0, 9));
+		getContentPane().add(statusBar, BorderLayout.SOUTH);
 
-        setUndecorated(true);
+		setUndecorated(true);
 
-        pack();
+		pack();
 
-        Toolkit toolKit = getToolkit();
-        Dimension scrSize = toolKit.getScreenSize();
+		Toolkit toolKit = getToolkit();
+		Dimension scrSize = toolKit.getScreenSize();
 
-        setBounds(scrSize.width / 2 - getWidth() / 2, scrSize.height / 2 - getHeight() / 2, getWidth(), getHeight());
+		setBounds(scrSize.width / 2 - getWidth() / 2, scrSize.height / 2 - getHeight() / 2, getWidth(), getHeight());
 
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        setVisible(true);
-    }
+		setVisible(true);
+	}
 
-    public void setStatusBar(String text)
-    {
-        statusBar.setText(text);
-    }
+	public void setStatusBar(String text)
+	{
+		statusBar.setText(text);
+	}
 }

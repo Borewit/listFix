@@ -27,18 +27,17 @@ package listfix.exceptions;
 = Purpose:  Custom exception type to handle unsupported playlist formats.
 =           Not currently used since check for #EXTM3U has been removed.
 ============================================================================
-*/
-
+ */
 public class UnsupportedPlaylistFormat extends java.lang.Exception
 {
-    public UnsupportedPlaylistFormat()
-    {
-        super();
-    }
-    
-    public UnsupportedPlaylistFormat(String s)
-    {
-        super(s);
-    }
+	public UnsupportedPlaylistFormat()
+	{
+		super();
+	}
+
+	public UnsupportedPlaylistFormat(String s)
+	{
+		super(s);
+	}
 }
     

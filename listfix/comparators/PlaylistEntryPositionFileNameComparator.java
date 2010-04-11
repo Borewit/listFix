@@ -24,8 +24,9 @@ import listfix.model.*;
 
 public class PlaylistEntryPositionFileNameComparator implements java.util.Comparator<PlaylistEntryPosition>
 {
-    public int compare(PlaylistEntryPosition aa, PlaylistEntryPosition bb)
-    {
-        return aa.getPlaylistEntry().getFileName().compareTo(bb.getPlaylistEntry().getFileName());
-    }    
+	@Override
+	public int compare(PlaylistEntryPosition aa, PlaylistEntryPosition bb)
+	{
+		return aa.getPlaylistEntry().getFileName().compareTo(bb.getPlaylistEntry().getFileName());
+	}
 }

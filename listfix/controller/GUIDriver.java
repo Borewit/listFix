@@ -35,7 +35,7 @@ import listfix.model.*;
 import listfix.util.ArrayFunctions;
 
 public class GUIDriver
-{	
+{
 	private boolean showMediaDirWindow = false;
 	private String[] mediaDir = null;
 	private String[] mediaLibraryDirectoryList = null;
@@ -43,7 +43,6 @@ public class GUIDriver
 	private Playlist currentList = new Playlist();
 	private AppOptions options = new AppOptions();
 	private M3UHistory history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
-	
 	public static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
 
 	public GUIDriver()
@@ -52,7 +51,7 @@ public class GUIDriver
 		{
 			(new FileWriter()).writeDefaultIniFilesIfNeeded();
 			IniFileReader initReader = new IniFileReader();
-			initReader.readIni();			
+			initReader.readIni();
 			options = initReader.getAppOptions();
 			mediaDir = initReader.getMediaDirs();
 			history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
@@ -60,13 +59,13 @@ public class GUIDriver
 			mediaLibraryDirectoryList = initReader.getMediaLibrary();
 			mediaLibraryFileList = initReader.getMediaLibraryFiles();
 
-            for (String dir : mediaDir)
-            {
-                if (!new File(dir).exists())
-                {
-                    this.removeMediaDir(dir);
-                }
-            }
+			for (String dir : mediaDir)
+			{
+				if (!new File(dir).exists())
+				{
+					this.removeMediaDir(dir);
+				}
+			}
 
 			if (mediaDir.length == 0)
 			{
@@ -139,10 +138,10 @@ public class GUIDriver
 	{
 		return history;
 	}
-    
+
 	public void playPlaylist()
 	{
-        currentList.play();
+		currentList.play();
 	}
 
 	public void clearM3UHistory()
@@ -310,14 +309,14 @@ public class GUIDriver
 		return guiTableUpdate();
 	}
 
-    public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException
+	public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
 		currentList.getEntries().addAll(playlistProcessor.readM3U());
 		return guiTableUpdate();
 	}
 
-    public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException
+	public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
 		Vector<PlaylistEntry> temp = playlistProcessor.readM3U();
@@ -376,7 +375,7 @@ public class GUIDriver
 		Vector<PlaylistEntry> result = new Vector<PlaylistEntry>();
 		while (currentList.getEntries().size() > 0)
 		{
-			int index = (int)(Math.random() * currentList.getEntries().size());
+			int index = (int) (Math.random() * currentList.getEntries().size());
 			result.add(currentList.getEntries().elementAt(index));
 			currentList.getEntries().removeElementAt(index);
 		}
@@ -452,7 +451,7 @@ public class GUIDriver
 	public String[][] updateFileName(int entryIndex, String filename)
 	{
 		currentList.getEntries().elementAt(entryIndex).setFileName(filename);
-        currentList.getEntries().elementAt(entryIndex).recheckFoundStatus();
+		currentList.getEntries().elementAt(entryIndex).recheckFoundStatus();
 		return locateFile(entryIndex);
 	}
 
@@ -528,7 +527,7 @@ public class GUIDriver
 		currentList.setFile(destination);
 		history.add(destination.getCanonicalPath());
 		(new FileWriter()).writeMruM3Us(history);
-	}	
+	}
 
 	public Object[][] insertFile(File fileToInsert, int entryIndex)
 	{
@@ -544,7 +543,7 @@ public class GUIDriver
 		currentList.getEntries().insertElementAt(entryToInsert, entryIndex);
 		return guiTableUpdate();
 	}
-	
+
 	public void switchMediaLibraryToUNCPaths()
 	{
 		if (mediaDir != null)

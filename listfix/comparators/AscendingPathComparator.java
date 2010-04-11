@@ -24,6 +24,7 @@ import listfix.model.*;
 
 public class AscendingPathComparator implements java.util.Comparator<PlaylistEntry>
 {
+	@Override
     public int compare(PlaylistEntry aa, PlaylistEntry bb)
     {
         if (aa.getPath().compareToIgnoreCase(bb.getPath()) < 0)

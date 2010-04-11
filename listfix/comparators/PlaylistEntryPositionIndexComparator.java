@@ -24,16 +24,17 @@ import listfix.model.PlaylistEntryPosition;
 
 public class PlaylistEntryPositionIndexComparator implements java.util.Comparator<PlaylistEntryPosition>
 {
-    public int compare(PlaylistEntryPosition aa, PlaylistEntryPosition bb)
-    {
-        if (aa.getPosition() < bb.getPosition())
-        {
-            return -1;
-        }
-        else if (aa.getPosition() == bb.getPosition())
-        {
-            return 0;
-        }
-        return 1;
-    }    
+	@Override
+	public int compare(PlaylistEntryPosition aa, PlaylistEntryPosition bb)
+	{
+		if (aa.getPosition() < bb.getPosition())
+		{
+			return -1;
+		}
+		else if (aa.getPosition() == bb.getPosition())
+		{
+			return 0;
+		}
+		return 1;
+	}
 }

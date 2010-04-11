@@ -22,58 +22,58 @@ package listfix.model;
 
 public class RepairedPlaylistResult
 {
-    private Playlist playlist = null;
-    private int startLostCount = 0;
-    private int endLostCount = 0;
-    private boolean writtenSuccessfully = false;
+	private Playlist playlist = null;
+	private int startLostCount = 0;
+	private int endLostCount = 0;
+	private boolean writtenSuccessfully = false;
 
-    public RepairedPlaylistResult(Playlist list, int originalLostCount, int newLostCount, boolean successfullyWritten)
-    {
-        playlist = list;
-        startLostCount = originalLostCount;
-        endLostCount = newLostCount;
-        writtenSuccessfully = successfullyWritten;
-    }
+	public RepairedPlaylistResult(Playlist list, int originalLostCount, int newLostCount, boolean successfullyWritten)
+	{
+		playlist = list;
+		startLostCount = originalLostCount;
+		endLostCount = newLostCount;
+		writtenSuccessfully = successfullyWritten;
+	}
 
-    /**
-     * @return the playlist
-     */
-    public Playlist getPlaylist()
-    {
-        return playlist;
-    }
+	/**
+	 * @return the playlist
+	 */
+	public Playlist getPlaylist()
+	{
+		return playlist;
+	}
 
-    /**
-     * @return the startLostCount
-     */
-    public int getStartLostCount()
-    {
-        return startLostCount;
-    }
+	/**
+	 * @return the startLostCount
+	 */
+	public int getStartLostCount()
+	{
+		return startLostCount;
+	}
 
-    /**
-     * @return the endLostCount
-     */
-    public int getEndLostCount()
-    {
-        return endLostCount;
-    }
+	/**
+	 * @return the endLostCount
+	 */
+	public int getEndLostCount()
+	{
+		return endLostCount;
+	}
 
-    /**
-     * @return the writtenSuccessfully
-     */
-    public boolean isWrittenSuccessfully()
-    {
-        return writtenSuccessfully;
-    }
+	/**
+	 * @return the writtenSuccessfully
+	 */
+	public boolean isWrittenSuccessfully()
+	{
+		return writtenSuccessfully;
+	}
 
-    public int getStartFoundCount()
-    {
-        return playlist.getEntryCount() - startLostCount;
-    }
+	public int getStartFoundCount()
+	{
+		return playlist.getEntryCount() - startLostCount;
+	}
 
-    public int getEndFoundCount()
-    {
-        return playlist.getEntryCount() - endLostCount;
-    }
+	public int getEndFoundCount()
+	{
+		return playlist.getEntryCount() - endLostCount;
+	}
 }

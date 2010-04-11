@@ -27,7 +27,7 @@ import javax.swing.tree.*;
 import listfix.comparators.FileComparator;
 
 public class FileTreeNodeGenerator
-{	
+{
 	/** Add nodes from under "dir" into curTop. Highly recursive. */
 	public static DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir)
 	{
@@ -37,16 +37,16 @@ public class FileTreeNodeGenerator
 			TreeNodeFile file = new TreeNodeFile(curPath);
 			DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(file);
 			curDir.setUserObject(file);
-			
+
 			// if we're creating the root node here, use a regular file to get the full path to show.
 			if (curTop == null)
 			{
 				curDir.setUserObject(new File(curPath));
 			}
-			
+
 			Vector<File> ol = new Vector<File>();
 			File[] inodes = dir.listFiles(new M3UFileFilter());
-			
+
 			if (inodes != null && inodes.length > 0)
 			{
 				for (int i = 0; i < inodes.length; i++)
@@ -78,7 +78,7 @@ public class FileTreeNodeGenerator
 				{
 					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile(files.elementAt(fnum).getPath())));
 				}
-				if (curDir.children().hasMoreElements() || !((File)curDir.getUserObject()).isDirectory())
+				if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
 				{
 					if (curTop != null)
 					{
@@ -91,9 +91,9 @@ public class FileTreeNodeGenerator
 		}
 		return null;
 	}
-	
+
 	public static String TreePathToFileSystemPath(TreePath node)
-	{		
-		return ((File)((DefaultMutableTreeNode)node.getLastPathComponent()).getUserObject()).getPath();
+	{
+		return ((File) ((DefaultMutableTreeNode) node.getLastPathComponent()).getUserObject()).getPath();
 	}
 }

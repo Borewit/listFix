@@ -29,166 +29,166 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 {
 	private static final long serialVersionUID = -7397347218289763336L;
 	private JProgressBar bar;
-    private JLabel label,  iconLabel;
-    private JPanel _main;
+	private JLabel label, iconLabel;
+	private JPanel _main;
 
-    protected JPanel getMainContainer()
-    {
-        return (_main);
-    }
+	protected JPanel getMainContainer()
+	{
+		return (_main);
+	}
 
-    @Override
-    public void setVisible(boolean flag)
-    {
-        if (flag)
-        {
-            startFocus();
-        }
+	@Override
+	public void setVisible(boolean flag)
+	{
+		if (flag)
+		{
+			startFocus();
+		}
 
-        super.setVisible(flag);
-    }
+		super.setVisible(flag);
+	}
 
-    protected void startFocus()
-    {
-    }
+	protected void startFocus()
+	{
+	}
 
-    public void setBusyCursor(boolean flag)
-    {
-        setCursor(Cursor.getPredefinedCursor(flag ? Cursor.WAIT_CURSOR
-                : Cursor.DEFAULT_CURSOR));
-    }
+	public void setBusyCursor(boolean flag)
+	{
+		setCursor(Cursor.getPredefinedCursor(flag ? Cursor.WAIT_CURSOR
+			: Cursor.DEFAULT_CURSOR));
+	}
 
-    protected boolean canClose()
-    {
-        return (true);
-    }
+	protected boolean canClose()
+	{
+		return (true);
+	}
 
-    public ProgressPopup(Frame parent, String title, boolean modal, int labelWidth, int labelHeight, boolean messageOnlyMode) //, boolean supportsCancel)
-    {
-        super(parent, title, modal);
-        _init();
+	public ProgressPopup(Frame parent, String title, boolean modal, int labelWidth, int labelHeight, boolean messageOnlyMode) //, boolean supportsCancel)
+	{
+		super(parent, title, modal);
+		_init();
 
-        setResizable(false);
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		setResizable(false);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        JPanel main = this.getMainContainer();
+		JPanel main = this.getMainContainer();
 
-        main.setLayout(new BorderLayout(5, 5));
+		main.setLayout(new BorderLayout(5, 5));
 
-        main.add("North", label = new JLabel("Please Wait"));
-        label.setPreferredSize(new Dimension(labelWidth, labelHeight));
-        label.setFont(new Font("Verdana", 0, 9));
-        label.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        
-        bar = new JProgressBar();
+		main.add("North", label = new JLabel("Please Wait"));
+		label.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		label.setFont(new Font("Verdana", 0, 9));
+		label.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        if (!messageOnlyMode)
-        {
-            JPanel p = new JPanel();
-            p.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		bar = new JProgressBar();
 
-            bar.setMinimum(0);
-            bar.setMaximum(100);
-            bar.setValue(0);
-            bar.setOpaque(false);
-            bar.setPreferredSize(new java.awt.Dimension(main.getPreferredSize().width, bar.getPreferredSize().height));
-            p.add(bar);
+		if (!messageOnlyMode)
+		{
+			JPanel p = new JPanel();
+			p.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-            main.add("Center", p);
-        }
+			bar.setMinimum(0);
+			bar.setMaximum(100);
+			bar.setValue(0);
+			bar.setOpaque(false);
+			bar.setPreferredSize(new java.awt.Dimension(main.getPreferredSize().width, bar.getPreferredSize().height));
+			p.add(bar);
 
-        if (getTitle().length() == 0)
-        {
-            setTitle(title);
-        }
+			main.add("Center", p);
+		}
 
-        pack();
-    }
+		if (getTitle().length() == 0)
+		{
+			setTitle(title);
+		}
 
-    public void setProgress(int progress)
-    {
-        if (progress < 0)
-        {
-            progress = 0;
-        }
-        else if (progress > 100)
-        {
-            progress = 100;
-        }
+		pack();
+	}
 
-        bar.setValue(progress);
-        if (progress == 100)
-        {
-            this.paintImmediately(bar);
-            this.sleep(1);
-            setVisible(false);
-        }
-    }
+	public void setProgress(int progress)
+	{
+		if (progress < 0)
+		{
+			progress = 0;
+		}
+		else if (progress > 100)
+		{
+			progress = 100;
+		}
 
-    private final void paintImmediately(Component c)
-    {
-        Graphics gc = c.getGraphics();
-        if (gc != null)
-        {
-            c.paint(gc);
-            gc.dispose();
-        }
-    }
+		bar.setValue(progress);
+		if (progress == 100)
+		{
+			this.paintImmediately(bar);
+			this.sleep(1);
+			setVisible(false);
+		}
+	}
 
-    private final void sleep(int sec)
-    {
-        try
-        {
-            Thread.sleep(sec * 1000);
-        }
-        catch (InterruptedException ex)
-        {
-        }
-    }
+	private final void paintImmediately(Component c)
+	{
+		Graphics gc = c.getGraphics();
+		if (gc != null)
+		{
+			c.paint(gc);
+			gc.dispose();
+		}
+	}
 
-    public void setIcon(Icon icon)
-    {
-        iconLabel.setIcon(icon);
-    }
+	private final void sleep(int sec)
+	{
+		try
+		{
+			Thread.sleep(sec * 1000);
+		}
+		catch (InterruptedException ex)
+		{
+		}
+	}
 
-    public void setMessage(String message)
-    {
-        label.setText(message);
-        pack();
-    }
+	public void setIcon(Icon icon)
+	{
+		iconLabel.setIcon(icon);
+	}
 
-    public void track(Task task)
-    {
-        bar.setValue(0);
-        task.addProgressObserver(this);
-        Thread t = new Thread(task);
-        t.start();
-        setVisible(true);
-        task.removeProgressObserver(this);
-    }
+	public void setMessage(String message)
+	{
+		label.setText(message);
+		pack();
+	}
 
-    private void center()
-    {
-        Point parentLocation = this.getParent().getLocationOnScreen();
-        double x = parentLocation.getX();
-        double y = parentLocation.getY();
-        int width = this.getParent().getWidth();
-        int height = this.getParent().getHeight();
+	public void track(Task task)
+	{
+		bar.setValue(0);
+		task.addProgressObserver(this);
+		Thread t = new Thread(task);
+		t.start();
+		setVisible(true);
+		task.removeProgressObserver(this);
+	}
 
-        this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
-    }
+	private void center()
+	{
+		Point parentLocation = this.getParent().getLocationOnScreen();
+		double x = parentLocation.getX();
+		double y = parentLocation.getY();
+		int width = this.getParent().getWidth();
+		int height = this.getParent().getHeight();
 
-    public void go()
-    {
-        this.center();
-        this.setEnabled(true);
-    }	
-	
-    private void _init()
-    {
-        getContentPane().setLayout(new GridLayout(1, 0));
-        _main = new JPanel();
-        _main.setOpaque(true);
-        getContentPane().add(_main);
-    }
+		this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
+	}
+
+	public void go()
+	{
+		this.center();
+		this.setEnabled(true);
+	}
+
+	private void _init()
+	{
+		getContentPane().setLayout(new GridLayout(1, 0));
+		_main = new JPanel();
+		_main.setOpaque(true);
+		getContentPane().add(_main);
+	}
 }

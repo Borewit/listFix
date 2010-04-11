@@ -30,44 +30,43 @@ import listfix.io.M3UFileReader;
 
 public class Playlist
 {
-    private File file;
-    private Vector<PlaylistEntry> entries = new Vector<PlaylistEntry>();
-    private Vector<PlaylistEntry> originalEntries = new Vector<PlaylistEntry>();
-    private boolean utfFormat = false;
-	
+	private File file;
+	private Vector<PlaylistEntry> entries = new Vector<PlaylistEntry>();
+	private Vector<PlaylistEntry> originalEntries = new Vector<PlaylistEntry>();
+	private boolean utfFormat = false;
+
 	public Playlist()
 	{
-        
 	}
-	
+
 	public Playlist(File playlist, OpenM3UTask task)
 	{
 		try
 		{
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
-            utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+			utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
 			file = playlist;
 			this.setEntries(playlistProcessor.readM3U(task));
 		}
-		catch(IOException e)
-        {
+		catch (IOException e)
+		{
 			e.printStackTrace();
-        }
+		}
 	}
 
-    public Playlist(File playlist)
+	public Playlist(File playlist)
 	{
 		try
 		{
 			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
-            utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+			utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
 			file = playlist;
 			this.setEntries(playlistProcessor.readM3U());
 		}
-		catch(IOException e)
-        {
+		catch (IOException e)
+		{
 			e.printStackTrace();
-        }
+		}
 	}
 
 	public File getFile()
@@ -87,115 +86,114 @@ public class Playlist
 
 	public void setEntries(Vector<PlaylistEntry> aEntries)
 	{
-        // TODO: Somehow track this part of the task
+		// TODO: Somehow track this part of the task
 		entries = aEntries;
 		originalEntries.clear();
-        for (int i = 0; i < entries.size(); i++)
-        {
-            originalEntries.add((PlaylistEntry)entries.get(i).clone());
-        }
+		for (int i = 0; i < entries.size(); i++)
+		{
+			originalEntries.add((PlaylistEntry) entries.get(i).clone());
+		}
 	}
-	
+
 	public void updateEntries(Vector<PlaylistEntry> aEntries)
 	{
 		entries = aEntries;
 	}
-	
-	public int getEntryCount()
-    {
-        return entries.size();
-    }
-	
-	public boolean playlistModified()
-    {
-        boolean result = false;
-        if (originalEntries.size() != entries.size())
-        {
-            result = true;
-        }
-        else
-        {
-            for (int i = 0; i < entries.size(); i++)
-            {
-                PlaylistEntry entryA = entries.get(i);
-                PlaylistEntry entryB = originalEntries.get(i);
-                if ((entryA.isURL() && entryB.isURL()) || (!entryA.isURL() && !entryB.isURL()))
-                {
-                    if (!entryA.isURL())
-                    {
-                        if (!entryA.getFile().getPath().equals(entryB.getFile().getPath()))
-                        {
-                            result = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (!entryA.getURI().toString().equals(entryB.getURI().toString()))
-                        {
-                            result = true;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-	
-	public int getURLCount()
-    {
-        int result = 0;
-        int size = this.getEntryCount();
-        for (int i = 0; i < size; i++)
-        {
-            PlaylistEntry tempEntry = entries.elementAt(i);
-            if (tempEntry.isURL())
-            {
-                result++;
-            }
-        }
-        return result;
-    }
-	
-	
-    public int getLostEntryCount()
-    {
-        int result = 0;
-        int size = this.getEntryCount();
-        for (int i = 0; i < size; i++)
-        {
-            PlaylistEntry tempEntry = entries.elementAt(i);
-            if (!tempEntry.isFound() && !tempEntry.isURL()) // && (tempEntry.skipExistsCheck() || !tempEntry.exists()))
-            {
-                result++;
-            }
-        }
-        return result;
-    }
-	
-	public String getFilename()
-    {
-        if (file == null)
-        {
-            return "";
-        }
-        return file.getName();
-    }
-	
-    public boolean isListEmpty()
-    {
-        return this.getEntryCount() == 0;
-    }
 
-    public void play()
-    {
-        try
+	public int getEntryCount()
+	{
+		return entries.size();
+	}
+
+	public boolean playlistModified()
+	{
+		boolean result = false;
+		if (originalEntries.size() != entries.size())
+		{
+			result = true;
+		}
+		else
+		{
+			for (int i = 0; i < entries.size(); i++)
+			{
+				PlaylistEntry entryA = entries.get(i);
+				PlaylistEntry entryB = originalEntries.get(i);
+				if ((entryA.isURL() && entryB.isURL()) || (!entryA.isURL() && !entryB.isURL()))
+				{
+					if (!entryA.isURL())
+					{
+						if (!entryA.getFile().getPath().equals(entryB.getFile().getPath()))
+						{
+							result = true;
+							break;
+						}
+					}
+					else
+					{
+						if (!entryA.getURI().toString().equals(entryB.getURI().toString()))
+						{
+							result = true;
+							break;
+						}
+					}
+				}
+				else
+				{
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	public int getURLCount()
+	{
+		int result = 0;
+		int size = this.getEntryCount();
+		for (int i = 0; i < size; i++)
+		{
+			PlaylistEntry tempEntry = entries.elementAt(i);
+			if (tempEntry.isURL())
+			{
+				result++;
+			}
+		}
+		return result;
+	}
+
+	public int getLostEntryCount()
+	{
+		int result = 0;
+		int size = this.getEntryCount();
+		for (int i = 0; i < size; i++)
+		{
+			PlaylistEntry tempEntry = entries.elementAt(i);
+			if (!tempEntry.isFound() && !tempEntry.isURL()) // && (tempEntry.skipExistsCheck() || !tempEntry.exists()))
+			{
+				result++;
+			}
+		}
+		return result;
+	}
+
+	public String getFilename()
+	{
+		if (file == null)
+		{
+			return "";
+		}
+		return file.getName();
+	}
+
+	public boolean isListEmpty()
+	{
+		return this.getEntryCount() == 0;
+	}
+
+	public void play()
+	{
+		try
 		{
 			FileLauncher.launch(file);
 		}
@@ -203,33 +201,33 @@ public class Playlist
 		{
 			e.printStackTrace();
 		}
-    }
+	}
 
-    public void batchRepair(String[] fileList)
-    {
-        for (PlaylistEntry entry : entries)
-        {
-            if (!entry.isURL())
-            {
-                if (entry.exists())
-                {
-                    entry.setMessage("Found!");
-                }
-                else
-                {
-                    entry.findNewLocationFromFileList(fileList);
-                }
-            }
-        }
-    }
+	public void batchRepair(String[] fileList)
+	{
+		for (PlaylistEntry entry : entries)
+		{
+			if (!entry.isURL())
+			{
+				if (entry.exists())
+				{
+					entry.setMessage("Found!");
+				}
+				else
+				{
+					entry.findNewLocationFromFileList(fileList);
+				}
+			}
+		}
+	}
 
-    public boolean isUtfFormat()
-    {
-        return utfFormat;
-    }
+	public boolean isUtfFormat()
+	{
+		return utfFormat;
+	}
 
-    public void setUtfFormat(boolean utfFormat)
-    {
-        this.utfFormat = utfFormat;
-    }
+	public void setUtfFormat(boolean utfFormat)
+	{
+		this.utfFormat = utfFormat;
+	}
 }

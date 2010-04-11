@@ -26,11 +26,12 @@ package listfix.io;
 = File:     M3UFileFilter.java
 = Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
 ============================================================================
-*/
+ */
 public class M3UFileFilter implements java.io.FileFilter
 {
+	@Override
 	public boolean accept(java.io.File file)
 	{
-		return (file.getName().endsWith(".m3u") || file.getName().endsWith(".m3u8") || file.isDirectory());
+		return (file.getName().toLowerCase().endsWith(".m3u") || file.getName().toLowerCase().endsWith(".m3u8") || file.isDirectory());
 	}
 }

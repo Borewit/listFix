@@ -28,38 +28,39 @@ package listfix.controller.tasks;
 import listfix.io.*;
 import listfix.controller.*;
 
-public class UpdateMediaLibraryTask extends listfix.controller.Task 
+public class UpdateMediaLibraryTask extends listfix.controller.Task
 {
-    private GUIDriver guiDriver;
-    private String[] mediaDirs;
-    private String[] mediaLibraryDirectoryList;
-    private String[] mediaLibraryFileList;  
-    
-    public UpdateMediaLibraryTask(GUIDriver gd) 
-    {
-        guiDriver = gd;
-        mediaDirs = gd.getMediaDirs();
-    }
+	private GUIDriver guiDriver;
+	private String[] mediaDirs;
+	private String[] mediaLibraryDirectoryList;
+	private String[] mediaLibraryFileList;
 
-    /** Run the task. This method is the body of the thread for this task.  */
-    public void run() 
-    {
-        if(mediaDirs != null)
-        {
-            DirectoryScanner ds = new DirectoryScanner();
-            ds.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), this);
-            this.setMessage("Finishing...");
-            mediaLibraryDirectoryList = ds.getDirectoryList();
-            mediaLibraryFileList = ds.getFileList();
-            ds.reset();
-            java.util.Arrays.sort(mediaDirs);
-            guiDriver.setMediaDirs(mediaDirs);
-            java.util.Arrays.sort(mediaLibraryDirectoryList);
-            guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
-            java.util.Arrays.sort(mediaLibraryFileList);
-            guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-            this.notifyObservers(100);
-            (new FileWriter()).writeIni(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
-        }
-    }   
+	public UpdateMediaLibraryTask(GUIDriver gd)
+	{
+		guiDriver = gd;
+		mediaDirs = gd.getMediaDirs();
+	}
+
+	/** Run the task. This method is the body of the thread for this task.  */
+	@Override
+	public void run()
+	{
+		if (mediaDirs != null)
+		{
+			DirectoryScanner ds = new DirectoryScanner();
+			ds.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), this);
+			this.setMessage("Finishing...");
+			mediaLibraryDirectoryList = ds.getDirectoryList();
+			mediaLibraryFileList = ds.getFileList();
+			ds.reset();
+			java.util.Arrays.sort(mediaDirs);
+			guiDriver.setMediaDirs(mediaDirs);
+			java.util.Arrays.sort(mediaLibraryDirectoryList);
+			guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
+			java.util.Arrays.sort(mediaLibraryFileList);
+			guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
+			this.notifyObservers(100);
+			(new FileWriter()).writeIni(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+		}
+	}
 }

@@ -24,16 +24,17 @@ import listfix.model.*;
 
 public class AscendingStatusComparator implements java.util.Comparator<PlaylistEntry>
 {
-    public int compare(PlaylistEntry aa, PlaylistEntry bb)
-    {
-        if (aa.getMessage().compareToIgnoreCase(bb.getMessage()) < 0)
-        {
-            return -1;
-        }
-        else if (aa.getMessage().equals(bb.getMessage()))
-        {
-            return 0;
-        }
-        return 1;
-    }    
+	@Override
+	public int compare(PlaylistEntry aa, PlaylistEntry bb)
+	{
+		if (aa.getMessage().compareToIgnoreCase(bb.getMessage()) < 0)
+		{
+			return -1;
+		}
+		else if (aa.getMessage().equals(bb.getMessage()))
+		{
+			return 0;
+		}
+		return 1;
+	}
 }

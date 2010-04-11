@@ -41,12 +41,12 @@ import listfix.util.UnicodeUtils;
 
 public class FileWriter
 {
-    private final String br = System.getProperty("line.separator");
-    private final String fs = System.getProperty("file.separator");
-    private final String homeDir = System.getProperty("user.home");
+	private final String br = System.getProperty("line.separator");
+	private final String fs = System.getProperty("file.separator");
+	private final String homeDir = System.getProperty("user.home");
 
-    public String getRelativePath(File file, File relativeTo)
-    {
+	public String getRelativePath(File file, File relativeTo)
+	{
 		try
 		{
 			StringTokenizer fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
@@ -68,9 +68,9 @@ public class FileWriter
 			{
 				fileName = fileTokens.remove(fileTokens.size() - 1);
 			}
-			
+
 			// relativeTo is the M3U we'll be writing to, we need to remove the last token regardless...
-			relativeToTokens.removeElementAt(relativeToTokens.size() - 1);			
+			relativeToTokens.removeElementAt(relativeToTokens.size() - 1);
 
 			int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
 			boolean tokenMatch = false;
@@ -114,69 +114,69 @@ public class FileWriter
 		{
 			return file.getAbsolutePath();
 		}
-    }
+	}
 
-    public void writeDefaultIniFilesIfNeeded()
-    {
-        BufferedWriter output;
-        FileOutputStream outputStream;
+	public void writeDefaultIniFilesIfNeeded()
+	{
+		BufferedWriter output;
+		FileOutputStream outputStream;
 
-        File testFile = new File(homeDir + fs + "dirLists.ini");
-        if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
-        {
-            try
-            {
-                StringBuffer buffer = new StringBuffer();
-                AppOptions options = new AppOptions();
-                outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
-                Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-                output = new BufferedWriter(osw);
-                buffer.append("[Media Directories]" + br);
-                buffer.append("[Options]" + br);
-                buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad()) + br);
-                buffer.append("MAX_PLAYLIST_HISTORY_SIZE=" + options.getMaxPlaylistHistoryEntries() + br);
-                buffer.append("SAVE_RELATIVE_REFERENCES=" + Boolean.toString(options.getSavePlaylistsWithRelativePaths()) + br);
+		File testFile = new File(homeDir + fs + "dirLists.ini");
+		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
+		{
+			try
+			{
+				StringBuffer buffer = new StringBuffer();
+				AppOptions options = new AppOptions();
+				outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				output = new BufferedWriter(osw);
+				buffer.append("[Media Directories]" + br);
+				buffer.append("[Options]" + br);
+				buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=" + Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad()) + br);
+				buffer.append("MAX_PLAYLIST_HISTORY_SIZE=" + options.getMaxPlaylistHistoryEntries() + br);
+				buffer.append("SAVE_RELATIVE_REFERENCES=" + Boolean.toString(options.getSavePlaylistsWithRelativePaths()) + br);
 				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=" + Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup()) + br);
 				buffer.append("LOOK_AND_FEEL=" + options.getLookAndFeel() + br);
 				buffer.append("ALWAYS_USE_UNC_PATHS=" + Boolean.toString(options.getAlwaysUseUNCPaths()) + br);
 				buffer.append("PLAYLISTS_DIRECTORY=" + options.getPlaylistsDirectory() + br);
-                buffer.append("[Media Library Directories]" + br);
-                buffer.append("[Media Library Files]" + br);
-                output.write(buffer.toString());
-                output.close();
-                outputStream.close();
-            }
-            catch (Exception e)
-            {
-                // eat the error and continue
-                e.printStackTrace();
-            }
-        }
+				buffer.append("[Media Library Directories]" + br);
+				buffer.append("[Media Library Files]" + br);
+				output.write(buffer.toString());
+				output.close();
+				outputStream.close();
+			}
+			catch (Exception e)
+			{
+				// eat the error and continue
+				e.printStackTrace();
+			}
+		}
 
-        testFile = new File(homeDir + fs + "listFixHistory.ini");
-        if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
-        {
-            try
-            {
-                outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
-                Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-                output = new BufferedWriter(osw);
-                output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent M3Us]" + br);
-                output.close();
-                outputStream.close();
-            }
-            catch (Exception e)
-            {
-                // eat the error and continue
-                e.printStackTrace();
-            }
-        }
-    }
+		testFile = new File(homeDir + fs + "listFixHistory.ini");
+		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
+		{
+			try
+			{
+				outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				output = new BufferedWriter(osw);
+				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent M3Us]" + br);
+				output.close();
+				outputStream.close();
+			}
+			catch (Exception e)
+			{
+				// eat the error and continue
+				e.printStackTrace();
+			}
+		}
+	}
 
-    public Vector<PlaylistEntry> writeM3U(Playlist list, File fileName) throws Exception
-    {
-        Vector<PlaylistEntry> entries = list.getEntries();
-        PlaylistEntry tempEntry = null;
+	public Vector<PlaylistEntry> writeM3U(Playlist list, File fileName) throws Exception
+	{
+		Vector<PlaylistEntry> entries = list.getEntries();
+		PlaylistEntry tempEntry = null;
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#EXTM3U" + br);
 		for (int i = 0; i < entries.size(); i++)
@@ -195,38 +195,38 @@ public class FileWriter
 			}
 		}
 
-        File dirToSaveIn = fileName.getParentFile().getAbsoluteFile();
-        if (!dirToSaveIn.exists())
-        {
-            dirToSaveIn.mkdirs();
-        }
+		File dirToSaveIn = fileName.getParentFile().getAbsoluteFile();
+		if (!dirToSaveIn.exists())
+		{
+			dirToSaveIn.mkdirs();
+		}
 
-        if (list.isUtfFormat() || fileName.getName().toLowerCase().endsWith("m3u8"))
-        {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-            BufferedWriter output = new BufferedWriter(osw);
-            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-            output.close();
-            outputStream.close();
-            list.setUtfFormat(true);
-        }
-        else
-        {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            BufferedOutputStream output = new BufferedOutputStream(outputStream);
-            output.write(buffer.toString().getBytes());
-            output.close();
-            outputStream.close();
-            list.setUtfFormat(false);
-        }
+		if (list.isUtfFormat() || fileName.getName().toLowerCase().endsWith("m3u8"))
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(true);
+		}
+		else
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			BufferedOutputStream output = new BufferedOutputStream(outputStream);
+			output.write(buffer.toString().getBytes());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(false);
+		}
 		return entries;
-    }
+	}
 
-    public Vector<PlaylistEntry> writeRelativeM3U(Playlist list, File fileName) throws Exception
-    {
-        Vector<PlaylistEntry> entries = list.getEntries();
-        PlaylistEntry tempEntry = null;
+	public Vector<PlaylistEntry> writeRelativeM3U(Playlist list, File fileName) throws Exception
+	{
+		Vector<PlaylistEntry> entries = list.getEntries();
+		PlaylistEntry tempEntry = null;
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#EXTM3U" + br);
 		for (int i = 0; i < entries.size(); i++)
@@ -249,66 +249,66 @@ public class FileWriter
 				buffer.append(tempEntry.toM3UString() + br);
 			}
 		}
-        
-        if (list.isUtfFormat() || fileName.getName().toLowerCase().endsWith("m3u8"))
-        {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-            BufferedWriter output = new BufferedWriter(osw);
-            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-            output.close();
-            outputStream.close();
-            list.setUtfFormat(true);
-        }
-        else
-        {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            BufferedOutputStream output = new BufferedOutputStream(outputStream);
-            output.write(buffer.toString().getBytes());
-            output.close();
-            outputStream.close();
-            list.setUtfFormat(false);
-        }
+
+		if (list.isUtfFormat() || fileName.getName().toLowerCase().endsWith("m3u8"))
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(true);
+		}
+		else
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			BufferedOutputStream output = new BufferedOutputStream(outputStream);
+			output.write(buffer.toString().getBytes());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(false);
+		}
 		return entries;
-    }
+	}
 
-    public void writeMruM3Us(M3UHistory history)
-    {
-        try
-        {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("[Recent M3Us]" + br);
-            String[] filenames = history.getM3UFilenames();
-            for (int i = 0; i < filenames.length; i++)
-            {
-                buffer.append(filenames[i] + br);
-            }			
+	public void writeMruM3Us(M3UHistory history)
+	{
+		try
+		{
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("[Recent M3Us]" + br);
+			String[] filenames = history.getM3UFilenames();
+			for (int i = 0; i < filenames.length; i++)
+			{
+				buffer.append(filenames[i] + br);
+			}
 			FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
-            Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-            BufferedWriter output = new BufferedWriter(osw);
-            output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-            output.close();
-            outputStream.close();
-        }
-        catch (IOException e)
-        {
-            // eat the error and continue
-            e.printStackTrace();
-        }
-    }
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+		}
+		catch (IOException e)
+		{
+			// eat the error and continue
+			e.printStackTrace();
+		}
+	}
 
-    public void writeIni(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList, AppOptions options)
-    {
-        try
-        {
-            WriteIniFileTask thisTask = new WriteIniFileTask(mediaDir, mediaLibraryDirList, mediaLibraryFileList, options);
-            thisTask.start();
-        }
-        catch (Exception e)
-        {
-            // eat the error and continue
-            e.printStackTrace();
-        }
-    }
+	public void writeIni(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList, AppOptions options)
+	{
+		try
+		{
+			WriteIniFileTask thisTask = new WriteIniFileTask(mediaDir, mediaLibraryDirList, mediaLibraryFileList, options);
+			thisTask.start();
+		}
+		catch (Exception e)
+		{
+			// eat the error and continue
+			e.printStackTrace();
+		}
+	}
 }
         

@@ -24,6 +24,7 @@ package listfix.view;
  *
  * @author  jcaron
  */
+import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,89 +38,87 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
 
-public class AppOptionsDialog extends javax.swing.JDialog 
-{    
+public class AppOptionsDialog extends javax.swing.JDialog
+{
 	private static final long serialVersionUID = 3409894354485158935L;
-	
-    public static final int OK = 0;
-    public static final int CANCEL = 1;
-	
+	public static final int OK = 0;
+	public static final int CANCEL = 1;
 	private int resultCode;
-    private String fileName;
-    private AppOptions options = null;	
+	private String fileName;
+	private AppOptions options = null;
 	private final JFileChooser jMediaDirChooser = new JFileChooser();
-    
-    /** Creates new form EditFilenameDialog */
-    public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts) 
-    {
-        super(parent, title, modal);
-        if (opts == null)
-        {
-            options = new AppOptions();
-        }
-        else
-        {
-            options = opts;
-        }
-        initComponents();
-		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
-        jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-        jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        this.center();
-    }	
-    
-    public AppOptionsDialog()
-    {
-        
-    }
-    
-    public String getFileName()
-    {
-        return fileName;
-    }
-    
-    public void setFileName(String x)
-    {
-        fileName = x;
-    }
-    
-    public void setResultCode(int i)
-    {
-        resultCode = i;
-    }
-    
-    public int getResultCode()
-    {
-        return resultCode;
-    }
 
-    private LookAndFeelInfo[] getInstalledLookAndFeels()
-    {
-        LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
-        Vector<LookAndFeelInfo> lafs = new Vector<LookAndFeelInfo>();
-        for(LookAndFeelInfo laf : plafs)
-        {
-            if (!laf.getName().toLowerCase().contains("nimbus"))
-            {
-                lafs.add(laf);
-            }
-        }
-        plafs = lafs.toArray(new LookAndFeelInfo[0]);
-        return plafs;
-    }
-	
+	/** Creates new form EditFilenameDialog */
+	public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts)
+	{
+		super(parent, title, modal);
+		if (opts == null)
+		{
+			options = new AppOptions();
+		}
+		else
+		{
+			options = opts;
+		}
+		this.setPreferredSize(new Dimension(390, 292));
+		this.center();
+		initComponents();
+		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
+		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	}
+
+	public AppOptionsDialog()
+	{
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String x)
+	{
+		fileName = x;
+	}
+
+	public void setResultCode(int i)
+	{
+		resultCode = i;
+	}
+
+	public int getResultCode()
+	{
+		return resultCode;
+	}
+
+	private LookAndFeelInfo[] getInstalledLookAndFeels()
+	{
+		LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+		Vector<LookAndFeelInfo> lafs = new Vector<LookAndFeelInfo>();
+		for (LookAndFeelInfo laf : plafs)
+		{
+			if (!laf.getName().toLowerCase().contains("nimbus"))
+			{
+				lafs.add(laf);
+			}
+		}
+		plafs = lafs.toArray(new LookAndFeelInfo[0]);
+		return plafs;
+	}
+
 	private DefaultComboBoxModel getLookAndFeelMenuItems()
 	{
 		LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
 
 		String[] model = new String[plafs.length];
-		for(int i=0; i< plafs.length; i++)
+		for (int i = 0; i < plafs.length; i++)
 		{
-			model[i] = plafs[i].getName();	
+			model[i] = plafs[i].getName();
 		}
 		return new DefaultComboBoxModel(model);
 	}
-	
+
 	private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
 	{
 		UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
@@ -129,8 +128,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		}
 		return plafs[0];
 	}
-	
-    private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
+
+	private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
 	{
 		UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
 		for (int i = 0; i < plafs.length; i++)
@@ -142,23 +141,49 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		}
 		return plafs[0];
 	}
-    
-    private void center()
-    {
-        Point parentLocation = this.getParent().getLocationOnScreen();
-        double x = parentLocation.getX();
-        double y = parentLocation.getY();
-        int width = this.getParent().getWidth();
-        int height = this.getParent().getHeight();
 
-        this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
-    }
+	private void center()
+	{
+		Point parentLocation = this.getParent().getLocationOnScreen();
+		double x = parentLocation.getX();
+		double y = parentLocation.getY();
+		int width = this.getParent().getWidth();
+		int height = this.getParent().getHeight();
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
+		this.setLocation((int) x + (width - this.getPreferredSize().width) / 2, (int) y + (height - this.getPreferredSize().height) / 2);
+//        Frame parent = (Frame)getParent();
+//        Dimension dim = parent.getSize();
+//        Point     loc = parent.getLocationOnScreen();
+//
+//        Dimension size = getSize();
+//
+//        loc.x += (dim.width  - size.width)/2;
+//        loc.y += (dim.height - size.height)/2;
+//
+//        if (loc.x < 0) loc.x = 0;
+//        if (loc.y < 0) loc.y = 0;
+//
+//        Dimension screen = getToolkit().getScreenSize();
+//
+//        if (size.width  > screen.width)
+//          size.width  = screen.width;
+//        if (size.height > screen.height)
+//          size.height = screen.height;
+//
+//        if (loc.x + size.width > screen.width)
+//          loc.x = screen.width - size.width;
+//
+//        if (loc.y + size.height > screen.height)
+//          loc.y = screen.height - size.height;
+//
+//        setBounds(loc.x, loc.y, size.width, size.height);
+	}
+
+	/** This method is called from within the constructor to
+	 * initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is
+	 * always regenerated by the Form Editor.
+	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -366,21 +391,21 @@ public class AppOptionsDialog extends javax.swing.JDialog
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        setVisible(false);
-        dispose();
-        setResultCode( CANCEL );
+		setVisible(false);
+		dispose();
+		setResultCode(CANCEL);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        setVisible(false);        
-        dispose();
-        setResultCode( OK );
+		setVisible(false);
+		dispose();
+		setResultCode(OK);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /** Closes the dialog */
+	/** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
-        setVisible(false);
-        dispose();
+		setVisible(false);
+		dispose();
     }//GEN-LAST:event_closeDialog
 
 	private void playlistDirectoryBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playlistDirectoryBrowseButtonActionPerformed
@@ -407,30 +432,29 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		}
 	}//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) 
-    {
-        new AppOptionsDialog(new java.awt.Frame(), "listFix() options", true, null).setVisible(true);
-    }
-    
-    public AppOptions showDialog() 
-    {
-        this.setVisible(true);
-        if (this.getResultCode() == OK)
-        {
-            options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
-            options.setMaxPlaylistHistoryEntries( new Integer( (String)recentPlaylistLimitComboBox.getItemAt( recentPlaylistLimitComboBox.getSelectedIndex() ) ).intValue() );
-            options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
+	/**
+	 * @param args the command line arguments
+	 */
+	public static void main(String args[])
+	{
+		new AppOptionsDialog(new java.awt.Frame(), "listFix() options", true, null).setVisible(true);
+	}
+
+	public AppOptions showDialog()
+	{
+		this.setVisible(true);
+		if (this.getResultCode() == OK)
+		{
+			options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
+			options.setMaxPlaylistHistoryEntries(new Integer((String) recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())).intValue());
+			options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
 			options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
 			options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
 			options.setAlwaysUseUNCPaths(this.alwaysUseUNCPathsCheckBox.isSelected());
 			options.setPlaylistsDirectory(playlistDirectoryTextField.getText());
-        }
-        return options;
-    }
-
+		}
+		return options;
+	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox alwaysUseUNCPathsCheckBox;
     private javax.swing.JCheckBox autoLocateCheckBox;
@@ -460,5 +484,4 @@ public class AppOptionsDialog extends javax.swing.JDialog
     private javax.swing.JCheckBox relativePathsCheckBox;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
-
 }

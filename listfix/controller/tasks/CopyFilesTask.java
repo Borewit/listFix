@@ -29,46 +29,47 @@ import java.util.Vector;
 import listfix.model.*;
 import listfix.io.*;
 
-public class CopyFilesTask extends listfix.controller.Task 
+public class CopyFilesTask extends listfix.controller.Task
 {
-    private Vector<PlaylistEntry> files;
-    private File destination;
-    
-    /** Creates new CopyFilesTask */
-    public CopyFilesTask(Vector<PlaylistEntry> x, File y) 
-    {
-        files = x;
-        destination = y;
-    }
+	private Vector<PlaylistEntry> files;
+	private File destination;
 
-    /** Run the task. This method is the body of the thread for this task.  */
-    public void run() 
-    {
-        PlaylistEntry tempEntry = null;
-        File fileToCopy = null;
-        File dest = null;
-        String fs = System.getProperty("file.separator");
-        for (int i = 0; i < files.size(); i++)
-        {
-            tempEntry = files.elementAt(i);
-            if (!tempEntry.isURL())
-            {
-                fileToCopy = tempEntry.getAbsoluteFile();
-                if (tempEntry.isFound()) // && fileToCopy.exists())
-                {
-                    dest = new File(destination.getPath() + fs + tempEntry.getFileName());
-                    try
-                    {
-                        FileCopier.copy(new FileInputStream(fileToCopy), new FileOutputStream(dest));
-                    }
-                    catch (IOException e)
-                    {
-                        // eat the error and continue
-                        e.printStackTrace();
-                    }
-                }
-            }
-            this.notifyObservers((int)((double)i/(double)(files.size()-1) * 100.0));
-        }   
-    }
+	/** Creates new CopyFilesTask */
+	public CopyFilesTask(Vector<PlaylistEntry> x, File y)
+	{
+		files = x;
+		destination = y;
+	}
+
+	/** Run the task. This method is the body of the thread for this task.  */
+	@Override
+	public void run()
+	{
+		PlaylistEntry tempEntry = null;
+		File fileToCopy = null;
+		File dest = null;
+		String fs = System.getProperty("file.separator");
+		for (int i = 0; i < files.size(); i++)
+		{
+			tempEntry = files.elementAt(i);
+			if (!tempEntry.isURL())
+			{
+				fileToCopy = tempEntry.getAbsoluteFile();
+				if (tempEntry.isFound()) // && fileToCopy.exists())
+				{
+					dest = new File(destination.getPath() + fs + tempEntry.getFileName());
+					try
+					{
+						FileCopier.copy(new FileInputStream(fileToCopy), new FileOutputStream(dest));
+					}
+					catch (IOException e)
+					{
+						// eat the error and continue
+						e.printStackTrace();
+					}
+				}
+			}
+			this.notifyObservers((int) ((double) i / (double) (files.size() - 1) * 100.0));
+		}
+	}
 }
