@@ -45,7 +45,7 @@ public class FileTreeNodeGenerator
 			}
 
 			Vector<File> ol = new Vector<File>();
-			File[] inodes = dir.listFiles(new M3UFileFilter());
+			File[] inodes = dir.listFiles(new PlaylistFileFilter());
 
 			if (inodes != null && inodes.length > 0)
 			{
@@ -62,7 +62,7 @@ public class FileTreeNodeGenerator
 					f = ol.elementAt(i);
 					if (f.isDirectory())
 					{
-						File[] tmp = f.listFiles(new M3UFileFilter());
+						File[] tmp = f.listFiles(new PlaylistFileFilter());
 						if (tmp != null && tmp.length > 0)
 						{
 							addNodes(curDir, f);

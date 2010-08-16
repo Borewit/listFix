@@ -39,7 +39,7 @@ public class PlaylistScanner
 		Vector<File> result = new Vector<File>();
 		if (directory.exists() && directory.isDirectory())
 		{
-			File[] inodes = directory.listFiles(new M3UFileFilter());
+			File[] inodes = directory.listFiles(new PlaylistFileFilter());
 			for (File inode : inodes)
 			{
 				if (inode.isFile())

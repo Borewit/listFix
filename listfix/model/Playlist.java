@@ -24,9 +24,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
-import listfix.controller.tasks.OpenM3UTask;
+import listfix.controller.tasks.OpenPlaylistTask;
 import listfix.io.FileLauncher;
 import listfix.io.M3UFileReader;
+import listfix.io.PLSFileReader;
 
 public class Playlist
 {
@@ -34,19 +35,33 @@ public class Playlist
 	private Vector<PlaylistEntry> entries = new Vector<PlaylistEntry>();
 	private Vector<PlaylistEntry> originalEntries = new Vector<PlaylistEntry>();
 	private boolean utfFormat = false;
+	private PlaylistType type = PlaylistType.UNKNOWN;
 
 	public Playlist()
 	{
 	}
 
-	public Playlist(File playlist, OpenM3UTask task)
+	public Playlist(File playlist, OpenPlaylistTask task)
 	{
 		try
 		{
-			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
-			utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
-			file = playlist;
-			this.setEntries(playlistProcessor.readM3U(task));
+			if (playlist.getName().toLowerCase().contains(".m3u"))
+			{
+				M3UFileReader playlistProcessor = new M3UFileReader(playlist);
+				utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+				file = playlist;
+				this.setEntries(playlistProcessor.readPlaylist(task));
+				type = PlaylistType.M3U;
+			}
+			else
+			{
+				// only other file type currently supported PLS
+				PLSFileReader playlistProcessor = new PLSFileReader(playlist);
+				utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+				file = playlist;
+				this.setEntries(playlistProcessor.readPlaylist(task));
+				type = PlaylistType.PLS;
+			}
 		}
 		catch (IOException e)
 		{
@@ -58,10 +73,23 @@ public class Playlist
 	{
 		try
 		{
-			M3UFileReader playlistProcessor = new M3UFileReader(playlist);
-			utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
-			file = playlist;
-			this.setEntries(playlistProcessor.readM3U());
+			if (playlist.getName().toLowerCase().contains(".m3u"))
+			{
+				M3UFileReader playlistProcessor = new M3UFileReader(playlist);
+				utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+				file = playlist;
+				this.setEntries(playlistProcessor.readPlaylist());
+				type = PlaylistType.M3U;
+			}
+			else
+			{
+				// only other file type currently supported PLS
+				PLSFileReader playlistProcessor = new PLSFileReader(playlist);
+				utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+				file = playlist;
+				this.setEntries(playlistProcessor.readPlaylist());
+				type = PlaylistType.PLS;
+			}
 		}
 		catch (IOException e)
 		{
@@ -229,5 +257,21 @@ public class Playlist
 	public void setUtfFormat(boolean utfFormat)
 	{
 		this.utfFormat = utfFormat;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public PlaylistType getType()
+	{
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(PlaylistType type)
+	{
+		this.type = type;
 	}
 }

@@ -74,7 +74,7 @@ public class M3UFileReader
 		}
 	}
 
-	public Vector<PlaylistEntry> readM3U(Task input) throws IOException
+	public Vector<PlaylistEntry> readPlaylist(Task input) throws IOException
 	{
 		StringBuilder cache = new StringBuilder();
 		String line1 = buffer.readLine();
@@ -141,7 +141,7 @@ public class M3UFileReader
 		return results;
 	}
 
-	public Vector<PlaylistEntry> readM3U() throws IOException
+	public Vector<PlaylistEntry> readPlaylist() throws IOException
 	{
 		String line1 = buffer.readLine();
 		if (line1 != null)

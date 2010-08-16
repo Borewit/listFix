@@ -58,13 +58,40 @@ public class PlaylistEntry implements Cloneable
 	private String message = "Unknown";
 	// This entry's lost/found flag.
 	private boolean found = false;
+	// The title of the entry
+	private String title = "";
+	// The length of the track
+	private String length = "-1";
 
 	// Construct a URL entry.
 	public PlaylistEntry(URI uri, String extra)
 	{
 		thisURI = uri;
 		extInf = extra;
+		extra = extra.replaceFirst("#EXTINF:", "");
+		if (extra != null && extra.length() > 0)
+		{
+			if (extra.contains(","))
+			{
+				String[] split = extra.split(",");
+				length = split[0];
+				title = split[1];
+			}
+			else
+			{
+				title = extra;
+			}
+		}
 		message = "URL";
+	}
+
+	// Construct a URL entry.
+	public PlaylistEntry(URI uri, String t, String l)
+	{
+		thisURI = uri;
+		title = t;
+		length = l;
+		extInf = "#EXTINF:" + l + "," + t;
 	}
 
 	// Construct a file-based entry.
@@ -73,6 +100,20 @@ public class PlaylistEntry implements Cloneable
 		path = p;
 		fileName = f;
 		extInf = extra;
+		extra = extra.replaceFirst("#EXTINF:", "");
+		if (extra != null && extra.length() > 0)
+		{
+			if (extra.contains(","))
+			{
+				String[] split = extra.split(",");
+				length = split[0];
+				title = split[1];
+			}
+			else
+			{
+				title = extra;
+			}
+		}
 		thisFile = new File(path, fileName);
 
 		// should we skip the exists check?
@@ -125,6 +166,68 @@ public class PlaylistEntry implements Cloneable
 		fileName = input.getName();
 		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
 		extInf = extra;
+		extra = extra.replaceFirst("#EXTINF:", "");
+		if (extra != null && extra.length() > 0)
+		{
+			if (extra.contains(","))
+			{
+				String[] split = extra.split(",");
+				length = split[0];
+				title = split[1];
+			}
+			else
+			{
+				title = extra;
+			}
+		}
+		thisFile = input;
+		if (skipExistsCheck())
+		{
+			message = "Not Found";
+		}
+		else if (this.exists())
+		{
+			message = "Found!";
+			found = true;
+			if (thisFile.isAbsolute())
+			{
+				absoluteFile = thisFile;
+			}
+			else
+			{
+				absoluteFile = new File(thisFile.getAbsolutePath());
+			}
+		}
+		else
+		{
+			if (!thisFile.isAbsolute())
+			{
+				absoluteFile = new File(basePath, input.getPath());
+				if (absoluteFile.exists())
+				{
+					message = "Found!";
+					found = true;
+				}
+				else
+				{
+					message = "Not Found";
+				}
+			}
+			else
+			{
+				message = "Not Found";
+			}
+		}
+	}
+
+	// Same as above but with a file object as input
+	public PlaylistEntry(File input, String t, String l)
+	{
+		fileName = input.getName();
+		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
+		extInf = "#EXTINF:" + l + "," + t;
+		title = t;
+		length = l;
 		thisFile = input;
 		if (skipExistsCheck())
 		{
@@ -327,6 +430,56 @@ public class PlaylistEntry implements Cloneable
 		return result.toString();
 	}
 
+	public String toPLSString(int index)
+	{
+		StringBuilder result = new StringBuilder();
+
+		// set the file
+		if (!this.isURL())
+		{
+			result.append("File" + index + "=");
+			if (!this.isRelative())
+			{
+				if (this.getPath().endsWith(fs))
+				{
+					result.append(this.getPath());
+					result.append(this.getFileName());
+				}
+				else
+				{
+					result.append(this.getPath());
+					result.append(fs);
+					result.append(this.getFileName());
+				}
+			}
+			else
+			{
+				String tempPath = thisFile.getPath();
+				if (tempPath.substring(0, tempPath.indexOf(fileName)).equals(fs))
+				{
+					result.append(fileName);
+				}
+				else
+				{
+					result.append(thisFile.getPath());
+				}
+			}
+		}
+		else
+		{
+			result.append("File" + index + "=" + thisURI.toString());
+		}
+		result.append(br);
+
+		// set the title
+		result.append("Title" + index + "=" + title + br);
+
+		// set the length
+		result.append("Length" + index + "=" + length + br);
+		
+		return result.toString();
+	}
+
 	public void findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
@@ -372,5 +525,21 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @return the title
+	 */
+	public String getTitle()
+	{
+		return title;
+	}
+
+	/**
+	 * @return the length
+	 */
+	public String getLength()
+	{
+		return length;
 	}
 }

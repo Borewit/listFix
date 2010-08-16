@@ -18,39 +18,47 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.controller.tasks;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     M3UFileChooserFilter.java
-= Purpose:  Simple instance of FilenameFilter that displays only
-=           M3U files or directories.
-============================================================================
+/**
+ *
+ * @author  jcaron
+ * @version 
  */
+import java.io.File;
 
-public class M3UFileChooserFilter extends javax.swing.filechooser.FileFilter
+import listfix.controller.*;
+import listfix.io.*;
+import listfix.model.Playlist;
+
+public class OpenPlaylistTask extends listfix.controller.Task
 {
-	public M3UFileChooserFilter()
-	{
+	private GUIDriver guiDriver;
+	private File input;
 
+	public OpenPlaylistTask(GUIDriver gd, File f)
+	{
+		guiDriver = gd;
+		input = f;
 	}
 
+	/** Run the task. This method is the body of the thread for this task.  */
 	@Override
-	public boolean accept(java.io.File file)
+	public void run()
 	{
-		return (file.getName().toLowerCase().endsWith(".m3u") || file.getName().toLowerCase().endsWith(".m3u8") || file.isDirectory());
-	}
-
-	@Override
-	public String getDescription()
-	{
-		return "Playlist Files (*.m3u, *.m3u8)";
-	}
-	
-	@Override
-	public String toString()
-	{
-		return "Playlist Files (*.m3u, *.m3u8)";
+		try
+		{
+			guiDriver.setPlaylist(new Playlist(input, this));
+			guiDriver.getHistory().add(input.getCanonicalPath());
+			(new FileWriter()).writeMruPlaylists(guiDriver.getHistory());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			this.notifyObservers(100);
+		}
 	}
 }

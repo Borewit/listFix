@@ -18,47 +18,23 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.controller.tasks;
+package listfix.io;
 
-/**
- *
- * @author  jcaron
- * @version 
+/*
+============================================================================
+= Author:   Jeremy Caron
+= File:     M3UFileFilter.java
+= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
+============================================================================
  */
-import java.io.File;
-
-import listfix.controller.*;
-import listfix.io.*;
-import listfix.model.Playlist;
-
-public class OpenM3UTask extends listfix.controller.Task
+public class PlaylistFileFilter implements java.io.FileFilter
 {
-	private GUIDriver guiDriver;
-	private File input;
-
-	public OpenM3UTask(GUIDriver gd, File f)
-	{
-		guiDriver = gd;
-		input = f;
-	}
-
-	/** Run the task. This method is the body of the thread for this task.  */
 	@Override
-	public void run()
+	public boolean accept(java.io.File file)
 	{
-		try
-		{
-			guiDriver.setPlaylist(new Playlist(input, this));
-			guiDriver.getHistory().add(input.getCanonicalPath());
-			(new FileWriter()).writeMruM3Us(guiDriver.getHistory());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			this.notifyObservers(100);
-		}
+		return (file.getName().toLowerCase().endsWith(".m3u") 
+			|| file.getName().toLowerCase().endsWith(".m3u8")
+			|| file.getName().toLowerCase().endsWith(".pls")
+			|| file.isDirectory());
 	}
 }

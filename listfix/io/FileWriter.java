@@ -161,7 +161,7 @@ public class FileWriter
 				outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
-				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent M3Us]" + br);
+				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent Playlists]" + br);
 				output.close();
 				outputStream.close();
 			}
@@ -272,12 +272,116 @@ public class FileWriter
 		return entries;
 	}
 
-	public void writeMruM3Us(M3UHistory history)
+
+	public Vector<PlaylistEntry> writePLS(Playlist list, File fileName) throws Exception
+	{
+		Vector<PlaylistEntry> entries = list.getEntries();
+		PlaylistEntry tempEntry = null;
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[playlist]" + br);
+		for (int i = 0; i < entries.size(); i++)
+		{
+			tempEntry = entries.elementAt(i);
+			if (tempEntry.isRelative() && tempEntry.getAbsoluteFile() != null)
+			{
+				tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength());
+				buffer.append(tempEntry.toPLSString(i + 1));
+				entries.remove(i);
+				entries.add(i, tempEntry);
+			}
+			else
+			{
+				buffer.append(tempEntry.toPLSString(i + 1));
+			}
+		}
+
+		buffer.append("NumberOfEntries=" + list.getEntryCount() + br);
+		buffer.append("Version=2");
+
+		File dirToSaveIn = fileName.getParentFile().getAbsoluteFile();
+		if (!dirToSaveIn.exists())
+		{
+			dirToSaveIn.mkdirs();
+		}
+
+		if (list.isUtfFormat())
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(true);
+		}
+		else
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			BufferedOutputStream output = new BufferedOutputStream(outputStream);
+			output.write(buffer.toString().getBytes());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(false);
+		}
+		return entries;
+	}
+
+	public Vector<PlaylistEntry> writeRelativePLS(Playlist list, File fileName) throws Exception
+	{
+		Vector<PlaylistEntry> entries = list.getEntries();
+		PlaylistEntry tempEntry = null;
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[playlist]" + br);
+		for (int i = 0; i < entries.size(); i++)
+		{
+			tempEntry = entries.elementAt(i);
+			if (!tempEntry.isRelative() && !tempEntry.isURL())
+			{
+				String relPath = getRelativePath(tempEntry.getFile().getAbsoluteFile(), fileName);
+				buffer.append("File" + (i + 1) + "=" + relPath + br);
+				buffer.append("Title" + (i + 1) + "=" + tempEntry.getTitle() + br);
+				buffer.append("Length" + (i + 1) + "=" + tempEntry.getLength() + br);
+				// replace the existing entry with a new relative one...
+				entries.remove(i);
+				entries.add(i, new PlaylistEntry(new File(relPath), tempEntry.getTitle(), tempEntry.getLength()));
+			}
+			else
+			{
+				buffer.append(tempEntry.toPLSString(i + 1));
+			}
+		}
+
+		buffer.append("NumberOfEntries=" + list.getEntryCount() + br);
+		buffer.append("Version=2");
+
+		if (list.isUtfFormat())
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(true);
+		}
+		else
+		{
+			FileOutputStream outputStream = new FileOutputStream(fileName);
+			BufferedOutputStream output = new BufferedOutputStream(outputStream);
+			output.write(buffer.toString().getBytes());
+			output.close();
+			outputStream.close();
+			list.setUtfFormat(false);
+		}
+		return entries;
+	}
+
+	public void writeMruPlaylists(M3UHistory history)
 	{
 		try
 		{
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("[Recent M3Us]" + br);
+			buffer.append("[Recent Playlists]" + br);
 			String[] filenames = history.getM3UFilenames();
 			for (int i = 0; i < filenames.length; i++)
 			{

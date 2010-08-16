@@ -147,7 +147,7 @@ public class GUIDriver
 	public void clearM3UHistory()
 	{
 		history.clearHistory();
-		(new FileWriter()).writeMruM3Us(history);
+		(new FileWriter()).writeMruPlaylists(history);
 	}
 
 	public Object[][] closePlaylist()
@@ -312,14 +312,14 @@ public class GUIDriver
 	public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
-		currentList.getEntries().addAll(playlistProcessor.readM3U());
+		currentList.getEntries().addAll(playlistProcessor.readPlaylist());
 		return guiTableUpdate();
 	}
 
 	public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException
 	{
 		M3UFileReader playlistProcessor = new M3UFileReader(input);
-		Vector<PlaylistEntry> temp = playlistProcessor.readM3U();
+		Vector<PlaylistEntry> temp = playlistProcessor.readPlaylist();
 		while (temp.size() > 0)
 		{
 			PlaylistEntry x = temp.remove(temp.size() - 1);
@@ -499,34 +499,64 @@ public class GUIDriver
 		return currentList.getEntries().elementAt(entryIndex);
 	}
 
-	public void saveM3U() throws Exception
+	public void savePlaylist() throws Exception
 	{
 		if (currentList.getFile() != null)
 		{
 			if (options.getSavePlaylistsWithRelativePaths())
 			{
-				currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList, currentList.getFile()));
+				if (currentList.getType() == PlaylistType.M3U)
+				{
+					currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList, currentList.getFile()));
+				}
+				else if (currentList.getType() == PlaylistType.PLS)
+				{
+					currentList.setEntries((new FileWriter()).writeRelativePLS(currentList, currentList.getFile()));
+				}
 			}
 			else
 			{
-				currentList.setEntries((new FileWriter()).writeM3U(currentList, currentList.getFile()));
+				if (currentList.getType() == PlaylistType.M3U)
+				{
+					currentList.setEntries((new FileWriter()).writeM3U(currentList, currentList.getFile()));
+				}
+				else if (currentList.getType() == PlaylistType.PLS)
+				{
+					currentList.setEntries((new FileWriter()).writePLS(currentList, currentList.getFile()));
+				}
 			}
 		}
 	}
 
-	public void saveM3U(File destination) throws Exception
+	public void savePlaylist(File destination) throws Exception
 	{
-		if (options.getSavePlaylistsWithRelativePaths())
+		PlaylistType destType = destination.getName().toLowerCase().contains(".m3u") ? PlaylistType.M3U : PlaylistType.PLS;
+		if (destType == PlaylistType.M3U)
 		{
-			currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList, destination));
+			if (options.getSavePlaylistsWithRelativePaths())
+			{
+				currentList.setEntries((new FileWriter()).writeRelativeM3U(currentList, destination));
+			}
+			else
+			{
+				currentList.setEntries((new FileWriter()).writeM3U(currentList, destination));
+			}
 		}
-		else
+		else if (destType == PlaylistType.PLS)
 		{
-			currentList.setEntries((new FileWriter()).writeM3U(currentList, destination));
+			if (options.getSavePlaylistsWithRelativePaths())
+			{
+				currentList.setEntries((new FileWriter()).writeRelativePLS(currentList, destination));
+			}
+			else
+			{
+				currentList.setEntries((new FileWriter()).writePLS(currentList, destination));
+			}
 		}
 		currentList.setFile(destination);
+		currentList.setType(destType);
 		history.add(destination.getCanonicalPath());
-		(new FileWriter()).writeMruM3Us(history);
+		(new FileWriter()).writeMruPlaylists(history);
 	}
 
 	public Object[][] insertFile(File fileToInsert, int entryIndex)

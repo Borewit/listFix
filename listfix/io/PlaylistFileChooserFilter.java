@@ -23,15 +23,37 @@ package listfix.io;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     M3UFileFilter.java
-= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
+= File:     M3UFileChooserFilter.java
+= Purpose:  Simple instance of FilenameFilter that displays only
+=           M3U files or directories.
 ============================================================================
  */
-public class M3UFileFilter implements java.io.FileFilter
+
+public class PlaylistFileChooserFilter extends javax.swing.filechooser.FileFilter
 {
+	public PlaylistFileChooserFilter()
+	{
+
+	}
+
 	@Override
 	public boolean accept(java.io.File file)
 	{
-		return (file.getName().toLowerCase().endsWith(".m3u") || file.getName().toLowerCase().endsWith(".m3u8") || file.isDirectory());
+		return (file.getName().toLowerCase().endsWith(".m3u")
+			|| file.getName().toLowerCase().endsWith(".m3u8") 
+			|| file.getName().toLowerCase().endsWith(".pls")
+			|| file.isDirectory());
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Playlist Files (*.m3u, *.m3u8, *.pls)";
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Playlist Files (*.m3u, *.m3u8, *.pls)";
 	}
 }

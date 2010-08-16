@@ -73,7 +73,7 @@ public class GUIScreen extends JFrame
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
 		jM3UChooser.setDialogTitle("Choose a Playlist...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
-		jM3UChooser.setFileFilter(new M3UFileChooserFilter());
+		jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
 		jFileChooser.setDialogTitle("Choose a file to append");
 		jFileChooser.setAcceptAllFileFilterUsed(false);
 		jFileChooser.setFileFilter(new ValidM3UFileRefFileChooserFilter());
@@ -86,7 +86,7 @@ public class GUIScreen extends JFrame
 		jSaveFileChooser.setDialogTitle("Save File:");
 		jSaveFileChooser.setAcceptAllFileFilterUsed(false);
 		jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jSaveFileChooser.setFileFilter(new M3UFileChooserFilter());
+		jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
 		playlistTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		playlistTable.setModel(new PlaylistTableModel());
 		playlistTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
@@ -1307,12 +1307,14 @@ public class GUIScreen extends JFrame
 				File playlist = jSaveFileChooser.getSelectedFile();
 				// Add .m3u to the end of the name if the user didn't add it themselves.  
 				// Check w/ indexOf to support .m3u8
-				if (playlist.getName().indexOf(".m3u") < 0)
+				String normalizedName = playlist.getName().trim().toLowerCase();
+				if (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls"))
 				{
+					// if no file type specified default to M3U
 					playlist = new File(playlist.getPath() + ".m3u");
 				}
 				PlaylistEntry.basePath = playlist.getParent();
-				guiDriver.saveM3U(playlist);
+				guiDriver.savePlaylist(playlist);
 				guiDriver.setPlaylistFile(playlist);
 				((PlaylistTableModel) playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
 				updateRecentMenu();
@@ -1371,7 +1373,7 @@ public class GUIScreen extends JFrame
 	private void openPlaylist(File playlist)
 	{
 		openM3UProgressDialog.go();
-		OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
+		OpenPlaylistTask thisTask = new OpenPlaylistTask(guiDriver, playlist);
 		try
 		{
 			PlaylistEntry.basePath = playlist.getParent();
@@ -1505,7 +1507,7 @@ public class GUIScreen extends JFrame
 			{
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				PlaylistEntry.basePath = guiDriver.getPlaylist().getFile().getParent();
-				guiDriver.saveM3U();
+				guiDriver.savePlaylist();
 				updateStatusLabel();
 				updateButtons();
 				((PlaylistTableModel) playlistTable.getModel()).updateData(guiDriver.guiTableUpdate());
@@ -2059,7 +2061,7 @@ private void updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) 
 		JMenuItem temp = (JMenuItem) evt.getSource();
 		openM3UProgressDialog.go();
 		File playlist = new File(temp.getText());
-		OpenM3UTask thisTask = new OpenM3UTask(guiDriver, playlist);
+		OpenPlaylistTask thisTask = new OpenPlaylistTask(guiDriver, playlist);
 		try
 		{
 			PlaylistEntry.basePath = playlist.getParent();
