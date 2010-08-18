@@ -138,7 +138,7 @@ public class IniFileReader
 				{
 					if (optionEnum.equals(AppOptionsEnum.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
 					{
-						options.setAutoLocateEntriesOnPlaylistLoad((new Boolean(optionValue)).booleanValue());
+						options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)).booleanValue());
 					}
 					else if (optionEnum.equals(AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE))
 					{
@@ -146,11 +146,11 @@ public class IniFileReader
 					}
 					else if (optionEnum.equals(AppOptionsEnum.SAVE_RELATIVE_REFERENCES))
 					{
-						options.setSavePlaylistsWithRelativePaths((new Boolean(optionValue)).booleanValue());
+						options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)).booleanValue());
 					}
 					else if (optionEnum.equals(AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
 					{
-						options.setAutoRefreshMediaLibraryOnStartup((new Boolean(optionValue)).booleanValue());
+						options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)).booleanValue());
 					}
 					else if (optionEnum.equals(AppOptionsEnum.LOOK_AND_FEEL))
 					{
@@ -158,7 +158,7 @@ public class IniFileReader
 					}
 					else if (optionEnum.equals(AppOptionsEnum.ALWAYS_USE_UNC_PATHS))
 					{
-						options.setAlwaysUseUNCPaths((new Boolean(optionValue)).booleanValue());
+						options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)).booleanValue());
 					}
 					else if (optionEnum.equals(AppOptionsEnum.PLAYLISTS_DIRECTORY))
 					{
