@@ -32,18 +32,19 @@ import java.util.Vector;
 
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
+import listfix.model.PlaylistType;
 import listfix.util.ArrayFunctions;
 import listfix.util.UnicodeUtils;
 
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     M3UFileReader.java
+= File:     M3UReader.java
 = Purpose:  Read in the playlist file and return a Vector containing
 =           PlaylistEntries that represent the files in the playlist.
 ============================================================================
  */
-public class M3UFileReader
+public class M3UReader implements IPlaylistReader
 {
 	private final static String fs = System.getProperty("file.separator");
 	private final static String br = System.getProperty("line.separator");
@@ -51,8 +52,9 @@ public class M3UFileReader
 	private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
 	private long fileLength = 0;
 	private String encoding = "";
+	private static final PlaylistType ListType = PlaylistType.M3U;
 
-	public M3UFileReader(File in) throws FileNotFoundException
+	public M3UReader(File in) throws FileNotFoundException
 	{
 		try
 		{

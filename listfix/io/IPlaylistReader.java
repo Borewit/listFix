@@ -18,13 +18,25 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.io;
+
+import java.io.IOException;
+import java.util.Vector;
+import listfix.controller.Task;
+import listfix.model.PlaylistEntry;
+import listfix.model.PlaylistType;
 
 /**
  *
  * @author jcaron
  */
-public enum PlaylistType
+public interface IPlaylistReader
 {
-	M3U, PLS, UNKNOWN
+	public static final PlaylistType ListType = PlaylistType.UNKNOWN;
+
+	public String getEncoding();
+	public void setEncoding(String encoding);
+
+	Vector<PlaylistEntry> readPlaylist(Task input) throws IOException;
+	Vector<PlaylistEntry> readPlaylist() throws IOException;
 }

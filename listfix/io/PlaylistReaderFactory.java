@@ -18,13 +18,26 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.io;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  *
  * @author jcaron
  */
-public enum PlaylistType
+public class PlaylistReaderFactory
 {
-	M3U, PLS, UNKNOWN
+	public static IPlaylistReader getPlaylistReader(File output) throws FileNotFoundException
+	{
+		if (output.getName().toLowerCase().contains(".m3u"))
+		{
+			return new M3UReader(output);
+		}
+		else
+		{
+			return new PLSReader(output);
+		}
+	}
 }

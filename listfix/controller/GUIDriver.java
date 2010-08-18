@@ -28,8 +28,10 @@ import listfix.controller.tasks.LocateClosestMatchesTask;
 import listfix.controller.tasks.LocateFilesTask;
 import listfix.exceptions.*;
 import listfix.io.FileWriter;
+import listfix.io.IPlaylistReader;
 import listfix.io.IniFileReader;
-import listfix.io.M3UFileReader;
+import listfix.io.M3UReader;
+import listfix.io.PlaylistReaderFactory;
 import listfix.io.UNCFile;
 import listfix.model.*;
 import listfix.util.ArrayFunctions;
@@ -84,9 +86,9 @@ public class GUIDriver
 		return currentList;
 	}
 
-	public void setPlaylist(Playlist aCurrentList)
+	public void setPlaylist(Playlist list)
 	{
-		currentList = aCurrentList;
+		currentList = list;
 	}
 
 	public AppOptions getAppOptions()
@@ -311,14 +313,14 @@ public class GUIDriver
 
 	public String[][] appendPlaylist(File input) throws FileNotFoundException, IOException
 	{
-		M3UFileReader playlistProcessor = new M3UFileReader(input);
+		IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(input);
 		currentList.getEntries().addAll(playlistProcessor.readPlaylist());
 		return guiTableUpdate();
 	}
 
 	public String[][] insertPlaylist(File input, int index) throws FileNotFoundException, IOException
 	{
-		M3UFileReader playlistProcessor = new M3UFileReader(input);
+		IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(input);
 		Vector<PlaylistEntry> temp = playlistProcessor.readPlaylist();
 		while (temp.size() > 0)
 		{

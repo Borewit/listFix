@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
+import listfix.model.PlaylistType;
 import listfix.util.UnicodeUtils;
 
 /*
@@ -42,13 +43,14 @@ import listfix.util.UnicodeUtils;
 =           PlaylistEntries that represent the files in the playlist.
 ============================================================================
  */
-public class PLSFileReader
+public class PLSReader implements IPlaylistReader
 {
 	private File plsFile = null;
 	private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
 	private String encoding = "";
+	private static final PlaylistType ListType = PlaylistType.PLS;
 
-	public PLSFileReader(File in) throws FileNotFoundException
+	public PLSReader(File in) throws FileNotFoundException
 	{
 		try
 		{
@@ -65,6 +67,7 @@ public class PLSFileReader
 		}
 	}
 
+	@Override
 	public Vector<PlaylistEntry> readPlaylist(Task input) throws IOException
 	{
 		PLSProperties propBag = new PLSProperties();
@@ -78,6 +81,7 @@ public class PLSFileReader
 		return results;
 	}
 
+	@Override
 	public Vector<PlaylistEntry> readPlaylist() throws IOException
 	{
 		PLSProperties propBag = new PLSProperties();
@@ -104,7 +108,7 @@ public class PLSFileReader
 			}
 			catch (URISyntaxException ex)
 			{
-				Logger.getLogger(PLSFileReader.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(PLSReader.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		else
@@ -113,11 +117,13 @@ public class PLSFileReader
 		}
 	}
 
+	@Override
 	public String getEncoding()
 	{
 		return encoding;
 	}
 
+	@Override
 	public void setEncoding(String encoding)
 	{
 		this.encoding = encoding;
