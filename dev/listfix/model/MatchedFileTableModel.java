@@ -20,7 +20,7 @@
 
 package listfix.model;
 
-import java.util.Vector;
+import java.util.List;
 
 public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 {
@@ -40,22 +40,23 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	};
 	public Integer sortCol = new Integer(1);
 	public Boolean isSortAsc = Boolean.FALSE;
-	public Vector<MatchedPlaylistEntry> vectorData = new Vector<MatchedPlaylistEntry>();
+	public List<MatchedPlaylistEntry> vectorData;
 
-	public MatchedFileTableModel(Vector<MatchedPlaylistEntry> input)
+	public MatchedFileTableModel(List<MatchedPlaylistEntry> input)
 	{
 		vectorData = input;
 		updateData(vectorData);
 	}
 
-	public void updateData(Vector<MatchedPlaylistEntry> input)
+	public void updateData(List<MatchedPlaylistEntry> input)
 	{
 		int n = input.size();
 		String[][] tempData = new String[n][2];
 		for (int i = 0; i < n; i++)
 		{
-			tempData[i][0] = input.elementAt(i).getPlaylistFile().getFileName();
-			tempData[i][1] = input.elementAt(i).getScore() + "";
+            MatchedPlaylistEntry entry = input.get(i);
+			tempData[i][0] = entry.getPlaylistFile().getFileName();
+			tempData[i][1] = entry.getScore() + "";
 		}
 		data = tempData;
 		vectorData = input;

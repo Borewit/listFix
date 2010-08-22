@@ -21,9 +21,9 @@
 package listfix.io;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import listfix.controller.Task;
 
 /*
@@ -36,8 +36,8 @@ import listfix.controller.Task;
  */
 public class DirectoryScanner
 {
-	private Vector<String> thisDirList;
-	private Vector<String> thisFileList;
+	private List<String> thisDirList;
+	private List<String> thisFileList;
 	private final String fs = System.getProperty("file.separator");
 	private int recursiveCount = 0;
 
@@ -48,7 +48,7 @@ public class DirectoryScanner
 		{
 			if (new File(baseDirs[i]).exists())
 			{
-				thisDirList.addElement(baseDirs[i]);
+				thisDirList.add(baseDirs[i]);
 				this.recursiveDir(baseDirs[i], task);
 			}
 		}
@@ -80,8 +80,8 @@ public class DirectoryScanner
 
 		File mediaDir = new File(baseDir);
 		String[] entryList = mediaDir.list();
-		List<String> fileList = new Vector<String>();
-		List<String> dirList = new Vector<String>();
+		List<String> fileList = new ArrayList<String>();
+		List<String> dirList = new ArrayList<String>();
 		StringBuilder s = new StringBuilder();
 
 		if (entryList != null)
@@ -120,7 +120,7 @@ public class DirectoryScanner
 
 		for (String dir : dirList)
 		{
-			thisDirList.addElement(dir);
+			thisDirList.add(dir);
 			recursiveDir(dir, task);
 		}
 	}
@@ -128,21 +128,21 @@ public class DirectoryScanner
 	public void reset()
 	{
 		recursiveCount = 0;
-		thisDirList = new Vector<String>();
-		thisFileList = new Vector<String>();
+		thisDirList = new ArrayList<String>();
+		thisFileList = new ArrayList<String>();
 	}
 
 	public String[] getFileList()
 	{
 		String[] result = new String[thisFileList.size()];
-		thisFileList.copyInto(result);
+        thisFileList.toArray(result);
 		return result;
 	}
 
 	public String[] getDirectoryList()
 	{
 		String[] result = new String[thisDirList.size()];
-		thisDirList.copyInto(result);
+		thisDirList.toArray(result);
 		return result;
 	}
 }

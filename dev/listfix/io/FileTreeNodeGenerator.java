@@ -21,7 +21,10 @@
 package listfix.io;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.tree.*;
 
 import listfix.comparators.FileComparator;
@@ -44,22 +47,19 @@ public class FileTreeNodeGenerator
 				curDir.setUserObject(new File(curPath));
 			}
 
-			Vector<File> ol = new Vector<File>();
+			List<File> ol = new ArrayList<File>();
 			File[] inodes = dir.listFiles(new PlaylistFileFilter());
 
 			if (inodes != null && inodes.length > 0)
 			{
-				for (int i = 0; i < inodes.length; i++)
-				{
-					ol.addElement(inodes[i]);
-				}
+                ol.addAll(Arrays.asList(inodes));
 				Collections.sort(ol, new FileComparator());
 				File f;
-				Vector<File> files = new Vector<File>();
+				List<File> files = new ArrayList<File>();
 				// Make two passes, one for Dirs and one for Files. This is #1.
 				for (int i = 0; i < ol.size(); i++)
 				{
-					f = ol.elementAt(i);
+					f = ol.get(i);
 					if (f.isDirectory())
 					{
 						File[] tmp = f.listFiles(new PlaylistFileFilter());
@@ -70,13 +70,13 @@ public class FileTreeNodeGenerator
 					}
 					else
 					{
-						files.addElement(f);
+						files.add(f);
 					}
 				}
 				// Pass two: for files.
 				for (int fnum = 0; fnum < files.size(); fnum++)
 				{
-					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile(files.elementAt(fnum).getPath())));
+					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile(files.get(fnum).getPath())));
 				}
 				if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
 				{

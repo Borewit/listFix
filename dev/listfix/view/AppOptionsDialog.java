@@ -28,8 +28,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -95,7 +96,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	private LookAndFeelInfo[] getInstalledLookAndFeels()
 	{
 		LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
-		Vector<LookAndFeelInfo> lafs = new Vector<LookAndFeelInfo>();
+		List<LookAndFeelInfo> lafs = new ArrayList<LookAndFeelInfo>();
 		for (LookAndFeelInfo laf : plafs)
 		{
 			if (!laf.getName().toLowerCase().contains("nimbus"))

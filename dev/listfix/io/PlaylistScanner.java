@@ -21,8 +21,8 @@
 package listfix.io;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /*
 ============================================================================
@@ -36,21 +36,24 @@ public class PlaylistScanner
 {
 	public static List<File> getAllPlaylists(File directory)
 	{
-		Vector<File> result = new Vector<File>();
+		List<File> result = new ArrayList<File>();
 		if (directory.exists() && directory.isDirectory())
 		{
 			File[] inodes = directory.listFiles(new PlaylistFileFilter());
-			for (File inode : inodes)
-			{
-				if (inode.isFile())
-				{
-					result.add(inode);
-				}
-				else
-				{
-					result.addAll(getAllPlaylists(inode));
-				}
-			}
+            if (inodes != null)
+            {
+                for (File inode : inodes)
+                {
+                    if (inode.isFile())
+                    {
+                        result.add(inode);
+                    }
+                    else
+                    {
+                        result.addAll(getAllPlaylists(inode));
+                    }
+                }
+            }
 		}
 		return result;
 	}

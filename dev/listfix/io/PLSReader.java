@@ -26,7 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +35,8 @@ import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistType;
 import listfix.util.UnicodeUtils;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
 
 /*
 ============================================================================
@@ -46,9 +49,9 @@ import listfix.util.UnicodeUtils;
 public class PLSReader implements IPlaylistReader
 {
 	private File plsFile = null;
-	private Vector<PlaylistEntry> results = new Vector<PlaylistEntry>();
+	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
 	private String encoding = "";
-	private static final PlaylistType ListType = PlaylistType.PLS;
+	private static final PlaylistType type = PlaylistType.PLS;
 
 	public PLSReader(File in) throws FileNotFoundException
 	{
@@ -68,7 +71,7 @@ public class PLSReader implements IPlaylistReader
 	}
 
 	@Override
-	public Vector<PlaylistEntry> readPlaylist(Task input) throws IOException
+	public List<PlaylistEntry> readPlaylist(Task input) throws IOException
 	{
 		PLSProperties propBag = new PLSProperties();
 		propBag.load(new FileInputStream(plsFile));
@@ -81,8 +84,25 @@ public class PLSReader implements IPlaylistReader
 		return results;
 	}
 
+	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+
+		PLSProperties propBag = new PLSProperties();
+		propBag.load(new FileInputStream(plsFile));
+		int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
+		progress.setTotal((int) entries);
+
+		for (int i = 1; i <= entries; i++)
+		{
+			processEntry(propBag, i);
+			progress.setCompleted(i);
+		}
+		return results;
+	}
+
 	@Override
-	public Vector<PlaylistEntry> readPlaylist() throws IOException
+	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
 		PLSProperties propBag = new PLSProperties();
 		propBag.load(new FileInputStream(plsFile));
@@ -127,5 +147,10 @@ public class PLSReader implements IPlaylistReader
 	public void setEncoding(String encoding)
 	{
 		this.encoding = encoding;
+	}
+
+	public PlaylistType getPlaylistType()
+	{
+		return type;
 	}
 }

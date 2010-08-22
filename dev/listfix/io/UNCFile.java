@@ -22,7 +22,8 @@ package listfix.io;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import pspdash.NetworkDriveList;
 
 /**
@@ -32,7 +33,7 @@ import pspdash.NetworkDriveList;
 public class UNCFile extends File
 {
 	private static NetworkDriveList driveLister = new NetworkDriveList();
-	private static final Vector<UNCFile> networkDrives = new Vector<UNCFile>();
+	private static final List<UNCFile> networkDrives = new ArrayList<UNCFile>();
 
 	static
 	{
@@ -105,7 +106,7 @@ public class UNCFile extends File
 		return this.getAbsolutePath().startsWith("\\\\");
 	}
 
-	public static Vector<UNCFile> listMappedRoots()
+	public static List<UNCFile> listMappedRoots()
 	{
 		return networkDrives;
 	}

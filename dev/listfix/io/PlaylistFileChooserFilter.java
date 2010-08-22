@@ -19,41 +19,35 @@
  */
 
 package listfix.io;
+import java.util.Set;
 
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     M3UFileChooserFilter.java
+= File:     PlaylistFileChooserFilter.java
 = Purpose:  Simple instance of FilenameFilter that displays only
-=           M3U files or directories.
+=           Playlist files or directories.
 ============================================================================
  */
 
-public class PlaylistFileChooserFilter extends javax.swing.filechooser.FileFilter
+// allows selection of playlists (m3u, m3u8) and directories (M3UFileFilter does not allow directories)
+public class PlaylistFileChooserFilter extends FileExtensionFilterBase
 {
-	public PlaylistFileChooserFilter()
-	{
+    public PlaylistFileChooserFilter()
+    {
+        super(_extensions);
+    }
 
-	}
+    @Override
+    public String getDescription()
+    {
+        return "Playlists (*.m3u, *.m3u8, *.pls)";
+    }
 
-	@Override
-	public boolean accept(java.io.File file)
-	{
-		return (file.getName().toLowerCase().endsWith(".m3u")
-			|| file.getName().toLowerCase().endsWith(".m3u8") 
-			|| file.getName().toLowerCase().endsWith(".pls")
-			|| file.isDirectory());
-	}
+    private static final Set<String> _extensions;
 
-	@Override
-	public String getDescription()
-	{
-		return "Playlist Files (*.m3u, *.m3u8, *.pls)";
-	}
-	
-	@Override
-	public String toString()
-	{
-		return "Playlist Files (*.m3u, *.m3u8, *.pls)";
-	}
+    static
+    {
+        _extensions = createExtensionSet("m3u", "m3u8", "pls");
+    }
 }

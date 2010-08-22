@@ -20,6 +20,15 @@
 
 package listfix.view.support;
 
+import java.awt.Component;
+import java.text.NumberFormat;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
 public class ZebraJTable extends javax.swing.JTable
 {
 	private java.awt.Color rowColors[] = new java.awt.Color[2];
@@ -54,10 +63,10 @@ public class ZebraJTable extends javax.swing.JTable
 		super(dataModel, columnModel, selectionModel);
 	}
 
-	public ZebraJTable(java.util.Vector<?> rowData, java.util.Vector<?> columnNames)
-	{
-		super(rowData, columnNames);
-	}
+//	public ZebraJTable(java.util.Vector<?> rowData, java.util.Vector<?> columnNames)
+//	{
+//		super(rowData, columnNames);
+//	}
 
 	/** Add stripes between cells and behind non-opaque cells. */
 	@Override
@@ -158,4 +167,78 @@ public class ZebraJTable extends javax.swing.JTable
 		}
 		rowColors[1] = new java.awt.Color(240, 240, 240);
 	}
+
+    public int autoResizeColumn(int colIx)
+    {
+        TableCellRenderer renderer = getCellRenderer(0, colIx);
+        int maxWidth = 0;
+        for (int rowIx = 0; rowIx < getRowCount(); rowIx++)
+        {
+            Object val = getValueAt(rowIx, colIx);
+            Component comp = renderer.getTableCellRendererComponent(this, val, false, false, rowIx, colIx);
+            int width = comp.getPreferredSize().width;
+            if (width > maxWidth)
+                maxWidth = width;
+        }
+        // add 2 for default intercell spacing
+        maxWidth += 2;
+        getColumnModel().getColumn(colIx).setPreferredWidth(maxWidth);
+        return maxWidth;
+    }
+    
+    public void initFillColumnForScrollPane(final JScrollPane scroller)
+    {
+        scroller.addComponentListener(new java.awt.event.ComponentAdapter() 
+        {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) 
+            {
+//                onScrollerComponentResized(evt);
+//                setFillerColumnWidth((JScrollPane)evt.getComponent());
+                setFillerColumnWidth(scroller);
+            }
+        });
+    }
+
+    public void setFillerColumnWidth(JScrollPane scroller)
+    {
+        TableColumnModel cm = getColumnModel();
+        int colCount = cm.getColumnCount();
+        int lastIx = colCount - 1;
+        int normWidth = 0;
+        for (int ix=0; ix < lastIx; ix++)
+        {
+            normWidth += cm.getColumn(ix).getWidth();
+        }
+        int viewWidth = scroller.getViewport().getWidth();
+        TableColumn fillCol = cm.getColumn(lastIx);
+        if (normWidth < viewWidth)
+        {
+            fillCol.setPreferredWidth(viewWidth - normWidth);
+        }
+        else
+        {
+            fillCol.setPreferredWidth(0);
+        }
+    }
+
+    public static class IntRenderer extends DefaultTableCellRenderer
+    {
+        public IntRenderer()
+        {
+            super();
+            setHorizontalAlignment(JLabel.RIGHT);
+        }
+
+        @Override
+        protected void setValue(Object value)
+        {
+            setText((value == null) ? "" : _intFormatter.format(value));
+        }
+    }
+
+    private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
+
+
+
 }

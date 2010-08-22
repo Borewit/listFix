@@ -105,7 +105,7 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 		pack();
 	}
 
-	public void setProgress(int progress)
+	public void reportProgress(int progress)
 	{
 		if (progress < 0)
 		{
@@ -125,7 +125,12 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 		}
 	}
 
-	private final void paintImmediately(Component c)
+    public void reportProgress(int progress, Object state)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+	private void paintImmediately(Component c)
 	{
 		Graphics gc = c.getGraphics();
 		if (gc != null)
@@ -135,7 +140,7 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 		}
 	}
 
-	private final void sleep(int sec)
+	private void sleep(int sec)
 	{
 		try
 		{

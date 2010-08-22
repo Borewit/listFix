@@ -20,18 +20,12 @@
 
 package listfix.model;
 
-import java.io.*;
+import java.io.File;
 
 public class MatchedPlaylistEntry
 {
 	private PlaylistEntry thisEntry = null;
 	private int score = 0;
-
-	public MatchedPlaylistEntry(String path, String fileName, int c)
-	{
-		thisEntry = new PlaylistEntry(path, fileName, "");
-		score = c;
-	}
 
 	public MatchedPlaylistEntry(File f, int c)
 	{

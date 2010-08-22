@@ -20,37 +20,74 @@
 
 package listfix.model;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import listfix.controller.tasks.OpenPlaylistTask;
 import listfix.io.FileLauncher;
+import listfix.io.FileWriter;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
+import listfix.util.FileNameTokenizer;
+import listfix.util.UnicodeUtils;
+import listfix.view.support.IPlaylistModifiedListener;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
 
 public class Playlist
 {
-	private File file;
-	private Vector<PlaylistEntry> entries = new Vector<PlaylistEntry>();
-	private Vector<PlaylistEntry> originalEntries = new Vector<PlaylistEntry>();
+	private File _file;
+	private List<PlaylistEntry> entries = new ArrayList<PlaylistEntry>();
+	private List<PlaylistEntry> originalEntries = new ArrayList<PlaylistEntry>();
 	private boolean utfFormat = false;
 	private PlaylistType type = PlaylistType.UNKNOWN;
 
-	// Represents a new, empty, unsaved playlist
-	public Playlist()
+	/**
+	 * @return the type
+	 */
+	public PlaylistType getType()
 	{
+		return type;
 	}
 
-	public Playlist(File playlist, OpenPlaylistTask task)
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(PlaylistType type)
+	{
+		this.type = type;
+	}
+
+	private void init(File playlist, IProgressObserver observer)
 	{
 		try
 		{
 			IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist);
 			utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
-			file = playlist;
-			this.setEntries(playlistProcessor.readPlaylist(task));
-			type = playlistProcessor.ListType;
+			_file = playlist;
+			if (observer != null)
+			{
+				this.setEntries(playlistProcessor.readPlaylist(observer));
+			}
+			else
+			{
+				this.setEntries(playlistProcessor.readPlaylist());
+			}
+			type = playlistProcessor.getPlaylistType();
+			_isModified = false;
+			refreshStatus();
 		}
 		catch (IOException e)
 		{
@@ -58,39 +95,64 @@ public class Playlist
 		}
 	}
 
-	public Playlist(File playlist)
+	public enum SortIx
 	{
-		try
-		{
-			IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist);
-			utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
-			file = playlist;
-			this.setEntries(playlistProcessor.readPlaylist());
-			type = playlistProcessor.ListType;
+		None,
+		Filename,
+		Path,
+		Status,
+		Random,
+		Reverse
+	}
 
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+	public Playlist(File playlist, IProgressObserver observer) throws IOException
+	{
+		init(playlist, observer);
 	}
 
 	public File getFile()
 	{
-		return file;
+		return _file;
 	}
 
 	public void setFile(File file)
 	{
-		this.file = file;
+		this._file = file;
 	}
 
-	public Vector<PlaylistEntry> getEntries()
+	public void addModifiedListener(IPlaylistModifiedListener listener)
 	{
-		return entries;
+		_listeners.add(listener);
+		firePlaylistModified();
 	}
 
-	public void setEntries(Vector<PlaylistEntry> aEntries)
+	public void removeModifiedListener(IPlaylistModifiedListener listener)
+	{
+		_listeners.remove(listener);
+		firePlaylistModified();
+	}
+
+	public List<IPlaylistModifiedListener> getModifiedListeners()
+	{
+		return _listeners;
+	}
+
+	private void firePlaylistModified()
+	{
+		refreshStatus();
+		for (IPlaylistModifiedListener listener : _listeners)
+		{
+			listener.playlistModified(this);
+		}
+	}
+
+	List<IPlaylistModifiedListener> _listeners = new ArrayList<IPlaylistModifiedListener>();
+
+//	public List<PlaylistEntry> getEntries()
+//	{
+//		return entries;
+//	}
+	private void setEntries(List<PlaylistEntry> aEntries)
 	{
 		// TODO: Somehow track this part of the task
 		entries = aEntries;
@@ -101,12 +163,7 @@ public class Playlist
 		}
 	}
 
-	public void updateEntries(Vector<PlaylistEntry> aEntries)
-	{
-		entries = aEntries;
-	}
-
-	public int getEntryCount()
+	public int size()
 	{
 		return entries.size();
 	}
@@ -153,77 +210,112 @@ public class Playlist
 		return result;
 	}
 
-	public int getURLCount()
+	private void refreshStatus()
 	{
-		int result = 0;
-		int size = this.getEntryCount();
-		for (int i = 0; i < size; i++)
+		if (originalEntries.size() != entries.size())
 		{
-			PlaylistEntry tempEntry = entries.elementAt(i);
-			if (tempEntry.isURL())
+			_isModified = true;
+		}
+
+		_urlCount = 0;
+		_missingCount = 0;
+		_fixedCount = 0;
+
+		for (int ix = 0; ix < entries.size(); ix++)
+		{
+			PlaylistEntry entry = entries.get(ix);
+			boolean entryIsUrl = entry.isURL();
+			if (entryIsUrl)
 			{
-				result++;
+				_urlCount++;
+			}
+			else if (!entry.isFound())
+			{
+				_missingCount++;
+			}
+			if (entry.isFixed())
+			{
+				_fixedCount++;
+			}
+
+			if (!isModified())
+			{
+				PlaylistEntry origEntry = originalEntries.get(ix);
+				boolean origIsUrl = origEntry.isURL();
+				if (entryIsUrl == origIsUrl)
+				{
+					if (!entryIsUrl)
+					{
+						if (!entry.getFile().getPath().equalsIgnoreCase(origEntry.getFile().getPath()))
+						{
+							_isModified = true;
+						}
+					}
+					else
+					{
+						if (!entry.getURI().equals(origEntry.getURI()))
+						{
+							_isModified = true;
+						}
+					}
+				}
+				else
+				{
+					_isModified = true;
+				}
 			}
 		}
-		return result;
+
 	}
 
-	public int getLostEntryCount()
+	public int getFixedCount()
 	{
-		int result = 0;
-		int size = this.getEntryCount();
-		for (int i = 0; i < size; i++)
-		{
-			PlaylistEntry tempEntry = entries.elementAt(i);
-			if (!tempEntry.isFound() && !tempEntry.isURL()) // && (tempEntry.skipExistsCheck() || !tempEntry.exists()))
-			{
-				result++;
-			}
-		}
-		return result;
+		return _fixedCount;
 	}
+
+	public int getUrlCount()
+	{
+		return _urlCount;
+	}
+
+	public int getMissingCount()
+	{
+		return _missingCount;
+	}
+
+	public boolean isModified()
+	{
+		return _isModified;
+	}
+
+	private int _fixedCount;
+	private int _urlCount;
+	private int _missingCount;
+	private boolean _isModified;
 
 	public String getFilename()
 	{
-		if (file == null)
+		if (_file == null)
 		{
 			return "";
 		}
-		return file.getName();
+		return _file.getName();
 	}
 
-	public boolean isListEmpty()
+	public boolean isEmpty()
 	{
-		return this.getEntryCount() == 0;
+		return entries.isEmpty();
 	}
 
 	public void play()
 	{
 		try
 		{
-			FileLauncher.launch(file);
+			FileLauncher.launch(_file);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-		}
-	}
-
-	public void batchRepair(String[] fileList)
-	{
-		for (PlaylistEntry entry : entries)
-		{
-			if (!entry.isURL())
-			{
-				if (entry.exists())
-				{
-					entry.setMessage("Found!");
-				}
-				else
-				{
-					entry.findNewLocationFromFileList(fileList);
-				}
-			}
 		}
 	}
 
@@ -237,19 +329,480 @@ public class Playlist
 		this.utfFormat = utfFormat;
 	}
 
-	/**
-	 * @return the type
-	 */
-	public PlaylistType getType()
+	public void replace(int index, PlaylistEntry newEntry)
 	{
-		return type;
+		entries.set(index, newEntry);
+		firePlaylistModified();
 	}
 
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(PlaylistType type)
+	public void moveUp(int[] indexes)
 	{
-		this.type = type;
+		Arrays.sort(indexes);
+		int ceiling = 0;
+		for (int ix = 0; ix < indexes.length; ix++)
+		{
+			int rowIx = indexes[ix];
+			if (rowIx != ceiling)
+			{
+				Collections.swap(entries, rowIx, rowIx - 1);
+				indexes[ix] = rowIx - 1;
+			}
+			else
+			{
+				ceiling++;
+			}
+		}
+		firePlaylistModified();
+	}
+
+	public void moveTo(int initialPos, int finalPos)
+	{
+		PlaylistEntry temp = entries.get(initialPos);
+		entries.remove(initialPos);
+		entries.add(finalPos, temp);
+		firePlaylistModified();
+	}
+
+	public void moveDown(int[] indexes)
+	{
+		Arrays.sort(indexes);
+		int floor = entries.size() - 1;
+		for (int ix = indexes.length - 1; ix >= 0; ix--)
+		{
+			int rowIx = indexes[ix];
+			if (rowIx != floor)
+			{
+				Collections.swap(entries, rowIx, rowIx + 1);
+				indexes[ix] = rowIx + 1;
+			}
+			else
+			{
+				floor--;
+			}
+		}
+		firePlaylistModified();
+	}
+
+	public int add(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+	{
+		List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
+		entries.addAll(newEntries);
+		firePlaylistModified();
+		return newEntries.size();
+	}
+
+	public int add(int ix, File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+	{
+		List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
+		entries.addAll(ix + 1, newEntries);
+		firePlaylistModified();
+		return newEntries.size();
+	}
+
+	private List<PlaylistEntry> getEntriesForFiles(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+	{
+		ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(files.length);
+
+		List<PlaylistEntry> ents = new ArrayList<PlaylistEntry>();
+		for (File file : files)
+		{
+			progress.stepCompleted();
+
+			if (Playlist.isPlaylist(file))
+			{
+				// playlist file
+				IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file);
+				ents.addAll(reader.readPlaylist());
+			}
+			else
+			{
+				// regular file
+				ents.add(new PlaylistEntry(file, null));
+			}
+		}
+		return ents;
+	}
+
+	public void changeEntryFileName(int ix, String newName)
+	{
+		entries.get(ix).setFileName(newName);
+		entries.get(ix).markFixedIfFound();
+		firePlaylistModified();
+	}
+
+	// returns positions of repaired rows
+	public List<Integer> repair(String[] librayFiles, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(entries.size());
+
+		List<Integer> fixed = new ArrayList<Integer>();
+		for (int ix = 0; ix < entries.size(); ix++)
+		{
+			progress.stepCompleted();
+
+			PlaylistEntry entry = entries.get(ix);
+			if (!entry.isFound() && !entry.isURL())
+			{
+				entry.findNewLocationFromFileList(librayFiles);
+				if (entry.isFound())
+				{
+					fixed.add(ix);
+				}
+			}
+		}
+
+		if (!fixed.isEmpty())
+		{
+			firePlaylistModified();
+		}
+		return fixed;
+	}
+
+	// similar to repair, but doesn't return repaired row information
+	public void batchRepair(String[] fileList, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(entries.size());
+
+		boolean isModified = false;
+		for (PlaylistEntry entry : entries)
+		{
+			progress.stepCompleted();
+
+			if (!entry.isFound() && !entry.isURL())
+			{
+				entry.findNewLocationFromFileList(fileList);
+				if (!isModified && entry.isFound())
+				{
+					isModified = true;
+				}
+			}
+		}
+
+		if (isModified)
+		{
+			firePlaylistModified();
+		}
+	}
+
+	public List<BatchMatchItem> findClosestMatches(String[] librayFiles, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(entries.size());
+
+		List<BatchMatchItem> fixed = new ArrayList<BatchMatchItem>();
+		for (int ix = 0; ix < entries.size(); ix++)
+		{
+			progress.stepCompleted();
+
+			PlaylistEntry entry = entries.get(ix);
+			if (!entry.isFound() && !entry.isURL())
+			{
+				List<MatchedPlaylistEntry> matches = entry.findClosestMatches(librayFiles, null);
+				if (!matches.isEmpty())
+				{
+					fixed.add(new BatchMatchItem(ix, entry, matches));
+				}
+			}
+		}
+
+		return fixed;
+	}
+
+	public List<Integer> applyClosestMatchSelections(List<BatchMatchItem> items)
+	{
+		List<Integer> fixed = new ArrayList<Integer>();
+		for (BatchMatchItem item : items)
+		{
+			if (item.getSelectedIx() >= 0)
+			{
+				int ix = item.getEntryIx();
+				fixed.add(ix);
+				entries.set(ix, item.getSelectedMatch().getPlaylistFile());
+				entries.get(ix).markFixedIfFound();
+			}
+		}
+
+		if (!fixed.isEmpty())
+		{
+			firePlaylistModified();
+		}
+		return fixed;
+	}
+
+	public PlaylistEntry get(int index)
+	{
+		return entries.get(index);
+	}
+
+	public void remove(int[] indexes)
+	{
+		Arrays.sort(indexes);
+		for (int ix = indexes.length - 1; ix >= 0; ix--)
+		{
+			int rowIx = indexes[ix];
+			entries.remove(rowIx);
+		}
+		firePlaylistModified();
+	}
+
+	public void reorder(SortIx sortIx, boolean isDescending)
+	{
+		switch (sortIx)
+		{
+			case Filename:
+			case Path:
+			case Status:
+				Collections.sort(entries, new EntryComparator(sortIx, isDescending));
+				break;
+
+			case Random:
+				Collections.shuffle(entries);
+				break;
+
+			case Reverse:
+				Collections.reverse(entries);
+				break;
+		}
+		firePlaylistModified();
+	}
+
+	private static class EntryComparator implements Comparator<PlaylistEntry>
+	{
+		public EntryComparator(SortIx sortIx, boolean isDescending)
+		{
+			_sortIx = sortIx;
+			_isDescending = isDescending;
+		}
+		final SortIx _sortIx;
+		final boolean _isDescending;
+
+		public int compare(PlaylistEntry lhs, PlaylistEntry rhs)
+		{
+			int rc = 0;
+
+			switch (_sortIx)
+			{
+				case Filename:
+					rc = lhs.getFileName().compareToIgnoreCase(rhs.getFileName());
+					break;
+				case Path:
+					rc = lhs.getPath().compareToIgnoreCase(rhs.getPath());
+					break;
+				case Status:
+					boolean lhsOk = lhs.isFound() || lhs.isURL();
+					boolean rhsOk = rhs.isFound() || rhs.isURL();
+					if (lhsOk == rhsOk)
+					{
+						rc = 0;
+					}
+					else if (lhsOk)
+					{
+						rc = 1;
+					}
+					else if (rhsOk)
+					{
+						rc = -1;
+					}
+					break;
+			}
+
+			return _isDescending ? -rc : rc;
+		}
+	}
+	// TODO: track progress? [this is O(n), so it might not need it]
+
+	public int removeDuplicates()
+	{
+		int removed = 0;
+		Set<String> found = new HashSet<String>();
+		for (int ix = 0; ix < entries.size();)
+		{
+			PlaylistEntry entry = entries.get(ix);
+			String name = entry.getFileName();
+			if (found.contains(name))
+			{
+				// duplicate found, remove
+				entries.remove(ix);
+				removed++;
+			}
+			else
+			{
+				found.add(name);
+				ix++;
+			}
+		}
+		if (removed > 0)
+		{
+			firePlaylistModified();
+		}
+		return removed;
+	}
+
+	public int removeMissing()
+	{
+		int removed = 0;
+		for (int ix = entries.size() - 1; ix >= 0; ix--)
+		{
+			PlaylistEntry entry = entries.get(ix);
+			if (!entry.isFound())
+			{
+				entries.remove(ix);
+				removed++;
+			}
+		}
+		if (removed > 0)
+		{
+			firePlaylistModified();
+		}
+		return removed;
+	}
+	private static final String br = System.getProperty("line.separator");
+
+	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws IOException
+	{
+		_file = destination;
+		save(saveRelative, observer);
+	}
+
+	public void save(boolean saveRelative, IProgressObserver observer) throws IOException
+	{
+		// avoid resetting total if part of batch operation
+		boolean hasTotal = observer instanceof ProgressAdapter;
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		if (!hasTotal)
+		{
+			progress.setTotal(entries.size());
+		}
+
+		if (getType() == PlaylistType.M3U)
+		{
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("#EXTM3U").append(br);
+			for (int i = 0; i < entries.size(); i++)
+			{
+				progress.stepCompleted();
+				PlaylistEntry entry = entries.get(i);
+
+				if (!entry.isURL())
+				{
+					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
+					{
+						// replace existing relative entry with a new absolute one
+						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf());
+						entries.set(i, entry);
+					}
+					else if (saveRelative && !entry.isRelative() && !entry.isURL())
+					{
+						// replace existing absolute entry with a new relative one
+						String relativePath = FileWriter.getRelativePath(entry.getFile().getAbsoluteFile(), _file);
+						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf());
+						entries.set(i, entry);
+					}
+				}
+
+				buffer.append(entry.toM3UString()).append(br);
+			}
+
+			// TODO: remove saveRelative check?
+			if (!saveRelative)
+			{
+				File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
+				if (!dirToSaveIn.exists())
+				{
+					dirToSaveIn.mkdirs();
+				}
+			}
+
+			FileOutputStream outputStream = new FileOutputStream(_file);
+			if (isUtfFormat() || _file.getName().toLowerCase().endsWith("m3u8"))
+			{
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				BufferedWriter output = new BufferedWriter(osw);
+				output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+				output.close();
+				outputStream.close();
+				setUtfFormat(true);
+			}
+			else
+			{
+				BufferedOutputStream output = new BufferedOutputStream(outputStream);
+				output.write(buffer.toString().getBytes());
+				output.close();
+				outputStream.close();
+				setUtfFormat(false);
+			}
+		}
+		else if (getType() == PlaylistType.PLS)
+		{
+			PlaylistEntry tempEntry = null;
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("[playlist]").append(br);
+			for (int i = 0; i < entries.size(); i++)
+			{
+				tempEntry = entries.get(i);
+				if (!saveRelative && tempEntry.isRelative() && tempEntry.getAbsoluteFile() != null)
+				{
+					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength());
+					entries.set(i, tempEntry);
+				}
+				else if (saveRelative && !tempEntry.isRelative() && !tempEntry.isURL())
+				{
+					// replace existing absolute entry with a new relative one
+					String relativePath = FileWriter.getRelativePath(tempEntry.getFile().getAbsoluteFile(), _file);
+					tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf());
+					entries.set(i, tempEntry);
+				}
+				buffer.append(tempEntry.toPLSString(i + 1));
+			}
+
+			buffer.append("NumberOfEntries=").append(entries.size()).append(br);
+			buffer.append("Version=2");
+
+			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
+			if (!dirToSaveIn.exists())
+			{
+				dirToSaveIn.mkdirs();
+			}
+
+			if (isUtfFormat())
+			{
+				FileOutputStream outputStream = new FileOutputStream(_file);
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				BufferedWriter output = new BufferedWriter(osw);
+				output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+				output.close();
+				outputStream.close();
+				setUtfFormat(true);
+			}
+			else
+			{
+				FileOutputStream outputStream = new FileOutputStream(_file);
+				BufferedOutputStream output = new BufferedOutputStream(outputStream);
+				output.write(buffer.toString().getBytes());
+				output.close();
+				outputStream.close();
+				setUtfFormat(false);
+			}
+		}
+
+		// change original entries
+		setEntries(entries);
+		_isModified = false;
+		firePlaylistModified();
+	}
+
+	public void reload(IProgressObserver observer)
+	{
+		init(_file, observer);
+		firePlaylistModified();
+	}
+
+	public static boolean isPlaylist(File input)
+	{
+		String lowerCaseExtension = FileNameTokenizer.getExtensionFromFileName(input.getName()).toLowerCase();
+		return lowerCaseExtension.equals("m3u") || lowerCaseExtension.equals("m3u8") || lowerCaseExtension.equals("pls");
 	}
 }

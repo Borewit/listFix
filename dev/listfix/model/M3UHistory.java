@@ -24,12 +24,13 @@ package listfix.model;
  *
  * @author  jcaron
  */
-import java.util.Vector;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class M3UHistory
 {
-	private Vector<String> playlists = new Vector<String>();
+	private List<String> playlists = new ArrayList<String>();
 	private int limit = 0;
 
 	/** Creates a new instance of M3UHistory */
@@ -43,7 +44,7 @@ public class M3UHistory
 		limit = maxPlaylistHistoryEntries;
 		if (limit < playlists.size())
 		{
-			playlists.setSize(limit);
+            ((ArrayList)playlists).subList(limit, playlists.size()).clear();
 		}
 	}
 
@@ -52,7 +53,7 @@ public class M3UHistory
 		return limit;
 	}
 
-	protected Vector<String> getPlaylists() // added to assist testing
+	protected List<String> getPlaylists() // added to assist testing
 	{
 		return playlists;
 	}
@@ -80,18 +81,18 @@ public class M3UHistory
 			if (index > -1)
 			{
 				String temp = playlists.remove(index);
-				playlists.insertElementAt(temp, 0);
+				playlists.add(0, temp);
 			}
 			else
 			{
 				if (playlists.size() < limit)
 				{
-					playlists.insertElementAt(filename, 0);
+					playlists.add(0, filename);
 				}
 				else
 				{
-					playlists.removeElementAt(limit - 1);
-					playlists.insertElementAt(filename, 0);
+					playlists.remove(limit - 1);
+					playlists.add(0, filename);
 				}
 			}
 		}
@@ -102,7 +103,7 @@ public class M3UHistory
 		String[] result = new String[playlists.size()];
 		for (int i = 0; i < playlists.size(); i++)
 		{
-			result[i] = (String) playlists.elementAt(i);
+			result[i] = (String) playlists.get(i);
 		}
 		return result;
 	}

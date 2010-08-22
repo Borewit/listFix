@@ -21,10 +21,11 @@
 package listfix.io;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistType;
+import listfix.view.support.IProgressObserver;
 
 /**
  *
@@ -32,11 +33,12 @@ import listfix.model.PlaylistType;
  */
 public interface IPlaylistReader
 {
-	public static final PlaylistType ListType = PlaylistType.UNKNOWN;
-
 	public String getEncoding();
 	public void setEncoding(String encoding);
 
-	Vector<PlaylistEntry> readPlaylist(Task input) throws IOException;
-	Vector<PlaylistEntry> readPlaylist() throws IOException;
+	public PlaylistType getPlaylistType();
+
+	List<PlaylistEntry> readPlaylist(Task input) throws IOException;
+	List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
+	List<PlaylistEntry> readPlaylist() throws IOException;
 }

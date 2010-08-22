@@ -24,20 +24,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Vector;
 
 import listfix.model.*;
 import listfix.io.*;
 
 public class CopyFilesTask extends listfix.controller.Task
 {
-	private Vector<PlaylistEntry> files;
+	private Playlist list;
 	private File destination;
 
 	/** Creates new CopyFilesTask */
-	public CopyFilesTask(Vector<PlaylistEntry> x, File y)
+	public CopyFilesTask(Playlist x, File y)
 	{
-		files = x;
+		list = x;
 		destination = y;
 	}
 
@@ -49,9 +48,9 @@ public class CopyFilesTask extends listfix.controller.Task
 		File fileToCopy = null;
 		File dest = null;
 		String fs = System.getProperty("file.separator");
-		for (int i = 0; i < files.size(); i++)
+		for (int i = 0; i < list.size(); i++)
 		{
-			tempEntry = files.elementAt(i);
+			tempEntry = list.get(i);
 			if (!tempEntry.isURL())
 			{
 				fileToCopy = tempEntry.getAbsoluteFile();
@@ -69,7 +68,7 @@ public class CopyFilesTask extends listfix.controller.Task
 					}
 				}
 			}
-			this.notifyObservers((int) ((double) i / (double) (files.size() - 1) * 100.0));
+			this.notifyObservers((int) ((double) i / (double) (list.size() - 1) * 100.0));
 		}
 	}
 }

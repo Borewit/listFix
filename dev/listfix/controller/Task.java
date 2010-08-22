@@ -20,19 +20,19 @@
 
 package listfix.controller;
 
+import java.util.ArrayList;
 import listfix.view.support.*;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 public abstract class Task extends Thread
 {
-	private Vector<IProgressObserver> observers;
+	private List<IProgressObserver> observers;
 	private int progress = 0;
 
 	public Task()
 	{
-		observers = new Vector<IProgressObserver>();
+		observers = new ArrayList<IProgressObserver>();
 	}
 
 	@Override
@@ -40,12 +40,12 @@ public abstract class Task extends Thread
 
 	public final void addProgressObserver(IProgressObserver observer)
 	{
-		observers.addElement(observer);
+		observers.add(observer);
 	}
 
 	public final void removeProgressObserver(IProgressObserver observer)
 	{
-		observers.removeElement(observer);
+		observers.remove(observer);
 	}
 
 	public final void notifyObservers(int percent)
@@ -60,11 +60,8 @@ public abstract class Task extends Thread
 		}
 		progress = percent;
 
-		Enumeration<IProgressObserver> e = observers.elements();
-		while (e.hasMoreElements())
-		{
-			e.nextElement().setProgress(percent);
-		}
+        for (IProgressObserver observer : observers)
+            observer.reportProgress(percent);
 	}
 
 	public int getProgress()
@@ -74,10 +71,7 @@ public abstract class Task extends Thread
 
 	public void setMessage(String message)
 	{
-		Enumeration<IProgressObserver> e = observers.elements();
-		while (e.hasMoreElements())
-		{
-			((ProgressPopup) e.nextElement()).setMessage(message);
-		}
+        for (IProgressObserver e : observers)
+            ((ProgressPopup)e).setMessage(message);
 	}
 }

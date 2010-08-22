@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2009 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ package listfix.io;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     M3UFileFilter.java
+= File:     PlaylistFileFilter.java
 = Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
 ============================================================================
  */
@@ -32,7 +32,7 @@ public class PlaylistFileFilter implements java.io.FileFilter
 	@Override
 	public boolean accept(java.io.File file)
 	{
-		return (file.getName().toLowerCase().endsWith(".m3u") 
+		return (file.getName().toLowerCase().endsWith(".m3u")
 			|| file.getName().toLowerCase().endsWith(".m3u8")
 			|| file.getName().toLowerCase().endsWith(".pls")
 			|| file.isDirectory());

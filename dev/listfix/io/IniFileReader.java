@@ -27,8 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import listfix.model.AppOptions;
 import listfix.model.AppOptionsEnum;
@@ -109,18 +110,18 @@ public class IniFileReader
 
 	public void readIni() throws Exception
 	{
-		Vector<String> tempVector = new Vector<String>();
+		List<String> tempVector = new ArrayList<String>();
 		// Read in base media directories
 		// skip first line, contains header
 		String line = B1.readLine();
 		line = B1.readLine();
 		while ((line != null) && (!line.startsWith("[")))
 		{
-			tempVector.addElement(line);
+			tempVector.add(line);
 			line = B1.readLine();
 		}
 		mediaDirs = new String[tempVector.size()];
-		tempVector.copyInto(mediaDirs);
+		tempVector.toArray(mediaDirs);
 		tempVector.clear();
 
 		// Read in app options, but only if the file contains them in this spot...
@@ -177,11 +178,11 @@ public class IniFileReader
 		line = B1.readLine();
 		while ((line != null) && (!line.startsWith("[")))
 		{
-			tempVector.addElement(line);
+			tempVector.add(line);
 			line = B1.readLine();
 		}
 		mediaLibrary = new String[tempVector.size()];
-		tempVector.copyInto(mediaLibrary);
+		tempVector.toArray(mediaLibrary);
 		tempVector.clear();
 
 		// Read in media library files
@@ -189,11 +190,11 @@ public class IniFileReader
 		line = B1.readLine();
 		while (line != null)
 		{
-			tempVector.addElement(line);
+			tempVector.add(line);
 			line = B1.readLine();
 		}
 		mediaLibraryFiles = new String[tempVector.size()];
-		tempVector.copyInto(mediaLibraryFiles);
+		tempVector.toArray(mediaLibraryFiles);
 		tempVector.clear();
 
 		// Read in history...
@@ -201,11 +202,11 @@ public class IniFileReader
 		line = B2.readLine();
 		while (line != null)
 		{
-			tempVector.addElement(line);
+			tempVector.add(line);
 			line = B2.readLine();
 		}
 		history = new String[tempVector.size()];
-		tempVector.copyInto(history);
+		tempVector.toArray(history);
 		tempVector.clear();
 	}
 

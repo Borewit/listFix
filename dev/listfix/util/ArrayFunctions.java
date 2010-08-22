@@ -28,7 +28,7 @@ package listfix.util;
 =           several which mimic Vector functionality.
 ============================================================================
  */
-import java.util.Vector;
+import java.util.List;
 
 public class ArrayFunctions
 {
@@ -157,7 +157,7 @@ public class ArrayFunctions
 		return result;
 	}
 
-	public static boolean ContainsStringWithPrefix(Vector<String> a, String b, boolean ignoreCase)
+	public static boolean ContainsStringWithPrefix(List<String> a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
 		if (a != null && a.size() > 0)
@@ -175,13 +175,13 @@ public class ArrayFunctions
 		return result;
 	}
 
-	public static String[] convertVectorToStringArray(Vector<Object> v)
+	public static String[] convertVectorToStringArray(List<Object> v)
 	{
 		int size = v.size();
 		String[] result = new String[size];
 		for (int i = 0; i < size; i++)
 		{
-			result[i] = v.elementAt(i).toString();
+			result[i] = v.get(i).toString();
 		}
 		return result;
 	}

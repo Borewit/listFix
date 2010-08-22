@@ -24,7 +24,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -38,13 +38,13 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 	public static final int OK = 0;
 	public static final int CANCEL = 1;
 	private static final long serialVersionUID = -5374761780814261291L;
-	private Vector<MatchedPlaylistEntry> matchData;
+	private List<MatchedPlaylistEntry> matchData;
 	private int choice = -1;
 	private int resultCode = CANCEL;
 	private MatchedFileTableModel tableModel = null;
 
 	/** Creates new form ClosestMatchChooserDialog */
-	public ClosestMatchChooserDialog(java.awt.Frame parent, Vector<MatchedPlaylistEntry> matches, boolean modal)
+	public ClosestMatchChooserDialog(java.awt.Frame parent, List<MatchedPlaylistEntry> matches, boolean modal)
 	{
 		super(parent, modal);
 		matchData = matches;
@@ -89,6 +89,15 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 		super.setVisible(visible);
 	}
 
+    private String getRowToolTip(MouseEvent e)
+    {
+        int rowIx = resultsTable.rowAtPoint(e.getPoint());
+        if (rowIx >= 0)
+            return ((MatchedFileTableModel)resultsTable.getModel()).vectorData.get(rowIx).getPlaylistFile().getPath();
+        else
+            return null;
+    }
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -106,7 +115,8 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
             //Implement table cell tool tips.
             public String getToolTipText(MouseEvent e)
             {
-                return ((MatchedFileTableModel)this.getModel()).vectorData.get(rowAtPoint(e.getPoint())).getPlaylistFile().getPath();
+                //return ((MatchedFileTableModel)this.getModel()).vectorData.get(rowAtPoint(e.getPoint())).getPlaylistFile().getPath();
+                return getRowToolTip(e);
             }
         }
 
@@ -132,7 +142,7 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         resultsTable.setModel(tableModel);
         resultsTable.setFillsViewportHeight(true);
-        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        resultsTable.setFont(new java.awt.Font("Verdana", 0, 9));
         resultsTable.setRowHeight(20);
         resultsTable.setShowHorizontalLines(false);
         resultsTable.setShowVerticalLines(false);

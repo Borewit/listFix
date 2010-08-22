@@ -20,7 +20,8 @@
 
 package listfix.view.support;
 
-public interface IProgressObserver
+public interface IProgressObserver<T>
 {
-	public void setProgress(int progress);
+	public void reportProgress(int progress);
+    public void reportProgress(int progress, T state);
 }

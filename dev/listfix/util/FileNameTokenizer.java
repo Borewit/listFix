@@ -20,11 +20,16 @@
 
 package listfix.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
 
 public class FileNameTokenizer
 {
-	public static final Vector<String> ignoreList = new Vector<String>();
+	public static final List<String> ignoreList = new ArrayList<String>();
 
 	static
 	{
@@ -43,7 +48,7 @@ public class FileNameTokenizer
 		return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
 	}
 
-	private static String removeExtensionFromFileName(String name)
+	public static String removeExtensionFromFileName(String name)
 	{
 		String result = name;
 		int index = name.lastIndexOf(".");
@@ -54,12 +59,21 @@ public class FileNameTokenizer
 		return result;
 	}
 
-	private static Vector<String> splitFileName(String fileName)
+    public static String getExtensionFromFileName(String name)
+    {
+        int ix = name.lastIndexOf('.');
+        if (ix >= 0 && ix < name.length() - 1)
+            return name.substring(ix + 1);
+        else
+            return null;
+    }
+
+	private static List<String> splitFileName(String fileName)
 	{
 		fileName = removeExtensionFromFileName(fileName);
 		StringTokenizer tokenMaker = new StringTokenizer(fileName, " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;");
 		int tokenCount = tokenMaker.countTokens();
-		Vector<String> result = new Vector<String>();
+		List<String> result = new ArrayList<String>();
 		for (int i = 0; i < tokenCount; i++)
 		{
 			String token = tokenMaker.nextToken();
@@ -71,7 +85,7 @@ public class FileNameTokenizer
 		return result;
 	}
 
-	private static int scoreMatchingTokens(Vector<String> array1, Vector<String> array2)
+	private static int scoreMatchingTokens(List<String> array1, List<String> array2)
 	{
 		HashMap<String, Integer> array1Counts = new HashMap<String, Integer>();
 		HashMap<String, Integer> array2Counts = new HashMap<String, Integer>();
