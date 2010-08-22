@@ -180,6 +180,9 @@ public class M3UReader implements IPlaylistReader
 						line2 = readLine();
 					}
 				}
+
+				progress.setCompleted(_cache.toString().getBytes().length);
+
 				while (line1 != null)
 				{
                     progress.setCompleted(_cache.toString().getBytes().length);
@@ -202,6 +205,7 @@ public class M3UReader implements IPlaylistReader
 							}
 						}
 					}
+					progress.setCompleted(_cache.toString().getBytes().length);
 				}
 			}
 		}

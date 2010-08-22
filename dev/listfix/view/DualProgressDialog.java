@@ -1,3 +1,22 @@
+/*
+ * listFix() - Fix Broken Playlists!
+ *
+ * This file is part of listFix().
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, please see http://www.gnu.org/licenses/
+ */
+
 package listfix.view;
 
 import java.awt.Container;
@@ -26,8 +45,8 @@ public class DualProgressDialog extends JDialog
         setResizable(false);
         pane.setLayout(new java.awt.GridBagLayout());
 
-        
         _taskLabel.setText(taskMsg);
+		_taskLabel.setFont(new java.awt.Font("Verdana", 0, 9));
         gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
@@ -42,6 +61,7 @@ public class DualProgressDialog extends JDialog
         pane.add(_taskProgress, gbc);
 
         _overallLabel.setText(overallMsg);
+		_overallLabel.setFont(new java.awt.Font("Verdana", 0, 9));
         gbc = new java.awt.GridBagConstraints();
         gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;

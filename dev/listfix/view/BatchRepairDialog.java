@@ -1,3 +1,21 @@
+/*
+ * listFix() - Fix Broken Playlists!
+ *
+ * This file is part of listFix().
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, please see http://www.gnu.org/licenses/
+ */
 
 package listfix.view;
 
@@ -36,6 +54,9 @@ public class BatchRepairDialog extends javax.swing.JDialog
         getRootPane().setDefaultButton(_btnSave);
         _txtBackup.setText(_batch.getDefaultBackupName());
 
+		_uiLists.setShowHorizontalLines(false);
+		_uiLists.setShowVerticalLines(false);
+		_uiLists.getTableHeader().setFont(new Font("Verdana", 0, 9));
 
         // load and repair lists
         final DualProgressDialog pd = new DualProgressDialog(parent, "Please wait...", "Loading Batch Repairs...");
@@ -158,6 +179,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        _chkBackup.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _chkBackup.setText("Backup original files to zip file:");
         _chkBackup.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -165,6 +187,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
+        _txtBackup.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _txtBackup.setEnabled(false);
 
         _btnCancel.setText("Cancel");
@@ -174,6 +197,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
+        _btnSave.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _btnSave.setText("Save Repairs");
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -200,7 +224,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
                 .addComponent(_txtBackup, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(_btnBrowse)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
                 .addComponent(_btnSave)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(_btnCancel)
@@ -228,6 +252,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         jLabel1.setText("Playlist details");
         jPanel3.add(jLabel1);
 
@@ -240,8 +265,10 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel4.setLayout(new java.awt.BorderLayout());
 
+        jPanel5.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
+        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         jLabel2.setText("Playlists");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -267,6 +294,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         _uiLists.setAutoCreateRowSorter(true);
         _uiLists.setModel(new PlaylistsTableModel());
         _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        _uiLists.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiLists.getTableHeader().setReorderingAllowed(false);
         _uiScrollLists.setViewportView(_uiLists);
 

@@ -1,3 +1,22 @@
+/*
+ * listFix() - Fix Broken Playlists!
+ *
+ * This file is part of listFix().
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, please see http://www.gnu.org/licenses/
+ */
+
 package listfix.view;
 
 import listfix.model.Playlist;
@@ -93,6 +112,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.GridLayout(6, 1));
 
         buttonGroup1.add(_rbRandom);
+        _rbRandom.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _rbRandom.setText("Random");
         _rbRandom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -102,6 +122,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbRandom);
 
         buttonGroup1.add(_rbReverse);
+        _rbReverse.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _rbReverse.setText("Reverse current order");
         _rbReverse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -111,6 +132,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbReverse);
 
         buttonGroup1.add(_rbFilename);
+        _rbFilename.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _rbFilename.setText("Filename");
         _rbFilename.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -120,6 +142,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbFilename);
 
         buttonGroup1.add(_rbPath);
+        _rbPath.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _rbPath.setText("Path");
         _rbPath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -129,6 +152,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbPath);
 
         buttonGroup1.add(_rbStatus);
+        _rbStatus.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _rbStatus.setText("Status");
         _rbStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -137,6 +161,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         });
         jPanel1.add(_rbStatus);
 
+        _chkDescending.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _chkDescending.setText("Descending");
         _chkDescending.setEnabled(false);
         jPanel1.add(_chkDescending);
@@ -145,6 +170,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
+        jButton1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         jButton1.setText("Change Order");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -153,6 +179,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         });
         jPanel2.add(jButton1);
 
+        jButton2.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

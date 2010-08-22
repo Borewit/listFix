@@ -1,3 +1,21 @@
+/*
+ * listFix() - Fix Broken Playlists!
+ *
+ * This file is part of listFix().
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, please see http://www.gnu.org/licenses/
+ */
 
 package listfix.view;
 
@@ -18,14 +36,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
+import javax.swing.plaf.UIResource;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -42,6 +63,35 @@ import listfix.view.support.ProgressWorker;
 
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
+	protected final TableCellRenderer createRightAlignCellRenderer()
+	{
+		DefaultTableCellRenderer label = new UIResourceTableCellRenderer();
+		label.setHorizontalAlignment(JLabel.RIGHT);
+		return label;
+	}
+
+	private static class UIResourceTableCellRenderer extends DefaultTableCellRenderer implements UIResource
+	{
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected, boolean hasFocus, int row, int column)
+		{
+			if (table != null)
+			{
+				JTableHeader header = table.getTableHeader();
+				if (header != null)
+				{
+					setForeground(header.getForeground());
+					setBackground(header.getBackground());
+					setFont(header.getFont());
+				}
+			}
+
+			setText((value == null) ? "" : value.toString());
+			return this;
+		}
+	}
+
 	public PlaylistEditCtrl()
 	{
 		initComponents();
@@ -52,10 +102,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 		_uiTable.setShowHorizontalLines(false);
 		_uiTable.setShowVerticalLines(false);
+		_uiTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
 
 		// resize columns
 		TableColumnModel cm = _uiTable.getColumnModel();
 		cm.getColumn(0).setPreferredWidth(20);
+		cm.getColumn(0).setHeaderRenderer(createRightAlignCellRenderer());
 		cm.getColumn(1).setPreferredWidth(20);
 		cm.getColumn(2).setPreferredWidth(100);
 		cm.getColumn(3).setPreferredWidth(100);
