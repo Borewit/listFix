@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistType;
 import listfix.util.UnicodeUtils;
@@ -71,19 +70,6 @@ public class PLSReader implements IPlaylistReader
 	}
 
 	@Override
-	public List<PlaylistEntry> readPlaylist(Task input) throws IOException
-	{
-		PLSProperties propBag = new PLSProperties();
-		propBag.load(new FileInputStream(plsFile));
-		int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
-		for (int i = 1; i <= entries; i++)
-		{
-			processEntry(propBag, i);
-			input.notifyObservers((int) ((double) (i - 1) / (double) (entries) * 100.0));
-		}
-		return results;
-	}
-
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);

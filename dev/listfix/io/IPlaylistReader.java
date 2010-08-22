@@ -22,7 +22,6 @@ package listfix.io;
 
 import java.io.IOException;
 import java.util.List;
-import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistType;
 import listfix.view.support.IProgressObserver;
@@ -38,7 +37,6 @@ public interface IPlaylistReader
 
 	public PlaylistType getPlaylistType();
 
-	List<PlaylistEntry> readPlaylist(Task input) throws IOException;
 	List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
 	List<PlaylistEntry> readPlaylist() throws IOException;
 }

@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import listfix.controller.Task;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistType;
 import listfix.util.ArrayFunctions;
@@ -83,73 +82,7 @@ public class M3UReader implements IPlaylistReader
         fileLength = in.length();
 	}
 
-	public List<PlaylistEntry> readPlaylist(Task input) throws IOException
-	{
-		StringBuilder cache = new StringBuilder();
-		String line1 = buffer.readLine();
-		if (line1 != null)
-		{
-			cache.append(line1);
-			String line2 = "";
-			if (line1.contains("#EXTM3U"))
-			{
-				line1 = buffer.readLine();
-				cache.append(line1);
-			}
-			if (line1 != null)
-			{
-				if (!line1.startsWith("#"))
-				{
-					line2 = line1;
-					line1 = "";
-				}
-				else
-				{
-					line2 = buffer.readLine();
-					cache.append(line2);
-					while (line2.startsWith("#"))
-					{
-						line1 = line1 + br + line2;
-						line2 = buffer.readLine();
-						cache.append(line2);
-					}
-				}
-				while (line1 != null)
-				{
-					if (!line2.equals(""))
-					{
-						processEntry(line1, line2);
-					}
-					input.notifyObservers((int) ((double) cache.toString().getBytes().length / (double) (fileLength) * 100.0));
-					line1 = buffer.readLine();
-					if (line1 != null)
-					{
-						cache.append(line1);
-						if (!line1.startsWith("#"))
-						{
-							line2 = line1;
-							line1 = "";
-						}
-						else
-						{
-							line2 = buffer.readLine();
-							cache.append(line2);
-							while (line2.startsWith("#"))
-							{
-								line1 = line1 + br + line2;
-								line2 = buffer.readLine();
-								cache.append(line2);
-							}
-						}
-					}
-					input.notifyObservers((int) ((double) cache.toString().getBytes().length / (double) (fileLength) * 100.0));
-				}
-			}
-		}
-		buffer.close();
-		return results;
-	}
-
+	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
         ProgressAdapter progress = ProgressAdapter.wrap(observer);
