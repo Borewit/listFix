@@ -58,8 +58,10 @@ import listfix.model.EditFilenameResult;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
+import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressPopup;
 import listfix.view.support.ProgressWorker;
+import listfix.view.support.ZebraJTable;
 
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
@@ -128,6 +130,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
 				_btnPlay.setEnabled(hasSelected || _playlist.getFile().exists());
+				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
 				if (_isSortedByFileIx)
 				{
 					refreshAddTooltip(hasSelected);
@@ -212,7 +215,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 			}
 		});
+	}
 
+	private void onPlaylistModified(Playlist list)
+	{
+		boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
+		_btnReload.setEnabled(list == null ? false : list.isModified());
+		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
+		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
 	}
 
 	private void addItems()
@@ -652,7 +662,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnPlay = new javax.swing.JButton();
         _btnLocate = new javax.swing.JButton();
         _uiTableScrollPane = new javax.swing.JScrollPane();
-        _uiTable = new listfix.view.support.ZebraJTable();
+        _uiTable = createTable();
 
         _miEditFilename.setText("Edit Filename");
         _miEditFilename.addActionListener(new java.awt.event.ActionListener() {
@@ -732,7 +742,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnSave);
 
         _btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
-        _btnReload.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+        _btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
         _btnReload.setFocusable(false);
         _btnReload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnReload.setMaximumSize(new java.awt.Dimension(31, 31));
@@ -856,7 +866,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new PlaylistTableModel());
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
         _uiTable.setRowHeight(20);
@@ -989,11 +999,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			int releasedRow = _uiTable.rowAtPoint(evt.getPoint());
 			if ((currentlySelectedRow != releasedRow) && (releasedRow != -1) && (releasedRow < _playlist.size()))
 			{
-				//((PlaylistTableModel) _uiTable.getModel()).updateData(
 				_playlist.moveTo(currentlySelectedRow, releasedRow);
 				currentlySelectedRow = releasedRow;
 				_uiTable.setRowSelectionInterval(currentlySelectedRow, currentlySelectedRow);
-				// getTableModel().fireTableDataChanged();
 			}
 		}
 	}//GEN-LAST:event__uiTableMouseDragged
@@ -1025,7 +1033,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				//((PlaylistTableModel) _uiTable.getModel()).updateData(
 				_playlist.moveTo(currentlySelectedRow, releasedRow);
 				currentlySelectedRow = releasedRow;
-				// getTableModel().fireTableDataChanged();
 			}
 		}
 	}//GEN-LAST:event__uiTableMouseReleased
@@ -1143,20 +1150,25 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnAdd.setEnabled(hasPlaylist);
 		_btnLocate.setEnabled(hasPlaylist);
 		_btnReorder.setEnabled(hasPlaylist);
-		_btnReload.setEnabled(hasPlaylist);
+		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
 		_btnPlay.setEnabled(hasPlaylist);
 
 		if (_playlist != null && !_playlist.isEmpty())
 		{
 			resizeAllColumns();
 		}
+
+		IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+		{
+			public void playlistModified(Playlist list)
+			{
+				onPlaylistModified(list);
+			}
+		};
+
+		_playlist.addModifiedListener(listener);
 	}
 	private Playlist _playlist;
-
-	public void hideSaveButton()
-	{
-		_btnSave.setVisible(false);
-	}
 
 	private void showWaitCursor(boolean isWaiting)
 	{
@@ -1226,129 +1238,30 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		return rows;
 	}
 
-	private void updateButtons()
-	{
-//		if (_playlist.size() == 0)
-//		{
-//			_btnUp.setEnabled(false);
-//			_btnDown.setEnabled(false);
-//			_btnDelete.setEnabled(false);
-//			playFileMenuItem.setEnabled(false);
-//			deleteRCMenuItem.setEnabled(false);
-//			locateRCMenuItem.setEnabled(false);
-//			locateButton.setEnabled(false);
-//			randomizeMenuItem.setEnabled(false);
-//			reverseMenuItem.setEnabled(false);
-//			filenameSortMenu.setEnabled(false);
-//			statusSortMenu.setEnabled(false);
-//			pathSortMenu.setEnabled(false);
-//			removeMissingMenuItem.setEnabled(false);
-//			removeDuplicatesMenuItem.setEnabled(false);
-//			copyToDirMenuItem.setEnabled(false);
-//			editFileNameRCMenuItem.setEnabled(false);
-//			openRCMenuItem.setEnabled(false);
-//			closestMatchesRCMenuItem.setEnabled(false);
-//			findClosestMatchesMenuItem.setEnabled(false);
-//			insertFileMenuItem.setEnabled(false);
-//		}
-//		else
-//		{
-//			upIconButton.setEnabled(true);
-//			downIconButton.setEnabled(true);
-//			if (playlistTable.getSelectedRow() == 0)
-//			{
-//				upIconButton.setEnabled(false);
-//			}
-//			if (playlistTable.getSelectedRow() == guiDriver.getPlaylist().getEntryCount() - 1)
-//			{
-//				downIconButton.setEnabled(false);
-//			}
-//			removeMenuItem.setEnabled(true);
-//			deleteIconButton.setEnabled(true);
-//			playFileMenuItem.setEnabled(true);
-//			deleteRCMenuItem.setEnabled(true);
-//			locateRCMenuItem.setEnabled(true);
-//			locateButton.setEnabled(true);
-//			randomizeMenuItem.setEnabled(true);
-//			reverseMenuItem.setEnabled(true);
-//			filenameSortMenu.setEnabled(true);
-//			statusSortMenu.setEnabled(true);
-//			pathSortMenu.setEnabled(true);
-//			removeMissingMenuItem.setEnabled(true);
-//			removeDuplicatesMenuItem.setEnabled(true);
-//			copyToDirMenuItem.setEnabled(true);
-//			editFileNameRCMenuItem.setEnabled(true);
-//			openRCMenuItem.setEnabled(true);
-//			closestMatchesRCMenuItem.setEnabled(true);
-//			findClosestMatchesMenuItem.setEnabled(true);
-//			insertFileMenuItem.setEnabled(true);
-//		}
-//		if (playlistTable.getSelectedRowCount() == 0)
-//		{
-//			upIconButton.setEnabled(false);
-//			removeMenuItem.setEnabled(false);
-//			deleteIconButton.setEnabled(false);
-//			playFileMenuItem.setEnabled(false);
-//			deleteRCMenuItem.setEnabled(false);
-//			locateRCMenuItem.setEnabled(false);
-//			editFileNameRCMenuItem.setEnabled(false);
-//			openRCMenuItem.setEnabled(false);
-//			closestMatchesRCMenuItem.setEnabled(false);
-//			findClosestMatchesMenuItem.setEnabled(false);
-//			insertPlaylistMenuItem.setEnabled(false);
-//			insertFileMenuItem.setEnabled(false);
-//			replaceFileMenuItem.setEnabled(false);
-//			replaceFileRCMenuItem.setEnabled(false);
-//		}
-//		else if ((playlistTable.getSelectedRowCount() != 0) && (guiDriver.getPlaylist().getEntryCount() != 0))
-//		{
-//			upIconButton.setEnabled(true);
-//			downIconButton.setEnabled(true);
-//			if (playlistTable.getSelectedRow() == 0)
-//			{
-//				upIconButton.setEnabled(false);
-//			}
-//			if (playlistTable.getSelectedRow() == guiDriver.getPlaylist().getEntryCount() - 1)
-//			{
-//				downIconButton.setEnabled(false);
-//			}
-//			removeMenuItem.setEnabled(true);
-//			deleteRCMenuItem.setEnabled(true);
-//			locateRCMenuItem.setEnabled(true);
-//			deleteIconButton.setEnabled(true);
-//			playFileMenuItem.setEnabled(true);
-//			if (!guiDriver.getEntryAt(playlistTable.getSelectedRow()).isURL())
-//			{
-//				editFileNameRCMenuItem.setEnabled(true);
-//				editFilenameMenuItem.setEnabled(true);
-//				closestMatchesRCMenuItem.setEnabled(true);
-//				findClosestMatchesMenuItem.setEnabled(true);
-//			}
-//			else
-//			{
-//				editFileNameRCMenuItem.setEnabled(false);
-//				editFilenameMenuItem.setEnabled(false);
-//				closestMatchesRCMenuItem.setEnabled(false);
-//				findClosestMatchesMenuItem.setEnabled(false);
-//				locateRCMenuItem.setEnabled(false);
-//			}
-//			openRCMenuItem.setEnabled(true);
-//			insertPlaylistMenuItem.setEnabled(true);
-//			insertFileMenuItem.setEnabled(true);
-//			replaceFileMenuItem.setEnabled(true);
-//			replaceFileRCMenuItem.setEnabled(true);
-//		}
-//		if (mediaLibraryList.getModel().getSize() == 0)
-//		{
-//			removeMediaDirButton.setEnabled(false);
-//			refreshMediaDirsButton.setEnabled(false);
-//		}
-//		else if (mediaLibraryList.getModel().getSize() != 0)
-//		{
-//			removeMediaDirButton.setEnabled(true);
-//			refreshMediaDirsButton.setEnabled(true);
-//		}
-	}
+	private ZebraJTable createTable()
+    {
+        return new ZebraJTable()
+        {
+            @Override
+            public String getToolTipText(MouseEvent event)
+            {
+                Point point = event.getPoint();
+                int rawRowIx = rowAtPoint(point);
+                int rawColIx = columnAtPoint(point);
+                if (rawRowIx >= 0 && rawColIx >= 0)
+                {
+                    int rowIx = convertRowIndexToModel(rawRowIx);
+                    int colIx = convertColumnIndexToModel(rawColIx);
+                    if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 1))
+                    {
+						PlaylistEntry entry = _playlist.get(rowIx);
+                        return (entry.isURL() ? "URL" : entry.getStatus().toString());
+                    }
+                }
+                return super.getToolTipText(event);
+            }
+        };
+    }
 
 	private class PlaylistTableModel extends AbstractTableModel
 	{

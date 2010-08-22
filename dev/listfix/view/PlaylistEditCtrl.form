@@ -121,7 +121,7 @@
               <Image iconType="3" name="/images/gtk-refresh.png"/>
             </Property>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="_playlist == null ? false : _playlist.getFile().exists()" type="code"/>
+              <Connection code="_playlist == null ? false : _playlist.isModified()" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -332,6 +332,9 @@
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="_uiTableMouseReleased"/>
             <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="_uiTableMouseDragged"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="createTable();"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

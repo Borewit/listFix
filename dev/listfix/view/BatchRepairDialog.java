@@ -43,118 +43,130 @@ import listfix.view.support.ProgressWorker;
 
 public class BatchRepairDialog extends javax.swing.JDialog
 {
-
-    /** Creates new form BatchRepairDialog */
-    public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch) 
-    {
-        super(parent, batch.getDescription(), modal);
-        //super(parent, modal);
-        _batch = batch;
-        initComponents();
-        getRootPane().setDefaultButton(_btnSave);
-        _txtBackup.setText(_batch.getDefaultBackupName());
+	/** Creates new form BatchRepairDialog */
+	public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
+	{
+		super(parent, batch.getDescription(), modal);
+		//super(parent, modal);
+		_batch = batch;
+		initComponents();
+		getRootPane().setDefaultButton(_btnSave);
+		_txtBackup.setText(_batch.getDefaultBackupName());
 
 		_uiLists.setShowHorizontalLines(false);
 		_uiLists.setShowVerticalLines(false);
 		_uiLists.getTableHeader().setFont(new Font("Verdana", 0, 9));
 
-        // load and repair lists
-        final DualProgressDialog pd = new DualProgressDialog(parent, "Please wait...", "Loading Batch Repairs...");
-        DualProgressWorker dpw = new DualProgressWorker<Void,String>()
-        {
+		// load and repair lists
+		final DualProgressDialog pd = new DualProgressDialog(parent, "Please wait...", "Loading Batch Repairs...");
+		DualProgressWorker dpw = new DualProgressWorker<Void, String>()
+		{
+			@Override
+			protected void process(List<ProgressItem<String>> chunks)
+			{
+				ProgressItem<String> titem = new ProgressItem<String>(true, -1, null);
+				ProgressItem<String> oitem = new ProgressItem<String>(false, -1, null);
+				getEffectiveItems(chunks, titem, oitem);
 
-            @Override
-            protected void process(List<ProgressItem<String>> chunks)
-            {
-                ProgressItem<String> titem = new ProgressItem<String>(true, -1, null);
-                ProgressItem<String> oitem = new ProgressItem<String>(false, -1, null);
-                getEffectiveItems(chunks, titem, oitem);
-                
-                if (titem.percentComplete >= 0)
-                    pd.getTaskProgressBar().setValue(titem.percentComplete);
-                if (titem.state != null)
-                    pd.getTaskLabel().setText(titem.state);
-                if (oitem.percentComplete >= 0)
-                    pd.getOverallProgressBar().setValue(oitem.percentComplete);
-                if (oitem.state != null)
-                    pd.getOverallLabel().setText(oitem.state);
-            }
+				if (titem.percentComplete >= 0)
+				{
+					pd.getTaskProgressBar().setValue(titem.percentComplete);
+				}
+				if (titem.state != null)
+				{
+					pd.getTaskLabel().setText(titem.state);
+				}
+				if (oitem.percentComplete >= 0)
+				{
+					pd.getOverallProgressBar().setValue(oitem.percentComplete);
+				}
+				if (oitem.state != null)
+				{
+					pd.getOverallLabel().setText(oitem.state);
+				}
+			}
 
-            @Override
-            protected Void doInBackground() throws Exception
-            {
-                _batch.load(this);
-                return null;
-            }
-        };
-        pd.show(dpw);
+			@Override
+			protected Void doInBackground() throws Exception
+			{
+				_batch.load(this);
+				return null;
+			}
+		};
+		pd.show(dpw);
 
 
-        InitPlaylistsList();
-        playlistEditCtrl1.hideSaveButton();
+		InitPlaylistsList();
 
-        String listCountTxt;
-        if (batch.getItems().size() == 1)
-            listCountTxt = "1 playlist";
-        else
-            listCountTxt = String.format("%d playlists", batch.getItems().size());
-        _labListCount.setText(listCountTxt);
+		String listCountTxt;
+		if (batch.getItems().size() == 1)
+		{
+			listCountTxt = "1 playlist";
+		}
+		else
+		{
+			listCountTxt = String.format("%d playlists", batch.getItems().size());
+		}
+		_labListCount.setText(listCountTxt);
 
-    }
-    
-    private void InitPlaylistsList()
-    {
-        _uiLists.setFont(new Font("Verdana", 0, 9));
-        _uiLists.initFillColumnForScrollPane(_uiScrollLists);
+	}
 
-        _uiLists.autoResizeColumn(0);
-        _uiLists.autoResizeColumn(1);
-        _uiLists.autoResizeColumn(2);
+	private void InitPlaylistsList()
+	{
+		_uiLists.setFont(new Font("Verdana", 0, 9));
+		_uiLists.initFillColumnForScrollPane(_uiScrollLists);
 
-        // selections
-        _uiLists.setColumnSelectionAllowed(false);
-        _uiLists.setCellSelectionEnabled(false);
-        _uiLists.setRowSelectionAllowed(true);
-        ListSelectionModel lsm = _uiLists.getSelectionModel();
-        lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        lsm.addListSelectionListener(new ListSelectionListener()
-        {
-            public void valueChanged(ListSelectionEvent e)
-            {
-                if (e.getValueIsAdjusting())
-                    return;
-                UpdateSelectedPlaylist();
-            }
-        });
+		_uiLists.autoResizeColumn(0);
+		_uiLists.autoResizeColumn(1);
+		_uiLists.autoResizeColumn(2);
 
-        // sort playlists by filename
-        RowSorter sorter = _uiLists.getRowSorter();
-        List<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
-        keys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
-        sorter.setSortKeys(keys);
-    }
+		// selections
+		_uiLists.setColumnSelectionAllowed(false);
+		_uiLists.setCellSelectionEnabled(false);
+		_uiLists.setRowSelectionAllowed(true);
+		ListSelectionModel lsm = _uiLists.getSelectionModel();
+		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		lsm.addListSelectionListener(new ListSelectionListener()
+		{
+			public void valueChanged(ListSelectionEvent e)
+			{
+				if (e.getValueIsAdjusting())
+				{
+					return;
+				}
+				UpdateSelectedPlaylist();
+			}
+		});
 
-    private void UpdateSelectedPlaylist()
-    {
-        int selIx = _uiLists.getSelectedRow();
-        if (selIx >= 0)
-        {
-            selIx = _uiLists.convertRowIndexToModel(selIx);
-            BatchRepairItem item = _batch.getItem(selIx);
-            playlistEditCtrl1.setPlaylist(item.getPlaylist());
-        }
-        else
-            playlistEditCtrl1.setPlaylist(null);
-    }
+		// sort playlists by filename
+		RowSorter sorter = _uiLists.getRowSorter();
+		List<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+		keys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+		sorter.setSortKeys(keys);
+	}
 
-    BatchRepair _batch;
+	private void UpdateSelectedPlaylist()
+	{
+		int selIx = _uiLists.getSelectedRow();
+		if (selIx >= 0)
+		{
+			selIx = _uiLists.convertRowIndexToModel(selIx);
+			BatchRepairItem item = _batch.getItem(selIx);
+			playlistEditCtrl1.setPlaylist(item.getPlaylist());
+		}
+		else
+		{
+			playlistEditCtrl1.setPlaylist(null);
+		}
+	}
+	BatchRepair _batch;
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+	/** This method is called from within the constructor to
+	 * initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is
+	 * always regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
@@ -309,137 +321,149 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
     private void onBtnBrowseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnBrowseActionPerformed
     {//GEN-HEADEREND:event_onBtnBrowseActionPerformed
-        JFileChooser dlg = new JFileChooser();
-        if (!_txtBackup.getText().isEmpty())
-            dlg.setSelectedFile(new File(_txtBackup.getText()));
-        if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-        {
-            _txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
-        }
+		JFileChooser dlg = new JFileChooser();
+		if (!_txtBackup.getText().isEmpty())
+		{
+			dlg.setSelectedFile(new File(_txtBackup.getText()));
+		}
+		if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			_txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
+		}
     }//GEN-LAST:event_onBtnBrowseActionPerformed
 
     private void onBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnSaveActionPerformed
     {//GEN-HEADEREND:event_onBtnSaveActionPerformed
-        ProgressWorker<Void,Void> worker = new ProgressWorker<Void,Void>()
-        {
-            @Override
-            protected Void doInBackground() throws IOException
-            {
-                boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-                _batch.save(saveRelative, _chkBackup.isSelected(), _txtBackup.getText(), this);
-                return null;
-            }
-        };
-        ProgressDialog pd = new ProgressDialog(null, true, worker, "Loading playlists...");
-        pd.setVisible(true);
+		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+		{
+			@Override
+			protected Void doInBackground() throws IOException
+			{
+				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+				_batch.save(saveRelative, _chkBackup.isSelected(), _txtBackup.getText(), this);
+				return null;
+			}
+		};
+		ProgressDialog pd = new ProgressDialog(null, true, worker, "Loading playlists...");
+		pd.setVisible(true);
 
-        try
-        {
-            worker.get();
-        }
-        catch (InterruptedException ex)
-        {
-            // ignore
-        }
-        catch (ExecutionException eex)
-        {
-            Throwable ex = eex.getCause();
-            String msg = "An error occurred while saving:\n" + ex.getMessage();
-            JOptionPane.showMessageDialog(BatchRepairDialog.this, msg, "Save Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+		try
+		{
+			worker.get();
+		}
+		catch (InterruptedException ex)
+		{
+			// ignore
+		}
+		catch (ExecutionException eex)
+		{
+			Throwable ex = eex.getCause();
+			String msg = "An error occurred while saving:\n" + ex.getMessage();
+			JOptionPane.showMessageDialog(BatchRepairDialog.this, msg, "Save Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
-        setVisible(false);
+		setVisible(false);
     }//GEN-LAST:event_onBtnSaveActionPerformed
 
     private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
     {//GEN-HEADEREND:event_onBtnCancelActionPerformed
-        setVisible(false);
+		setVisible(false);
     }//GEN-LAST:event_onBtnCancelActionPerformed
 
     private void onChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_onChkBackupItemStateChanged
     {//GEN-HEADEREND:event_onChkBackupItemStateChanged
-        boolean isChecked = _chkBackup.isSelected();
-        _txtBackup.setEnabled(isChecked);
-        _btnBrowse.setEnabled(isChecked);
-        if (isChecked)
-        {
-            _txtBackup.selectAll();
-            _txtBackup.requestFocusInWindow();
-        }
+		boolean isChecked = _chkBackup.isSelected();
+		_txtBackup.setEnabled(isChecked);
+		_btnBrowse.setEnabled(isChecked);
+		if (isChecked)
+		{
+			_txtBackup.selectAll();
+			_txtBackup.requestFocusInWindow();
+		}
     }//GEN-LAST:event_onChkBackupItemStateChanged
 
-    private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
-    private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
-    private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
+	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
+	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
+	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
 
-    private class PlaylistsTableModel extends AbstractTableModel
-    {
-        public PlaylistsTableModel()
-        {
-            _items = _batch.getItems();
-        }
+	private class PlaylistsTableModel extends AbstractTableModel
+	{
+		public PlaylistsTableModel()
+		{
+			_items = _batch.getItems();
+		}
 
-        public int getRowCount()
-        {
-            return _items.size();
-        }
+		public int getRowCount()
+		{
+			return _items.size();
+		}
 
-        public int getColumnCount()
-        {
-            return 4;
-        }
+		public int getColumnCount()
+		{
+			return 4;
+		}
 
-        @Override
-        public String getColumnName(int column)
-        {
-            switch (column)
-            {
-                case 0: return "";
-                case 1: return "Name";
-                case 2: return "Location";
-                default: return null;
-            }
-        }
+		@Override
+		public String getColumnName(int column)
+		{
+			switch (column)
+			{
+				case 0:
+					return "";
+				case 1:
+					return "Name";
+				case 2:
+					return "Location";
+				default:
+					return null;
+			}
+		}
 
-        @Override
-        public Class<?> getColumnClass(int columnIndex)
-        {
-            if (columnIndex == 0)
-                return ImageIcon.class;
-            else
-                return Object.class;
-        }
+		@Override
+		public Class<?> getColumnClass(int columnIndex)
+		{
+			if (columnIndex == 0)
+			{
+				return ImageIcon.class;
+			}
+			else
+			{
+				return Object.class;
+			}
+		}
 
-        public Object getValueAt(int rowIndex, int columnIndex)
-        {
-            BatchRepairItem item = _items.get(rowIndex);
-            switch (columnIndex)
-            {
-                case 0:
-                    Playlist list = item.getPlaylist();
-                    if (list.getMissingCount() > 0)
-                        return _imgMissing; // red
-                    else if (list.getFixedCount() > 0)
-                        return _imgFixed; // light green
-                    else
-                        return _imgFound; // dark green
+		public Object getValueAt(int rowIndex, int columnIndex)
+		{
+			BatchRepairItem item = _items.get(rowIndex);
+			switch (columnIndex)
+			{
+				case 0:
+					Playlist list = item.getPlaylist();
+					if (list.getMissingCount() > 0)
+					{
+						return _imgMissing; // red
+					}
+					else if (list.getFixedCount() > 0)
+					{
+						return _imgFixed; // light green
+					}
+					else
+					{
+						return _imgFound; // dark green
+					}
+				case 1:
+					return item.getDisplayName();
 
-                case 1:
-                    return item.getDisplayName();
+				case 2:
+					return item.getPath();
 
-                case 2:
-                    return item.getPath();
-
-                default:
-                    return null;
-            }
-        }
-
-        private List<BatchRepairItem> _items;
-    }
-
-
+				default:
+					return null;
+			}
+		}
+		private List<BatchRepairItem> _items;
+	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnBrowse;
     private javax.swing.JButton _btnCancel;
@@ -459,5 +483,4 @@ public class BatchRepairDialog extends javax.swing.JDialog
     private javax.swing.JSplitPane jSplitPane1;
     private listfix.view.PlaylistEditCtrl playlistEditCtrl1;
     // End of variables declaration//GEN-END:variables
-
 }

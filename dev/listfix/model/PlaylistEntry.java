@@ -63,7 +63,15 @@ public class PlaylistEntry implements Cloneable
 	// The length of the track
 	private String length = "-1";
 
-    private enum Status
+	/**
+	 * @return the _status
+	 */
+	public Status getStatus()
+	{
+		return _status;
+	}
+
+    public enum Status
     {
         Unknown,
         Missing,
@@ -233,7 +241,7 @@ public class PlaylistEntry implements Cloneable
 
 	public void markFixedIfFound()
     {
-        if (_status == Status.Found)
+        if (getStatus() == Status.Found)
             _isFixed = true;
     }
 
@@ -325,7 +333,7 @@ public class PlaylistEntry implements Cloneable
 
 	public boolean isFound()
 	{
-		return _status == Status.Found;
+		return getStatus() == Status.Found;
 	}
 
     public boolean isFixed()
