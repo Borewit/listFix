@@ -736,12 +736,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		final Playlist list = getPlaylistFromTab(tabIx);
 		if (list.isModified())
 		{
-			String msg = "This playlist has been modified. Do you really want to close it without saving?\n"
-				+ "    YES = close without saving\n"
-				+ "    NO = save and close\n"
-				+ "    CANCEL = do nothing";
-			int rc = JOptionPane.showConfirmDialog(this, msg, "Confirm Close", JOptionPane.YES_NO_CANCEL_OPTION);
-			if (rc == JOptionPane.NO_OPTION)
+            Object[] options = { "Save", "Don't Save", "Cancel" };
+			int rc = JOptionPane.showOptionDialog(this, "This playlist has been modified. Do you want to save the changes?", "Confirm Close",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+			if (rc == JOptionPane.YES_OPTION)
 			{
 				// TODO: not tested
 				ProgressWorker<Boolean, Void> worker = new ProgressWorker<Boolean, Void>()
@@ -776,7 +774,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 				return false;
 			}
-			if (rc != JOptionPane.CANCEL_OPTION)
+            else if(rc == JOptionPane.NO_OPTION)
 			{
 				closeTab(list, tabIx);
 				return true;
@@ -817,10 +815,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		{
 			if (list.isModified())
 			{
-				String msg = "You have unsaved changes. Do you really want to quit and discard these changes?\n"
-					+ "    YES = exit and discard changes\n"
-					+ "    NO = don't exit";
-				int rc = JOptionPane.showConfirmDialog(this, msg, "Confirm Close", JOptionPane.YES_NO_OPTION);
+
+                Object[] options = { "Discard Changes and Exit", "Cancel" };
+                int rc = JOptionPane.showOptionDialog(this, "You have unsaved changes. Do you really want to discard these changes and exit?\n", "Confirm Close",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 				if (rc == JOptionPane.NO_OPTION)
 				{
 					return;
