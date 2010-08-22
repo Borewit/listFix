@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
 
 import listfix.controller.tasks.WriteIniFileTask;
 import listfix.model.AppOptions;
-import listfix.model.M3UHistory;
+import listfix.model.PlaylistHistory;
 import listfix.util.UnicodeUtils;
 
 public class FileWriter
@@ -172,13 +172,13 @@ public class FileWriter
 		}
 	}
 
-	public void writeMruPlaylists(M3UHistory history)
+	public void writeMruPlaylists(PlaylistHistory history)
 	{
 		try
 		{
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("[Recent Playlists]").append(br);
-			String[] filenames = history.getM3UFilenames();
+			String[] filenames = history.getFilenames();
 			for (int i = 0; i < filenames.length; i++)
 			{
 				buffer.append(filenames[i]).append(br);

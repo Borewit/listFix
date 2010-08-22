@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2009 Jeremy Caron
- *
+ * 
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -18,13 +18,19 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.model.enums;
 
 /**
  *
  * @author jcaron
  */
-public enum PlaylistType
+public class AppOptionsEnum
 {
-	M3U, PLS, UNKNOWN
+	public final static Integer SAVE_RELATIVE_REFERENCES = 0;
+	public final static Integer AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD = 1;
+	public final static Integer MAX_PLAYLIST_HISTORY_SIZE = 2;
+	public final static Integer AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD = 3;
+	public final static Integer LOOK_AND_FEEL = 4;
+	public final static Integer ALWAYS_USE_UNC_PATHS = 5;
+	public final static Integer PLAYLISTS_DIRECTORY = 6;
 }

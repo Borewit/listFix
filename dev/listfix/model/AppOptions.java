@@ -20,6 +20,7 @@
 
 package listfix.model;
 
+import listfix.model.enums.AppOptionsEnum;
 import java.io.File;
 import java.util.Hashtable;
 import javax.swing.UIManager;

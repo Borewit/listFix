@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import listfix.model.PlaylistEntry;
-import listfix.model.PlaylistType;
+import listfix.model.enums.PlaylistType;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;

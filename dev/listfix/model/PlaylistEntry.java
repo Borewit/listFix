@@ -20,6 +20,7 @@
 
 package listfix.model;
 
+import listfix.model.enums.PlaylistEntryStatus;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -35,115 +36,110 @@ import listfix.view.support.ProgressAdapter;
 public class PlaylistEntry implements Cloneable
 {
 	// file separator
-	private final static String fs = System.getProperty("file.separator");
+	private final static String FILE_SEPARATOR = System.getProperty("file.separator");
 	// line separator
-	private final static String br = System.getProperty("line.separator");
+	private final static String BR = System.getProperty("line.separator");
 	// is the file system case sensitive?
-	private static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+	private static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
 	// The list of folders we know don't exist.
-	public static List<String> nonExistentDirectories = new ArrayList<String>();
+	public static List<String> NonExistentDirectories = new ArrayList<String>();
 	// A list of folders we know DO exist.
-	public static List<String> existingDirectories = new ArrayList<String>();
+	public static List<String> ExistingDirectories = new ArrayList<String>();
 	// The root folder all the entries in a relative playlist are relative to.
-	public static String basePath = "";
-	// This entry's path.
-	private String path = "";
+	public static String BasePath = "";
+	// This entry's _path.
+	private String _path = "";
 	// This entry's extra info.
-	private String extInf = "";
+	private String _extInf = "";
 	// This entry's file name.
-	private String fileName = "";
+	private String _fileName = "";
 	// This entry's File object.
-	private File thisFile = null;
+	private File _thisFile = null;
 	// This entry's absolute file.
-	private File absoluteFile = null;
+	private File _absoluteFile = null;
 	// The entry's URI (for URLs).
-	private URI thisURI = null;
-	// The title of the entry
-	private String title = "";
-	// The length of the track
-	private String length = "-1";
+	private URI _thisURI = null;
+	// The _title of the entry
+	private String _title = "";
+	// The _length of the track
+	private String _length = "-1";
+	// Status of this item.
+    private PlaylistEntryStatus _status = PlaylistEntryStatus.Unknown;
+	// Has this item been fixed?
+    private boolean _isFixed;
 
 	/**
 	 * @return the _status
 	 */
-	public Status getStatus()
+	public PlaylistEntryStatus getStatus()
 	{
 		return _status;
 	}
 
-    public enum Status
-    {
-        Unknown,
-        Missing,
-        Found
-    }
-    private Status _status = Status.Unknown;
-    private boolean _isFixed;
-
 	// Construct a URL entry.
 	public PlaylistEntry(URI uri, String extra)
 	{
-		thisURI = uri;
-		extInf = extra;
+		_thisURI = uri;
+		_extInf = extra;
 		parseExtraInfo(extra);
 	}
 
 	// Construct a URL entry.
 	public PlaylistEntry(URI uri, String t, String l)
 	{
-		thisURI = uri;
-		title = t;
-		length = l;
-		extInf = "#EXTINF:" + l + "," + t;
+		_thisURI = uri;
+		_title = t;
+		_length = l;
+		_extInf = "#EXTINF:" + l + "," + t;
 	}
 
 	// Construct a file-based entry.
 	public PlaylistEntry(String p, String f, String extra, File parentPath)
 	{
-		path = p;
-		fileName = f;
-		extInf = extra;
+		_path = p;
+		_fileName = f;
+		_extInf = extra;
 		parseExtraInfo(extra);
-		thisFile = new File(path, fileName);
+		_thisFile = new File(_path, _fileName);
 
 		// should we skip the exists check?
 		if (skipExistsCheck())
 		{
-            _status = Status.Missing;
+            _status = PlaylistEntryStatus.Missing;
 		}
 		// if we should check, do so...
 		else if (this.exists())
 		{
 			// file was found in its current location
-            _status = Status.Found;
-			if (thisFile.isAbsolute())
+            _status = PlaylistEntryStatus.Found;
+			if (_thisFile.isAbsolute())
 			{
-				absoluteFile = thisFile;
+				_absoluteFile = _thisFile;
 			}
 			else
 			{
-				absoluteFile = new File(thisFile.getAbsolutePath());
+				_absoluteFile = new File(_thisFile.getAbsolutePath());
 			}
 		}
 		else
 		{
 			// file was not found
-			if (!thisFile.isAbsolute())
+			if (!_thisFile.isAbsolute())
 			{
 				// if the test file was relative, try making it absolute.
-				absoluteFile = new File(parentPath, p + fs + f);
-				if (absoluteFile.exists())
+				_absoluteFile = new File(parentPath, p + FILE_SEPARATOR + f);
+				if (_absoluteFile.exists())
 				{
-                    _status = Status.Found;
+                    _status = PlaylistEntryStatus.Found;
 				}
 				else
 				{
-                    _status = Status.Missing;
+                    _status = PlaylistEntryStatus.Missing;
 				}
 			}
 			else
 			{
-                _status = Status.Missing;
+                _status = PlaylistEntryStatus.Missing;
 			}
 		}
 	}
@@ -151,44 +147,44 @@ public class PlaylistEntry implements Cloneable
 	// Same as above but with a file object as input
 	public PlaylistEntry(File input, String extra)
 	{
-		fileName = input.getName();
-		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
-		extInf = extra;
+		_fileName = input.getName();
+		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+		_extInf = extra;
 		parseExtraInfo(extra);
-		thisFile = input;
+		_thisFile = input;
 		if (skipExistsCheck())
 		{
-            _status = Status.Missing;
+            _status = PlaylistEntryStatus.Missing;
 		}
 		else if (this.exists())
 		{
-			_status = Status.Found;
-			if (thisFile.isAbsolute())
+			_status = PlaylistEntryStatus.Found;
+			if (_thisFile.isAbsolute())
 			{
-				absoluteFile = thisFile;
+				_absoluteFile = _thisFile;
 			}
 			else
 			{
-				absoluteFile = new File(thisFile.getAbsolutePath());
+				_absoluteFile = new File(_thisFile.getAbsolutePath());
 			}
 		}
 		else
 		{
-			if (!thisFile.isAbsolute())
+			if (!_thisFile.isAbsolute())
 			{
-				absoluteFile = new File(basePath, input.getPath());
-				if (absoluteFile.exists())
+				_absoluteFile = new File(BasePath, input.getPath());
+				if (_absoluteFile.exists())
 				{
-					_status = Status.Found;
+					_status = PlaylistEntryStatus.Found;
 				}
 				else
 				{
-					_status = Status.Missing;
+					_status = PlaylistEntryStatus.Missing;
 				}
 			}
 			else
 			{
-				_status = Status.Missing;
+				_status = PlaylistEntryStatus.Missing;
 			}
 		}
 	}
@@ -196,144 +192,144 @@ public class PlaylistEntry implements Cloneable
 	// Same as above but with a file object as input
 	public PlaylistEntry(File input, String t, String l)
 	{
-		fileName = input.getName();
-		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
-		extInf = "#EXTINF:" + l + "," + t;
-		title = t;
-		length = l;
-		thisFile = input;
+		_fileName = input.getName();
+		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+		_extInf = "#EXTINF:" + l + "," + t;
+		_title = t;
+		_length = l;
+		_thisFile = input;
 		if (skipExistsCheck())
 		{
-			_status = Status.Missing;
+			_status = PlaylistEntryStatus.Missing;
 		}
 		else if (this.exists())
 		{
-			_status = Status.Found;
-			if (thisFile.isAbsolute())
+			_status = PlaylistEntryStatus.Found;
+			if (_thisFile.isAbsolute())
 			{
-				absoluteFile = thisFile;
+				_absoluteFile = _thisFile;
 			}
 			else
 			{
-				absoluteFile = new File(thisFile.getAbsolutePath());
+				_absoluteFile = new File(_thisFile.getAbsolutePath());
 			}
 		}
 		else
 		{
-			if (!thisFile.isAbsolute())
+			if (!_thisFile.isAbsolute())
 			{
-				absoluteFile = new File(basePath, input.getPath());
-				if (absoluteFile.exists())
+				_absoluteFile = new File(BasePath, input.getPath());
+				if (_absoluteFile.exists())
 				{
-					_status = Status.Found;
+					_status = PlaylistEntryStatus.Found;
 				}
 				else
 				{
-					_status = Status.Missing;
+					_status = PlaylistEntryStatus.Missing;
 				}
 			}
 			else
 			{
-				_status = Status.Missing;
+				_status = PlaylistEntryStatus.Missing;
 			}
 		}
 	}
 
 	public void markFixedIfFound()
     {
-        if (getStatus() == Status.Found)
+        if (getStatus() == PlaylistEntryStatus.Found)
             _isFixed = true;
     }
 
 	public String getPath()
 	{
-		return this.isURL() ? "" : path;
+		return this.isURL() ? "" : _path;
 	}
 
 	public File getFile()
 	{
-		return thisFile;
+		return _thisFile;
 	}
 
 	public String getFileName()
 	{
-		return this.isURL() ? thisURI.toString() : fileName;
+		return this.isURL() ? _thisURI.toString() : _fileName;
 	}
 
 	public String getExtInf()
 	{
-		return extInf;
+		return _extInf;
 	}
 
 	// check the file system for existence if we don't already know the file exists.
 	private boolean exists()
 	{
-		return isFound() || thisFile.exists();
+		return isFound() || _thisFile.exists();
 	}
 
 	private void recheckFoundStatus()
 	{
-        if (thisFile.exists() && thisFile.isFile())
+        if (_thisFile.exists() && _thisFile.isFile())
         {
-            _status = Status.Found;
+            _status = PlaylistEntryStatus.Found;
         }
         else
         {
-            _status = Status.Missing;
+            _status = PlaylistEntryStatus.Missing;
             _isFixed = false;
         }
 	}
 
 	public URI getURI()
 	{
-		return thisURI;
+		return _thisURI;
 	}
 
 	public File getAbsoluteFile()
 	{
-		return absoluteFile;
+		return _absoluteFile;
 	}
 
 	public void setPath(String input)
 	{
-		path = input;
-		thisFile = new File(path, fileName);
+		_path = input;
+		_thisFile = new File(_path, _fileName);
         resetAbsoluteFile();
         recheckFoundStatus();
 	}
 
 	public void setFileName(String input)
 	{
-		fileName = input;
-		thisFile = new File(path, fileName);
+		_fileName = input;
+		_thisFile = new File(_path, _fileName);
 	}
 
 	private void setFile(File input)
 	{
-		thisFile = input;
-		fileName = input.getName();
-		path = input.getPath().substring(0, input.getPath().indexOf(fileName));
+		_thisFile = input;
+		_fileName = input.getName();
+		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
         resetAbsoluteFile();
 	}
 
     private void resetAbsoluteFile()
     {
-        if (thisFile.isAbsolute())
-            absoluteFile = thisFile;
+        if (_thisFile.isAbsolute())
+            _absoluteFile = _thisFile;
         else
-            absoluteFile = new File(thisFile.getAbsolutePath());
+            _absoluteFile = new File(_thisFile.getAbsolutePath());
     }
 
 	private boolean skipExistsCheck()
 	{
-		String[] emptyPaths = new String[nonExistentDirectories.size()];
-		nonExistentDirectories.toArray(emptyPaths);
-		return isFound() || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, path, false);
+		String[] emptyPaths = new String[NonExistentDirectories.size()];
+		NonExistentDirectories.toArray(emptyPaths);
+		return isFound() || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, _path, false);
 	}
 
 	public boolean isFound()
 	{
-		return getStatus() == Status.Found;
+		return getStatus() == PlaylistEntryStatus.Found;
 	}
 
     public boolean isFixed()
@@ -343,12 +339,12 @@ public class PlaylistEntry implements Cloneable
 
 	public boolean isURL()
 	{
-		return thisURI != null && thisFile == null;
+		return _thisURI != null && _thisFile == null;
 	}
 
 	public boolean isRelative()
 	{
-		return !this.isURL() && thisFile != null && !thisFile.isAbsolute();
+		return !this.isURL() && _thisFile != null && !_thisFile.isAbsolute();
 	}
 
 	// Try to open the file with the "default" MP3 player (only works on some systems).
@@ -357,7 +353,7 @@ public class PlaylistEntry implements Cloneable
 		File absFile = null;
 		if (this.isURL())
 		{
-			BrowserLauncher.launch(this.thisURI.toString());
+			BrowserLauncher.launch(this._thisURI.toString());
 		}
 		else
 		{
@@ -365,11 +361,11 @@ public class PlaylistEntry implements Cloneable
 			{
 				if (this.isRelative())
 				{
-					absFile = this.absoluteFile.getCanonicalFile();
+					absFile = this._absoluteFile.getCanonicalFile();
 				}
 				else
 				{
-					absFile = this.thisFile.getCanonicalFile();
+					absFile = this._thisFile.getCanonicalFile();
 				}
 				FileLauncher.launch(absFile);
 			}
@@ -382,13 +378,13 @@ public class PlaylistEntry implements Cloneable
 		if (!(this.getExtInf() == null) && !(this.getExtInf().equals("")))
 		{
 			result.append(this.getExtInf());
-			result.append(br);
+			result.append(BR);
 		}
 		if (!this.isURL())
 		{
 			if (!this.isRelative())
 			{
-				if (this.getPath().endsWith(fs))
+				if (this.getPath().endsWith(FILE_SEPARATOR))
 				{
 					result.append(this.getPath());
 					result.append(this.getFileName());
@@ -396,26 +392,26 @@ public class PlaylistEntry implements Cloneable
 				else
 				{
 					result.append(this.getPath());
-					result.append(fs);
+					result.append(FILE_SEPARATOR);
 					result.append(this.getFileName());
 				}
 			}
 			else
 			{
-				String tempPath = thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(fileName)).equals(fs))
+				String tempPath = _thisFile.getPath();
+				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(FILE_SEPARATOR))
 				{
-					result.append(fileName);
+					result.append(_fileName);
 				}
 				else
 				{
-					result.append(thisFile.getPath());
+					result.append(_thisFile.getPath());
 				}
 			}
 		}
 		else
 		{
-			result.append(thisURI.toString());
+			result.append(_thisURI.toString());
 		}
 		return result.toString();
 	}
@@ -430,7 +426,7 @@ public class PlaylistEntry implements Cloneable
 			result.append("File").append(index).append("=");
 			if (!this.isRelative())
 			{
-				if (this.getPath().endsWith(fs))
+				if (this.getPath().endsWith(FILE_SEPARATOR))
 				{
 					result.append(this.getPath());
 					result.append(this.getFileName());
@@ -438,34 +434,34 @@ public class PlaylistEntry implements Cloneable
 				else
 				{
 					result.append(this.getPath());
-					result.append(fs);
+					result.append(FILE_SEPARATOR);
 					result.append(this.getFileName());
 				}
 			}
 			else
 			{
-				String tempPath = thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(fileName)).equals(fs))
+				String tempPath = _thisFile.getPath();
+				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(FILE_SEPARATOR))
 				{
-					result.append(fileName);
+					result.append(_fileName);
 				}
 				else
 				{
-					result.append(thisFile.getPath());
+					result.append(_thisFile.getPath());
 				}
 			}
 		}
 		else
 		{
-			result.append("File").append(index).append("=").append(thisURI.toString());
+			result.append("File").append(index).append("=").append(_thisURI.toString());
 		}
-		result.append(br);
+		result.append(BR);
 
-		// set the title
-		result.append("Title").append(index).append("=").append(title).append(br);
+		// set the _title
+		result.append("Title").append(index).append("=").append(_title).append(BR);
 
-		// set the length
-		result.append("Length").append(index).append("=").append(length).append(br);
+		// set the _length
+		result.append("Length").append(index).append("=").append(_length).append(BR);
 		
 		return result.toString();
 	}
@@ -473,10 +469,10 @@ public class PlaylistEntry implements Cloneable
 	public void findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
-		String trimmedFileName = fileSystemIsCaseSensitive ? fileName.trim() : fileName.trim().toLowerCase();
+		String trimmedFileName = FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();
 		for (int i = 0; i < fileList.length; i++)
 		{
-			if (fileSystemIsCaseSensitive ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
+			if (FILE_SYSTEM_IS_CASE_SENSITIVE ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
 			{
 				searchResult = i;
 				break;
@@ -486,11 +482,11 @@ public class PlaylistEntry implements Cloneable
 		{
 			File foundFile = new File(fileList[searchResult]);
 			this.setFile(foundFile);
-            _status = Status.Found;
+            _status = PlaylistEntryStatus.Found;
             _isFixed = true;
 			return;
 		}
-        _status = Status.Missing;
+        _status = PlaylistEntryStatus.Missing;
 	}
 
     public List<MatchedPlaylistEntry> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
@@ -537,19 +533,19 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	/**
-	 * @return the title
+	 * @return the _title
 	 */
 	public String getTitle()
 	{
-		return title;
+		return _title;
 	}
 
 	/**
-	 * @return the length
+	 * @return the _length
 	 */
 	public String getLength()
 	{
-		return length;
+		return _length;
 	}
 
 	private void parseExtraInfo(String extra)
@@ -563,18 +559,18 @@ public class PlaylistEntry implements Cloneable
 				String[] split = extra.split(",");
 				if (split != null && split.length > 1)
 				{
-					length = split[0];
-					title = split[1];
+					_length = split[0];
+					_title = split[1];
 				}
 				else if (split != null && split.length == 1)
 				{
-					// assume it's a title?
-					title = split[0];
+					// assume it's a _title?
+					_title = split[0];
 				}
 			}
 			else
 			{
-				title = extra;
+				_title = extra;
 			}
 		}
 	}

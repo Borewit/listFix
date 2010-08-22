@@ -37,7 +37,7 @@ public class GUIDriver
 	private String[] mediaLibraryDirectoryList = null;
 	private String[] mediaLibraryFileList = null;
 	private AppOptions options = new AppOptions();
-	private M3UHistory history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
+	private PlaylistHistory history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
 	public static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
 
     public static GUIDriver getInstance()
@@ -57,7 +57,7 @@ public class GUIDriver
 			initReader.readIni();
 			options = initReader.getAppOptions();
 			mediaDir = initReader.getMediaDirs();
-			history = new M3UHistory(options.getMaxPlaylistHistoryEntries());
+			history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
 			history.initHistory(initReader.getHistory());
 			mediaLibraryDirectoryList = initReader.getMediaLibrary();
 			mediaLibraryFileList = initReader.getMediaLibraryFiles();
@@ -127,7 +127,7 @@ public class GUIDriver
 		return showMediaDirWindow;
 	}
 
-	public M3UHistory getHistory()
+	public PlaylistHistory getHistory()
 	{
 		return history;
 	}
@@ -140,7 +140,7 @@ public class GUIDriver
 
 	public String[] getRecentM3Us()
 	{
-		return history.getM3UFilenames();
+		return history.getFilenames();
 	}
 
 	public String[] removeMediaDir(String dir) throws MediaDirNotFoundException

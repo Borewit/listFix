@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.model.AppOptions;
-import listfix.model.AppOptionsEnum;
+import listfix.model.enums.AppOptionsEnum;
 import listfix.util.UnicodeUtils;
 
 /*

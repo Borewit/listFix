@@ -468,7 +468,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 					}
 				}
 
-				PlaylistEntry.basePath = playlist.getParent();
+				PlaylistEntry.BasePath = playlist.getParent();
 
 				final File finalPlaylistFile = playlist;
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
@@ -592,7 +592,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 
 					// update playlist history
-					M3UHistory history = guiDriver.getHistory();
+					PlaylistHistory history = guiDriver.getHistory();
 					history.add(path);
 					(new FileWriter()).writeMruPlaylists(history);
 

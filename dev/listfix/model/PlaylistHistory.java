@@ -28,13 +28,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class M3UHistory
+public class PlaylistHistory
 {
 	private List<String> playlists = new ArrayList<String>();
 	private int limit = 0;
 
-	/** Creates a new instance of M3UHistory */
-	public M3UHistory(int x)
+	/** Creates a new instance of PlaylistHistory */
+	public PlaylistHistory(int x)
 	{
 		limit = x;
 	}
@@ -98,7 +98,7 @@ public class M3UHistory
 		}
 	}
 
-	public String[] getM3UFilenames()
+	public String[] getFilenames()
 	{
 		String[] result = new String[playlists.size()];
 		for (int i = 0; i < playlists.size(); i++)

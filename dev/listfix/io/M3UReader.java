@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.model.PlaylistEntry;
-import listfix.model.PlaylistType;
+import listfix.model.enums.PlaylistType;
 import listfix.util.ArrayFunctions;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
@@ -257,27 +257,27 @@ public class M3UReader implements IPlaylistReader
 				{
 					firstToken = word;
 				}
-				if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.nonExistentDirectories.contains(word + fs))
+				if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + fs))
 				{
 					// This token is the closest thing we have to the notion of a 'drive' on any OS...
 					// make a file out of this and see if it has any files.
 					File testFile = new File(tempPath);
 					if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
 					{
-						PlaylistEntry.nonExistentDirectories.add(tempPath);
+						PlaylistEntry.NonExistentDirectories.add(tempPath);
 					}
 				}
 				else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1
-					&& !PlaylistEntry.nonExistentDirectories.contains("\\\\" + firstToken)
-					&& !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.existingDirectories, tempPath, true)
-					&& !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.nonExistentDirectories, tempPath, true))
+					&& !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken)
+					&& !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.ExistingDirectories, tempPath, true)
+					&& !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.NonExistentDirectories, tempPath, true))
 				{
 					// Handle UNC paths specially
 					File testFile = new File(tempPath);
 					boolean exists = testFile.exists();
 					if (exists)
 					{
-						PlaylistEntry.existingDirectories.add(tempPath);
+						PlaylistEntry.ExistingDirectories.add(tempPath);
 						if (firstPathToExist == null)
 						{
 							firstPathToExist = testFile;
@@ -285,11 +285,11 @@ public class M3UReader implements IPlaylistReader
 					}
 					if (!exists && pathTokenizer.countTokens() == 1)
 					{
-						PlaylistEntry.nonExistentDirectories.add(tempPath);
+						PlaylistEntry.NonExistentDirectories.add(tempPath);
 					}
 					if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
 					{
-						PlaylistEntry.nonExistentDirectories.add("\\\\" + firstToken);
+						PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken);
 					}
 				}
 				if (pathTokenizer.hasMoreTokens())
