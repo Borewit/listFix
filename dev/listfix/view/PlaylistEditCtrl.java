@@ -641,6 +641,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _miCopyFiles = new javax.swing.JMenuItem();
         _uiToolbar = new javax.swing.JToolBar();
         _btnSave = new javax.swing.JButton();
+        _btnReload = new javax.swing.JButton();
         _btnAdd = new javax.swing.JButton();
         _btnDelete = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
@@ -649,7 +650,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnReorder = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         _btnPlay = new javax.swing.JButton();
-        _btnReload = new javax.swing.JButton();
         _btnLocate = new javax.swing.JButton();
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = new listfix.view.support.ZebraJTable();
@@ -730,6 +730,21 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
         });
         _uiToolbar.add(_btnSave);
+
+        _btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
+        _btnReload.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+        _btnReload.setFocusable(false);
+        _btnReload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnReload.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnReload.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnReload.setPreferredSize(new java.awt.Dimension(31, 31));
+        _btnReload.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnReload.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                _btnReloadMouseClicked(evt);
+            }
+        });
+        _uiToolbar.add(_btnReload);
 
         _btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-add.gif"))); // NOI18N
         _btnAdd.setEnabled(false);
@@ -818,21 +833,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiToolbar.add(_btnPlay);
 
-        _btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
-        _btnReload.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
-        _btnReload.setFocusable(false);
-        _btnReload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnReload.setMaximumSize(new java.awt.Dimension(31, 31));
-        _btnReload.setMinimumSize(new java.awt.Dimension(31, 31));
-        _btnReload.setPreferredSize(new java.awt.Dimension(31, 31));
-        _btnReload.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnReload.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                _btnReloadMouseClicked(evt);
-            }
-        });
-        _uiToolbar.add(_btnReload);
-
         _btnLocate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-find.gif"))); // NOI18N
         _btnLocate.setToolTipText("Locate Missing Files");
         _btnLocate.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
@@ -856,7 +856,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new PlaylistTableModel());
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
         _uiTable.setRowHeight(20);
@@ -1032,46 +1032,61 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private void _btnReloadMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event__btnReloadMouseClicked
 	{//GEN-HEADEREND:event__btnReloadMouseClicked
-		showWaitCursor(true);
-
-		ProgressWorker worker = new ProgressWorker()
+		if (_playlist.isModified())
 		{
-			@Override
-			protected Object doInBackground() throws IOException
+			Object[] options =
 			{
-				_playlist.reload(this);
-				return null;
-			}
-			int firstIx;
-			int lastIx;
-
-			@Override
-			protected void done()
+				"Discard Changes and Reload", "Cancel"
+			};
+			int rc = JOptionPane.showOptionDialog(this.getParentFrame(), "The current list is modified, do you really want to discard these changes and reload from source?\n", "Confirm Reload",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+			if (rc == JOptionPane.NO_OPTION)
 			{
-				try
-				{
-					get();
-				}
-				catch (InterruptedException ex)
-				{
-				}
-				catch (ExecutionException ex)
-				{
-					showWaitCursor(false);
-					JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				getTableModel().fireTableDataChanged();
-				resizeAllColumns();
+				return;
 			}
-		};
+			else
+			{
+				showWaitCursor(true);
 
-		ProgressDialog pd = new ProgressDialog(null, true, worker, "Reloading...");
-		pd.setVisible(true);
+				ProgressWorker worker = new ProgressWorker()
+				{
+					@Override
+					protected Object doInBackground() throws IOException
+					{
+						_playlist.reload(this);
+						return null;
+					}
+					int firstIx;
+					int lastIx;
 
-		showWaitCursor(false);
+					@Override
+					protected void done()
+					{
+						try
+						{
+							get();
+						}
+						catch (InterruptedException ex)
+						{
+						}
+						catch (ExecutionException ex)
+						{
+							showWaitCursor(false);
+							JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 
+						getTableModel().fireTableDataChanged();
+						resizeAllColumns();
+					}
+				};
+
+				ProgressDialog pd = new ProgressDialog(null, true, worker, "Reloading...");
+				pd.setVisible(true);
+
+				showWaitCursor(false);
+			}
+		}
 	}//GEN-LAST:event__btnReloadMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
