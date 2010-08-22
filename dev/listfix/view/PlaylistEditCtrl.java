@@ -129,8 +129,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnDelete.setEnabled(hasSelected);
 				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-				_btnPlay.setEnabled(hasSelected || _playlist.getFile().exists());
+				_btnPlay.setEnabled(hasSelected || _playlist == null ? false : _playlist.getFile().exists());
 				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
+				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 				if (_isSortedByFileIx)
 				{
 					refreshAddTooltip(hasSelected);
@@ -221,8 +222,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{
 		boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
 		_btnReload.setEnabled(list == null ? false : list.isModified());
+		_btnSave.setEnabled(list == null ? false : list.isModified());
 		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+		getTableModel().fireTableDataChanged();
 	}
 
 	private void addItems()
@@ -591,7 +594,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			protected Void doInBackground() throws IOException
 			{
 				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-				_playlist.save(saveRelative, this);
+				try
+				{
+					_playlist.save(saveRelative, this);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 				return null;
 			}
 
@@ -731,6 +741,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
         _btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
         _btnSave.setToolTipText("Save");
+        _btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
         _btnSave.setFocusable(false);
         _btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -1151,24 +1162,27 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnLocate.setEnabled(hasPlaylist);
 		_btnReorder.setEnabled(hasPlaylist);
 		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
-		_btnPlay.setEnabled(hasPlaylist);
+		_btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+		_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 
 		if (_playlist != null && !_playlist.isEmpty())
 		{
 			resizeAllColumns();
 		}
 
-		IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+		if (_playlist != null)
 		{
-			public void playlistModified(Playlist list)
-			{
-				onPlaylistModified(list);
-			}
-		};
-
-		_playlist.addModifiedListener(listener);
+			_playlist.addModifiedListener(listener);
+		}
 	}
 	private Playlist _playlist;
+	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+	{
+		public void playlistModified(Playlist list)
+		{
+			onPlaylistModified(list);
+		}
+	};
 
 	private void showWaitCursor(boolean isWaiting)
 	{
@@ -1239,29 +1253,29 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	}
 
 	private ZebraJTable createTable()
-    {
-        return new ZebraJTable()
-        {
-            @Override
-            public String getToolTipText(MouseEvent event)
-            {
-                Point point = event.getPoint();
-                int rawRowIx = rowAtPoint(point);
-                int rawColIx = columnAtPoint(point);
-                if (rawRowIx >= 0 && rawColIx >= 0)
-                {
-                    int rowIx = convertRowIndexToModel(rawRowIx);
-                    int colIx = convertColumnIndexToModel(rawColIx);
-                    if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 1))
-                    {
+	{
+		return new ZebraJTable()
+		{
+			@Override
+			public String getToolTipText(MouseEvent event)
+			{
+				Point point = event.getPoint();
+				int rawRowIx = rowAtPoint(point);
+				int rawColIx = columnAtPoint(point);
+				if (rawRowIx >= 0 && rawColIx >= 0)
+				{
+					int rowIx = convertRowIndexToModel(rawRowIx);
+					int colIx = convertColumnIndexToModel(rawColIx);
+					if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 1))
+					{
 						PlaylistEntry entry = _playlist.get(rowIx);
-                        return (entry.isURL() ? "URL" : entry.getStatus().toString());
-                    }
-                }
-                return super.getToolTipText(event);
-            }
-        };
-    }
+						return (entry.isURL() ? "URL" : entry.getStatus().toString());
+					}
+				}
+				return super.getToolTipText(event);
+			}
+		};
+	}
 
 	private class PlaylistTableModel extends AbstractTableModel
 	{

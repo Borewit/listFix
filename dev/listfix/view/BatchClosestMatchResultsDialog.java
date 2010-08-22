@@ -28,7 +28,6 @@ import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -329,11 +328,13 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			fireContentsChanged(this, 0, _matches.size());
 		}
 
+		@Override
 		public int getSize()
 		{
 			return _matches != null ? _matches.size() + 1 : 0;
 		}
 
+		@Override
 		public Object getElementAt(int index)
 		{
 			if (_matches != null)
@@ -354,11 +355,13 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			}
 		}
 
+		@Override
 		public void setSelectedItem(Object anItem)
 		{
 			_selected = anItem;
 		}
 
+		@Override
 		public Object getSelectedItem()
 		{
 			return _selected;

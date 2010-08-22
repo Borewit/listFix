@@ -39,6 +39,7 @@ import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
 import listfix.view.support.DualProgressWorker;
+import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
 
 public class BatchRepairDialog extends javax.swing.JDialog
@@ -95,8 +96,12 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		};
 		pd.show(dpw);
 
-
 		InitPlaylistsList();
+
+		for (BatchRepairItem item : batch.getItems())
+		{
+			item.getPlaylist().addModifiedListener(listener);
+		}
 
 		String listCountTxt;
 		if (batch.getItems().size() == 1)
@@ -108,8 +113,15 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			listCountTxt = String.format("%d playlists", batch.getItems().size());
 		}
 		_labListCount.setText(listCountTxt);
-
 	}
+
+	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+	{
+		public void playlistModified(Playlist list)
+		{
+			onPlaylistModified(list);
+		}
+	};
 
 	private void InitPlaylistsList()
 	{
@@ -143,6 +155,26 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		List<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
 		keys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 		sorter.setSortKeys(keys);
+	}
+
+	private void onPlaylistModified(Playlist list)
+	{
+		int uiIndex = _uiLists.getSelectedRow();
+		int selIx = _uiLists.getSelectedRow();
+		if (selIx >= 0)
+		{
+			selIx = _uiLists.convertRowIndexToModel(selIx);
+			BatchRepairItem item = _batch.getItem(selIx);
+			try
+			{
+				((PlaylistsTableModel) _uiLists.getModel()).fireTableDataChanged();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			_uiLists.setRowSelectionInterval(uiIndex, uiIndex);
+		}
 	}
 
 	private void UpdateSelectedPlaylist()
@@ -382,7 +414,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			_txtBackup.requestFocusInWindow();
 		}
     }//GEN-LAST:event_onChkBackupItemStateChanged
-
 	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
 	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
 	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));

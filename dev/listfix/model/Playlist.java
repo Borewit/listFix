@@ -122,14 +122,18 @@ public class Playlist
 
 	public void addModifiedListener(IPlaylistModifiedListener listener)
 	{
-		_listeners.add(listener);
-		firePlaylistModified();
+		if (listener != null)
+		{
+			if (!_listeners.contains(listener))
+			{
+				_listeners.add(listener);
+			}
+		}
 	}
 
 	public void removeModifiedListener(IPlaylistModifiedListener listener)
 	{
 		_listeners.remove(listener);
-		firePlaylistModified();
 	}
 
 	public List<IPlaylistModifiedListener> getModifiedListeners()
@@ -142,7 +146,10 @@ public class Playlist
 		refreshStatus();
 		for (IPlaylistModifiedListener listener : _listeners)
 		{
-			listener.playlistModified(this);
+			if (listener != null)
+			{
+				listener.playlistModified(this);
+			}
 		}
 	}
 
@@ -331,6 +338,11 @@ public class Playlist
 
 	public void replace(int index, PlaylistEntry newEntry)
 	{
+
+		if (!entries.get(index).isFound())
+		{
+			newEntry.markFixedIfFound();
+		}
 		entries.set(index, newEntry);
 		firePlaylistModified();
 	}
