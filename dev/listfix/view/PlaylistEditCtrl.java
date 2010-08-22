@@ -1159,7 +1159,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{
 		// resize columns to fit
 		int cwidth = 0;
-		cwidth += _uiTable.autoResizeColumn(1);
+		cwidth += _uiTable.autoResizeColumn(1, true);
 		cwidth += _uiTable.autoResizeColumn(2);
 		cwidth += _uiTable.autoResizeColumn(3);
 		TableColumnModel cm = _uiTable.getColumnModel();
