@@ -158,6 +158,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("listFix( ) - v2.0.0");
+        setMinimumSize(new java.awt.Dimension(600, 149));
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -281,13 +282,14 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
 
         mainMenuBar.setBorder(null);
+        mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
-        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
         loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         loadMenuItem.setMnemonic('L');
         loadMenuItem.setText("Open Playlist");
         loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -333,11 +335,11 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
-        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         fileMenu.add(recentMenu);
 
         clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         clearHistoryMenuItem.setMnemonic('H');
         clearHistoryMenuItem.setText("Clear Playlist History");
         clearHistoryMenuItem.setToolTipText("");
@@ -352,7 +354,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         fileMenu.add(jSeparator1);
 
         appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         appOptionsMenuItem.setMnemonic('H');
         appOptionsMenuItem.setText("Options...");
         appOptionsMenuItem.setToolTipText("");
@@ -367,7 +369,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         fileMenu.add(jSeparator2);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        exit.setFont(new java.awt.Font("Verdana", 0, 9));
+        exit.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         exit.setMnemonic('x');
         exit.setText("Exit");
         exit.addActionListener(new java.awt.event.ActionListener() {
@@ -1196,6 +1198,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
 			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
+			SwingUtilities.updateComponentTreeUI(_uiTabs);
 		}
 		catch (ClassNotFoundException e)
 		{

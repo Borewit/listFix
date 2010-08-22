@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class WinampHelper
 {
-    static public BatchRepair getWinampBatchRepair(String[] mediaFiles)
+    public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
     {
         String homePath = System.getProperty("user.home");
         final String winAmpPath = homePath + "\\AppData\\Roaming\\Winamp\\Plugins\\ml\\";

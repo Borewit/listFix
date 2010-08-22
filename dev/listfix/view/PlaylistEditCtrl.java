@@ -39,6 +39,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.RowSorterEvent;
@@ -65,208 +68,528 @@ import listfix.view.support.ZebraJTable;
 
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
-	protected final TableCellRenderer createRightAlignCellRenderer()
-	{
-		DefaultTableCellRenderer label = new UIResourceTableCellRenderer();
-		label.setHorizontalAlignment(JLabel.RIGHT);
-		return label;
-	}
-
-	private static class UIResourceTableCellRenderer extends DefaultTableCellRenderer implements UIResource
-	{
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column)
+		private static class RightAlignedTableCellRenderer implements TableCellRenderer
 		{
-			if (table != null)
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column)
 			{
-				JTableHeader header = table.getTableHeader();
-				if (header != null)
-				{
-					setForeground(header.getForeground());
-					setBackground(header.getBackground());
-					setFont(header.getFont());
-				}
+				Component header = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				((JLabel) header).setHorizontalAlignment(SwingConstants.RIGHT);
+				return header;
 			}
-
-			setText((value == null) ? "" : value.toString());
-			return this;
 		}
-	}
 
-	public PlaylistEditCtrl()
-	{
-		initComponents();
-
-		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
-		_uiTable.setFont(new Font("Verdana", 0, 9));
-		_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
-
-		_uiTable.setShowHorizontalLines(false);
-		_uiTable.setShowVerticalLines(false);
-		_uiTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
-
-		// resize columns
-		TableColumnModel cm = _uiTable.getColumnModel();
-		cm.getColumn(0).setPreferredWidth(20);
-		cm.getColumn(0).setHeaderRenderer(createRightAlignCellRenderer());
-		cm.getColumn(1).setPreferredWidth(20);
-		cm.getColumn(2).setPreferredWidth(100);
-		cm.getColumn(3).setPreferredWidth(100);
-		_uiTable.setFillerColumnWidth(_uiTableScrollPane);
-
-		// add selection listener
-		_uiTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		public PlaylistEditCtrl()
 		{
-			public void valueChanged(ListSelectionEvent e)
+			initComponents();
+
+			_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
+			_uiTable.setFont(new Font("Verdana", 0, 9));
+			_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
+
+			_uiTable.setShowHorizontalLines(false);
+			_uiTable.setShowVerticalLines(false);
+			_uiTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
+
+			// resize columns
+			TableColumnModel cm = _uiTable.getColumnModel();
+			cm.getColumn(0).setPreferredWidth(20);
+			cm.getColumn(0).setHeaderRenderer(new RightAlignedTableCellRenderer());
+			cm.getColumn(1).setPreferredWidth(20);
+			cm.getColumn(2).setPreferredWidth(100);
+			cm.getColumn(3).setPreferredWidth(100);
+			_uiTable.setFillerColumnWidth(_uiTableScrollPane);
+
+			// add selection listener
+			_uiTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 			{
-				if (e.getValueIsAdjusting())
+				public void valueChanged(ListSelectionEvent e)
+				{
+					if (e.getValueIsAdjusting())
+					{
+						return;
+					}
+
+					boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
+					_btnDelete.setEnabled(hasSelected);
+					_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
+					_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+					_btnPlay.setEnabled(hasSelected || (_playlist == null ? false : _playlist.getFile().exists()));
+					_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
+					_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+					if (_isSortedByFileIx)
+					{
+						refreshAddTooltip(hasSelected);
+					}
+				}
+			});
+
+			// add sort listener
+			RowSorter sorter = _uiTable.getRowSorter();
+			sorter.addRowSorterListener(new RowSorterListener()
+			{
+				public void sorterChanged(RowSorterEvent e)
+				{
+					RowSorter sorter = e.getSource();
+					List<RowSorter.SortKey> keys = sorter.getSortKeys();
+					if ((keys.size() < 1) || (keys.get(0).getColumn() != 0) || (keys.get(0).getSortOrder() != SortOrder.ASCENDING))
+					{
+						// # is not the first sort column - disable move up / move down
+						if (_isSortedByFileIx)
+						{
+							_isSortedByFileIx = false;
+							_btnUp.setEnabled(false);
+							_btnDown.setEnabled(false);
+							_btnUp.setToolTipText("Move Up (sort by # to enable)");
+							_btnDown.setToolTipText("Move Down (sort by # to enable)");
+							refreshAddTooltip(false);
+						}
+					}
+					else
+					{
+						if (!_isSortedByFileIx)
+						{
+							_isSortedByFileIx = true;
+							boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
+							_btnUp.setEnabled(hasSelected);
+							_btnDown.setEnabled(hasSelected);
+							_btnUp.setToolTipText("Move Up");
+							_btnDown.setToolTipText("Move Down");
+							refreshAddTooltip(hasSelected);
+						}
+					}
+				}
+			});
+
+			// set sort to #
+			ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+			keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			sorter.setSortKeys(keys);
+
+			// add popup menu to list
+			_uiTable.addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mousePressed(MouseEvent e)
+				{
+					showMenu(e);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e)
+				{
+					showMenu(e);
+				}
+
+				private void showMenu(MouseEvent e)
+				{
+					if (_playlist != null && e.isPopupTrigger())
+					{
+						Point p = e.getPoint();
+						int rowIx = _uiTable.rowAtPoint(p);
+						boolean isOverItem = rowIx >= 0;
+						if (isOverItem)
+						{
+							_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
+						}
+
+						_miEditFilename.setEnabled(isOverItem);
+						_miFindClosest.setEnabled(isOverItem);
+						_miReplace.setEnabled(isOverItem);
+
+						_uiPopupMenu.show(e.getComponent(), p.x, p.y);
+					}
+				}
+			});
+		}
+
+		private void onPlaylistModified(Playlist list)
+		{
+			boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
+			_btnReload.setEnabled(list == null ? false : list.isModified());
+			_btnSave.setEnabled(list == null ? false : list.isModified());
+			_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
+			_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+			getTableModel().fireTableDataChanged();
+		}
+
+		private void addItems()
+		{
+			JFileChooser chooser = new JFileChooser();
+			chooser.addChoosableFileFilter(new AudioFileFilter());
+			chooser.setMultiSelectionEnabled(true);
+			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+			{
+				final File[] files = chooser.getSelectedFiles();
+				if (files.length == 0)
 				{
 					return;
 				}
 
-				boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-				_btnDelete.setEnabled(hasSelected);
-				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
-				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-				_btnPlay.setEnabled(hasSelected || (_playlist == null ? false : _playlist.getFile().exists()));
-				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
-				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
-				if (_isSortedByFileIx)
-				{
-					refreshAddTooltip(hasSelected);
-				}
-			}
-		});
+				showWaitCursor(true);
 
-		// add sort listener
-		RowSorter sorter = _uiTable.getRowSorter();
-		sorter.addRowSorterListener(new RowSorterListener()
+				ProgressWorker worker = new ProgressWorker()
+				{
+					@Override
+					protected Object doInBackground() throws IOException
+					{
+						int insertIx = _isSortedByFileIx ? _uiTable.getSelectedRow() : -1;
+
+						if (insertIx >= 0)
+						{
+							int count = _playlist.add(insertIx, files, this);
+							firstIx = insertIx + 1;
+							lastIx = firstIx + count - 1;
+						}
+						else
+						{
+							firstIx = _playlist.size();
+							_playlist.add(files, this);
+							lastIx = _playlist.size() - 1;
+						}
+
+						return null;
+					}
+					int firstIx;
+					int lastIx;
+
+					@Override
+					protected void done()
+					{
+						try
+						{
+							get();
+						}
+						catch (InterruptedException ex)
+						{
+						}
+						catch (ExecutionException ex)
+						{
+							showWaitCursor(false);
+							JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Add File Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+
+						// update list and select new items
+						PlaylistTableModel model = getTableModel();
+						if (_isSortedByFileIx)
+						{
+							// rows are in playlist order, so use quick update and selection methods
+							_uiTable.clearSelection();
+							model.fireTableRowsInserted(firstIx, lastIx);
+							_uiTable.addRowSelectionInterval(firstIx, lastIx);
+						}
+						else
+						{
+							// rows are in unknown order, so find and select each new row
+							model.fireTableDataChanged();
+							for (int ix = firstIx; ix <= lastIx; ix++)
+							{
+								int viewIx = _uiTable.convertRowIndexToView(ix);
+								_uiTable.addRowSelectionInterval(viewIx, viewIx);
+							}
+						}
+						resizeAllColumns();
+					}
+				};
+
+				ProgressDialog pd = new ProgressDialog(null, true, worker, "Adding items...");
+				pd.setVisible(true);
+
+				showWaitCursor(false);
+			}
+		}
+
+		private void deleteSelectedRows()
 		{
-			public void sorterChanged(RowSorterEvent e)
+			int[] rows = getSelectedRows();
+			_playlist.remove(rows);
+			PlaylistTableModel model = getTableModel();
+			model.fireTableDataChanged();
+		}
+
+		private void moveSelectedRowsUp()
+		{
+			int[] rows = getSelectedRows();
+			_playlist.moveUp(rows);
+			_uiTable.clearSelection();
+			for (int ix : rows)
 			{
-				RowSorter sorter = e.getSource();
+				_uiTable.addRowSelectionInterval(ix, ix);
+			}
+		}
+
+		private void moveSelectedRowsDown()
+		{
+			int[] rows = getSelectedRows();
+			_playlist.moveDown(rows);
+			_uiTable.clearSelection();
+			for (int ix : rows)
+			{
+				_uiTable.addRowSelectionInterval(ix, ix);
+			}
+		}
+
+		private void locateMissingFiles()
+		{
+			final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+			ProgressWorker worker = new ProgressWorker<List<Integer>, Void>()
+			{
+				@Override
+				protected List<Integer> doInBackground()
+				{
+					return _playlist.repair(libraryFiles, this);
+				}
+
+				@Override
+				protected void done()
+				{
+					try
+					{
+						_uiTable.clearSelection();
+						List<Integer> fixed = get();
+						for (Integer fixIx : fixed)
+						{
+							int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
+							_uiTable.addRowSelectionInterval(viewIx, viewIx);
+						}
+					}
+					catch (InterruptedException ex)
+					{
+					}
+					catch (ExecutionException ex)
+					{
+					}
+				}
+			};
+			ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Repairing...");
+			pd.setVisible(true);
+		}
+
+		private void reorderList()
+		{
+			Playlist.SortIx sortIx = Playlist.SortIx.None;
+			boolean isDescending = false;
+			if (!_isSortedByFileIx)
+			{
+				RowSorter sorter = _uiTable.getRowSorter();
 				List<RowSorter.SortKey> keys = sorter.getSortKeys();
-				if ((keys.size() < 1) || (keys.get(0).getColumn() != 0) || (keys.get(0).getSortOrder() != SortOrder.ASCENDING))
+				if (keys.size() > 0)
 				{
-					// # is not the first sort column - disable move up / move down
-					if (_isSortedByFileIx)
+					RowSorter.SortKey key = keys.get(0);
+					switch (key.getColumn())
 					{
-						_isSortedByFileIx = false;
-						_btnUp.setEnabled(false);
-						_btnDown.setEnabled(false);
-						_btnUp.setToolTipText("Move Up (sort by # to enable)");
-						_btnDown.setToolTipText("Move Down (sort by # to enable)");
-						refreshAddTooltip(false);
-					}
-				}
-				else
-				{
-					if (!_isSortedByFileIx)
-					{
-						_isSortedByFileIx = true;
-						boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-						_btnUp.setEnabled(hasSelected);
-						_btnDown.setEnabled(hasSelected);
-						_btnUp.setToolTipText("Move Up");
-						_btnDown.setToolTipText("Move Down");
-						refreshAddTooltip(hasSelected);
+//                    case 0:
+//                        // #
+//                        order = Playlist.SortOrder.None;
+//                        break;
+
+						case 1:
+							// status
+							sortIx = Playlist.SortIx.Status;
+							isDescending = key.getSortOrder() == SortOrder.DESCENDING;
+							break;
+
+						case 2:
+							// filename
+							sortIx = Playlist.SortIx.Filename;
+							isDescending = key.getSortOrder() == SortOrder.DESCENDING;
+							break;
+
+						case 3:
+							// path
+							sortIx = Playlist.SortIx.Path;
+							isDescending = key.getSortOrder() == SortOrder.DESCENDING;
+							break;
 					}
 				}
 			}
-		});
 
-		// set sort to #
-		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
-		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-		sorter.setSortKeys(keys);
+			ReorderPlaylistDialog dlg = new ReorderPlaylistDialog(getParentFrame(), true, sortIx, isDescending);
+			dlg.setLocationRelativeTo(this);
+			dlg.setVisible(true);
+			sortIx = dlg.getSelectedSortIx();
+			if (sortIx != Playlist.SortIx.None)
+			{
+				showWaitCursor(true);
 
-		// add popup menu to list
-		_uiTable.addMouseListener(new MouseAdapter()
+				_playlist.reorder(sortIx, dlg.getIsDescending());
+
+				RowSorter sorter = _uiTable.getRowSorter();
+				ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+				keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+				sorter.setSortKeys(keys);
+
+				PlaylistTableModel model = getTableModel();
+				model.fireTableDataChanged();
+
+				showWaitCursor(false);
+			}
+		}
+
+		private void editFilename()
 		{
-			@Override
-			public void mousePressed(MouseEvent e)
+			int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
+			PlaylistEntry entry = _playlist.get(rowIx);
+			EditFilenameResult response = EditFilenameDialog.showDialog(getParentFrame(), "Edit Filename", true, entry.getFileName());
+			if (response.getResultCode() == EditFilenameDialog.OK)
 			{
-				showMenu(e);
+				_playlist.changeEntryFileName(rowIx, response.getFileName());
+				//entry.setFileName(response.getFileName());
+				getTableModel().fireTableRowsUpdated(rowIx, rowIx);
 			}
+		}
 
-			@Override
-			public void mouseReleased(MouseEvent e)
+		private void findClosestMatches()
+		{
+			final int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
+			final PlaylistEntry entry = _playlist.get(rowIx);
+			final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+			ProgressWorker worker = new ProgressWorker<List<MatchedPlaylistEntry>, Void>()
 			{
-				showMenu(e);
-			}
-
-			private void showMenu(MouseEvent e)
-			{
-				if (_playlist != null && e.isPopupTrigger())
+				@Override
+				protected List<MatchedPlaylistEntry> doInBackground()
 				{
-					Point p = e.getPoint();
-					int rowIx = _uiTable.rowAtPoint(p);
-					boolean isOverItem = rowIx >= 0;
-					if (isOverItem)
+					return entry.findClosestMatches(libraryFiles, this);
+				}
+
+				@Override
+				protected void done()
+				{
+					try
 					{
-						_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
+						List<MatchedPlaylistEntry> matches = get();
+						ClosestMatchChooserDialog dlg = new ClosestMatchChooserDialog(getParentFrame(), matches, true);
+						dlg.center();
+						dlg.setVisible(true);
+						if (dlg.getResultCode() == ClosestMatchChooserDialog.OK)
+						{
+							_playlist.replace(rowIx, matches.get(dlg.getChoice()).getPlaylistFile());
+							getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+						}
 					}
+					catch (InterruptedException ex)
+					{
+					}
+					catch (ExecutionException ex)
+					{
+					}
+				}
+			};
+			ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches...");
+			pd.setVisible(true);
+		}
 
-					_miEditFilename.setEnabled(isOverItem);
-					_miFindClosest.setEnabled(isOverItem);
-					_miReplace.setEnabled(isOverItem);
+		private void bulkFindClosestMatches()
+		{
+			final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+			ProgressWorker<List<BatchMatchItem>, Void> worker = new ProgressWorker<List<BatchMatchItem>, Void>()
+			{
+				@Override
+				protected List<BatchMatchItem> doInBackground()
+				{
+					return _playlist.findClosestMatches(libraryFiles, this);
+				}
+			};
+			ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches for all missing files...");
+			pd.setVisible(true);
 
-					_uiPopupMenu.show(e.getComponent(), p.x, p.y);
+			final List<BatchMatchItem> items;
+			try
+			{
+				items = worker.get();
+				if (items.isEmpty())
+				{
+					return;
 				}
 			}
-		});
-	}
-
-	private void onPlaylistModified(Playlist list)
-	{
-		boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-		_btnReload.setEnabled(list == null ? false : list.isModified());
-		_btnSave.setEnabled(list == null ? false : list.isModified());
-		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
-		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-		getTableModel().fireTableDataChanged();
-	}
-
-	private void addItems()
-	{
-		JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new AudioFileFilter());
-		chooser.setMultiSelectionEnabled(true);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-		{
-			final File[] files = chooser.getSelectedFiles();
-			if (files.length == 0)
+			catch (Exception ex)
 			{
 				return;
 			}
 
-			showWaitCursor(true);
+			BatchClosestMatchResultsDialog dlg = new BatchClosestMatchResultsDialog(getParentFrame(), items);
+			dlg.setLocationRelativeTo(getParentFrame());
+			dlg.setVisible(true);
+			if (dlg.isAccepted())
+			{
+				_uiTable.clearSelection();
+				List<Integer> fixed = _playlist.applyClosestMatchSelections(items);
+				for (Integer fixIx : fixed)
+				{
+					int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
+					_uiTable.addRowSelectionInterval(viewIx, viewIx);
+				}
+			}
+		}
 
-			ProgressWorker worker = new ProgressWorker()
+		private void replaceSelectedEntry()
+		{
+			int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
+			PlaylistEntry entry = _playlist.get(rowIx);
+
+			JFileChooser chooser = new JFileChooser();
+			chooser.addChoosableFileFilter(new AudioFileFilter());
+			if (!entry.isURL())
+			{
+				chooser.setSelectedFile(entry.getAbsoluteFile());
+			}
+			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+			{
+				File file = chooser.getSelectedFile();
+				// make sure the replacement file is not a playlist
+				if (Playlist.isPlaylist(file))
+				{
+					JOptionPane.showMessageDialog(this, "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				PlaylistEntry newEntry = new PlaylistEntry(file, null);
+				_playlist.replace(rowIx, newEntry);
+				getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+			}
+		}
+
+		private void removeDuplicates()
+		{
+			int dupCount = _playlist.removeDuplicates();
+			if (dupCount > 0)
+			{
+				getTableModel().fireTableDataChanged();
+			}
+			String msg = dupCount == 1 ? "Removed 1 duplicate" : String.format("Removed %d duplicates", dupCount);
+			JOptionPane.showMessageDialog(this, msg, "Duplicates Removed", JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		private void removeMissing()
+		{
+			int count = _playlist.removeMissing();
+			if (count > 0)
+			{
+				getTableModel().fireTableDataChanged();
+			}
+			String msg = count == 1 ? "Removed 1 missing entry" : String.format("Removed %d missing entries", count);
+			JOptionPane.showMessageDialog(this, msg, "Missing Entries Removed", JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		private void savePlaylist()
+		{
+			ProgressWorker worker = new ProgressWorker<Void, Void>()
 			{
 				@Override
-				protected Object doInBackground() throws IOException
+				protected Void doInBackground() throws IOException
 				{
-					int insertIx = _isSortedByFileIx ? _uiTable.getSelectedRow() : -1;
-
-					if (insertIx >= 0)
+					boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+					try
 					{
-						int count = _playlist.add(insertIx, files, this);
-						firstIx = insertIx + 1;
-						lastIx = firstIx + count - 1;
+						_playlist.save(saveRelative, this);
 					}
-					else
+					catch (Exception e)
 					{
-						firstIx = _playlist.size();
-						_playlist.add(files, this);
-						lastIx = _playlist.size() - 1;
+						e.printStackTrace();
 					}
-
 					return null;
 				}
-				int firstIx;
-				int lastIx;
 
 				@Override
 				protected void done()
@@ -280,372 +603,35 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (ExecutionException ex)
 					{
-						showWaitCursor(false);
-						JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Add File Error", JOptionPane.ERROR_MESSAGE);
-						return;
+						JOptionPane.showMessageDialog(getParentFrame(), ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
 					}
-
-					// update list and select new items
-					PlaylistTableModel model = getTableModel();
-					if (_isSortedByFileIx)
-					{
-						// rows are in playlist order, so use quick update and selection methods
-						_uiTable.clearSelection();
-						model.fireTableRowsInserted(firstIx, lastIx);
-						_uiTable.addRowSelectionInterval(firstIx, lastIx);
-					}
-					else
-					{
-						// rows are in unknown order, so find and select each new row
-						model.fireTableDataChanged();
-						for (int ix = firstIx; ix <= lastIx; ix++)
-						{
-							int viewIx = _uiTable.convertRowIndexToView(ix);
-							_uiTable.addRowSelectionInterval(viewIx, viewIx);
-						}
-					}
-					resizeAllColumns();
 				}
 			};
-
-			ProgressDialog pd = new ProgressDialog(null, true, worker, "Adding items...");
+			ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
 			pd.setVisible(true);
-
-			showWaitCursor(false);
 		}
-	}
 
-	private void deleteSelectedRows()
-	{
-		int[] rows = getSelectedRows();
-		_playlist.remove(rows);
-		PlaylistTableModel model = getTableModel();
-		model.fireTableDataChanged();
-	}
-
-	private void moveSelectedRowsUp()
-	{
-		int[] rows = getSelectedRows();
-		_playlist.moveUp(rows);
-		_uiTable.clearSelection();
-		for (int ix : rows)
+		private void playSelectedEntry()
 		{
-			_uiTable.addRowSelectionInterval(ix, ix);
-		}
-	}
-
-	private void moveSelectedRowsDown()
-	{
-		int[] rows = getSelectedRows();
-		_playlist.moveDown(rows);
-		_uiTable.clearSelection();
-		for (int ix : rows)
-		{
-			_uiTable.addRowSelectionInterval(ix, ix);
-		}
-	}
-
-	private void locateMissingFiles()
-	{
-		final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-		ProgressWorker worker = new ProgressWorker<List<Integer>, Void>()
-		{
-			@Override
-			protected List<Integer> doInBackground()
+			int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
+			PlaylistEntry entry = _playlist.get(rowIx);
+			try
 			{
-				return _playlist.repair(libraryFiles, this);
+				entry.play();
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + ex.toString());
 			}
 
-			@Override
-			protected void done()
-			{
-				try
-				{
-					_uiTable.clearSelection();
-					List<Integer> fixed = get();
-					for (Integer fixIx : fixed)
-					{
-						int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
-						_uiTable.addRowSelectionInterval(viewIx, viewIx);
-					}
-				}
-				catch (InterruptedException ex)
-				{
-				}
-				catch (ExecutionException ex)
-				{
-				}
-			}
-		};
-		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Repairing...");
-		pd.setVisible(true);
-	}
-
-	private void reorderList()
-	{
-		Playlist.SortIx sortIx = Playlist.SortIx.None;
-		boolean isDescending = false;
-		if (!_isSortedByFileIx)
-		{
-			RowSorter sorter = _uiTable.getRowSorter();
-			List<RowSorter.SortKey> keys = sorter.getSortKeys();
-			if (keys.size() > 0)
-			{
-				RowSorter.SortKey key = keys.get(0);
-				switch (key.getColumn())
-				{
-//                    case 0:
-//                        // #
-//                        order = Playlist.SortOrder.None;
-//                        break;
-
-					case 1:
-						// status
-						sortIx = Playlist.SortIx.Status;
-						isDescending = key.getSortOrder() == SortOrder.DESCENDING;
-						break;
-
-					case 2:
-						// filename
-						sortIx = Playlist.SortIx.Filename;
-						isDescending = key.getSortOrder() == SortOrder.DESCENDING;
-						break;
-
-					case 3:
-						// path
-						sortIx = Playlist.SortIx.Path;
-						isDescending = key.getSortOrder() == SortOrder.DESCENDING;
-						break;
-				}
-			}
 		}
 
-		ReorderPlaylistDialog dlg = new ReorderPlaylistDialog(getParentFrame(), true, sortIx, isDescending);
-		dlg.setLocationRelativeTo(this);
-		dlg.setVisible(true);
-		sortIx = dlg.getSelectedSortIx();
-		if (sortIx != Playlist.SortIx.None)
-		{
-			showWaitCursor(true);
-
-			_playlist.reorder(sortIx, dlg.getIsDescending());
-
-			RowSorter sorter = _uiTable.getRowSorter();
-			ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
-			keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-			sorter.setSortKeys(keys);
-
-			PlaylistTableModel model = getTableModel();
-			model.fireTableDataChanged();
-
-			showWaitCursor(false);
-		}
-	}
-
-	private void editFilename()
-	{
-		int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		PlaylistEntry entry = _playlist.get(rowIx);
-		EditFilenameResult response = EditFilenameDialog.showDialog(getParentFrame(), "Edit Filename", true, entry.getFileName());
-		if (response.getResultCode() == EditFilenameDialog.OK)
-		{
-			_playlist.changeEntryFileName(rowIx, response.getFileName());
-			//entry.setFileName(response.getFileName());
-			getTableModel().fireTableRowsUpdated(rowIx, rowIx);
-		}
-	}
-
-	private void findClosestMatches()
-	{
-		final int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		final PlaylistEntry entry = _playlist.get(rowIx);
-		final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-		ProgressWorker worker = new ProgressWorker<List<MatchedPlaylistEntry>, Void>()
-		{
-			@Override
-			protected List<MatchedPlaylistEntry> doInBackground()
-			{
-				return entry.findClosestMatches(libraryFiles, this);
-			}
-
-			@Override
-			protected void done()
-			{
-				try
-				{
-					List<MatchedPlaylistEntry> matches = get();
-					ClosestMatchChooserDialog dlg = new ClosestMatchChooserDialog(getParentFrame(), matches, true);
-					dlg.center();
-					dlg.setVisible(true);
-					if (dlg.getResultCode() == ClosestMatchChooserDialog.OK)
-					{
-						_playlist.replace(rowIx, matches.get(dlg.getChoice()).getPlaylistFile());
-						getTableModel().fireTableRowsUpdated(rowIx, rowIx);
-					}
-				}
-				catch (InterruptedException ex)
-				{
-				}
-				catch (ExecutionException ex)
-				{
-				}
-			}
-		};
-		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches...");
-		pd.setVisible(true);
-	}
-
-	private void bulkFindClosestMatches()
-	{
-		final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-		ProgressWorker<List<BatchMatchItem>, Void> worker = new ProgressWorker<List<BatchMatchItem>, Void>()
-		{
-			@Override
-			protected List<BatchMatchItem> doInBackground()
-			{
-				return _playlist.findClosestMatches(libraryFiles, this);
-			}
-		};
-		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches for all missing files...");
-		pd.setVisible(true);
-
-		final List<BatchMatchItem> items;
-		try
-		{
-			items = worker.get();
-			if (items.isEmpty())
-			{
-				return;
-			}
-		}
-		catch (Exception ex)
-		{
-			return;
-		}
-
-		BatchClosestMatchResultsDialog dlg = new BatchClosestMatchResultsDialog(getParentFrame(), items);
-		dlg.setLocationRelativeTo(getParentFrame());
-		dlg.setVisible(true);
-		if (dlg.isAccepted())
-		{
-			_uiTable.clearSelection();
-			List<Integer> fixed = _playlist.applyClosestMatchSelections(items);
-			for (Integer fixIx : fixed)
-			{
-				int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
-				_uiTable.addRowSelectionInterval(viewIx, viewIx);
-			}
-		}
-	}
-
-	private void replaceSelectedEntry()
-	{
-		int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		PlaylistEntry entry = _playlist.get(rowIx);
-
-		JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new AudioFileFilter());
-		if (!entry.isURL())
-		{
-			chooser.setSelectedFile(entry.getAbsoluteFile());
-		}
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-		{
-			File file = chooser.getSelectedFile();
-			// make sure the replacement file is not a playlist
-			if (Playlist.isPlaylist(file))
-			{
-				JOptionPane.showMessageDialog(this, "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			PlaylistEntry newEntry = new PlaylistEntry(file, null);
-			_playlist.replace(rowIx, newEntry);
-			getTableModel().fireTableRowsUpdated(rowIx, rowIx);
-		}
-	}
-
-	private void removeDuplicates()
-	{
-		int dupCount = _playlist.removeDuplicates();
-		if (dupCount > 0)
-		{
-			getTableModel().fireTableDataChanged();
-		}
-		String msg = dupCount == 1 ? "Removed 1 duplicate" : String.format("Removed %d duplicates", dupCount);
-		JOptionPane.showMessageDialog(this, msg, "Duplicates Removed", JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	private void removeMissing()
-	{
-		int count = _playlist.removeMissing();
-		if (count > 0)
-		{
-			getTableModel().fireTableDataChanged();
-		}
-		String msg = count == 1 ? "Removed 1 missing entry" : String.format("Removed %d missing entries", count);
-		JOptionPane.showMessageDialog(this, msg, "Missing Entries Removed", JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	private void savePlaylist()
-	{
-		ProgressWorker worker = new ProgressWorker<Void, Void>()
-		{
-			@Override
-			protected Void doInBackground() throws IOException
-			{
-				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-				try
-				{
-					_playlist.save(saveRelative, this);
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			protected void done()
-			{
-				try
-				{
-					get();
-				}
-				catch (InterruptedException ex)
-				{
-				}
-				catch (ExecutionException ex)
-				{
-					JOptionPane.showMessageDialog(getParentFrame(), ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		};
-		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
-		pd.setVisible(true);
-	}
-
-	private void playSelectedEntry()
-	{
-		int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		PlaylistEntry entry = _playlist.get(rowIx);
-		try
-		{
-			entry.play();
-		}
-		catch (Exception ex)
-		{
-			JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + ex.toString());
-		}
-
-	}
-
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+		/** This method is called from within the constructor to
+		 * initialize the form.
+		 * WARNING: Do NOT modify this code. The content of this method is
+		 * always regenerated by the Form Editor.
+		 */
+		@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -1132,250 +1118,250 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     // End of variables declaration//GEN-END:variables
-	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
-	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
-	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
-	private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.gif"));
+private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
+		private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
+		private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
+		private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.gif"));
 
-	public Playlist getPlaylist()
-	{
-		return _playlist;
-	}
-
-	public void setPlaylist(Playlist list)
-	{
-		setPlaylist(list, false);
-	}
-
-	public void setPlaylist(Playlist list, boolean force)
-	{
-		if (_playlist == list && !force)
+		public Playlist getPlaylist()
 		{
-			return;
-		}
-		_playlist = list;
-
-		((PlaylistTableModel) _uiTable.getModel()).fireTableDataChanged();
-
-		boolean hasPlaylist = _playlist != null;
-		_btnAdd.setEnabled(hasPlaylist);
-		_btnLocate.setEnabled(hasPlaylist);
-		_btnReorder.setEnabled(hasPlaylist);
-		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
-		_btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
-		_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
-
-		if (_playlist != null && !_playlist.isEmpty())
-		{
-			resizeAllColumns();
+			return _playlist;
 		}
 
-		if (_playlist != null)
+		public void setPlaylist(Playlist list)
 		{
-			_playlist.addModifiedListener(listener);
+			setPlaylist(list, false);
 		}
-	}
-	private Playlist _playlist;
-	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
-	{
-		public void playlistModified(Playlist list)
-		{
-			onPlaylistModified(list);
-		}
-	};
 
-	private void showWaitCursor(boolean isWaiting)
-	{
-		if (isWaiting)
+		public void setPlaylist(Playlist list, boolean force)
 		{
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		}
-		else
-		{
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-	}
-
-	private void resizeAllColumns()
-	{
-		// resize columns to fit
-		int cwidth = 0;
-		cwidth += _uiTable.autoResizeColumn(1, true);
-		cwidth += _uiTable.autoResizeColumn(2);
-		cwidth += _uiTable.autoResizeColumn(3);
-		TableColumnModel cm = _uiTable.getColumnModel();
-		TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
-		Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
-		int width = comp.getPreferredSize().width + 4;
-		TableColumn col = cm.getColumn(0);
-		col.setMinWidth(width);
-		col.setMaxWidth(width);
-		col.setPreferredWidth(width);
-		cwidth += width;
-	}
-	private boolean _isSortedByFileIx;
-
-	private void refreshAddTooltip(boolean hasSelected)
-	{
-		if (!_isSortedByFileIx)
-		{
-			_btnAdd.setToolTipText("Append File or Playlist (sort by # to insert)");
-		}
-		else if (hasSelected)
-		{
-			_btnAdd.setToolTipText("Insert File or Playlist after selected item");
-		}
-		else
-		{
-			_btnAdd.setToolTipText("Append File or Playlist");
-		}
-	}
-
-	private PlaylistTableModel getTableModel()
-	{
-		return (PlaylistTableModel) _uiTable.getModel();
-	}
-
-	private Frame getParentFrame()
-	{
-		return JOptionPane.getFrameForComponent(this);
-	}
-
-	private int[] getSelectedRows()
-	{
-		int[] rows = _uiTable.getSelectedRows();
-		RowSorter sorter = _uiTable.getRowSorter();
-		for (int ix = 0; ix < rows.length; ix++)
-		{
-			rows[ix] = sorter.convertRowIndexToModel(rows[ix]);
-		}
-		return rows;
-	}
-
-	private ZebraJTable createTable()
-	{
-		return new ZebraJTable()
-		{
-			@Override
-			public String getToolTipText(MouseEvent event)
+			if (_playlist == list && !force)
 			{
-				Point point = event.getPoint();
-				int rawRowIx = rowAtPoint(point);
-				int rawColIx = columnAtPoint(point);
-				if (rawRowIx >= 0 && rawColIx >= 0)
-				{
-					int rowIx = convertRowIndexToModel(rawRowIx);
-					int colIx = convertColumnIndexToModel(rawColIx);
-					if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 1))
-					{
-						PlaylistEntry entry = _playlist.get(rowIx);
-						return (entry.isURL() ? "URL" : entry.getStatus().toString());
-					}
-				}
-				return super.getToolTipText(event);
+				return;
 			}
-		};
-	}
+			_playlist = list;
 
-	private class PlaylistTableModel extends AbstractTableModel
-	{
-		public int getRowCount()
-		{
+			((PlaylistTableModel) _uiTable.getModel()).fireTableDataChanged();
+
+			boolean hasPlaylist = _playlist != null;
+			_btnAdd.setEnabled(hasPlaylist);
+			_btnLocate.setEnabled(hasPlaylist);
+			_btnReorder.setEnabled(hasPlaylist);
+			_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
+			_btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+			_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+
+			if (_playlist != null && !_playlist.isEmpty())
+			{
+				resizeAllColumns();
+			}
+
 			if (_playlist != null)
 			{
-				return _playlist.size();
+				_playlist.addModifiedListener(listener);
+			}
+		}
+		private Playlist _playlist;
+		private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+		{
+			public void playlistModified(Playlist list)
+			{
+				onPlaylistModified(list);
+			}
+		};
+
+		private void showWaitCursor(boolean isWaiting)
+		{
+			if (isWaiting)
+			{
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			}
 			else
 			{
-				return 0;
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
 
-		public int getColumnCount()
+		private void resizeAllColumns()
 		{
-			return 4;
+			// resize columns to fit
+			int cwidth = 0;
+			cwidth += _uiTable.autoResizeColumn(1, true);
+			cwidth += _uiTable.autoResizeColumn(2);
+			cwidth += _uiTable.autoResizeColumn(3);
+			TableColumnModel cm = _uiTable.getColumnModel();
+			TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
+			Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
+			int width = comp.getPreferredSize().width + 4;
+			TableColumn col = cm.getColumn(0);
+			col.setMinWidth(width);
+			col.setMaxWidth(width);
+			col.setPreferredWidth(width);
+			cwidth += width;
 		}
+		private boolean _isSortedByFileIx;
 
-		public Object getValueAt(int rowIndex, int columnIndex)
+		private void refreshAddTooltip(boolean hasSelected)
 		{
-			PlaylistEntry entry = _playlist.get(rowIndex);
-			switch (columnIndex)
+			if (!_isSortedByFileIx)
 			{
-				case 0:
-					return rowIndex + 1;
-				case 1:
-					if (entry.isURL())
-					{
-						return _imgUrl;
-					}
-					else if (entry.isFixed())
-					{
-						return _imgFixed;
-					}
-					else if (entry.isFound())
-					{
-						return _imgFound;
-					}
-					else
-					{
-						return _imgMissing;
-					}
-				case 2:
-					return entry.getFileName();
-				case 3:
-					return entry.getPath();
-				default:
-					return null;
+				_btnAdd.setToolTipText("Append File or Playlist (sort by # to insert)");
+			}
+			else if (hasSelected)
+			{
+				_btnAdd.setToolTipText("Insert File or Playlist after selected item");
+			}
+			else
+			{
+				_btnAdd.setToolTipText("Append File or Playlist");
 			}
 		}
 
-		@Override
-		public String getColumnName(int column)
+		private PlaylistTableModel getTableModel()
 		{
-			switch (column)
+			return (PlaylistTableModel) _uiTable.getModel();
+		}
+
+		private Frame getParentFrame()
+		{
+			return JOptionPane.getFrameForComponent(this);
+		}
+
+		private int[] getSelectedRows()
+		{
+			int[] rows = _uiTable.getSelectedRows();
+			RowSorter sorter = _uiTable.getRowSorter();
+			for (int ix = 0; ix < rows.length; ix++)
 			{
-				case 0:
-					return "#";
-				case 1:
-					return "";
-				case 2:
-					return "File Name";
-				case 3:
-					return "Location";
-				default:
-					return null;
+				rows[ix] = sorter.convertRowIndexToModel(rows[ix]);
+			}
+			return rows;
+		}
+
+		private ZebraJTable createTable()
+		{
+			return new ZebraJTable()
+			{
+				@Override
+				public String getToolTipText(MouseEvent event)
+				{
+					Point point = event.getPoint();
+					int rawRowIx = rowAtPoint(point);
+					int rawColIx = columnAtPoint(point);
+					if (rawRowIx >= 0 && rawColIx >= 0)
+					{
+						int rowIx = convertRowIndexToModel(rawRowIx);
+						int colIx = convertColumnIndexToModel(rawColIx);
+						if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 1))
+						{
+							PlaylistEntry entry = _playlist.get(rowIx);
+							return (entry.isURL() ? "URL" : entry.getStatus().toString());
+						}
+					}
+					return super.getToolTipText(event);
+				}
+			};
+		}
+
+		private class PlaylistTableModel extends AbstractTableModel
+		{
+			public int getRowCount()
+			{
+				if (_playlist != null)
+				{
+					return _playlist.size();
+				}
+				else
+				{
+					return 0;
+				}
+			}
+
+			public int getColumnCount()
+			{
+				return 4;
+			}
+
+			public Object getValueAt(int rowIndex, int columnIndex)
+			{
+				PlaylistEntry entry = _playlist.get(rowIndex);
+				switch (columnIndex)
+				{
+					case 0:
+						return rowIndex + 1;
+					case 1:
+						if (entry.isURL())
+						{
+							return _imgUrl;
+						}
+						else if (entry.isFixed())
+						{
+							return _imgFixed;
+						}
+						else if (entry.isFound())
+						{
+							return _imgFound;
+						}
+						else
+						{
+							return _imgMissing;
+						}
+					case 2:
+						return entry.getFileName();
+					case 3:
+						return entry.getPath();
+					default:
+						return null;
+				}
+			}
+
+			@Override
+			public String getColumnName(int column)
+			{
+				switch (column)
+				{
+					case 0:
+						return "#";
+					case 1:
+						return "";
+					case 2:
+						return "File Name";
+					case 3:
+						return "Location";
+					default:
+						return null;
+				}
+			}
+
+			@Override
+			public Class<?> getColumnClass(int columnIndex)
+			{
+				switch (columnIndex)
+				{
+					case 0:
+						return Integer.class;
+					case 1:
+						return ImageIcon.class;
+					default:
+						return Object.class;
+				}
 			}
 		}
 
-		@Override
-		public Class<?> getColumnClass(int columnIndex)
+		private class IntRenderer extends DefaultTableCellRenderer
 		{
-			switch (columnIndex)
+			public IntRenderer()
 			{
-				case 0:
-					return Integer.class;
-				case 1:
-					return ImageIcon.class;
-				default:
-					return Object.class;
+				super();
+				setHorizontalAlignment(JLabel.RIGHT);
+			}
+
+			@Override
+			protected void setValue(Object value)
+			{
+				setText((value == null) ? "" : _intFormatter.format(value));
 			}
 		}
+		private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
+		int currentlySelectedRow = 0;
 	}
-
-	private class IntRenderer extends DefaultTableCellRenderer
-	{
-		public IntRenderer()
-		{
-			super();
-			setHorizontalAlignment(JLabel.RIGHT);
-		}
-
-		@Override
-		protected void setValue(Object value)
-		{
-			setText((value == null) ? "" : _intFormatter.format(value));
-		}
-	}
-	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
-	int currentlySelectedRow = 0;
-}

@@ -216,6 +216,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
+        setMinimumSize(new java.awt.Dimension(430, 320));
+        setModal(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -226,8 +228,9 @@ public class AppOptionsDialog extends javax.swing.JDialog
         topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Config", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9)));
-        optionsPanel.setPreferredSize(new java.awt.Dimension(380, 250));
+        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Config", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9))); // NOI18N
+        optionsPanel.setMinimumSize(new java.awt.Dimension(1210, 60));
+        optionsPanel.setPreferredSize(new java.awt.Dimension(380, 280));
         optionsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
@@ -333,7 +336,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel7.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel6.add(jLabel7);
 
-        playlistDirectoryTextField.setFont(new java.awt.Font("Verdana", 0, 9));
+        playlistDirectoryTextField.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         playlistDirectoryTextField.setText(options.getPlaylistsDirectory());
         playlistDirectoryTextField.setAlignmentX(0.0F);
         playlistDirectoryTextField.setAlignmentY(0.0F);
