@@ -110,6 +110,8 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
         batchPlaylistRepairMenuItem = new javax.swing.JMenuItem();
+        jPanel1 = new javax.swing.JPanel();
+        openIconButton = new javax.swing.JButton();
         statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         splitPane = new javax.swing.JSplitPane();
@@ -165,6 +167,29 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 exitForm(evt);
             }
         });
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        openIconButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
+        openIconButton.setText("Open Playlist");
+        openIconButton.setToolTipText("Open Playlist");
+        openIconButton.setAlignmentY(0.0F);
+        openIconButton.setBorder(null);
+        openIconButton.setFocusable(false);
+        openIconButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        openIconButton.setMaximumSize(new java.awt.Dimension(115, 25));
+        openIconButton.setMinimumSize(new java.awt.Dimension(115, 25));
+        openIconButton.setPreferredSize(new java.awt.Dimension(115, 25));
+        openIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openIconButtonActionPerformed1(evt);
+            }
+        });
+        jPanel1.add(openIconButton, java.awt.BorderLayout.WEST);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         statusPanel.setLayout(new java.awt.BorderLayout());
@@ -286,10 +311,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
-        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         loadMenuItem.setMnemonic('L');
         loadMenuItem.setText("Open Playlist");
         loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -335,11 +360,11 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
-        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
         fileMenu.add(recentMenu);
 
         clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         clearHistoryMenuItem.setMnemonic('H');
         clearHistoryMenuItem.setText("Clear Playlist History");
         clearHistoryMenuItem.setToolTipText("");
@@ -354,7 +379,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         fileMenu.add(jSeparator1);
 
         appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         appOptionsMenuItem.setMnemonic('H');
         appOptionsMenuItem.setText("Options...");
         appOptionsMenuItem.setToolTipText("");
@@ -369,7 +394,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         fileMenu.add(jSeparator2);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        exit.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        exit.setFont(new java.awt.Font("Verdana", 0, 9));
         exit.setMnemonic('x');
         exit.setText("Exit");
         exit.addActionListener(new java.awt.event.ActionListener() {
@@ -1131,6 +1156,24 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	}
 }//GEN-LAST:event_onMenuBatchRepairActionPerformed
 
+private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN-FIRST:event_openIconButtonActionPerformed1
+{//GEN-HEADEREND:event_openIconButtonActionPerformed1
+	if (_currentPlaylist != null)
+	{
+		jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
+	}
+	int response = jM3UChooser.showOpenDialog(this);
+	if (response == JFileChooser.APPROVE_OPTION)
+	{
+		File playlist = jM3UChooser.getSelectedFile();
+		this.openPlaylist(playlist);
+	}
+	else
+	{
+		jM3UChooser.cancelSelection();
+	}
+}//GEN-LAST:event_openIconButtonActionPerformed1
+
 	private void updateMediaDirButtons()
 	{
 		if (mediaLibraryList.getModel().getSize() == 0)
@@ -1243,6 +1286,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -1254,6 +1298,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
     private javax.swing.JList mediaLibraryList;
     private javax.swing.JPanel mediaLibraryPanel;
     private javax.swing.JScrollPane mediaLibraryScrollPane;
+    private javax.swing.JButton openIconButton;
     private javax.swing.JPanel playlistDirectoryPanel;
     private javax.swing.JTree playlistDirectoryTree;
     private javax.swing.JPanel playlistPanel;
