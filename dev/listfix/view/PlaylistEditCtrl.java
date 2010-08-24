@@ -19,6 +19,13 @@
 
 package listfix.view;
 
+import listfix.view.dialogs.ReorderPlaylistDialog;
+import listfix.view.dialogs.EditFilenameDialog;
+import listfix.view.dialogs.BatchClosestMatchResultsDialog;
+import listfix.view.dialogs.ProgressDialog;
+import listfix.view.dialogs.BatchRepairDialog;
+import listfix.view.dialogs.ClosestMatchChooserDialog;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;

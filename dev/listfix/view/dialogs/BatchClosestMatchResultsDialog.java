@@ -17,7 +17,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -141,7 +141,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new MatchTableModel());
         _uiTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiScrollPane.setViewportView(_uiTable);
 
         getContentPane().add(_uiScrollPane, java.awt.BorderLayout.CENTER);

@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 /**
  *

@@ -17,7 +17,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 import listfix.model.Playlist;
 
@@ -112,7 +112,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.GridLayout(6, 1));
 
         buttonGroup1.add(_rbRandom);
-        _rbRandom.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _rbRandom.setFont(new java.awt.Font("Verdana", 0, 9));
         _rbRandom.setText("Random");
         _rbRandom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,7 +122,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbRandom);
 
         buttonGroup1.add(_rbReverse);
-        _rbReverse.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _rbReverse.setFont(new java.awt.Font("Verdana", 0, 9));
         _rbReverse.setText("Reverse current order");
         _rbReverse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -132,7 +132,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbReverse);
 
         buttonGroup1.add(_rbFilename);
-        _rbFilename.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _rbFilename.setFont(new java.awt.Font("Verdana", 0, 9));
         _rbFilename.setText("Filename");
         _rbFilename.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -142,7 +142,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbFilename);
 
         buttonGroup1.add(_rbPath);
-        _rbPath.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _rbPath.setFont(new java.awt.Font("Verdana", 0, 9));
         _rbPath.setText("Path");
         _rbPath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -152,7 +152,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbPath);
 
         buttonGroup1.add(_rbStatus);
-        _rbStatus.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _rbStatus.setFont(new java.awt.Font("Verdana", 0, 9));
         _rbStatus.setText("Status");
         _rbStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -161,7 +161,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         });
         jPanel1.add(_rbStatus);
 
-        _chkDescending.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _chkDescending.setFont(new java.awt.Font("Verdana", 0, 9));
         _chkDescending.setText("Descending");
         _chkDescending.setEnabled(false);
         jPanel1.add(_chkDescending);
@@ -170,7 +170,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jButton1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Verdana", 0, 9));
         jButton1.setText("Change Order");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,7 +179,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         });
         jPanel2.add(jButton1);
 
-        jButton2.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jButton2.setFont(new java.awt.Font("Verdana", 0, 9));
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

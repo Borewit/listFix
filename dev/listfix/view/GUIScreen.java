@@ -20,10 +20,12 @@
 
 package listfix.view;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Cursor;
+import java.awt.event.MouseEvent;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +37,30 @@ import javax.swing.*;
 import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
-import listfix.controller.tasks.*;
-import listfix.io.*;
-import listfix.model.*;
-import listfix.util.ArrayFunctions;
+import listfix.controller.tasks.AddMediaDirectoryTask;
+import listfix.controller.tasks.UpdateMediaLibraryTask;
+
+import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
+import listfix.io.FileWriter;
+import listfix.io.PlaylistFileChooserFilter;
+import listfix.io.PlaylistScanner;
+import listfix.io.UNCFile;
+import listfix.io.WinampHelper;
+
+import listfix.model.AppOptions;
+import listfix.model.BatchRepair;
+import listfix.model.BatchRepairItem;
+import listfix.model.Playlist;
+import listfix.model.PlaylistEntry;
+import listfix.model.PlaylistHistory;
+
+import listfix.util.ArrayFunctions;
+
+import listfix.view.dialogs.ProgressDialog;
+import listfix.view.dialogs.BatchRepairDialog;
+import listfix.view.dialogs.AppOptionsDialog;
+
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
 import listfix.view.support.ICloseableTabManager;
@@ -59,7 +80,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 	{
 		listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
 		splashScreen.setStatusBar("Loading Media Library & Options...");
-		guiDriver = GUIDriver.getInstance(); //new GUIDriver();
+		guiDriver = GUIDriver.getInstance(); 
 		splashScreen.setStatusBar("Initializing UI...");
 		initComponents();
 		jM3UChooser = new JFileChooser();
@@ -711,6 +732,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 	{
 		_playlistListener = new IPlaylistModifiedListener()
 		{
+			@Override
 			public void playlistModified(Playlist list)
 			{
 				onPlaylistModified(list);
@@ -1213,6 +1235,7 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 				temp.setFont(new java.awt.Font("Verdana", 0, 9));
 				temp.addActionListener(new java.awt.event.ActionListener()
 				{
+					@Override
 					public void actionPerformed(java.awt.event.ActionEvent evt)
 					{
 						recentPlaylistActionPerformed(evt);

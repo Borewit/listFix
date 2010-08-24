@@ -17,7 +17,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 import java.awt.Font;
 import java.io.File;
@@ -223,7 +223,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        _chkBackup.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _chkBackup.setFont(new java.awt.Font("Verdana", 0, 9));
         _chkBackup.setText("Backup original files to zip file:");
         _chkBackup.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -231,7 +231,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
-        _txtBackup.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _txtBackup.setFont(new java.awt.Font("Verdana", 0, 9));
         _txtBackup.setEnabled(false);
 
         _btnCancel.setText("Cancel");
@@ -241,7 +241,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
-        _btnSave.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _btnSave.setFont(new java.awt.Font("Verdana", 0, 9));
         _btnSave.setText("Save Repairs");
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -296,7 +296,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel1.setText("Playlist details");
         jPanel3.add(jLabel1);
 
@@ -309,10 +309,10 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jPanel5.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jPanel5.setFont(new java.awt.Font("Verdana", 0, 9));
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel2.setText("Playlists");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -338,7 +338,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         _uiLists.setAutoCreateRowSorter(true);
         _uiLists.setModel(new PlaylistsTableModel());
         _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        _uiLists.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiLists.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiLists.getTableHeader().setReorderingAllowed(false);
         _uiScrollLists.setViewportView(_uiLists);
 

@@ -17,7 +17,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 import java.awt.Container;
 import java.awt.Frame;

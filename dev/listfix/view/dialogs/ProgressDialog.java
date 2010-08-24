@@ -17,7 +17,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -114,7 +114,7 @@ public class ProgressDialog extends javax.swing.JDialog
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel1.setText("jLabel1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;

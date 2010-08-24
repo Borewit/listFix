@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.dialogs;
 
 /**
  *
@@ -336,7 +336,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel7.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel6.add(jLabel7);
 
-        playlistDirectoryTextField.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        playlistDirectoryTextField.setFont(new java.awt.Font("Verdana", 0, 9));
         playlistDirectoryTextField.setText(options.getPlaylistsDirectory());
         playlistDirectoryTextField.setAlignmentX(0.0F);
         playlistDirectoryTextField.setAlignmentY(0.0F);
