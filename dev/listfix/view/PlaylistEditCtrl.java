@@ -603,17 +603,21 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		pd.setVisible(true);
 	}
 
-	private void playSelectedEntry()
+	private void playSelectedEntries()
 	{
-		int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		PlaylistEntry entry = _playlist.get(rowIx);
 		try
 		{
-			entry.play();
+			int[] rows = _uiTable.getSelectedRows();
+			for (int r = 0; r < rows.length; r++)
+			{
+				rows[r] = _uiTable.convertRowIndexToModel(rows[r]);
+			}
+			Playlist tempList = _playlist.getSublist(rows);
+			tempList.play();
 		}
 		catch (Exception ex)
 		{
-			JOptionPane.showMessageDialog(this, "Could not open this playlist entry, error is as follows: \n\n" + ex.toString());
+			JOptionPane.showMessageDialog(this, "Could not open these playlist entries, error was: \n\n" + ex.toString());
 		}
 
 	}
@@ -946,7 +950,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 		else
 		{
-			playSelectedEntry();
+			playSelectedEntries();
 		}
     }//GEN-LAST:event_onBtnPlayActionPerformed
 
@@ -1002,7 +1006,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			currentlySelectedRow = _uiTable.rowAtPoint(evt.getPoint());
 			if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
 			{
-				playSelectedEntry();
+				playSelectedEntries();
 			}
 		}
 //		else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))

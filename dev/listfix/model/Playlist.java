@@ -21,6 +21,7 @@
 package listfix.model;
 
 import listfix.model.enums.PlaylistType;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -63,7 +64,6 @@ public class Playlist
 	private int _missingCount;
 	private boolean _isModified;
 
-
 	public enum SortIx
 	{
 		None,
@@ -72,6 +72,18 @@ public class Playlist
 		Status,
 		Random,
 		Reverse
+	}
+
+	private Playlist(List<PlaylistEntry> sublist) throws IOException
+	{
+		_utfFormat = true;
+		setEntries(sublist);
+		_file = File.createTempFile("yay", ".m3u");
+
+		_type = PlaylistType.M3U;
+		_isModified = false;
+		refreshStatus();
+		save(false, null);
 	}
 
 	public Playlist(File playlist, IProgressObserver observer) throws IOException
@@ -102,6 +114,16 @@ public class Playlist
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public Playlist getSublist(int[] rows) throws IOException
+	{
+		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+		for (int i : rows)
+		{
+			tempList.add(_entries.get(i));
+		}
+		return new Playlist(tempList);
 	}
 
 	/**
@@ -678,7 +700,7 @@ public class Playlist
 		save(saveRelative, observer);
 	}
 
-	public void save(boolean saveRelative, IProgressObserver observer) throws IOException
+	public final void save(boolean saveRelative, IProgressObserver observer) throws IOException
 	{
 		// avoid resetting total if part of batch operation
 		boolean hasTotal = observer instanceof ProgressAdapter;
@@ -690,119 +712,140 @@ public class Playlist
 
 		if (getType() == PlaylistType.M3U)
 		{
-			StringBuilder buffer = new StringBuilder();
-			buffer.append("#EXTM3U").append(BR);
-			for (int i = 0; i < _entries.size(); i++)
-			{
-				progress.stepCompleted();
-				PlaylistEntry entry = _entries.get(i);
-
-				if (!entry.isURL())
-				{
-					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
-					{
-						// replace existing relative entry with a new absolute one
-						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf());
-						_entries.set(i, entry);
-					}
-					else if (saveRelative && !entry.isRelative() && !entry.isURL())
-					{
-						// replace existing absolute entry with a new relative one
-						String relativePath = FileWriter.getRelativePath(entry.getFile().getAbsoluteFile(), _file);
-						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf());
-						_entries.set(i, entry);
-					}
-				}
-
-				buffer.append(entry.toM3UString()).append(BR);
-			}
-
-			// TODO: remove saveRelative check?
-			if (!saveRelative)
-			{
-				File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
-				if (!dirToSaveIn.exists())
-				{
-					dirToSaveIn.mkdirs();
-				}
-			}
-
-			FileOutputStream outputStream = new FileOutputStream(_file);
-			if (isUtfFormat() || _file.getName().toLowerCase().endsWith("m3u8"))
-			{
-				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-				BufferedWriter output = new BufferedWriter(osw);
-				output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-				output.close();
-				outputStream.close();
-				setUtfFormat(true);
-			}
-			else
-			{
-				BufferedOutputStream output = new BufferedOutputStream(outputStream);
-				output.write(buffer.toString().getBytes());
-				output.close();
-				outputStream.close();
-				setUtfFormat(false);
-			}
+			saveM3U(saveRelative, progress);
 		}
 		else if (getType() == PlaylistType.PLS)
 		{
-			PlaylistEntry tempEntry = null;
-			StringBuilder buffer = new StringBuilder();
-			buffer.append("[playlist]").append(BR);
-			for (int i = 0; i < _entries.size(); i++)
-			{
-				tempEntry = _entries.get(i);
-				if (!saveRelative && tempEntry.isRelative() && tempEntry.getAbsoluteFile() != null)
-				{
-					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength());
-					_entries.set(i, tempEntry);
-				}
-				else if (saveRelative && !tempEntry.isRelative() && !tempEntry.isURL())
-				{
-					// replace existing absolute entry with a new relative one
-					String relativePath = FileWriter.getRelativePath(tempEntry.getFile().getAbsoluteFile(), _file);
-					tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf());
-					_entries.set(i, tempEntry);
-				}
-				buffer.append(tempEntry.toPLSString(i + 1));
-			}
-
-			buffer.append("NumberOfEntries=").append(_entries.size()).append(BR);
-			buffer.append("Version=2");
-
-			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
-			if (!dirToSaveIn.exists())
-			{
-				dirToSaveIn.mkdirs();
-			}
-
-			if (isUtfFormat())
-			{
-				FileOutputStream outputStream = new FileOutputStream(_file);
-				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-				BufferedWriter output = new BufferedWriter(osw);
-				output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-				output.close();
-				outputStream.close();
-				setUtfFormat(true);
-			}
-			else
-			{
-				FileOutputStream outputStream = new FileOutputStream(_file);
-				BufferedOutputStream output = new BufferedOutputStream(outputStream);
-				output.write(buffer.toString().getBytes());
-				output.close();
-				outputStream.close();
-				setUtfFormat(false);
-			}
+			savePLS(saveRelative, progress);
 		}
 
 		// change original _entries
 		setEntries(_entries);
 		_isModified = false;
 		firePlaylistModified();
+	}
+
+	private void saveM3U(boolean saveRelative, ProgressAdapter progress) throws IOException
+	{
+		boolean track = progress != null;
+
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("#EXTM3U").append(BR);
+		for (int i = 0; i < _entries.size(); i++)
+		{
+			if (track)
+			{
+				progress.stepCompleted();
+			}
+			PlaylistEntry entry = _entries.get(i);
+
+			if (!entry.isURL())
+			{
+				if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
+				{
+					// replace existing relative entry with a new absolute one
+					entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf());
+					_entries.set(i, entry);
+				}
+				else if (saveRelative && !entry.isRelative() && !entry.isURL())
+				{
+					// replace existing absolute entry with a new relative one
+					String relativePath = FileWriter.getRelativePath(entry.getFile().getAbsoluteFile(), _file);
+					entry = new PlaylistEntry(new File(relativePath), entry.getExtInf());
+					_entries.set(i, entry);
+				}
+			}
+
+			buffer.append(entry.toM3UString()).append(BR);
+		}
+
+		// TODO: remove saveRelative check?
+		if (!saveRelative)
+		{
+			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
+			if (!dirToSaveIn.exists())
+			{
+				dirToSaveIn.mkdirs();
+			}
+		}
+
+		FileOutputStream outputStream = new FileOutputStream(_file);
+		if (isUtfFormat() || _file.getName().toLowerCase().endsWith("m3u8"))
+		{
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+			setUtfFormat(true);
+		}
+		else
+		{
+			BufferedOutputStream output = new BufferedOutputStream(outputStream);
+			output.write(buffer.toString().getBytes());
+			output.close();
+			outputStream.close();
+			setUtfFormat(false);
+		}
+	}
+
+	private void savePLS(boolean saveRelative, ProgressAdapter progress) throws IOException
+	{
+		boolean track = progress != null;
+
+		PlaylistEntry tempEntry = null;
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("[playlist]").append(BR);
+		for (int i = 0; i < _entries.size(); i++)
+		{
+			if (track)
+			{
+				progress.stepCompleted();
+			}
+			tempEntry = _entries.get(i);
+			if (!saveRelative && tempEntry.isRelative() && tempEntry.getAbsoluteFile() != null)
+			{
+				tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength());
+				_entries.set(i, tempEntry);
+			}
+			else if (saveRelative && !tempEntry.isRelative() && !tempEntry.isURL())
+			{
+				// replace existing absolute entry with a new relative one
+				String relativePath = FileWriter.getRelativePath(tempEntry.getFile().getAbsoluteFile(), _file);
+				tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf());
+				_entries.set(i, tempEntry);
+			}
+			buffer.append(tempEntry.toPLSString(i + 1));
+		}
+
+		buffer.append("NumberOfEntries=").append(_entries.size()).append(BR);
+		buffer.append("Version=2");
+
+		File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
+		if (!dirToSaveIn.exists())
+		{
+			dirToSaveIn.mkdirs();
+		}
+
+		if (isUtfFormat())
+		{
+			FileOutputStream outputStream = new FileOutputStream(_file);
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+			output.close();
+			outputStream.close();
+			setUtfFormat(true);
+		}
+		else
+		{
+			FileOutputStream outputStream = new FileOutputStream(_file);
+			BufferedOutputStream output = new BufferedOutputStream(outputStream);
+			output.write(buffer.toString().getBytes());
+			output.close();
+			outputStream.close();
+			setUtfFormat(false);
+		}
 	}
 
 	public void reload(IProgressObserver observer)

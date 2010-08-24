@@ -21,6 +21,7 @@
 package listfix.io;
 
 import java.awt.Desktop;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +45,7 @@ public class FileLauncher
 			tempFile.deleteOnExit();
 
 			// write out the .bat file...
-			StringBuffer buffer = new StringBuffer("chcp 1252\nset myvar=\"");
+			StringBuilder buffer = new StringBuilder("chcp 1252\nset myvar=\"");
 			buffer.append(toLaunch.getCanonicalPath());
 			buffer.append("\"\n");
 			buffer.append("start \"\" %myvar%");
