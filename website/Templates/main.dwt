@@ -3,10 +3,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- TemplateBeginEditable name="doctitle" -->
 <title>listFix() - Fix and Repair Broken Playlists - Playlist Repair Done Right!</title>
+<!-- TemplateEndEditable -->
 <meta name="description" content="listFix() is a java app that can fix a broken playlist by searching a media library for moved and renamed files. Supports absolute & relative references, UTF-8, UNC paths, and URLs. Also removes duplicates, sorts and randomizes lists, and much more!">
 <meta name="keywords" content="playlist repair, fix playlists, fix playlist, M3U repair, repair playlists, broken playlist, broken playlists"> 
 <meta name="robots" content="noodp, noydir, index, follow, archive" />
-<!-- TemplateEndEditable --> 
 <!-- TemplateBeginEditable name="head" --><!-- TemplateEndEditable --> 
 <style type="text/css">
 <!--
