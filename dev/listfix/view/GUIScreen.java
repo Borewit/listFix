@@ -111,7 +111,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		updateRecentMenu();
 		refreshStatusLabel(null);
 		(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
-
+		((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_gettingStartedPanel");
 		initPlaylistListener();
 	}
 
@@ -132,7 +132,6 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
         batchPlaylistRepairMenuItem = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
-        openIconButton = new javax.swing.JButton();
         statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         splitPane = new javax.swing.JSplitPane();
@@ -149,6 +148,8 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
         playlistPanel = new javax.swing.JPanel();
         _uiTabs = new javax.swing.JTabbedPane();
+        _gettingStartedPanel = new javax.swing.JPanel();
+        openIconButton = new javax.swing.JButton();
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
@@ -190,26 +191,6 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         });
 
         jPanel1.setLayout(new java.awt.BorderLayout());
-
-        openIconButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
-        openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
-        openIconButton.setText("Open Playlist");
-        openIconButton.setToolTipText("Open Playlist");
-        openIconButton.setAlignmentY(0.0F);
-        openIconButton.setBorder(null);
-        openIconButton.setFocusable(false);
-        openIconButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        openIconButton.setMaximumSize(new java.awt.Dimension(115, 25));
-        openIconButton.setMinimumSize(new java.awt.Dimension(115, 25));
-        openIconButton.setPreferredSize(new java.awt.Dimension(115, 25));
-        openIconButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openIconButtonActionPerformed1(evt);
-            }
-        });
-        jPanel1.add(openIconButton, java.awt.BorderLayout.WEST);
-
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -312,7 +293,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         splitPane.setLeftComponent(leftSplitPane);
 
         playlistPanel.setBackground(java.awt.SystemColor.window);
-        playlistPanel.setLayout(new java.awt.BorderLayout());
+        playlistPanel.setLayout(new java.awt.CardLayout());
 
         _uiTabs.setBackground(java.awt.SystemColor.window);
         _uiTabs.setFocusable(false);
@@ -321,14 +302,35 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 onTabStateChanged(evt);
             }
         });
-        playlistPanel.add(_uiTabs, java.awt.BorderLayout.CENTER);
+        playlistPanel.add(_uiTabs, "_uiTabs");
+
+        openIconButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
+        openIconButton.setText("Open Playlist");
+        openIconButton.setToolTipText("Open Playlist");
+        openIconButton.setAlignmentY(0.0F);
+        openIconButton.setBorder(null);
+        openIconButton.setFocusable(false);
+        openIconButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        openIconButton.setMaximumSize(new java.awt.Dimension(115, 25));
+        openIconButton.setMinimumSize(new java.awt.Dimension(115, 25));
+        openIconButton.setPreferredSize(new java.awt.Dimension(115, 25));
+        openIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openIconButtonActionPerformed1(evt);
+            }
+        });
+        _gettingStartedPanel.add(openIconButton);
+
+        playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
         splitPane.setRightComponent(playlistPanel);
 
         getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
 
         mainMenuBar.setBorder(null);
-        mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9));
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
@@ -645,6 +647,8 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 					(new FileWriter()).writeMruPlaylists(history);
 
 					updateRecentMenu();
+
+					((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_uiTabs");
 				}
 			};
 			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading...");
@@ -855,6 +859,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 			JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
 		}
 
+		if (_uiTabs.getTabCount() <= 0)
+		{
+			((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_gettingStartedPanel");
+		}
 	}
 
 	private void confirmCloseApp()
@@ -1297,6 +1305,7 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel _gettingStartedPanel;
     private javax.swing.JMenuItem _miBatchRepair;
     private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem aboutMenuItem;
