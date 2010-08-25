@@ -2,7 +2,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- TemplateBeginEditable name="doctitle" -->
-<title>listFix() - Fix and Repair Broken Playlists!</title>
+<title>listFix() - Fix and Repair Broken Playlists - Playlist Repair Done Right!</title>
+<meta name="description" content="listFix() is a java app that can fix a broken playlist by searching a media library for moved and renamed files. Supports absolute & relative references, UTF-8, UNC paths, and URLs. Also removes duplicates, sorts and randomizes lists, and much more!">
+<meta name="keywords" content="playlist repair, fix playlists, fix playlist, M3U repair, repair playlists, broken playlist, broken playlists"> 
+<meta name="robots" content="noodp, noydir, index, follow, archive" />
 <!-- TemplateEndEditable --> 
 <!-- TemplateBeginEditable name="head" --><!-- TemplateEndEditable --> 
 <style type="text/css">
@@ -169,5 +172,25 @@
     <td bgcolor="#006699" height="1" width="1"><img src="../images/006699.gif" width="1" height="1"></td>
   </tr>
 </table>
+<!-- Piwik -->
+<script type="text/javascript">
+	var pkBaseURL = (("https:" == document.location.protocol) ? "https://sourceforge.net/apps/piwik/listfix/" : "http://sourceforge.net/apps/piwik/listfix/");
+	document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try 
+{
+	var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+	piwikTracker.trackPageView();
+	piwikTracker.enableLinkTracking();
+} 
+catch( err ) {}
+</script>
+<noscript>
+	<p>
+    	<img src="http://sourceforge.net/apps/piwik/listfix/piwik.php?idsite=1" style="border:0" alt=""/>
+    </p>
+</noscript>
+<!-- End Piwik Tag -->
 </body>
 </html>
