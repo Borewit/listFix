@@ -20,6 +20,7 @@
 package listfix.io;
 
 import java.io.File;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import listfix.model.BatchRepair;
@@ -31,17 +32,21 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class WinampHelper
 {
+    // all exceptions are ignored - returns null if any exception is thrown
     public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
     {
-        String homePath = System.getProperty("user.home");
-        final String winAmpPath = homePath + "\\AppData\\Roaming\\Winamp\\Plugins\\ml\\";
-        String playlistPath = winAmpPath + "playlists.xml";
-
-        final BatchRepair br = new BatchRepair(mediaFiles, new File(winAmpPath));
-        br.setDescription("Batch Repair: Winamp Playlists");
-
         try
         {
+            String homePath = System.getenv("APPDATA");
+            final String winAmpPath = homePath + "\\Winamp\\Plugins\\ml\\";
+            String playlistPath = winAmpPath + "playlists.xml";
+            File listsFile = new File(playlistPath);
+            if (!listsFile.canRead())
+                return null;
+
+            final BatchRepair br = new BatchRepair(mediaFiles, new File(winAmpPath));
+            br.setDescription("Batch Repair: Winamp Playlists");
+
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             XMLReader parser = saxParser.getXMLReader();
@@ -62,11 +67,13 @@ public class WinampHelper
                 }
             });
 
-            parser.parse(playlistPath);
+            // parse using URI to workaround a java bug [affects some 1.6 versions, but not all]
+            parser.parse(listsFile.toURI().toString());
             return br;
         }
         catch(Exception ex)
         {
+            ex.printStackTrace();
             return null;
         }
     }

@@ -127,6 +127,14 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		initPlaylistListener();
 
         addOpenPlaylistTabButton(_uiTabs);
+
+
+        String os = System.getProperty("os.name");
+        if (!os.startsWith("Windows"))
+        {
+            batchRepairWinampMenuItem.setVisible(false);
+        }
+
 	}
 
 	public AppOptions getOptions()
@@ -695,6 +703,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         // reserve space for open button
         Insets newInsets = new Insets(oldInsets.top, oldInsets.left, oldInsets.bottom, rightPad);
         setTabAreaInsets(newInsets);
+        _tabPaneInsets = newInsets;
 
         // add open button
         final TButton button = new TButton(img);
@@ -711,6 +720,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         });
         tabCtrl.add(button);
     }
+    private Insets _tabPaneInsets;
 
     private void setTabAreaInsets(Insets tabAreaInsets)
     {
@@ -1479,6 +1489,9 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
+
+            if (_tabPaneInsets != null)
+                setTabAreaInsets(_tabPaneInsets);
 		}
 		catch (ClassNotFoundException e)
 		{
