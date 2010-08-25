@@ -868,7 +868,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setFillsViewportHeight(true);
         _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
-        _uiTable.setIntercellSpacing(new java.awt.Dimension(1, 3));
+        _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
         _uiTable.getTableHeader().setReorderingAllowed(false);
         _uiTable.addMouseListener(new java.awt.event.MouseAdapter() {

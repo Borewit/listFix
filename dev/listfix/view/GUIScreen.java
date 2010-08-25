@@ -20,12 +20,19 @@
 
 package listfix.view;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +41,11 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.plaf.TabbedPaneUI;
+import javax.swing.plaf.UIResource;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
@@ -113,6 +125,8 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
 		((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_gettingStartedPanel");
 		initPlaylistListener();
+
+        addOpenPlaylistTabButton(_uiTabs);
 	}
 
 	public AppOptions getOptions()
@@ -295,7 +309,6 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         playlistPanel.setBackground(java.awt.SystemColor.window);
         playlistPanel.setLayout(new java.awt.CardLayout());
 
-        _uiTabs.setBackground(java.awt.SystemColor.window);
         _uiTabs.setFocusable(false);
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -640,7 +653,6 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 					// add custom tab controls
 					_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 
-
 					// update playlist history
 					PlaylistHistory history = guiDriver.getHistory();
 					history.add(path);
@@ -662,6 +674,198 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 	}
 	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<String, PlaylistEditCtrl>();
 	Map<Playlist, PlaylistEditCtrl> _playlistToEditorMap = new HashMap<Playlist, PlaylistEditCtrl>();
+
+    private void addOpenPlaylistTabButton(JTabbedPane tabCtrl)
+    {
+        Insets oldInsets = getTabAreaInsets();
+        if (oldInsets == null)
+            return;
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/images/open-small.gif"));
+        int width = img.getIconWidth() + 4;
+        int height = img.getIconHeight() + 4;
+
+        // these settings work for putting the button on the left
+        //_btnOpenTab.setForcedBounds(oldInsets.left, oldInsets.top, width, height);
+        //Insets newInsets = new Insets(oldInsets.top, _btnOpenTab.getWidth() + 4 + oldInsets.left, oldInsets.bottom, oldInsets.right);
+        
+        int rightPad = width + 2 + oldInsets.right;
+        final Rectangle bounds = new Rectangle(rightPad, oldInsets.top, width, height);
+
+        // reserve space for open button
+        Insets newInsets = new Insets(oldInsets.top, oldInsets.left, oldInsets.bottom, rightPad);
+        setTabAreaInsets(newInsets);
+
+        // add open button
+        final TButton button = new TButton(img);
+        button.setToolTipText("Open Playlist");
+        button.setForcedBounds(tabCtrl.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
+        tabCtrl.addComponentListener(new ComponentAdapter()
+        {
+            @Override
+            public void componentResized(ComponentEvent e)
+            {
+                Component comp = e.getComponent();
+                button.setForcedBounds(comp.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
+            }
+        });
+        tabCtrl.add(button);
+    }
+
+    private void setTabAreaInsets(Insets tabAreaInsets)
+    {
+        TabbedPaneUI ui = _uiTabs.getUI();
+        if (ui instanceof BasicTabbedPaneUI)
+        {
+            try
+            {
+                Class<?> uiClass = ui.getClass();
+                while (uiClass != null)
+                {
+                    try
+                    {
+                        Field field = uiClass.getDeclaredField("tabAreaInsets");
+                        if (field != null)
+                        {
+                            field.setAccessible(true);
+                            field.set(ui, tabAreaInsets);
+                            _uiTabs.invalidate();
+                            return;
+                        }
+                    }
+                    catch (NoSuchFieldException ex){}
+                    uiClass = uiClass.getSuperclass();
+                }
+            }
+            catch (Throwable t){}
+        }
+
+        throw new UnsupportedOperationException("LAF does not support tab area inserts");
+    }
+
+    private Insets getTabAreaInsets()
+    {
+        TabbedPaneUI ui = _uiTabs.getUI();
+        if (ui instanceof BasicTabbedPaneUI)
+        {
+            try
+            {
+                Class<?> uiClass = ui.getClass();
+                while (uiClass != null)
+                {
+                    try
+                    {
+                        Field field = uiClass.getDeclaredField("tabAreaInsets");
+                        if (field != null)
+                        {
+                            field.setAccessible(true);
+                            return (Insets)field.get(ui);
+                        }
+                    }
+                    catch (NoSuchFieldException nsfe){}
+                    uiClass = uiClass.getSuperclass();
+                }
+            }
+            catch (Throwable t){}
+        }
+        return UIManager.getInsets("TabbedPane.tabAreaInsets");
+    }
+
+    static
+    {
+        Color highlight = UIManager.getColor("TabbedPane.highlight");
+        _normalBorder = new LineBorder(highlight);
+        _pressedBorder = new LineBorder(Color.black);
+    }
+    private static Border _normalBorder;
+    private static Border _pressedBorder;
+
+    class TButton extends JButton implements UIResource
+    {
+        public TButton(Icon icon)
+        {
+            super(icon);
+
+            setContentAreaFilled(false);
+            setFocusable(false);
+            setBorder(_normalBorder);
+            setBorderPainted(false);
+
+            createMouseListener();
+            createOpenActionListener();
+        }
+
+        public TButton(String text, Icon icon)
+        {
+            super(text, icon);
+
+            setFocusable(false);
+            setFont(new java.awt.Font("Verdana", 0, 9));
+            setToolTipText(text);
+            setAlignmentY(0.0F);
+            setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+            setMargin(new java.awt.Insets(4, 10, 4, 10));
+
+            createOpenActionListener();
+        }
+
+        private void createMouseListener()
+        {
+            addMouseListener(new MouseAdapter()
+            {
+                @Override
+                public void mouseEntered(MouseEvent e)
+                {
+                    setBorderPainted(true);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e)
+                {
+                    setBorderPainted(false);
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e)
+                {
+                    setBorder(_pressedBorder);
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e)
+                {
+                    setBorder(_normalBorder);
+                }
+            });
+        }
+
+        private void createOpenActionListener()
+        {
+            addActionListener(new java.awt.event.ActionListener()
+            {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    openIconButtonActionPerformed(evt);
+                }
+            });
+        }
+
+        public void setForcedBounds(int x, int y, int width, int height)
+        {
+            _allowBoundsSetting = true;
+            setBounds(x, y, width, height);
+            _allowBoundsSetting = false;
+        }
+
+        @Override
+        public void setBounds(int x, int y, int width, int height)
+        {
+            if (_allowBoundsSetting)
+                super.setBounds(x, y, width, height);
+        }
+        private boolean _allowBoundsSetting = true;
+    }
+
 
 	private int getPlaylistTabIx(String path)
 	{
@@ -729,7 +933,9 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		{
 			return null;
 		}
-		return ((PlaylistEditCtrl) _uiTabs.getComponentAt(tabIx)).getPlaylist();
+        Component comp = _uiTabs.getComponentAt(tabIx);
+        BasicTabbedPaneUI ui;
+		return comp != null ? ((PlaylistEditCtrl) _uiTabs.getComponentAt(tabIx)).getPlaylist() : null;
 	}
 
 	private void initPlaylistListener()

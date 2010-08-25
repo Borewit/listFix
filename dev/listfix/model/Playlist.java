@@ -532,7 +532,7 @@ public class Playlist
 			progress.stepCompleted();
 
 			PlaylistEntry entry = _entries.get(ix);
-			if (!entry.isFound() && !entry.isURL())
+			if (!entry.isFound())
 			{
 				List<MatchedPlaylistEntry> matches = entry.findClosestMatches(librayFiles, null);
 				if (!matches.isEmpty())
