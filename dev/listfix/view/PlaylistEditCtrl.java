@@ -1316,6 +1316,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	};
 
+	public void suppressOpenButton()
+	{
+		_uiToolbar.remove(_btnOpen);
+	}
+
 	private void showWaitCursor(boolean isWaiting)
 	{
 		if (isWaiting)
