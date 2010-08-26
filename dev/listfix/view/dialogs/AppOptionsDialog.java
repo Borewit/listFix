@@ -154,32 +154,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		int height = this.getParent().getHeight();
 
 		this.setLocation((int) x + (width - this.getPreferredSize().width) / 2, (int) y + (height - this.getPreferredSize().height) / 2);
-//        Frame parent = (Frame)getParent();
-//        Dimension dim = parent.getSize();
-//        Point     loc = parent.getLocationOnScreen();
-//
-//        Dimension size = getSize();
-//
-//        loc.x += (dim.width  - size.width)/2;
-//        loc.y += (dim.height - size.height)/2;
-//
-//        if (loc.x < 0) loc.x = 0;
-//        if (loc.y < 0) loc.y = 0;
-//
-//        Dimension screen = getToolkit().getScreenSize();
-//
-//        if (size.width  > screen.width)
-//          size.width  = screen.width;
-//        if (size.height > screen.height)
-//          size.height = screen.height;
-//
-//        if (loc.x + size.width > screen.width)
-//          loc.x = screen.width - size.width;
-//
-//        if (loc.y + size.height > screen.height)
-//          loc.y = screen.height - size.height;
-//
-//        setBounds(loc.x, loc.y, size.width, size.height);
 	}
 
 	/** This method is called from within the constructor to
