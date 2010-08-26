@@ -1187,7 +1187,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			{
 				"Save", "Don't Save", "Cancel"
 			};
-			int rc = JOptionPane.showOptionDialog(this, "This playlist has been modified. Do you want to save the changes?", "Confirm Close",
+			int rc = JOptionPane.showOptionDialog(getParentFrame(), "This playlist has been modified. Do you want to save the changes?", "Abandon Changes?",
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			if (rc == JOptionPane.YES_OPTION)
 			{
