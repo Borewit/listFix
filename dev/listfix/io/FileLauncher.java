@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import listfix.util.OperatingSystem;
 
 public class FileLauncher
 {
@@ -37,9 +38,8 @@ public class FileLauncher
 	{
 		// try to figure out the OS so we can issue the correct command
 		// TODO: Lots of debugging on different OSes to make sure this works.
-		String lowerCaseOpSysName = System.getProperty("os.name").toLowerCase();
 		String cmdLine = "";
-		if (lowerCaseOpSysName.contains("windows"))
+		if (OperatingSystem.isWindows())
 		{
 			File tempFile = File.createTempFile("abc", ".bat");
 			tempFile.deleteOnExit();

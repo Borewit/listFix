@@ -22,6 +22,7 @@ package listfix.io;
 
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
+import listfix.util.OperatingSystem;
 
 public class BrowserLauncher
 {
@@ -29,10 +30,9 @@ public class BrowserLauncher
 
 	public static void launch(String url)
 	{
-		String osName = System.getProperty("os.name");
 		try
 		{
-			if (osName.startsWith("Mac OS"))
+			if (OperatingSystem.isMac())
 			{
 				Class fileMgr = Class.forName("com.apple.eio.FileManager");
 				Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[]
@@ -44,7 +44,7 @@ public class BrowserLauncher
 						url
 					});
 			}
-			else if (osName.startsWith("Windows"))
+			else if (OperatingSystem.isWindows())
 			{
 				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
 			}

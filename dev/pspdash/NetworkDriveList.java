@@ -27,6 +27,7 @@ package pspdash;
 
 import java.io.*;
 import java.util.*;
+import listfix.util.OperatingSystem;
 
 /**
  * On Windows systems, this class compiles a list of shared
@@ -57,10 +58,11 @@ public class NetworkDriveList
 	 */
 	public NetworkDriveList(int maxDelay)
 	{
-		if (isWindows())
+		if (OperatingSystem.isWindows())
 		{
 			Thread t = new Thread()
 			{
+				@Override
 				public void run()
 				{
 					getList();
@@ -370,12 +372,6 @@ public class NetworkDriveList
 		}
 
 		return null;
-	}
-
-	/** Return true if the operating system is a variant of Windows */
-	private boolean isWindows()
-	{
-		return (System.getProperty("os.name").indexOf("Windows") != -1);
 	}
 
 	/** Extract the drive letter from a filename */

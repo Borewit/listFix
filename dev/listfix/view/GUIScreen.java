@@ -39,12 +39,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.UIResource;
+import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.tree.*;
 
@@ -68,6 +72,8 @@ import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistHistory;
 
 import listfix.util.ArrayFunctions;
+import listfix.util.Log;
+import listfix.util.OperatingSystem;
 
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
@@ -92,7 +98,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 	{
 		listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
 		splashScreen.setStatusBar("Loading Media Library & Options...");
-		guiDriver = GUIDriver.getInstance(); 
+		guiDriver = GUIDriver.getInstance();
 		splashScreen.setStatusBar("Initializing UI...");
 		initComponents();
 		jM3UChooser = new JFileChooser();
@@ -119,22 +125,25 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		{
 			mediaLibraryList.setListData(guiDriver.getMediaDirs());
 		}
+
 		updateMediaDirButtons();
 		updateRecentMenu();
 		refreshStatusLabel(null);
+
 		(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
-		((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_gettingStartedPanel");
+
+		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
+
 		initPlaylistListener();
 
-        addOpenPlaylistTabButton(_uiTabs);
+		addOpenPlaylistTabButton(_uiTabs);
 
+		if (!OperatingSystem.isWindows())
+		{
+			batchRepairWinampMenuItem.setVisible(false);
+		}
 
-        String os = System.getProperty("os.name");
-        if (!os.startsWith("Windows"))
-        {
-            batchRepairWinampMenuItem.setVisible(false);
-        }
-
+		syncJMenuFonts();
 	}
 
 	public AppOptions getOptions()
@@ -153,11 +162,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
         batchPlaylistRepairMenuItem = new javax.swing.JMenuItem();
-        jPanel1 = new javax.swing.JPanel();
-        statusPanel = new javax.swing.JPanel();
+        _statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
-        splitPane = new javax.swing.JSplitPane();
-        leftSplitPane = new javax.swing.JSplitPane();
+        _splitPane = new javax.swing.JSplitPane();
+        _leftSplitPane = new javax.swing.JSplitPane();
         mediaLibraryPanel = new javax.swing.JPanel();
         mediaLibraryButtonPanel = new javax.swing.JPanel();
         addMediaDirButton = new javax.swing.JButton();
@@ -168,16 +176,16 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         playlistDirectoryPanel = new javax.swing.JPanel();
         treeScrollPane = new javax.swing.JScrollPane();
         playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
-        playlistPanel = new javax.swing.JPanel();
+        _playlistPanel = new javax.swing.JPanel();
         _uiTabs = new javax.swing.JTabbedPane();
         _gettingStartedPanel = new javax.swing.JPanel();
-        openIconButton = new javax.swing.JButton();
-        mainMenuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
+        _openIconButton = new javax.swing.JButton();
+        _mainMenuBar = new javax.swing.JMenuBar();
+        _fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
-        _miBatchRepair = new javax.swing.JMenuItem();
+        _mibatchRepair = new javax.swing.JMenuItem();
         batchRepairWinampMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         recentMenu = new javax.swing.JMenu();
@@ -186,7 +194,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
         appOptionsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         exit = new javax.swing.JMenuItem();
-        helpMenu = new javax.swing.JMenu();
+        _helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
         helpMenuItem = new javax.swing.JMenuItem();
         updateCheckMenuItem = new javax.swing.JMenuItem();
@@ -212,31 +220,28 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
             }
         });
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
-        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
-
-        statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        statusPanel.setLayout(new java.awt.BorderLayout());
+        _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        _statusPanel.setLayout(new java.awt.BorderLayout());
 
         statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
         statusLabel.setForeground(new java.awt.Color(102, 102, 102));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
-        statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
+        _statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
 
-        getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(_statusPanel, java.awt.BorderLayout.SOUTH);
 
-        splitPane.setDividerSize(7);
-        splitPane.setMaximumSize(null);
-        splitPane.setOneTouchExpandable(true);
-        splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
+        _splitPane.setDividerSize(7);
+        _splitPane.setMaximumSize(null);
+        _splitPane.setOneTouchExpandable(true);
+        _splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
 
-        leftSplitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        leftSplitPane.setDividerLocation(280);
-        leftSplitPane.setDividerSize(7);
-        leftSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        leftSplitPane.setMaximumSize(null);
-        leftSplitPane.setOneTouchExpandable(true);
+        _leftSplitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        _leftSplitPane.setDividerLocation(280);
+        _leftSplitPane.setDividerSize(7);
+        _leftSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        _leftSplitPane.setMaximumSize(null);
+        _leftSplitPane.setOneTouchExpandable(true);
 
         mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         mediaLibraryPanel.setAlignmentX(0.0F);
@@ -290,7 +295,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         mediaLibraryPanel.add(mediaLibraryScrollPane, java.awt.BorderLayout.CENTER);
 
-        leftSplitPane.setBottomComponent(mediaLibraryPanel);
+        _leftSplitPane.setBottomComponent(mediaLibraryPanel);
 
         playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         playlistDirectoryPanel.setAlignmentX(0.0F);
@@ -310,52 +315,59 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
         playlistDirectoryPanel.add(treeScrollPane, java.awt.BorderLayout.CENTER);
 
-        leftSplitPane.setTopComponent(playlistDirectoryPanel);
+        _leftSplitPane.setTopComponent(playlistDirectoryPanel);
 
-        splitPane.setLeftComponent(leftSplitPane);
+        _splitPane.setLeftComponent(_leftSplitPane);
 
-        playlistPanel.setBackground(java.awt.SystemColor.window);
-        playlistPanel.setLayout(new java.awt.CardLayout());
+        _playlistPanel.setBackground(java.awt.SystemColor.window);
+        _playlistPanel.setLayout(new java.awt.CardLayout());
 
         _uiTabs.setFocusable(false);
+        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 onTabStateChanged(evt);
             }
         });
-        playlistPanel.add(_uiTabs, "_uiTabs");
+        _playlistPanel.add(_uiTabs, "_uiTabs");
 
-        openIconButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
-        openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
-        openIconButton.setText("Open Playlist");
-        openIconButton.setToolTipText("Open Playlist");
-        openIconButton.setAlignmentY(0.0F);
-        openIconButton.setBorder(null);
-        openIconButton.setFocusable(false);
-        openIconButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        openIconButton.setMaximumSize(new java.awt.Dimension(115, 25));
-        openIconButton.setMinimumSize(new java.awt.Dimension(115, 25));
-        openIconButton.setPreferredSize(new java.awt.Dimension(115, 25));
-        openIconButton.addActionListener(new java.awt.event.ActionListener() {
+        _gettingStartedPanel.setBackground(new java.awt.Color(255, 255, 255));
+        _gettingStartedPanel.setLayout(new java.awt.GridBagLayout());
+
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 16));
+        _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
+        _openIconButton.setText("Open A Playlist");
+        _openIconButton.setToolTipText("Open A Playlist");
+        _openIconButton.setAlignmentY(0.0F);
+        _openIconButton.setBorder(null);
+        _openIconButton.setFocusable(false);
+        _openIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _openIconButton.setIconTextGap(-5);
+        _openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        _openIconButton.setMaximumSize(new java.awt.Dimension(300, 25));
+        _openIconButton.setMinimumSize(new java.awt.Dimension(256, 25));
+        _openIconButton.setPreferredSize(new java.awt.Dimension(300, 300));
+        _openIconButton.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        _openIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _openIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openIconButtonActionPerformed1(evt);
+                _openIconButtonActionPerformed1(evt);
             }
         });
-        _gettingStartedPanel.add(openIconButton);
+        _gettingStartedPanel.add(_openIconButton, new java.awt.GridBagConstraints());
 
-        playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
+        _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
-        splitPane.setRightComponent(playlistPanel);
+        _splitPane.setRightComponent(_playlistPanel);
 
-        getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
+        getContentPane().add(_splitPane, java.awt.BorderLayout.CENTER);
 
-        mainMenuBar.setBorder(null);
-        mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9));
+        _mainMenuBar.setBorder(null);
+        _mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9));
 
-        fileMenu.setMnemonic('F');
-        fileMenu.setText("File");
-        fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        _fileMenu.setMnemonic('F');
+        _fileMenu.setText("File");
+        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -366,7 +378,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 openIconButtonActionPerformed(evt);
             }
         });
-        fileMenu.add(loadMenuItem);
+        _fileMenu.add(loadMenuItem);
 
         saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         saveAsMenuItem.setMnemonic('V');
@@ -376,19 +388,19 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 saveAsMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(saveAsMenuItem);
+        _fileMenu.add(saveAsMenuItem);
 
         jSeparator6.setForeground(new java.awt.Color(102, 102, 153));
-        fileMenu.add(jSeparator6);
+        _fileMenu.add(jSeparator6);
 
-        _miBatchRepair.setFont(loadMenuItem.getFont());
-        _miBatchRepair.setText("Batch Repair...");
-        _miBatchRepair.addActionListener(new java.awt.event.ActionListener() {
+        _mibatchRepair.setFont(loadMenuItem.getFont());
+        _mibatchRepair.setText("Batch Repair...");
+        _mibatchRepair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onMenuBatchRepairActionPerformed(evt);
             }
         });
-        fileMenu.add(_miBatchRepair);
+        _fileMenu.add(_mibatchRepair);
 
         batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
@@ -397,15 +409,15 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 batchRepairWinampMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(batchRepairWinampMenuItem);
+        _fileMenu.add(batchRepairWinampMenuItem);
 
         jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
-        fileMenu.add(jSeparator3);
+        _fileMenu.add(jSeparator3);
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
         recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
-        fileMenu.add(recentMenu);
+        _fileMenu.add(recentMenu);
 
         clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
         clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -417,10 +429,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 clearHistoryMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(clearHistoryMenuItem);
+        _fileMenu.add(clearHistoryMenuItem);
 
         jSeparator1.setForeground(new java.awt.Color(102, 102, 153));
-        fileMenu.add(jSeparator1);
+        _fileMenu.add(jSeparator1);
 
         appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
         appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -432,10 +444,10 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 appOptionsMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(appOptionsMenuItem);
+        _fileMenu.add(appOptionsMenuItem);
 
         jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
-        fileMenu.add(jSeparator2);
+        _fileMenu.add(jSeparator2);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         exit.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -446,13 +458,13 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 exitActionPerformed(evt);
             }
         });
-        fileMenu.add(exit);
+        _fileMenu.add(exit);
 
-        mainMenuBar.add(fileMenu);
+        _mainMenuBar.add(_fileMenu);
 
-        helpMenu.setMnemonic('H');
-        helpMenu.setText("Help");
-        helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        _helpMenu.setMnemonic('H');
+        _helpMenu.setText("Help");
+        _helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -463,7 +475,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 aboutMenuItemActionPerformed(evt);
             }
         });
-        helpMenu.add(aboutMenuItem);
+        _helpMenu.add(aboutMenuItem);
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
         helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -474,7 +486,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 helpMenuItemActionPerformed(evt);
             }
         });
-        helpMenu.add(helpMenuItem);
+        _helpMenu.add(helpMenuItem);
 
         updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         updateCheckMenuItem.setText("Check For Updates");
@@ -483,11 +495,11 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
                 updateCheckMenuItemActionPerformed(evt);
             }
         });
-        helpMenu.add(updateCheckMenuItem);
+        _helpMenu.add(updateCheckMenuItem);
 
-        mainMenuBar.add(helpMenu);
+        _mainMenuBar.add(_helpMenu);
 
-        setJMenuBar(mainMenuBar);
+        setJMenuBar(_mainMenuBar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -589,6 +601,16 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 	private void openPlaylist(final File file)
 	{
+		// do nothing if the file is already open.
+		for (Playlist list : _playlistToEditorMap.keySet())
+		{
+			if (list.getFile().equals(file))
+			{
+				_uiTabs.setSelectedComponent(_playlistToEditorMap.get(list));
+				return;
+			}
+		}
+
 		final String path;
 		try
 		{
@@ -668,7 +690,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 					updateRecentMenu();
 
-					((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_uiTabs");
+					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 				}
 			};
 			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading...");
@@ -683,199 +705,330 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<String, PlaylistEditCtrl>();
 	Map<Playlist, PlaylistEditCtrl> _playlistToEditorMap = new HashMap<Playlist, PlaylistEditCtrl>();
 
-    private void addOpenPlaylistTabButton(JTabbedPane tabCtrl)
-    {
-        Insets oldInsets = getTabAreaInsets();
-        if (oldInsets == null)
-            return;
+	private void addOpenPlaylistTabButton(JTabbedPane tabCtrl)
+	{
+		Insets oldInsets = getTabAreaInsets();
+		if (oldInsets == null)
+		{
+			return;
+		}
 
-        ImageIcon img = new ImageIcon(getClass().getResource("/images/open-small.gif"));
-        int width = img.getIconWidth() + 4;
-        int height = img.getIconHeight() + 4;
+		ImageIcon img = new ImageIcon(getClass().getResource("/images/open-small.gif"));
+		int width = img.getIconWidth() + 4;
+		int height = img.getIconHeight() + 4;
 
-        // these settings work for putting the button on the left
-        //_btnOpenTab.setForcedBounds(oldInsets.left, oldInsets.top, width, height);
-        //Insets newInsets = new Insets(oldInsets.top, _btnOpenTab.getWidth() + 4 + oldInsets.left, oldInsets.bottom, oldInsets.right);
-        
-        int rightPad = width + 2 + oldInsets.right;
-        final Rectangle bounds = new Rectangle(rightPad, oldInsets.top, width, height);
+		// these settings work for putting the button on the left
+		//_btnOpenTab.setForcedBounds(oldInsets.left, oldInsets.top, width, height);
+		//Insets newInsets = new Insets(oldInsets.top, _btnOpenTab.getWidth() + 4 + oldInsets.left, oldInsets.bottom, oldInsets.right);
 
-        // reserve space for open button
-        Insets newInsets = new Insets(oldInsets.top, oldInsets.left, oldInsets.bottom, rightPad);
-        setTabAreaInsets(newInsets);
-        _tabPaneInsets = newInsets;
+		int rightPad = width + 2 + oldInsets.right;
+		final Rectangle bounds = new Rectangle(rightPad, oldInsets.top, width, height);
 
-        // add open button
-        final TButton button = new TButton(img);
-        button.setToolTipText("Open Playlist");
-        button.setForcedBounds(tabCtrl.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
-        tabCtrl.addComponentListener(new ComponentAdapter()
-        {
-            @Override
-            public void componentResized(ComponentEvent e)
-            {
-                Component comp = e.getComponent();
-                button.setForcedBounds(comp.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
-            }
-        });
-        tabCtrl.add(button);
-    }
-    private Insets _tabPaneInsets;
+		// reserve space for open button
+		Insets newInsets = new Insets(oldInsets.top, oldInsets.left, oldInsets.bottom, rightPad);
+		setTabAreaInsets(newInsets);
+		_tabPaneInsets = newInsets;
 
-    private void setTabAreaInsets(Insets tabAreaInsets)
-    {
-        TabbedPaneUI ui = _uiTabs.getUI();
-        if (ui instanceof BasicTabbedPaneUI)
-        {
-            try
-            {
-                Class<?> uiClass = ui.getClass();
-                while (uiClass != null)
-                {
-                    try
-                    {
-                        Field field = uiClass.getDeclaredField("tabAreaInsets");
-                        if (field != null)
-                        {
-                            field.setAccessible(true);
-                            field.set(ui, tabAreaInsets);
-                            _uiTabs.invalidate();
-                            return;
-                        }
-                    }
-                    catch (NoSuchFieldException ex){}
-                    uiClass = uiClass.getSuperclass();
-                }
-            }
-            catch (Throwable t){}
-        }
+		// add open button
+		final TButton button = new TButton(img);
+		button.setToolTipText("Open Playlist");
+		button.setForcedBounds(tabCtrl.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
+		tabCtrl.addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				Component comp = e.getComponent();
+				button.setForcedBounds(comp.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
+			}
+		});
+		tabCtrl.add(button);
+	}
+	private Insets _tabPaneInsets;
 
-        throw new UnsupportedOperationException("LAF does not support tab area inserts");
-    }
+	private void setTabAreaInsets(Insets tabAreaInsets)
+	{
+		TabbedPaneUI ui = _uiTabs.getUI();
+		if (ui instanceof BasicTabbedPaneUI)
+		{
+			try
+			{
+				Class<?> uiClass = ui.getClass();
+				while (uiClass != null)
+				{
+					try
+					{
+						Field field = uiClass.getDeclaredField("tabAreaInsets");
+						if (field != null)
+						{
+							field.setAccessible(true);
+							field.set(ui, tabAreaInsets);
+							_uiTabs.invalidate();
+							return;
+						}
+					}
+					catch (NoSuchFieldException ex)
+					{
+					}
+					uiClass = uiClass.getSuperclass();
+				}
+			}
+			catch (Throwable t)
+			{
+			}
+		}
 
-    private Insets getTabAreaInsets()
-    {
-        TabbedPaneUI ui = _uiTabs.getUI();
-        if (ui instanceof BasicTabbedPaneUI)
-        {
-            try
-            {
-                Class<?> uiClass = ui.getClass();
-                while (uiClass != null)
-                {
-                    try
-                    {
-                        Field field = uiClass.getDeclaredField("tabAreaInsets");
-                        if (field != null)
-                        {
-                            field.setAccessible(true);
-                            return (Insets)field.get(ui);
-                        }
-                    }
-                    catch (NoSuchFieldException nsfe){}
-                    uiClass = uiClass.getSuperclass();
-                }
-            }
-            catch (Throwable t){}
-        }
-        return UIManager.getInsets("TabbedPane.tabAreaInsets");
-    }
+		throw new UnsupportedOperationException("LAF does not support tab area inserts");
+	}
 
-    static
-    {
-        Color highlight = UIManager.getColor("TabbedPane.highlight");
-        _normalBorder = new LineBorder(highlight);
-        _pressedBorder = new LineBorder(Color.black);
-    }
-    private static Border _normalBorder;
-    private static Border _pressedBorder;
+	private Insets getTabAreaInsets()
+	{
+		TabbedPaneUI ui = _uiTabs.getUI();
+		if (ui instanceof BasicTabbedPaneUI)
+		{
+			try
+			{
+				Class<?> uiClass = ui.getClass();
+				while (uiClass != null)
+				{
+					try
+					{
+						Field field = uiClass.getDeclaredField("tabAreaInsets");
+						if (field != null)
+						{
+							field.setAccessible(true);
+							return (Insets) field.get(ui);
+						}
+					}
+					catch (NoSuchFieldException nsfe)
+					{
+					}
+					uiClass = uiClass.getSuperclass();
+				}
+			}
+			catch (Throwable t)
+			{
+			}
+		}
+		return UIManager.getInsets("TabbedPane.tabAreaInsets");
+	}
 
-    class TButton extends JButton implements UIResource
-    {
-        public TButton(Icon icon)
-        {
-            super(icon);
+	static
+	{
+		Color highlight = UIManager.getColor("TabbedPane.highlight");
+		_normalBorder = new LineBorder(highlight);
+		_pressedBorder = new LineBorder(Color.black);
+	}
+	private static Border _normalBorder;
+	private static Border _pressedBorder;
 
-            setContentAreaFilled(false);
-            setFocusable(false);
-            setBorder(_normalBorder);
-            setBorderPainted(false);
+	private void syncJMenuFonts()
+	{
+		JMenuItem item = null;
+		for (int i = 0; i < _fileMenu.getItemCount(); i++)
+		{
+			item = _fileMenu.getItem(i);
+			try
+			{
+				syncJMenuItemFonts(item);
+			}
+			catch (Exception ex)
+			{
+			}
+		}
 
-            createMouseListener();
-            createOpenActionListener();
-        }
+		for (int i = 0; i < _helpMenu.getItemCount(); i++)
+		{
+			item = _helpMenu.getItem(i);
+			try
+			{
+				syncJMenuItemFonts(item);
+			}
+			catch (Exception ex)
+			{
+			}
+		}
+	}
 
-        public TButton(String text, Icon icon)
-        {
-            super(text, icon);
+	private void syncJMenuItemFonts(JMenuItem item) throws SecurityException, IllegalArgumentException, IllegalAccessException
+	{
+		ButtonUI bui = item.getUI();
+		if (bui instanceof BasicMenuItemUI)
+		{
+			Class<?> uiclass = bui.getClass();
+			while (uiclass != null)
+			{
+				try
+				{
+					Field field = uiclass.getDeclaredField("acceleratorFont");
+					if (field != null)
+					{
+						field.setAccessible(true);
+						field.set(bui, new java.awt.Font("Verdana", 0, 9));
 
-            setFocusable(false);
-            setFont(new java.awt.Font("Verdana", 0, 9));
-            setToolTipText(text);
-            setAlignmentY(0.0F);
-            setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-            setMargin(new java.awt.Insets(4, 10, 4, 10));
+					}
+				}
+				catch (NoSuchFieldException ex)
+				{
+				}
+				uiclass = uiclass.getSuperclass();
+			}
+		}
+	}
 
-            createOpenActionListener();
-        }
+	public void updateCurrentTab(Playlist list)
+	{
+		PlaylistEditCtrl editor = new PlaylistEditCtrl();
+		editor.setPlaylist(list);
+		PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _uiTabs.getSelectedComponent();
+		int spot = _uiTabs.getSelectedIndex();
+		try
+		{
+			_pathToEditorMap.put(list.getFile().getCanonicalPath(), editor);
+			_playlistToEditorMap.put(list, editor);
+			_pathToEditorMap.remove(oldEditor.getPlaylist().getFile().getCanonicalPath());
+			_playlistToEditorMap.remove(oldEditor.getPlaylist());
+			_uiTabs.removeTabAt(spot);
+			_uiTabs.insertTab(list.getFilename(), null, editor, list.getFile().getPath(), spot);
+			_uiTabs.setSelectedIndex(spot);
+			_uiTabs.setTabComponentAt(spot, new ClosableTabCtrl(GUIScreen.this, _uiTabs, list.getFilename()));
 
-        private void createMouseListener()
-        {
-            addMouseListener(new MouseAdapter()
-            {
-                @Override
-                public void mouseEntered(MouseEvent e)
-                {
-                    setBorderPainted(true);
-                }
+			// update playlist history
+			PlaylistHistory history = guiDriver.getHistory();
+			try
+			{
+				history.add(list.getFile().getCanonicalPath());
+			}
+			catch (IOException ex)
+			{
+				Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			(new FileWriter()).writeMruPlaylists(history);
 
-                @Override
-                public void mouseExited(MouseEvent e)
-                {
-                    setBorderPainted(false);
-                }
+			updateRecentMenu();
+		}
+		catch (IOException ex)
+		{
+			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-                @Override
-                public void mousePressed(MouseEvent e)
-                {
-                    setBorder(_pressedBorder);
-                }
+	public void updateRecentMenu()
+	{
+		recentMenu.removeAll();
+		String[] files = guiDriver.getRecentM3Us();
+		if (files.length == 0)
+		{
+			JMenuItem temp = new JMenuItem("Empty");
+			temp.setEnabled(false);
+			recentMenu.add(temp);
+		}
+		else
+		{
+			for (int i = 0; i < files.length; i++)
+			{
+				JMenuItem temp = new JMenuItem(files[i]);
+				temp.setFont(new java.awt.Font("Verdana", 0, 9));
+				temp.addActionListener(new java.awt.event.ActionListener()
+				{
+					@Override
+					public void actionPerformed(java.awt.event.ActionEvent evt)
+					{
+						recentPlaylistActionPerformed(evt);
+					}
+				});
+				recentMenu.add(temp);
+			}
+		}
+	}
 
-                @Override
-                public void mouseReleased(MouseEvent e)
-                {
-                    setBorder(_normalBorder);
-                }
-            });
-        }
+	class TButton extends JButton implements UIResource
+	{
+		public TButton(Icon icon)
+		{
+			super(icon);
 
-        private void createOpenActionListener()
-        {
-            addActionListener(new java.awt.event.ActionListener()
-            {
-                public void actionPerformed(java.awt.event.ActionEvent evt)
-                {
-                    openIconButtonActionPerformed(evt);
-                }
-            });
-        }
+			setContentAreaFilled(false);
+			setFocusable(false);
+			setBorder(_normalBorder);
+			setBorderPainted(false);
 
-        public void setForcedBounds(int x, int y, int width, int height)
-        {
-            _allowBoundsSetting = true;
-            setBounds(x, y, width, height);
-            _allowBoundsSetting = false;
-        }
+			createMouseListener();
+			createOpenActionListener();
+		}
 
-        @Override
-        public void setBounds(int x, int y, int width, int height)
-        {
-            if (_allowBoundsSetting)
-                super.setBounds(x, y, width, height);
-        }
-        private boolean _allowBoundsSetting = true;
-    }
+		public TButton(String text, Icon icon)
+		{
+			super(text, icon);
 
+			setFocusable(false);
+			setFont(new java.awt.Font("Verdana", 0, 9));
+			setToolTipText(text);
+			setAlignmentY(0.0F);
+			setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+			setMargin(new java.awt.Insets(4, 10, 4, 10));
+
+			createOpenActionListener();
+		}
+
+		private void createMouseListener()
+		{
+			addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mouseEntered(MouseEvent e)
+				{
+					setBorderPainted(true);
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e)
+				{
+					setBorderPainted(false);
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e)
+				{
+					setBorder(_pressedBorder);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e)
+				{
+					setBorder(_normalBorder);
+				}
+			});
+		}
+
+		private void createOpenActionListener()
+		{
+			addActionListener(new java.awt.event.ActionListener()
+			{
+				public void actionPerformed(java.awt.event.ActionEvent evt)
+				{
+					openIconButtonActionPerformed(evt);
+				}
+			});
+		}
+
+		public void setForcedBounds(int x, int y, int width, int height)
+		{
+			_allowBoundsSetting = true;
+			setBounds(x, y, width, height);
+			_allowBoundsSetting = false;
+		}
+
+		@Override
+		public void setBounds(int x, int y, int width, int height)
+		{
+			if (_allowBoundsSetting)
+			{
+				super.setBounds(x, y, width, height);
+			}
+		}
+		private boolean _allowBoundsSetting = true;
+	}
 
 	private int getPlaylistTabIx(String path)
 	{
@@ -934,7 +1087,6 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 		}
 	}
-
 	Playlist _currentPlaylist;
 
 	private Playlist getPlaylistFromTab(int tabIx)
@@ -943,8 +1095,8 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		{
 			return null;
 		}
-        Component comp = _uiTabs.getComponentAt(tabIx);
-        BasicTabbedPaneUI ui;
+		Component comp = _uiTabs.getComponentAt(tabIx);
+		BasicTabbedPaneUI ui;
 		return comp != null ? ((PlaylistEditCtrl) _uiTabs.getComponentAt(tabIx)).getPlaylist() : null;
 	}
 
@@ -1005,9 +1157,12 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		final Playlist list = getPlaylistFromTab(tabIx);
 		if (list.isModified())
 		{
-            Object[] options = { "Save", "Don't Save", "Cancel" };
+			Object[] options =
+			{
+				"Save", "Don't Save", "Cancel"
+			};
 			int rc = JOptionPane.showOptionDialog(this, "This playlist has been modified. Do you want to save the changes?", "Confirm Close",
-                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			if (rc == JOptionPane.YES_OPTION)
 			{
 				// TODO: not tested
@@ -1043,7 +1198,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 				return false;
 			}
-            else if(rc == JOptionPane.NO_OPTION)
+			else if (rc == JOptionPane.NO_OPTION)
 			{
 				closeTab(list, tabIx);
 				return true;
@@ -1077,7 +1232,7 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 
 		if (_uiTabs.getTabCount() <= 0)
 		{
-			((java.awt.CardLayout)playlistPanel.getLayout()).show(playlistPanel, "_gettingStartedPanel");
+			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
 		}
 	}
 
@@ -1089,9 +1244,12 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 			if (list.isModified())
 			{
 
-                Object[] options = { "Discard Changes and Exit", "Cancel" };
-                int rc = JOptionPane.showOptionDialog(this, "You have unsaved changes. Do you really want to discard these changes and exit?\n", "Confirm Close",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				Object[] options =
+				{
+					"Discard Changes and Exit", "Cancel"
+				};
+				int rc = JOptionPane.showOptionDialog(this, "You have unsaved changes. Do you really want to discard these changes and exit?\n", "Confirm Close",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 				if (rc == JOptionPane.NO_OPTION)
 				{
 					return;
@@ -1402,8 +1560,8 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	}
 }//GEN-LAST:event_onMenuBatchRepairActionPerformed
 
-private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN-FIRST:event_openIconButtonActionPerformed1
-{//GEN-HEADEREND:event_openIconButtonActionPerformed1
+private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN-FIRST:event__openIconButtonActionPerformed1
+{//GEN-HEADEREND:event__openIconButtonActionPerformed1
 	if (_currentPlaylist != null)
 	{
 		jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
@@ -1418,7 +1576,7 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 	{
 		jM3UChooser.cancelSelection();
 	}
-}//GEN-LAST:event_openIconButtonActionPerformed1
+}//GEN-LAST:event__openIconButtonActionPerformed1
 
 	private void updateMediaDirButtons()
 	{
@@ -1441,35 +1599,6 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
-	private void updateRecentMenu()
-	{
-		recentMenu.removeAll();
-		String[] files = guiDriver.getRecentM3Us();
-		if (files.length == 0)
-		{
-			JMenuItem temp = new JMenuItem("Empty");
-			temp.setEnabled(false);
-			recentMenu.add(temp);
-		}
-		else
-		{
-			for (int i = 0; i < files.length; i++)
-			{
-				JMenuItem temp = new JMenuItem(files[i]);
-				temp.setFont(new java.awt.Font("Verdana", 0, 9));
-				temp.addActionListener(new java.awt.event.ActionListener()
-				{
-					@Override
-					public void actionPerformed(java.awt.event.ActionEvent evt)
-					{
-						recentPlaylistActionPerformed(evt);
-					}
-				});
-				recentMenu.add(temp);
-			}
-		}
-	}
-
 	private void recentPlaylistActionPerformed(java.awt.event.ActionEvent evt)
 	{
 		JMenuItem temp = (JMenuItem) evt.getSource();
@@ -1490,20 +1619,17 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
 
-            if (_tabPaneInsets != null)
-                setTabAreaInsets(_tabPaneInsets);
+			if (_tabPaneInsets != null)
+			{
+				setTabAreaInsets(_tabPaneInsets);
+			}
 		}
-		catch (ClassNotFoundException e)
+		catch (Exception e)
 		{
 		}
-		catch (InstantiationException e)
+		finally
 		{
-		}
-		catch (IllegalAccessException e)
-		{
-		}
-		catch (UnsupportedLookAndFeelException e)
-		{
+			syncJMenuFonts();
 		}
 	}
 
@@ -1524,8 +1650,16 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu _fileMenu;
     private javax.swing.JPanel _gettingStartedPanel;
-    private javax.swing.JMenuItem _miBatchRepair;
+    private javax.swing.JMenu _helpMenu;
+    private javax.swing.JSplitPane _leftSplitPane;
+    private javax.swing.JMenuBar _mainMenuBar;
+    private javax.swing.JMenuItem _mibatchRepair;
+    private javax.swing.JButton _openIconButton;
+    private javax.swing.JPanel _playlistPanel;
+    private javax.swing.JSplitPane _splitPane;
+    private javax.swing.JPanel _statusPanel;
     private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton addMediaDirButton;
@@ -1534,33 +1668,24 @@ private void openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GEN
     private javax.swing.JMenuItem batchRepairWinampMenuItem;
     private javax.swing.JMenuItem clearHistoryMenuItem;
     private javax.swing.JMenuItem exit;
-    private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JSplitPane leftSplitPane;
     private javax.swing.JMenuItem loadMenuItem;
-    private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JPanel mediaLibraryButtonPanel;
     private javax.swing.JList mediaLibraryList;
     private javax.swing.JPanel mediaLibraryPanel;
     private javax.swing.JScrollPane mediaLibraryScrollPane;
-    private javax.swing.JButton openIconButton;
     private javax.swing.JPanel playlistDirectoryPanel;
     private javax.swing.JTree playlistDirectoryTree;
-    private javax.swing.JPanel playlistPanel;
     private javax.swing.JPopupMenu playlistTreeRightClickMenu;
     private javax.swing.JMenu recentMenu;
     private javax.swing.JButton refreshMediaDirsButton;
     private javax.swing.JButton removeMediaDirButton;
     private javax.swing.JMenuItem saveAsMenuItem;
-    private javax.swing.JSplitPane splitPane;
     private javax.swing.JLabel statusLabel;
-    private javax.swing.JPanel statusPanel;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JMenuItem updateCheckMenuItem;
     // End of variables declaration//GEN-END:variables

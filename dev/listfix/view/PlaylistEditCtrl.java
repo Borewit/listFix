@@ -19,6 +19,8 @@
 
 package listfix.view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.BatchClosestMatchResultsDialog;
@@ -64,12 +66,15 @@ import listfix.controller.GUIDriver;
 import listfix.controller.tasks.CopyFilesTask;
 
 import listfix.io.AudioFileFilter;
+import listfix.io.FileWriter;
+import listfix.io.PlaylistFileChooserFilter;
 
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
+import listfix.model.PlaylistHistory;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressPopup;
@@ -83,7 +88,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		initComponents();
 
 		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
-		_uiTable.setFont(new Font("Verdana", 0, 9));
 		_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
 
 		_uiTable.setShowHorizontalLines(false);
@@ -649,6 +653,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _miRemoveMissing = new javax.swing.JMenuItem();
         _miCopyFiles = new javax.swing.JMenuItem();
         _uiToolbar = new javax.swing.JToolBar();
+        _btnOpen = new javax.swing.JButton();
         _btnSave = new javax.swing.JButton();
         _btnReload = new javax.swing.JButton();
         _btnAdd = new javax.swing.JButton();
@@ -727,6 +732,22 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
         _uiToolbar.setFloatable(false);
         _uiToolbar.setRollover(true);
+
+        _btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.gif"))); // NOI18N
+        _btnOpen.setToolTipText("Open Playlist");
+        _btnOpen.setBorder(null);
+        _btnOpen.setFocusable(false);
+        _btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnOpen.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnOpen.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnOpen.setPreferredSize(new java.awt.Dimension(31, 31));
+        _btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnOpenActionPerformed(evt);
+            }
+        });
+        _uiToolbar.add(_btnOpen);
 
         _btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
         _btnSave.setToolTipText("Save");
@@ -866,7 +887,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new PlaylistTableModel());
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
@@ -1095,11 +1116,131 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 		}
 	}//GEN-LAST:event__btnReloadMouseClicked
+
+	private void openInternal()
+	{
+		JFileChooser jM3UChooser = new JFileChooser();
+		jM3UChooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
+		if (_playlist != null)
+		{
+			jM3UChooser.setSelectedFile(_playlist.getFile());
+		}
+
+		int response = jM3UChooser.showOpenDialog(getParentFrame());
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			final File file = jM3UChooser.getSelectedFile();
+			final String[] libraryFiles;
+			if (GUIDriver.getInstance().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+			{
+				libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+			}
+			else
+			{
+				libraryFiles = null;
+			}
+
+			ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+			{
+				@Override
+				protected Playlist doInBackground() throws Exception
+				{
+					Playlist list = new Playlist(file, this);
+					if (libraryFiles != null)
+					{
+						list.repair(libraryFiles, this);
+					}
+					return list;
+				}
+
+				@Override
+				protected void done()
+				{
+					Playlist list;
+					try
+					{
+						list = get();
+					}
+					catch (Exception ex)
+					{
+						JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					((GUIScreen)getParentFrame()).updateCurrentTab(list);
+				}
+			};
+			ProgressDialog pd = new ProgressDialog((GUIScreen)getParentFrame(), true, worker, "Loading...");
+			pd.setVisible(true);
+		}
+		else
+		{
+			jM3UChooser.cancelSelection();
+		}
+	}
+
+	private void _btnOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnOpenActionPerformed
+	{//GEN-HEADEREND:event__btnOpenActionPerformed
+		if (_playlist.isModified())
+		{
+			Object[] options =
+			{
+				"Save", "Don't Save", "Cancel"
+			};
+			int rc = JOptionPane.showOptionDialog(this, "This playlist has been modified. Do you want to save the changes?", "Confirm Close",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+			if (rc == JOptionPane.YES_OPTION)
+			{
+				ProgressWorker<Boolean, Void> worker = new ProgressWorker<Boolean, Void>()
+				{
+					@Override
+					protected Boolean doInBackground() throws IOException
+					{
+						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+						_playlist.save(saveRelative, this);
+						return true;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
+				pd.setVisible(true);
+
+				try
+				{
+					boolean savedOk = worker.get();
+					if (savedOk)
+					{
+						openInternal();
+					}
+				}
+				catch (InterruptedException ex)
+				{
+				}
+				catch (ExecutionException ex)
+				{
+					JOptionPane.showMessageDialog(getParentFrame(), ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (rc == JOptionPane.NO_OPTION)
+			{
+				openInternal();
+			}
+			else
+			{
+				// do nothing, user bailed...
+			}
+		}
+		else
+		{
+			openInternal();
+		}
+
+}//GEN-LAST:event__btnOpenActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
     private javax.swing.JButton _btnDown;
     private javax.swing.JButton _btnLocate;
+    private javax.swing.JButton _btnOpen;
     private javax.swing.JButton _btnPlay;
     private javax.swing.JButton _btnReload;
     private javax.swing.JButton _btnReorder;
@@ -1121,7 +1262,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     // End of variables declaration//GEN-END:variables
-	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
+	private static ImageIcon
+
+
+
+	 _imgMissing  = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
 	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
 	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
 	private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.gif"));
