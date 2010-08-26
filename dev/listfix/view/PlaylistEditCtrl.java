@@ -19,8 +19,7 @@
 
 package listfix.view;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.Component;
 import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.BatchClosestMatchResultsDialog;
@@ -28,7 +27,7 @@ import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
-import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
@@ -66,7 +65,6 @@ import listfix.controller.GUIDriver;
 import listfix.controller.tasks.CopyFilesTask;
 
 import listfix.io.AudioFileFilter;
-import listfix.io.FileWriter;
 import listfix.io.PlaylistFileChooserFilter;
 
 import listfix.model.BatchMatchItem;
@@ -74,7 +72,7 @@ import listfix.model.EditFilenameResult;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
-import listfix.model.PlaylistHistory;
+import listfix.view.support.FontHelper;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressPopup;
@@ -220,6 +218,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void addItems()
 	{
 		JFileChooser chooser = new JFileChooser();
+		FontHelper.setFileChooserFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		chooser.setMultiSelectionEnabled(true);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
@@ -533,6 +532,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		PlaylistEntry entry = _playlist.get(rowIx);
 
 		JFileChooser chooser = new JFileChooser();
+		FontHelper.setFileChooserFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		if (!entry.isURL())
 		{
@@ -984,16 +984,17 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     private void onMenuCopyFiles(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuCopyFiles
     {//GEN-HEADEREND:event_onMenuCopyFiles
-		JFileChooser destinationDirectoryFileChooser = new JFileChooser();
-		destinationDirectoryFileChooser.setDialogTitle("Choose a destination directory...");
-		destinationDirectoryFileChooser.setAcceptAllFileFilterUsed(false);
-		destinationDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int response = destinationDirectoryFileChooser.showOpenDialog(this);
+		JFileChooser destDirFileChooser = new JFileChooser();
+		destDirFileChooser.setDialogTitle("Choose a destination directory...");
+		destDirFileChooser.setAcceptAllFileFilterUsed(false);
+		destDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		FontHelper.setFileChooserFont(destDirFileChooser.getComponents());
+		int response = destDirFileChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
-				File destDir = destinationDirectoryFileChooser.getSelectedFile();
+				File destDir = destDirFileChooser.getSelectedFile();
 
 				final listfix.view.support.ProgressPopup copyFilesProgressDialog = new ProgressPopup(getParentFrame(), "Copying Files", true, 250, 25, false);
 				copyFilesProgressDialog.go();
@@ -1120,6 +1121,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void openInternal()
 	{
 		JFileChooser jM3UChooser = new JFileChooser();
+		FontHelper.setFileChooserFont(jM3UChooser.getComponents());
 		jM3UChooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
 		if (_playlist != null)
 		{
@@ -1167,10 +1169,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						return;
 					}
 
-					((GUIScreen)getParentFrame()).updateCurrentTab(list);
+					((GUIScreen) getParentFrame()).updateCurrentTab(list);
 				}
 			};
-			ProgressDialog pd = new ProgressDialog((GUIScreen)getParentFrame(), true, worker, "Loading...");
+			ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading...");
 			pd.setVisible(true);
 		}
 		else
@@ -1262,11 +1264,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     // End of variables declaration//GEN-END:variables
-	private static ImageIcon
-
-
-
-	 _imgMissing  = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
+	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
 	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
 	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
 	private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.gif"));

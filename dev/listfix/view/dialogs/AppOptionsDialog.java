@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
+import listfix.view.support.FontHelper;
 
 public class AppOptionsDialog extends javax.swing.JDialog
 {
@@ -67,6 +68,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		FontHelper.setFileChooserFont(jMediaDirChooser.getComponents());
 	}
 
 	public AppOptionsDialog()

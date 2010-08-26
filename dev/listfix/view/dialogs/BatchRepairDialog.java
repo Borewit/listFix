@@ -39,6 +39,7 @@ import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
 import listfix.view.support.DualProgressWorker;
+import listfix.view.support.FontHelper;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
 
@@ -357,10 +358,12 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		if (!_txtBackup.getText().isEmpty())
 		{
 			dlg.setSelectedFile(new File(_txtBackup.getText()));
+			FontHelper.setFileChooserFont(dlg.getComponents());
 		}
 		if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			_txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
+			FontHelper.setFileChooserFont(dlg.getComponents());
 		}
     }//GEN-LAST:event_onBtnBrowseActionPerformed
 

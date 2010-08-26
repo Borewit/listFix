@@ -72,7 +72,6 @@ import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistHistory;
 
 import listfix.util.ArrayFunctions;
-import listfix.util.Log;
 import listfix.util.OperatingSystem;
 
 import listfix.view.dialogs.ProgressDialog;
@@ -81,10 +80,11 @@ import listfix.view.dialogs.AppOptionsDialog;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
+import listfix.view.support.FontHelper;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
 
-public class GUIScreen extends JFrame implements ICloseableTabManager
+public final class GUIScreen extends JFrame implements ICloseableTabManager
 {
 	private static final long serialVersionUID = 7691786927987534889L;
 	private final JFileChooser jM3UChooser;
@@ -109,13 +109,16 @@ public class GUIScreen extends JFrame implements ICloseableTabManager
 		jM3UChooser.setDialogTitle("Choose a Playlist...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
 		jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
+		FontHelper.setFileChooserFont(jM3UChooser.getComponents());
 		jMediaDirChooser.setDialogTitle("Specify a media directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		FontHelper.setFileChooserFont(jMediaDirChooser.getComponents());
 		jSaveFileChooser.setDialogTitle("Save File:");
 		jSaveFileChooser.setAcceptAllFileFilterUsed(false);
 		jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
+		FontHelper.setFileChooserFont(jSaveFileChooser.getComponents());
 		splashScreen.setVisible(false);
 		if (guiDriver.getShowMediaDirWindow())
 		{
@@ -1526,6 +1529,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	dlg.addChoosableFileFilter(new PlaylistFileChooserFilter());
 	dlg.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 	dlg.setMultiSelectionEnabled(true);
+	FontHelper.setFileChooserFont(dlg.getComponents());
 	if (dlg.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 	{
 		// build complete list of playlists
