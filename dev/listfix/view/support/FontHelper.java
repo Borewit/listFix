@@ -29,13 +29,13 @@ import java.awt.Font;
  */
 public class FontHelper
 {
-	public static void setFileChooserFont(Component[] comp)
+	public static void recursiveSetFont(Component[] comp)
 	{
 		for (int x = 0; x < comp.length; x++)
 		{
 			if (comp[x] instanceof Container)
 			{
-				setFileChooserFont(((Container) comp[x]).getComponents());
+				recursiveSetFont(((Container) comp[x]).getComponents());
 			}
 			try
 			{

@@ -121,6 +121,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
 	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
 	{
+		@Override
 		public void playlistModified(Playlist list)
 		{
 			onPlaylistModified(list);
@@ -144,6 +145,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		lsm.addListSelectionListener(new ListSelectionListener()
 		{
+			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
 				if (e.getValueIsAdjusting())
@@ -361,12 +363,12 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		if (!_txtBackup.getText().isEmpty())
 		{
 			dlg.setSelectedFile(new File(_txtBackup.getText()));
-			FontHelper.setFileChooserFont(dlg.getComponents());
+			FontHelper.recursiveSetFont(dlg.getComponents());
 		}
 		if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			_txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
-			FontHelper.setFileChooserFont(dlg.getComponents());
+			FontHelper.recursiveSetFont(dlg.getComponents());
 		}
     }//GEN-LAST:event_onBtnBrowseActionPerformed
 
@@ -431,11 +433,13 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			_items = _batch.getItems();
 		}
 
+		@Override
 		public int getRowCount()
 		{
 			return _items.size();
 		}
 
+		@Override
 		public int getColumnCount()
 		{
 			return 4;
@@ -470,6 +474,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			}
 		}
 
+		@Override
 		public Object getValueAt(int rowIndex, int columnIndex)
 		{
 			BatchRepairItem item = _items.get(rowIndex);

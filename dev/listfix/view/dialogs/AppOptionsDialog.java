@@ -68,7 +68,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FontHelper.setFileChooserFont(jMediaDirChooser.getComponents());
+		FontHelper.recursiveSetFont(jMediaDirChooser.getComponents());
 	}
 
 	public AppOptionsDialog()

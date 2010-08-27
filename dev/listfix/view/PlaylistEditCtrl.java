@@ -218,7 +218,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void addItems()
 	{
 		JFileChooser chooser = new JFileChooser();
-		FontHelper.setFileChooserFont(chooser.getComponents());
+		FontHelper.recursiveSetFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		chooser.setMultiSelectionEnabled(true);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
@@ -532,7 +532,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		PlaylistEntry entry = _playlist.get(rowIx);
 
 		JFileChooser chooser = new JFileChooser();
-		FontHelper.setFileChooserFont(chooser.getComponents());
+		FontHelper.recursiveSetFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		if (!entry.isURL())
 		{
@@ -988,7 +988,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		destDirFileChooser.setDialogTitle("Choose a destination directory...");
 		destDirFileChooser.setAcceptAllFileFilterUsed(false);
 		destDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FontHelper.setFileChooserFont(destDirFileChooser.getComponents());
+		FontHelper.recursiveSetFont(destDirFileChooser.getComponents());
 		int response = destDirFileChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
@@ -1018,12 +1018,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{//GEN-HEADEREND:event__uiTableMouseDragged
 		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
 		{
-			int releasedRow = _uiTable.rowAtPoint(evt.getPoint());
-			if ((currentlySelectedRow != releasedRow) && (releasedRow != -1) && (releasedRow < _playlist.size()))
+			int newModelRow = _uiTable.convertRowIndexToModel(_uiTable.rowAtPoint(evt.getPoint()));
+			int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
+			int tableRow = _uiTable.rowAtPoint(evt.getPoint());
+			if ((currentlySelectedRow != tableRow) && (tableRow != -1) && (tableRow < _playlist.size()))
 			{
-				_playlist.moveTo(currentlySelectedRow, releasedRow);
-				currentlySelectedRow = releasedRow;
-				_uiTable.setRowSelectionInterval(currentlySelectedRow, currentlySelectedRow);
+				_playlist.moveTo(oldModelRow, newModelRow);
+				currentlySelectedRow = tableRow;
+				_uiTable.setRowSelectionInterval(tableRow, tableRow);
 			}
 		}
 	}//GEN-LAST:event__uiTableMouseDragged
@@ -1038,23 +1040,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				playSelectedEntries();
 			}
 		}
-//		else if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
-//		{
-//			currentRightClick = _uiTable.rowAtPoint(evt.getPoint());
-//		}
 	}//GEN-LAST:event__uiTableMousePressed
 
 	private void _uiTableMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMouseReleased
 	{//GEN-HEADEREND:event__uiTableMouseReleased
 		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
 		{
-			int releasedRow = _uiTable.rowAtPoint(evt.getPoint());
+			int newModelRow = _uiTable.convertRowIndexToModel(_uiTable.rowAtPoint(evt.getPoint()));
+			int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
+			int tableRow = _uiTable.rowAtPoint(evt.getPoint());
 			// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
-			if ((currentlySelectedRow != releasedRow) && (!_uiPopupMenu.isEnabled()) && (releasedRow != -1))
+			if ((currentlySelectedRow != tableRow) && (!_uiPopupMenu.isEnabled()) && (tableRow != -1))
 			{
-				//((PlaylistTableModel) _uiTable.getModel()).updateData(
-				_playlist.moveTo(currentlySelectedRow, releasedRow);
-				currentlySelectedRow = releasedRow;
+				_playlist.moveTo(oldModelRow, newModelRow);
+				currentlySelectedRow = tableRow;
 			}
 		}
 	}//GEN-LAST:event__uiTableMouseReleased
@@ -1121,7 +1120,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void openInternal()
 	{
 		JFileChooser jM3UChooser = new JFileChooser();
-		FontHelper.setFileChooserFont(jM3UChooser.getComponents());
+		FontHelper.recursiveSetFont(jM3UChooser.getComponents());
 		jM3UChooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
 		if (_playlist != null)
 		{

@@ -64,9 +64,9 @@ public class PlaylistEntry implements Cloneable
 	// The _length of the track
 	private String _length = "-1";
 	// Status of this item.
-    private PlaylistEntryStatus _status = PlaylistEntryStatus.Unknown;
+	private PlaylistEntryStatus _status = PlaylistEntryStatus.Unknown;
 	// Has this item been fixed?
-    private boolean _isFixed;
+	private boolean _isFixed;
 
 	/**
 	 * @return the _status
@@ -105,13 +105,13 @@ public class PlaylistEntry implements Cloneable
 		// should we skip the exists check?
 		if (skipExistsCheck())
 		{
-            _status = PlaylistEntryStatus.Missing;
+			_status = PlaylistEntryStatus.Missing;
 		}
 		// if we should check, do so...
 		else if (this.exists())
 		{
 			// file was found in its current location
-            _status = PlaylistEntryStatus.Found;
+			_status = PlaylistEntryStatus.Found;
 			if (_thisFile.isAbsolute())
 			{
 				_absoluteFile = _thisFile;
@@ -130,16 +130,16 @@ public class PlaylistEntry implements Cloneable
 				_absoluteFile = new File(parentPath, p + FILE_SEPARATOR + f);
 				if (_absoluteFile.exists())
 				{
-                    _status = PlaylistEntryStatus.Found;
+					_status = PlaylistEntryStatus.Found;
 				}
 				else
 				{
-                    _status = PlaylistEntryStatus.Missing;
+					_status = PlaylistEntryStatus.Missing;
 				}
 			}
 			else
 			{
-                _status = PlaylistEntryStatus.Missing;
+				_status = PlaylistEntryStatus.Missing;
 			}
 		}
 	}
@@ -154,7 +154,7 @@ public class PlaylistEntry implements Cloneable
 		_thisFile = input;
 		if (skipExistsCheck())
 		{
-            _status = PlaylistEntryStatus.Missing;
+			_status = PlaylistEntryStatus.Missing;
 		}
 		else if (this.exists())
 		{
@@ -236,10 +236,12 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	public void markFixedIfFound()
-    {
-        if (getStatus() == PlaylistEntryStatus.Found)
-            _isFixed = true;
-    }
+	{
+		if (getStatus() == PlaylistEntryStatus.Found)
+		{
+			_isFixed = true;
+		}
+	}
 
 	public String getPath()
 	{
@@ -269,15 +271,15 @@ public class PlaylistEntry implements Cloneable
 
 	private void recheckFoundStatus()
 	{
-        if (_thisFile.exists() && _thisFile.isFile())
-        {
-            _status = PlaylistEntryStatus.Found;
-        }
-        else
-        {
-            _status = PlaylistEntryStatus.Missing;
-            _isFixed = false;
-        }
+		if (_thisFile.exists() && _thisFile.isFile())
+		{
+			_status = PlaylistEntryStatus.Found;
+		}
+		else
+		{
+			_status = PlaylistEntryStatus.Missing;
+			_isFixed = false;
+		}
 	}
 
 	public URI getURI()
@@ -294,8 +296,8 @@ public class PlaylistEntry implements Cloneable
 	{
 		_path = input;
 		_thisFile = new File(_path, _fileName);
-        resetAbsoluteFile();
-        recheckFoundStatus();
+		resetAbsoluteFile();
+		recheckFoundStatus();
 	}
 
 	public void setFileName(String input)
@@ -309,16 +311,20 @@ public class PlaylistEntry implements Cloneable
 		_thisFile = input;
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
-        resetAbsoluteFile();
+		resetAbsoluteFile();
 	}
 
-    private void resetAbsoluteFile()
-    {
-        if (_thisFile.isAbsolute())
-            _absoluteFile = _thisFile;
-        else
-            _absoluteFile = new File(_thisFile.getAbsolutePath());
-    }
+	private void resetAbsoluteFile()
+	{
+		if (_thisFile.isAbsolute())
+		{
+			_absoluteFile = _thisFile;
+		}
+		else
+		{
+			_absoluteFile = new File(_thisFile.getAbsolutePath());
+		}
+	}
 
 	private boolean skipExistsCheck()
 	{
@@ -332,10 +338,15 @@ public class PlaylistEntry implements Cloneable
 		return getStatus() == PlaylistEntryStatus.Found;
 	}
 
-    public boolean isFixed()
-    {
-        return _isFixed;
-    }
+	public boolean isFixed()
+	{
+		return _isFixed;
+	}
+
+	public void setFixed(boolean fixed)
+	{
+		_isFixed = fixed;
+	}
 
 	public boolean isURL()
 	{
@@ -348,7 +359,7 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Try to open the file with the "default" MP3 player (only works on some systems).
-	public void play() throws IOException, InterruptedException 
+	public void play() throws IOException, InterruptedException
 	{
 		File absFile = null;
 		if (this.isURL())
@@ -462,7 +473,7 @@ public class PlaylistEntry implements Cloneable
 
 		// set the _length
 		result.append("Length").append(index).append("=").append(_length).append(BR);
-		
+
 		return result.toString();
 	}
 
@@ -482,32 +493,34 @@ public class PlaylistEntry implements Cloneable
 		{
 			File foundFile = new File(fileList[searchResult]);
 			this.setFile(foundFile);
-            _status = PlaylistEntryStatus.Found;
-            _isFixed = true;
+			_status = PlaylistEntryStatus.Found;
+			_isFixed = true;
 			return;
 		}
-        _status = PlaylistEntryStatus.Missing;
+		_status = PlaylistEntryStatus.Missing;
 	}
 
-    public List<MatchedPlaylistEntry> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
-    {
-        ProgressAdapter progress = ProgressAdapter.wrap(observer);
-        progress.setTotal(mediaFiles.length);
+	public List<MatchedPlaylistEntry> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(mediaFiles.length);
 
-        List<MatchedPlaylistEntry> matches = new ArrayList<MatchedPlaylistEntry>();
-        String entryName = getFileName().replaceAll("\'", "");
-        for (String mediaFilePath : mediaFiles) 
-        {
-            progress.stepCompleted();
+		List<MatchedPlaylistEntry> matches = new ArrayList<MatchedPlaylistEntry>();
+		String entryName = getFileName().replaceAll("\'", "");
+		for (String mediaFilePath : mediaFiles)
+		{
+			progress.stepCompleted();
 
-            File mediaFile = new File(mediaFilePath);
-            int score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", ""));
-            if (score > 0)
-                matches.add(new MatchedPlaylistEntry(mediaFile, score));
-        }
+			File mediaFile = new File(mediaFilePath);
+			int score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", ""));
+			if (score > 0)
+			{
+				matches.add(new MatchedPlaylistEntry(mediaFile, score));
+			}
+		}
 		Collections.sort(matches, new MatchedPlaylistEntryComparator());
-        return matches;
-    }
+		return matches;
+	}
 
 	@Override
 	public Object clone()

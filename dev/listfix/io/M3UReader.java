@@ -55,40 +55,40 @@ public class M3UReader implements IPlaylistReader
 	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
 	private long fileLength = 0;
 	private String encoding = "";
-    private File _listFile;
+	private File _listFile;
 	private static final PlaylistType type = PlaylistType.M3U;
 
 	public M3UReader(File in) throws FileNotFoundException
 	{
-        _listFile = in;
-        encoding = UnicodeUtils.getEncoding(in);
-        if (encoding.equals("UTF-8") || in.getName().toLowerCase().endsWith(".m3u8"))
-        {
-            try
-            {
-                buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in), "UTF-8"), "UTF8"));
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                // this should never happen (utf-8 must be supported) - rethrow as runtime exception
-                throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
-            }
-            encoding = "UTF-8";
-        }
-        else
-        {
-            buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
-        }
-        fileLength = in.length();
+		_listFile = in;
+		encoding = UnicodeUtils.getEncoding(in);
+		if (encoding.equals("UTF-8") || in.getName().toLowerCase().endsWith(".m3u8"))
+		{
+			try
+			{
+				buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in), "UTF-8"), "UTF8"));
+			}
+			catch (UnsupportedEncodingException ex)
+			{
+				// this should never happen (utf-8 must be supported) - rethrow as runtime exception
+				throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
+			}
+			encoding = "UTF-8";
+		}
+		else
+		{
+			buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
+		}
+		fileLength = in.length();
 	}
 
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
-        ProgressAdapter progress = ProgressAdapter.wrap(observer);
-        progress.setTotal((int) fileLength);
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal((int) fileLength);
 
-        _cache = new StringBuilder();
+		_cache = new StringBuilder();
 		String line1 = readLine();
 		if (line1 != null)
 		{
@@ -114,11 +114,19 @@ public class M3UReader implements IPlaylistReader
 					}
 				}
 
-				progress.setCompleted(_cache.toString().getBytes().length);
+				int cacheSize = _cache.toString().getBytes().length;
+				if (cacheSize < fileLength)
+				{
+					progress.setCompleted(cacheSize);
+				}
 
 				while (line1 != null)
 				{
-                    progress.setCompleted(_cache.toString().getBytes().length);
+					cacheSize = _cache.toString().getBytes().length;
+					if (cacheSize < fileLength)
+					{
+						progress.setCompleted(cacheSize);
+					}
 					processEntry(line1, line2);
 					line1 = readLine();
 					if (line1 != null)
@@ -138,7 +146,11 @@ public class M3UReader implements IPlaylistReader
 							}
 						}
 					}
-					progress.setCompleted(_cache.toString().getBytes().length);
+					cacheSize = _cache.toString().getBytes().length;
+					if (cacheSize < fileLength)
+					{
+						progress.setCompleted(cacheSize);
+					}
 				}
 			}
 		}
@@ -200,13 +212,13 @@ public class M3UReader implements IPlaylistReader
 		return results;
 	}
 
-    private String readLine() throws IOException
-    {
-        String line = buffer.readLine();
-        _cache.append(line);
-        return line;
-    }
-    StringBuilder _cache;
+	private String readLine() throws IOException
+	{
+		String line = buffer.readLine();
+		_cache.append(line);
+		return line;
+	}
+	StringBuilder _cache;
 
 	private void processEntry(String L1, String L2) throws IOException
 	{

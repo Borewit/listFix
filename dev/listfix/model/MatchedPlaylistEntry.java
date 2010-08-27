@@ -30,6 +30,7 @@ public class MatchedPlaylistEntry
 	public MatchedPlaylistEntry(File f, int c)
 	{
 		thisEntry = new PlaylistEntry(f, "");
+		thisEntry.setFixed(true);
 		score = c;
 	}
 

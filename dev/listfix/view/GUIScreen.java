@@ -23,6 +23,7 @@ package listfix.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
@@ -43,9 +44,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.*;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.UIResource;
 import javax.swing.plaf.basic.BasicMenuItemUI;
@@ -109,16 +112,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		jM3UChooser.setDialogTitle("Choose a Playlist...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
 		jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
-		FontHelper.setFileChooserFont(jM3UChooser.getComponents());
+		FontHelper.recursiveSetFont(jM3UChooser.getComponents());
 		jMediaDirChooser.setDialogTitle("Specify a media directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FontHelper.setFileChooserFont(jMediaDirChooser.getComponents());
+		FontHelper.recursiveSetFont(jMediaDirChooser.getComponents());
 		jSaveFileChooser.setDialogTitle("Save File:");
 		jSaveFileChooser.setAcceptAllFileFilterUsed(false);
 		jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
-		FontHelper.setFileChooserFont(jSaveFileChooser.getComponents());
+		FontHelper.recursiveSetFont(jSaveFileChooser.getComponents());
 		splashScreen.setVisible(false);
 		if (guiDriver.getShowMediaDirWindow())
 		{
@@ -147,6 +150,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
 
 		syncJMenuFonts();
+        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", 0, 9)));
+		UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("Verdana", 0, 9)));
+		UIManager.put("OptionPane.buttonFont", new FontUIResource(new Font("Verdana", 0, 9)));
 	}
 
 	public AppOptions getOptions()
@@ -326,7 +332,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistPanel.setLayout(new java.awt.CardLayout());
 
         _uiTabs.setFocusable(false);
-        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 onTabStateChanged(evt);
@@ -337,7 +343,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _gettingStartedPanel.setBackground(new java.awt.Color(255, 255, 255));
         _gettingStartedPanel.setLayout(new java.awt.GridBagLayout());
 
-        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 16));
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -345,11 +351,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _openIconButton.setBorder(null);
         _openIconButton.setFocusable(false);
         _openIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _openIconButton.setIconTextGap(-5);
+        _openIconButton.setIconTextGap(-2);
         _openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         _openIconButton.setMaximumSize(new java.awt.Dimension(300, 25));
         _openIconButton.setMinimumSize(new java.awt.Dimension(256, 25));
-        _openIconButton.setPreferredSize(new java.awt.Dimension(300, 300));
+        _openIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
         _openIconButton.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         _openIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _openIconButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1372,7 +1378,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 	private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		JOptionPane.showMessageDialog(this, "listFix( ) v1.5.3\nBy: Jeremy Caron (firewyre at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, "listFix( ) v2.0.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) \n          Kennedy Akala (user22735 at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void exitActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_exitActionPerformed
@@ -1529,7 +1535,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	dlg.addChoosableFileFilter(new PlaylistFileChooserFilter());
 	dlg.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 	dlg.setMultiSelectionEnabled(true);
-	FontHelper.setFileChooserFont(dlg.getComponents());
+	FontHelper.recursiveSetFont(dlg.getComponents());
 	if (dlg.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 	{
 		// build complete list of playlists
