@@ -85,7 +85,7 @@
                 </Property>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="_mibatchRepair">
+            <MenuItem class="javax.swing.JMenuItem" name="_miBatchRepair">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection component="loadMenuItem" name="font" type="property"/>

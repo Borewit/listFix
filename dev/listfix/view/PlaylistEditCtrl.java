@@ -1018,14 +1018,18 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{//GEN-HEADEREND:event__uiTableMouseDragged
 		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
 		{
-			int newModelRow = _uiTable.convertRowIndexToModel(_uiTable.rowAtPoint(evt.getPoint()));
-			int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
-			int tableRow = _uiTable.rowAtPoint(evt.getPoint());
-			if ((currentlySelectedRow != tableRow) && (tableRow != -1) && (tableRow < _playlist.size()))
+			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
+			if (rowAtPoint > -1)
 			{
-				_playlist.moveTo(oldModelRow, newModelRow);
-				currentlySelectedRow = tableRow;
-				_uiTable.setRowSelectionInterval(tableRow, tableRow);
+				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
+				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
+				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
+				if ((currentlySelectedRow != tableRow) && (tableRow != -1) && (tableRow < _playlist.size()))
+				{
+					_playlist.moveTo(oldModelRow, newModelRow);
+					currentlySelectedRow = tableRow;
+					_uiTable.setRowSelectionInterval(tableRow, tableRow);
+				}
 			}
 		}
 	}//GEN-LAST:event__uiTableMouseDragged
@@ -1046,14 +1050,18 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{//GEN-HEADEREND:event__uiTableMouseReleased
 		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
 		{
-			int newModelRow = _uiTable.convertRowIndexToModel(_uiTable.rowAtPoint(evt.getPoint()));
-			int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
-			int tableRow = _uiTable.rowAtPoint(evt.getPoint());
-			// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
-			if ((currentlySelectedRow != tableRow) && (!_uiPopupMenu.isEnabled()) && (tableRow != -1))
+			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
+			if (rowAtPoint > -1)
 			{
-				_playlist.moveTo(oldModelRow, newModelRow);
-				currentlySelectedRow = tableRow;
+				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
+				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
+				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
+				// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
+				if ((currentlySelectedRow != tableRow) && (!_uiPopupMenu.isEnabled()) && (tableRow != -1))
+				{
+					_playlist.moveTo(oldModelRow, newModelRow);
+					currentlySelectedRow = tableRow;
+				}
 			}
 		}
 	}//GEN-LAST:event__uiTableMouseReleased

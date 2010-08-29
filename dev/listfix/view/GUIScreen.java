@@ -123,6 +123,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
 		FontHelper.recursiveSetFont(jSaveFileChooser.getComponents());
 		splashScreen.setVisible(false);
+
+        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", 0, 9)));
+		UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("Verdana", 0, 9)));
+		UIManager.put("OptionPane.buttonFont", new FontUIResource(new Font("Verdana", 0, 9)));
+
 		if (guiDriver.getShowMediaDirWindow())
 		{
 			JOptionPane.showMessageDialog(this, "You need to add a media directory before you can find the new locations of your files.  See help for more information.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
@@ -150,9 +155,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
 
 		syncJMenuFonts();
-        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", 0, 9)));
-		UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("Verdana", 0, 9)));
-		UIManager.put("OptionPane.buttonFont", new FontUIResource(new Font("Verdana", 0, 9)));
 	}
 
 	public AppOptions getOptions()
@@ -194,7 +196,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         loadMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
-        _mibatchRepair = new javax.swing.JMenuItem();
+        _miBatchRepair = new javax.swing.JMenuItem();
         batchRepairWinampMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         recentMenu = new javax.swing.JMenu();
@@ -343,7 +345,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _gettingStartedPanel.setBackground(new java.awt.Color(255, 255, 255));
         _gettingStartedPanel.setLayout(new java.awt.GridBagLayout());
 
-        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -402,16 +404,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         jSeparator6.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator6);
 
-        _mibatchRepair.setFont(loadMenuItem.getFont());
-        _mibatchRepair.setText("Batch Repair...");
-        _mibatchRepair.addActionListener(new java.awt.event.ActionListener() {
+        _miBatchRepair.setFont(loadMenuItem.getFont());
+        _miBatchRepair.setText("Batch Repair...");
+        _miBatchRepair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onMenuBatchRepairActionPerformed(evt);
             }
         });
-        _fileMenu.add(_mibatchRepair);
+        _fileMenu.add(_miBatchRepair);
 
-        batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
         batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1665,7 +1667,7 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
     private javax.swing.JMenu _helpMenu;
     private javax.swing.JSplitPane _leftSplitPane;
     private javax.swing.JMenuBar _mainMenuBar;
-    private javax.swing.JMenuItem _mibatchRepair;
+    private javax.swing.JMenuItem _miBatchRepair;
     private javax.swing.JButton _openIconButton;
     private javax.swing.JPanel _playlistPanel;
     private javax.swing.JSplitPane _splitPane;

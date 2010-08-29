@@ -94,7 +94,11 @@ public class GUIDriver
 
 	public String[] getMediaDirs()
 	{
-		return mediaDir;
+		if (mediaDir.length > 0)
+		{
+			return mediaDir;
+		}
+		return new String[] {"Please Add A Media Directory..."};
 	}
 
 	public void setMediaDirs(String[] value)
