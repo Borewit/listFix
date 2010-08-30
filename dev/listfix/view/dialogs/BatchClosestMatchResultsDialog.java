@@ -20,6 +20,7 @@
 package listfix.view.dialogs;
 
 import java.awt.Component;
+import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -70,11 +71,15 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
 		cm.getColumn(2).setCellEditor(new MatchEditor());
 
-		int screenWidth = getGraphicsConfiguration().getDevice().getDisplayMode().getWidth();
-		int newWidth = cwidth + getWidth() - _uiScrollPane.getWidth() + 2;
-		//int newWidth = cwidth + get() - _uiScrollPane.getVisibleRect().width;
-		//int newWidth = cwidth + 10;
-		setSize(Math.min(newWidth, screenWidth - 50), getHeight());
+        // get screenwidth using workaround for vmware/linux bug
+        int screenWidth;
+        DisplayMode dmode = getGraphicsConfiguration().getDevice().getDisplayMode();
+        if (dmode != null)
+            screenWidth = dmode.getWidth();
+        else
+            screenWidth = getGraphicsConfiguration().getBounds().width;
+        int newWidth = cwidth + getWidth() - _uiScrollPane.getWidth() + 2;
+        setSize(Math.min(newWidth, screenWidth - 50), getHeight());
 
 		_uiTable.setShowHorizontalLines(false);
 		_uiTable.setShowVerticalLines(false);
