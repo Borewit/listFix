@@ -70,7 +70,7 @@ public class GUIDriver
 				}
 			}
 
-			if (mediaDir.length == 0)
+			if (!hasAddedMediaDirectory())
 			{
 				showMediaDirWindow = true;
 			}
@@ -90,6 +90,11 @@ public class GUIDriver
 	public void setAppOptions(AppOptions opts)
 	{
 		options = opts;
+	}
+
+	public final boolean hasAddedMediaDirectory()
+	{
+		return mediaDir.length != 0;
 	}
 
 	public String[] getMediaDirs()
@@ -147,7 +152,7 @@ public class GUIDriver
 		return history.getFilenames();
 	}
 
-	public String[] removeMediaDir(String dir) throws MediaDirNotFoundException
+	public final String[] removeMediaDir(String dir) throws MediaDirNotFoundException
 	{
 		boolean found = false;
 		int i = 0;

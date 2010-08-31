@@ -62,7 +62,6 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
 			mediaLibraryDirectoryList = ds.getDirectoryList();
 			mediaLibraryFileList = ds.getFileList();
 			ds.reset();
-			java.util.Arrays.sort(mediaDir);
 			guiDriver.setMediaDirs(mediaDir);
 			java.util.Arrays.sort(mediaLibraryDirectoryList);
 			guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
@@ -82,7 +81,6 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
 			mediaLibraryDirectoryList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryDirectoryList(), ds.getDirectoryList());
 			mediaLibraryFileList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryFileList(), ds.getFileList());
 			ds.reset();
-			java.util.Arrays.sort(mediaDir);
 			guiDriver.setMediaDirs(mediaDir);
 			java.util.Arrays.sort(mediaLibraryDirectoryList);
 			guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);

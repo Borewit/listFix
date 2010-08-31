@@ -32,6 +32,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -221,7 +222,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		FontHelper.recursiveSetFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		chooser.setMultiSelectionEnabled(true);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		if (GUIDriver.getInstance().hasAddedMediaDirectory())
+		{
+			chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
+		}
+		if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
 		{
 			final File[] files = chooser.getSelectedFiles();
 			if (files.length == 0)
@@ -534,17 +539,23 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		JFileChooser chooser = new JFileChooser();
 		FontHelper.recursiveSetFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
+		if (GUIDriver.getInstance().hasAddedMediaDirectory())
+		{
+			chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
+		}
+
 		if (!entry.isURL())
 		{
 			chooser.setSelectedFile(entry.getAbsoluteFile());
 		}
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
 		{
 			File file = chooser.getSelectedFile();
+			
 			// make sure the replacement file is not a playlist
 			if (Playlist.isPlaylist(file))
 			{
-				JOptionPane.showMessageDialog(this, "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(getParentFrame(), "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			PlaylistEntry newEntry = new PlaylistEntry(file, null);
@@ -561,7 +572,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			getTableModel().fireTableDataChanged();
 		}
 		String msg = dupCount == 1 ? "Removed 1 duplicate" : String.format("Removed %d duplicates", dupCount);
-		JOptionPane.showMessageDialog(this, msg, "Duplicates Removed", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(getParentFrame(), msg, "Duplicates Removed", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void removeMissing()
@@ -572,7 +583,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			getTableModel().fireTableDataChanged();
 		}
 		String msg = count == 1 ? "Removed 1 missing entry" : String.format("Removed %d missing entries", count);
-		JOptionPane.showMessageDialog(this, msg, "Missing Entries Removed", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(getParentFrame(), msg, "Missing Entries Removed", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void savePlaylist()
@@ -628,7 +639,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 		catch (Exception ex)
 		{
-			JOptionPane.showMessageDialog(this, "Could not open these playlist entries, error was: \n\n" + ex.toString());
+			JOptionPane.showMessageDialog(getParentFrame(), "Could not open these playlist entries, error was: \n\n" + ex.toString());
 		}
 
 	}
@@ -887,7 +898,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new PlaylistTableModel());
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
@@ -903,6 +914,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
                 _uiTableMouseDragged(evt);
+            }
+        });
+        _uiTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                _uiTableKeyPressed(evt);
             }
         });
         _uiTableScrollPane.setViewportView(_uiTable);
@@ -989,7 +1005,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		destDirFileChooser.setAcceptAllFileFilterUsed(false);
 		destDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		FontHelper.recursiveSetFont(destDirFileChooser.getComponents());
-		int response = destDirFileChooser.showOpenDialog(this);
+		int response = destDirFileChooser.showOpenDialog(getParentFrame());
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
 			try
@@ -1003,7 +1019,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 			catch (Exception e)
 			{
-				JOptionPane.showMessageDialog(this, "An error has occured, 1 or more files were not copied.");
+				JOptionPane.showMessageDialog(getParentFrame(), "An error has occured, 1 or more files were not copied.");
 				e.printStackTrace();
 			}
 		}
@@ -1244,6 +1260,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 
 }//GEN-LAST:event__btnOpenActionPerformed
+
+	private void _uiTableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__uiTableKeyPressed
+	{//GEN-HEADEREND:event__uiTableKeyPressed
+		int keyVal = evt.getKeyCode();
+		if (keyVal == KeyEvent.VK_DELETE)
+		{
+			deleteSelectedRows();
+		}
+	}//GEN-LAST:event__uiTableKeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
