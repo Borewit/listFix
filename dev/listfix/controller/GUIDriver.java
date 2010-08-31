@@ -20,14 +20,21 @@
 
 package listfix.controller;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
 
-import listfix.exceptions.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import listfix.exceptions.MediaDirNotFoundException;
+
 import listfix.io.FileWriter;
 import listfix.io.IniFileReader;
 import listfix.io.UNCFile;
-import listfix.model.*;
+
+import listfix.model.AppOptions;
+import listfix.model.PlaylistHistory;
+
 import listfix.util.ArrayFunctions;
 
 public class GUIDriver

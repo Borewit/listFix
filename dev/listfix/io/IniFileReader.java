@@ -122,6 +122,7 @@ public class IniFileReader
 		}
 		mediaDirs = new String[tempVector.size()];
 		tempVector.toArray(mediaDirs);
+
 		tempVector.clear();
 
 		// Read in app options, but only if the file contains them in this spot...
@@ -168,10 +169,7 @@ public class IniFileReader
 				}
 				line = B1.readLine();
 			}
-			tempVector.clear();
 		}
-
-		// TODO: Cleanup performance-draining copyInto calls...
 
 		// Read in media library directories
 		// skip first line, contains header
@@ -210,7 +208,7 @@ public class IniFileReader
 		tempVector.clear();
 	}
 
-	public void close_file() throws IOException
+	public void closeFile() throws IOException
 	{
 		B1.close();
 		B2.close();
