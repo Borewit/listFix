@@ -61,13 +61,13 @@ public class BatchRepair
         {
             // load
             progress.getOverall().stepCompleted();
-            progress.getTask().reportProgress(0, "Loading " + item.getDisplayName());
+            progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
             File file = new File(item.getPath());
             item.setPlaylist(new Playlist(file, progress.getTask()));
 
             // repair
             progress.getOverall().stepCompleted();
-            progress.getTask().reportProgress(0, "Repairing " + item.getDisplayName());
+            progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
             Playlist list = item.getPlaylist();
             list.batchRepair(_mediaFiles, progress.getTask());
         }
