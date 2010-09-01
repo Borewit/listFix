@@ -565,35 +565,38 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				PlaylistEntry.BasePath = playlist.getParent();
 
 				final File finalPlaylistFile = playlist;
+                String oldPath = _currentPlaylist.getFile().getCanonicalPath();
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
 					@Override
-					protected Void doInBackground() //throws Exception
+					protected Void doInBackground() throws IOException
 					{
-						try
-						{
-							boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-							_currentPlaylist.saveAs(finalPlaylistFile, saveRelative, this);
-						}
-						catch (IOException ex)
-						{
-							JOptionPane.showMessageDialog(GUIScreen.this, ex, "Save Error", JOptionPane.ERROR_MESSAGE);
-						}
+                        boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+                        _currentPlaylist.saveAs(finalPlaylistFile, saveRelative, this);
 						return null;
 					}
 				};
 				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
 				pd.setVisible(true);
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+                worker.get();
+                int tabIx = getPlaylistTabIx(_currentPlaylist);
+                String newPath = finalPlaylistFile.getCanonicalPath();
+                _uiTabs.setToolTipTextAt(tabIx, newPath);
+                _pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
+                _pathToEditorMap.remove(oldPath);
+                updatePlaylistDirectoryPanel();
 			}
 			catch (Exception e)
 			{
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 			}
+            finally
+            {
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
 		}
-		updatePlaylistDirectoryPanel();
 	}//GEN-LAST:event_saveAsMenuItemActionPerformed
 
 	private void openIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_openIconButtonActionPerformed
