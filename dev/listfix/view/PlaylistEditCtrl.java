@@ -765,6 +765,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
         _btnSave.setFocusable(false);
         _btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnSave.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnSave.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnSave.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -850,9 +853,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnReorder.setEnabled(false);
         _btnReorder.setFocusable(false);
         _btnReorder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnReorder.setMaximumSize(new java.awt.Dimension(29, 29));
-        _btnReorder.setMinimumSize(new java.awt.Dimension(29, 29));
-        _btnReorder.setPreferredSize(new java.awt.Dimension(29, 29));
+        _btnReorder.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnReorder.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnReorder.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnReorder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnReorder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -867,6 +870,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
         _btnPlay.setFocusable(false);
         _btnPlay.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnPlay.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnPlay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -898,7 +904,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new PlaylistTableModel());
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
