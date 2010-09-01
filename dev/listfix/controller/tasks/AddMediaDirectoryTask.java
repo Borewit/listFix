@@ -52,7 +52,7 @@ public class AddMediaDirectoryTask extends listfix.controller.Task
 	@Override
 	public void run()
 	{
-		if (guiDriver.getMediaDirs() == null)
+		if (!guiDriver.hasAddedMediaDirectory())
 		{
 			mediaDir = new String[1];
 			mediaDir[0] = dir;

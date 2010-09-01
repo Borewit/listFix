@@ -892,39 +892,25 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 	public void updateCurrentTab(Playlist list)
 	{
-		PlaylistEditCtrl editor = new PlaylistEditCtrl();
-		editor.setPlaylist(list);
 		PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _uiTabs.getSelectedComponent();
 		int spot = _uiTabs.getSelectedIndex();
+
+		((ClosableTabCtrl) _uiTabs.getTabComponentAt(spot)).setText(list.getFilename());
+		oldEditor.setPlaylist(list, true);
+
+		// update playlist history
+		PlaylistHistory history = guiDriver.getHistory();
 		try
 		{
-			_pathToEditorMap.put(list.getFile().getCanonicalPath(), editor);
-			_playlistToEditorMap.put(list, editor);
-			_pathToEditorMap.remove(oldEditor.getPlaylist().getFile().getCanonicalPath());
-			_playlistToEditorMap.remove(oldEditor.getPlaylist());
-			_uiTabs.removeTabAt(spot);
-			_uiTabs.insertTab(list.getFilename(), null, editor, list.getFile().getPath(), spot);
-			_uiTabs.setSelectedIndex(spot);
-			_uiTabs.setTabComponentAt(spot, new ClosableTabCtrl(GUIScreen.this, _uiTabs, list.getFilename()));
-
-			// update playlist history
-			PlaylistHistory history = guiDriver.getHistory();
-			try
-			{
-				history.add(list.getFile().getCanonicalPath());
-			}
-			catch (IOException ex)
-			{
-				Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			(new FileWriter()).writeMruPlaylists(history);
-
-			updateRecentMenu();
+			history.add(list.getFile().getCanonicalPath());
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		(new FileWriter()).writeMruPlaylists(history);
+
+		updateRecentMenu();
 	}
 
 	public void updateRecentMenu()
@@ -1350,7 +1336,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 			String selection = (String) mediaLibraryList.getSelectedValue();
 			if (selection != null)
 			{
-				mediaLibraryList.setListData(guiDriver.removeMediaDir(selection));
+				if (!selection.equals("Please Add A Media Directory..."))
+				{
+					guiDriver.removeMediaDir(selection);
+					mediaLibraryList.setListData(guiDriver.getMediaDirs());
+				}
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
