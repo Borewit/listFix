@@ -681,7 +681,7 @@ public class Playlist
 		for (int ix = _entries.size() - 1; ix >= 0; ix--)
 		{
 			PlaylistEntry entry = _entries.get(ix);
-			if (!entry.isFound())
+			if (!entry.isURL() && !entry.isFound())
 			{
 				_entries.remove(ix);
 				removed++;
