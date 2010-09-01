@@ -424,9 +424,9 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			_txtBackup.requestFocusInWindow();
 		}
     }//GEN-LAST:event_onChkBackupItemStateChanged
-	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
-	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
-	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
+	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.png"));
+	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.png"));
+	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.png"));
 
 	private class PlaylistsTableModel extends AbstractTableModel
 	{

@@ -1297,10 +1297,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     // End of variables declaration//GEN-END:variables
-	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.gif"));
-	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.gif"));
-	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.gif"));
-	private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.gif"));
+	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.png"));
+	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.png"));
+	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.png"));
+	private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.png"));
 
 	public Playlist getPlaylist()
 	{
