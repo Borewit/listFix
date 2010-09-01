@@ -1079,6 +1079,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					currentlySelectedRow = tableRow;
 				}
 			}
+			else
+			{
+				_uiTable.clearSelection();
+			}
 		}
 	}//GEN-LAST:event__uiTableMouseReleased
 
