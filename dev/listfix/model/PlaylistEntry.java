@@ -304,6 +304,8 @@ public class PlaylistEntry implements Cloneable
 	{
 		_fileName = input;
 		_thisFile = new File(_path, _fileName);
+		resetAbsoluteFile();
+		recheckFoundStatus();
 	}
 
 	private void setFile(File input)
@@ -312,6 +314,7 @@ public class PlaylistEntry implements Cloneable
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 		resetAbsoluteFile();
+		recheckFoundStatus();
 	}
 
 	private void resetAbsoluteFile()

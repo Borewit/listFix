@@ -79,6 +79,7 @@ public class Playlist
 		_utfFormat = true;
 		setEntries(sublist);
 		_file = File.createTempFile("yay", ".m3u");
+		_file.deleteOnExit();
 
 		_type = PlaylistType.M3U;
 		_isModified = false;
