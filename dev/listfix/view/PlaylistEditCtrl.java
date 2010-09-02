@@ -27,7 +27,6 @@ import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
@@ -284,7 +283,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					{
 						// rows are in playlist order, so use quick update and selection methods
 						_uiTable.clearSelection();
-						model.fireTableRowsInserted(firstIx, lastIx);
 						_uiTable.addRowSelectionInterval(firstIx, lastIx);
 					}
 					else
