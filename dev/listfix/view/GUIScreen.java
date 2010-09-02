@@ -234,8 +234,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         _statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
-        statusLabel.setForeground(new java.awt.Color(102, 102, 102));
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        statusLabel.setForeground(new java.awt.Color(75, 75, 75));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
         _statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
@@ -339,7 +339,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistPanel.setLayout(new java.awt.CardLayout());
 
         _uiTabs.setFocusable(false);
-        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 onTabStateChanged(evt);
