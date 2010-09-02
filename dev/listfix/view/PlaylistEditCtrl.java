@@ -274,7 +274,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					catch (ExecutionException ex)
 					{
 						showWaitCursor(false);
-						JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Add File Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Add File Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
@@ -1134,7 +1134,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						catch (ExecutionException ex)
 						{
 							showWaitCursor(false);
-							JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 
@@ -1198,7 +1198,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (Exception ex)
 					{
-						JOptionPane.showMessageDialog(PlaylistEditCtrl.this, ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 

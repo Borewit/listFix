@@ -566,10 +566,9 @@ public class PlaylistEntry implements Cloneable
 
 	private void parseExtraInfo(String extra)
 	{
-
-		extra = extra.replaceFirst("#EXTINF:", "");
 		if (extra != null && extra.length() > 0)
 		{
+			extra = extra.replaceFirst("#EXTINF:", "");
 			if (extra.contains(","))
 			{
 				String[] split = extra.split(",");

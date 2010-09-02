@@ -442,8 +442,6 @@ public class Playlist
 		List<PlaylistEntry> ents = new ArrayList<PlaylistEntry>();
 		for (File file : files)
 		{
-			progress.stepCompleted();
-
 			if (Playlist.isPlaylist(file))
 			{
 				// playlist file
@@ -455,6 +453,8 @@ public class Playlist
 				// regular file
 				ents.add(new PlaylistEntry(file, null));
 			}
+
+			progress.stepCompleted();
 		}
 		return ents;
 	}
