@@ -253,6 +253,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _leftSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         _leftSplitPane.setMaximumSize(null);
         _leftSplitPane.setOneTouchExpandable(true);
+        _leftSplitPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                _leftSplitPaneResized(evt);
+            }
+        });
 
         mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         mediaLibraryPanel.setAlignmentX(0.0F);
@@ -413,7 +418,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _fileMenu.add(_miBatchRepair);
 
-        batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
         batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1582,6 +1587,11 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 		jM3UChooser.cancelSelection();
 	}
 }//GEN-LAST:event__openIconButtonActionPerformed1
+
+private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST:event__leftSplitPaneResized
+{//GEN-HEADEREND:event__leftSplitPaneResized
+	_leftSplitPane.setDividerLocation(.60);
+}//GEN-LAST:event__leftSplitPaneResized
 
 	private void updateMediaDirButtons()
 	{
