@@ -157,7 +157,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
     private void onBtnOkActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnOkActionPerformed
     {//GEN-HEADEREND:event_onBtnOkActionPerformed
 		_isAccepted = true;
-		if (_uiTable.getSelectedRow() > -1)
+		if (_uiTable.getSelectedRow() > -1 && _uiTable.getSelectedColumn() == 2)
 		{
 			TableCellEditor cellEditor = _uiTable.getCellEditor(_uiTable.getSelectedRow(), _uiTable.getSelectedColumn());
 			cellEditor.stopCellEditing();
