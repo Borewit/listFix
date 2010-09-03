@@ -717,6 +717,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 					updateRecentMenu();
 
+                    // update title and status bar if list was modified during loading
+                    if (list.isModified())
+                        onPlaylistModified(list);
+
 					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 				}
 			};
