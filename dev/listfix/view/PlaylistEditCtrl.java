@@ -470,8 +470,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					dlg.setVisible(true);
 					if (dlg.getResultCode() == ClosestMatchChooserDialog.OK)
 					{
-						_playlist.replace(rowIx, matches.get(dlg.getChoice()).getPlaylistFile());
-						getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+						if (_playlist.get(rowIx).getFile().compareTo(matches.get(dlg.getChoice()).getPlaylistFile().getFile()) != 0)
+						{
+							_playlist.replace(rowIx, matches.get(dlg.getChoice()).getPlaylistFile());
+							getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+						}
 					}
 				}
 				catch (InterruptedException ex)
