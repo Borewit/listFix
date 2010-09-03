@@ -136,17 +136,20 @@
                       </tr>
                       <tr>
                         <td class="tableBorder"><p class="boxText">Have you ever spent some time making a playlist, only to have it break when you reorganize your files?  listFix() is a Swing application that solves this problem by finding the missing entries in your playlists automatically. &nbsp;Tell it where you keep your media files, load in the playlist you want to fix, and hit the locate button. &nbsp;The program will search your media library for the file and update the playlist accordingly when it finds a match. </p>
-                          <p class="boxText">If a few files are still missing, it's possible they were renamed. &nbsp;listFix() has a simple way of finding these files as well, by scanning your media library for files that have a similar name to the one in your playlist.</p>
+                          <p class="boxText">If a few files are still missing, they were probably renamed. &nbsp;listFix() has a  way of finding these files as well, by scoring the files in your media library with a &quot;similarity&quot; test and offering you a choice of the best potential matches, pre-selecting the matches it deems &quot;best&quot;.</p>
+                          <p class="boxText">iTunes fans, see  <a href="https://sourceforge.net/apps/mediawiki/listfix/index.php?title=Fix_iTunes_playlists">Using listFix() to fix iTunes playlists</a> <br>
+                          (I know, Steve Jobs crys when you run Java, but it's worth it =])</p>
                           <p class="boxText"><strong>Features: </strong></p>
                           <ul>
+                            <li class="boxText">M3U/M3U8/PLS Support (Winamp, XMMS, Foobar2000, etc)</li>
                             <li class="boxText">Find lost/missing playlist entries</li>
-                            <li class="boxText">Insert/Move/Delete/Replace entries</li>
+                            <li class="boxText">Insert/Move/Delete/Replace/Append entries</li>
+                            <li class="boxText">Insert/Append Playlists</li>
                             <li class="boxText">Sort the playlist by filename, status, and location</li>
                             <li class="boxText">Randomize the list</li>
                             <li class="boxText">Remove duplicates and/or missing tracks from the playlist</li>
                             <li class="boxText">Copy all songs in a list to a specified directory</li>
                             <li class="boxText">Advanced search for renamed tracks</li>
-                            <li class="boxText">Append one playlist to another </li>
                             <li class="boxText">Launch an entry or playlist in the system's default media program</li>
                             <li class="boxText">Support for URL &amp; UNC path entries</li>
                             <li class="boxText">Save playlists with absolute or relative references</li>
@@ -156,12 +159,7 @@
                           </ul>
                           <p class="boxText"><strong>Requirements:</strong></p>
                           <ul>
-                            <li class="boxText">JRE/JDK 1.6 - no promises of compatibility for OS-specific features on Macs</li>
-                            <li class="boxText">M3U-formatted playlists (Winamp, XMMS, etc)
-                              <ul>
-                                <li><a href="https://sourceforge.net/apps/mediawiki/listfix/index.php?title=Fix_iTunes_playlists">Using listFix() to fix iTunes playlists</a></li>
-                              </ul>
-                            </li>
+                            <li class="boxText">JRE/JDK 1.6 - no promises of compatibility for OS-specific features on Macs </li>
                             <li class="boxText">UNC paths currently supported only on Windows (Linux users can smbmount a network drive and then use the mount point as a media directory)<br>
                             </li>
                           </ul>                          </td>
@@ -176,9 +174,9 @@
                         <td class="tableBorder"><div class="boxText"><strong> Notes:
                         </strong>
                           <blockquote>
-                            <p>Version 2.0.0 is a huge leap forward over version 1.5.3 (thus the large jump in version numbers). &nbsp;Much thanks to Kennedy for all the hard work, for adding most of these new features, and perhaps most importantly, providing  inspiration for getting me working on this again. &nbsp;The list below may not seem like a lot of new features, but the app just feels so much more advanced now. &nbsp;I hope you all agree!<br>
+                            <p>All I'll say is that <a href="https://sourceforge.net/projects/listfix/files/">Version 2.0.0</a> is <strong>awesome</strong> (thus the large jump in version numbers). &nbsp;Much thanks to Kennedy for all the hard work, for adding most of these new features, and perhaps most importantly, for getting me working on this again.<br>
                               <br>
-                              We've done as much testing as we possibly can, but there are only two of us and I'm sure something's slipped past us.  &nbsp;As always, if you find any bugs, please report them using the <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">bug tracker</a>.</p>
+We've done as much testing as we possibly can, but there are only two of us and I'm sure we've missed something.  &nbsp;As always, please <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">report any bugs you find</a>.</p>
                           </blockquote>
                           <P><strong>New Features:</strong></P>
                                 <ul id="internal-source-marker_0.8390070497989655">
@@ -197,6 +195,7 @@
                             <li>Fixed a case sensitivity issue w/ file extensions (couldn't open .M3U files)</li>
                             <li>&quot;Remove Missing Entries&quot; was removing URLs</li>
                             <li>Recent Playlists menu didn't update when doing a &quot;Save As&quot;</li>
+                            <li>More font consistency</li>
                           </ul>
                         </div></td>
                       </tr>
