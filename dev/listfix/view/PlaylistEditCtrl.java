@@ -677,6 +677,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
+        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+
+        _miEditFilename.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miEditFilename.setText("Edit Filename");
         _miEditFilename.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -685,6 +688,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miEditFilename);
 
+        _miReplace.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miReplace.setText("Replace Selected Entry");
         _miReplace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -694,6 +698,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiPopupMenu.add(_miReplace);
         _uiPopupMenu.add(jSeparator3);
 
+        _miFindClosest.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miFindClosest.setText("Find Closest Matches");
         _miFindClosest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -702,6 +707,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miFindClosest);
 
+        _miBatchFindClosest.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miBatchFindClosest.setText("Batch Find Closest Matches");
         _miBatchFindClosest.setToolTipText("Finds best closest match for all missing files in list");
         _miBatchFindClosest.addActionListener(new java.awt.event.ActionListener() {
@@ -712,6 +718,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiPopupMenu.add(_miBatchFindClosest);
         _uiPopupMenu.add(jSeparator4);
 
+        _miRemoveDups.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miRemoveDups.setText("Remove Duplicates");
         _miRemoveDups.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -720,6 +727,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miRemoveDups);
 
+        _miRemoveMissing.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miRemoveMissing.setText("Remove Missing");
         _miRemoveMissing.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -728,6 +736,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miRemoveMissing);
 
+        _miCopyFiles.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _miCopyFiles.setText("Copy Files");
         _miCopyFiles.setToolTipText("");
         _miCopyFiles.addActionListener(new java.awt.event.ActionListener() {
