@@ -401,7 +401,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(loadMenuItem);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -411,7 +411,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _fileMenu.add(saveMenuItem);
 
-        saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         saveAsMenuItem.setMnemonic('V');
         saveAsMenuItem.setText("Save As");
         saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
