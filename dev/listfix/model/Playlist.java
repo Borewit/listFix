@@ -108,6 +108,11 @@ public class Playlist
 				this.setEntries(playlistProcessor.readPlaylist());
 			}
 			_type = playlistProcessor.getPlaylistType();
+			if (_type == PlaylistType.PLS)
+			{
+				// let's override our previous determination in the PLS case so we don't end up saving it out incorrectly
+				_utfFormat = false;
+			}
 			_isModified = false;
 			refreshStatus();
 		}
@@ -698,6 +703,12 @@ public class Playlist
 	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws IOException
 	{
 		_file = destination;
+		_type = determinePlaylistType(destination);
+		if (_type == PlaylistType.PLS)
+		{
+			// apparently winamp shits itself if PLS files are saved in UTF-8 (who knew...)
+			_utfFormat = false;
+		}
 		save(saveRelative, observer);
 	}
 
@@ -857,7 +868,23 @@ public class Playlist
 
 	public static boolean isPlaylist(File input)
 	{
-		String lowerCaseExtension = FileNameTokenizer.getExtensionFromFileName(input.getName()).toLowerCase();
-		return lowerCaseExtension.equals("m3u") || lowerCaseExtension.equals("m3u8") || lowerCaseExtension.equals("pls");
+		return determinePlaylistType(input) != PlaylistType.UNKNOWN;
+	}
+
+	private static PlaylistType determinePlaylistType(File input)
+	{
+		if (input != null)
+		{
+			String lowerCaseExtension = FileNameTokenizer.getExtensionFromFileName(input.getName()).toLowerCase();
+			if (lowerCaseExtension.equals("m3u") || lowerCaseExtension.equals("m3u8"))
+			{
+				return PlaylistType.M3U;
+			}
+			else if (lowerCaseExtension.equals("pls"))
+			{
+				return PlaylistType.PLS;
+			}
+		}
+		return PlaylistType.UNKNOWN;
 	}
 }

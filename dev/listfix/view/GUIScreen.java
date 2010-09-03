@@ -591,6 +591,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
                 _pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
                 _pathToEditorMap.remove(oldPath);
                 updatePlaylistDirectoryPanel();
+
+				// update playlist history
+				guiDriver.getHistory().add(newPath);
+				(new FileWriter()).writeMruPlaylists(guiDriver.getHistory());
+				updateRecentMenu();
 			}
 			catch (Exception e)
 			{
@@ -911,7 +916,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		(new FileWriter()).writeMruPlaylists(history);
 

@@ -112,12 +112,12 @@
                           <p align="center" class="boxText">
                           <br>
                           <strong>Project News</strong><BR>
-                          <a name="a2a_dd" onmouseover="a2a_show_dropdown(this)" onmouseout="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20News&amp;linkurl=https%3A//sourceforge.net/export/rss2_projnews.php%3Fgroup_id%3D113978%26rss_fulltext%3D1"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
+                          <a name="a2a_dd" onMouseOver="a2a_show_dropdown(this)" onMouseOut="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20News&amp;linkurl=https%3A//sourceforge.net/export/rss2_projnews.php%3Fgroup_id%3D113978%26rss_fulltext%3D1"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
 						  <script type="text/javascript">a2a_linkname="listFix() News";a2a_linkurl="https://sourceforge.net/export/rss2_projnews.php?group_id=113978&rss_fulltext=1";</script><script type="text/javascript" src="http://www.addtoany.com/js.dropdown.js?type=feed"></script>
                           <br>
                           <br>
                           <strong>Project Releases</strong><br>
-                          <a name="a2a_dd" onmouseover="a2a_show_dropdown(this)" onmouseout="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20Releases&amp;linkurl=https%3A//sourceforge.net/export/rss2_projfiles.php%3Fgroup_id%3D113978"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
+                          <a name="a2a_dd" onMouseOver="a2a_show_dropdown(this)" onMouseOut="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20Releases&amp;linkurl=https%3A//sourceforge.net/export/rss2_projfiles.php%3Fgroup_id%3D113978"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
 						  <script type="text/javascript">a2a_linkname="listFix() Releases";a2a_linkurl="https://sourceforge.net/export/rss2_projfiles.php?group_id=113978";</script><script type="text/javascript" src="http://www.addtoany.com/js.dropdown.js?type=feed"></script><br>
                             <br>
                         </p>                        </td>
@@ -144,18 +144,20 @@
                             <li class="boxText">Sort the playlist by filename, status, and location</li>
                             <li class="boxText">Randomize the list</li>
                             <li class="boxText">Remove duplicates and/or missing tracks from the playlist</li>
-                            <li class="boxText">Copy all songs in a list to a new directory</li>
+                            <li class="boxText">Copy all songs in a list to a specified directory</li>
                             <li class="boxText">Advanced search for renamed tracks</li>
                             <li class="boxText">Append one playlist to another </li>
                             <li class="boxText">Launch an entry or playlist in the system's default media program</li>
                             <li class="boxText">Support for URL &amp; UNC path entries</li>
                             <li class="boxText">Save playlists with absolute or relative references</li>
                             <li class="boxText">Batch repairing of playlists</li>
+                            <li class="boxText">Batch find closest matches (for renamed files)</li>
+                            <li class="boxText">Batch repair Winamp Media Library playlists</li>
                           </ul>
                           <p class="boxText"><strong>Requirements:</strong></p>
                           <ul>
                             <li class="boxText">JRE/JDK 1.6 - no promises of compatibility for OS-specific features on Macs</li>
-                            <li class="boxText">M3U-formatted playlists (Winamp, XMMS, etc) - <span class="redCallOut">PLS support coming soon</span>
+                            <li class="boxText">M3U-formatted playlists (Winamp, XMMS, etc)
                               <ul>
                                 <li><a href="https://sourceforge.net/apps/mediawiki/listfix/index.php?title=Fix_iTunes_playlists">Using listFix() to fix iTunes playlists</a></li>
                               </ul>
@@ -168,50 +170,33 @@
                     <br>
 					<table width="95%" border="1" align="center" cellpadding="3" cellspacing="0" bgcolor="#EEEEEE" class="tableBorder">
                       <tr bgcolor="#006699">
-                        <td height="20" class="tableBorder"><div align="left" class="boxHeader">Recent Improvements - Version 1.5.3  (2009.04.16)</div></td>
+                        <td height="20" class="tableBorder"><div align="left" class="boxHeader">Recent Improvements - Version 2.0.0  (2010.09.02)</div></td>
                       </tr>
                       <tr>
                         <td class="tableBorder"><div class="boxText"><strong> Notes:
                         </strong>
                           <blockquote>
-                            <p>Version 1.5.3 picks up where 1.5.2 left off.  There are lots of new features (including batch playlist repair), see the change log for more information. Please report any bugs you find!</p>
+                            <p>Version 2.0.0 is a huge leap forward over version 1.5.3 (thus the large jump in version numbers). &nbsp;Much thanks to Kennedy for all the hard work, for adding most of these new features, and perhaps most importantly, providing  inspiration for getting me working on this again. &nbsp;The list below may not seem like a lot of new features, but the app just feels so much more advanced now. &nbsp;I hope you all agree!<br>
+                              <br>
+                              We've done as much testing as we possibly can, but there are only two of us and I'm sure something's slipped past us.  &nbsp;As always, if you find any bugs, please report them using the <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">bug tracker</a>.</p>
                           </blockquote>
                           <P><strong>New Features:</strong></P>
-                          <ul>
-                            <li>Batch repairing of playlists!</li>
-                            <li> Revamped scoring algorithm for closest match detection</li>
-                            <li> Double-click to select a closest match</li>
-                            <li> Double-click to open/launch a playlist entry</li>
-                            <li> Vastly improved Closest Matches screen 
-                              <ul>
-                                <li> Sortable columns</li>
-                                <li>Table row tooltips to show the location of a closest match</li>
-                              </ul>
-                            </li>
-                            <li>MPC added to list of indexed extensions</li>
-                            <li> Splash screen with description of what's happening during startup</li>
-                            <li> Alternating table row colors for tables</li>
-                            <li> Now showing a pop if you attempt to close the app while working on 
-                              an unsaved, modified playlist.</li>
-                            <li>&quot;Help&quot; and &quot;Check For Updates&quot; menu items, take you to the wiki and website respectively</li>
-                          </ul>
+                                <ul id="internal-source-marker_0.8390070497989655">
+                                  <li>New tabbed interface, have multiple playlists open at the same time</li>
+                                  <li>Found status now indicated by colored icons</li>
+                                  <li>New batch repair interface that allows in-place editing of batch repaired lists</li>
+                                  <li>Batch repair of playlists stored in winamp&rsquo;s media library!</li>
+                                  <li>Batch find closest matches to find all renamed missing files in a playlist at once</li>
+                                  <li>Playlist editor now supports multi-select; delete, move, &amp; play multiple items at once</li>
+                                  <li>Simplified adding and sorting</li>
+                                  <li>Reload button to abandon changes to a list and reload from disk</li>
+                                  <li>PLS support</li>
+                                </ul>
                           <p><strong>Bug Fixes:</strong></p>
                           <ul>
-                            <li> Hopefully fully completed/fixed UTF-8 support </li>
-                            <li> Found a fix for the '&amp;' playback bug</li>
-                            <li>Auto-removing a media directory at startup when it was no longer present didn't remove 
-                              all the media library directories under that folder</li>
-                            <li> JDK 6 Update 10 bug fix for Closest Matches screen</li>
-                            <li>Fixed serious lag caused by clicking on a missing playlist entry that was on a network drive</li>
-                            <li> Fill Viewport for all JTables</li>
-                            <li> Removed Nimbus from the L&amp;F list as we might not be fully compliant yet</li>
-                            <li> Sped up the remove missing entries operation</li>
-                            <li> Copy files task was executing twice, once after the progress bar was hidden, 
-                              thus causing unresponsiveness</li>
-                            <li> Huge performance improvement when opening playlists that have entries 
-                              pointing to samba shares under windows.</li>
-                            <li> Now updating the playlist panel after playlist saving or batch repairing operations</li>
-                            <li> Editing a filename to a missing file didn't break that entry in the UI (as it should've)</li>
+                            <li>Fixed a case sensitivity issue w/ file extensions (couldn't open .M3U files)</li>
+                            <li>&quot;Remove Missing Entries&quot; was removing URLs</li>
+                            <li>Recent Playlists menu didn't update when doing a &quot;Save As&quot;</li>
                           </ul>
                         </div></td>
                       </tr>
@@ -219,11 +204,17 @@
 				    <br>
 					<table width="95%" border="1" align="center" cellpadding="3" cellspacing="0" bgcolor="#EEEEEE" class="tableBorder">
                       <tr bgcolor="#006699">
-                        <td height="20" class="tableBorder"><div align="left" class="boxHeader">Future Features</div></td>
+                        <td height="20" class="tableBorder"><div align="left" class="boxHeader">Future Features?</div></td>
                       </tr>
                       <tr>
-                        <td class="tableBorder"><ul class="boxText">
-                          <li>View/Edit M3U Source (although reinventing a text editor might be a waste of time)</li>
+                        <td class="tableBorder">
+                        <span class="boxText">The following may or may not happen someday, shoot us an email or leave a message in the forums if you really want to see one of these features added.</span>
+                        <ul class="boxText">
+  <li>Create playlists from scratch</li>
+  <li>Extraction of Winamp Media Library playlists to a specified folder</li>
+  <li>Undo (probably one-level deep to start)</li>
+  <li>A way to cancel out of long-running operations</li>
+  <li>View/Edit M3U Source (although reinventing a text editor might be a waste of time)</li>
                           <li>Ability to find matches in a selected media directory only (maybe) </li>
                           <li>Handle iTunes-exported playlists! (BIG maybe)</li>
                           <li>Options Panel
@@ -236,7 +227,7 @@
                               <li>Let &quot;locate files&quot; update the location of entries found outside the media library to a location inside the library</li>
                               </ul>
                           </li>
-</ul></td>
+						</ul></td>
                       </tr>
                     </table>
 				<!-- #EndEditable -->                </div></td>

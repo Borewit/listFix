@@ -65,7 +65,7 @@ public class FileNameTokenizer
         if (ix >= 0 && ix < name.length() - 1)
             return name.substring(ix + 1);
         else
-            return null;
+            return "";
     }
 
 	private static List<String> splitFileName(String fileName)
