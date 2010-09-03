@@ -1285,6 +1285,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		{
 			deleteSelectedRows();
 		}
+		else if (keyVal == KeyEvent.VK_ENTER)
+		{
+			playSelectedEntries();
+		}
 	}//GEN-LAST:event__uiTableKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
