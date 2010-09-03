@@ -240,7 +240,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         _txtBackup.setFont(new java.awt.Font("Verdana", 0, 9));
         _txtBackup.setEnabled(false);
 
-        _btnCancel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _btnCancel.setFont(new java.awt.Font("Verdana", 0, 9));
         _btnCancel.setText("Cancel");
         _btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -249,7 +249,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         });
 
         _btnSave.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
-        _btnSave.setText("Save Repairs");
+        _btnSave.setText("Save All Repairs");
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onBtnSaveActionPerformed(evt);
@@ -275,7 +275,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
                 .addComponent(_txtBackup, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(_btnBrowse)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
                 .addComponent(_btnSave)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(_btnCancel)
@@ -303,7 +303,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel1.setText("Playlist details");
         jPanel3.add(jLabel1);
 
@@ -319,7 +319,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         jPanel5.setFont(new java.awt.Font("Verdana", 0, 9));
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9));
         jLabel2.setText("Playlists");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -327,7 +327,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
         jPanel5.add(jLabel2, gridBagConstraints);
 
-        _labListCount.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _labListCount.setFont(new java.awt.Font("Verdana", 0, 9));
         _labListCount.setForeground(javax.swing.UIManager.getDefaults().getColor("controlShadow"));
         _labListCount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         _labListCount.setText("0 lists");

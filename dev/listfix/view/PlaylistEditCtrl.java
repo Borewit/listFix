@@ -412,7 +412,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 
 		ReorderPlaylistDialog dlg = new ReorderPlaylistDialog(getParentFrame(), true, sortIx, isDescending);
-		dlg.setLocationRelativeTo(this);
+		dlg.setLocationRelativeTo(getParentFrame());
 		dlg.setVisible(true);
 		sortIx = dlg.getSelectedSortIx();
 		if (sortIx != Playlist.SortIx.None)

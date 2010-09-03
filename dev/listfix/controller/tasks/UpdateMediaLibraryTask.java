@@ -53,7 +53,6 @@ public class UpdateMediaLibraryTask extends listfix.controller.Task
 			mediaLibraryDirectoryList = ds.getDirectoryList();
 			mediaLibraryFileList = ds.getFileList();
 			ds.reset();
-			java.util.Arrays.sort(mediaDirs);
 			guiDriver.setMediaDirs(mediaDirs);
 			java.util.Arrays.sort(mediaLibraryDirectoryList);
 			guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);

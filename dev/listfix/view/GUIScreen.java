@@ -266,8 +266,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
 
-        addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         addMediaDirButton.setText("Add");
+        addMediaDirButton.setToolTipText("Where do you keep your music?");
         addMediaDirButton.setFocusable(false);
         addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
         addMediaDirButton.setPreferredSize(null);
@@ -278,8 +279,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         mediaLibraryButtonPanel.add(addMediaDirButton);
 
-        removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         removeMediaDirButton.setText("Remove");
+        removeMediaDirButton.setToolTipText("Remove a directory from the search list");
         removeMediaDirButton.setFocusable(false);
         removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
         removeMediaDirButton.setPreferredSize(null);
@@ -290,8 +292,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         mediaLibraryButtonPanel.add(removeMediaDirButton);
 
-        refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         refreshMediaDirsButton.setText("Refresh");
+        refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
         refreshMediaDirsButton.setFocusable(false);
         refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
         refreshMediaDirsButton.setPreferredSize(null);
