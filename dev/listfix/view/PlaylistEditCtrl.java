@@ -212,6 +212,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnSave.setEnabled(list == null ? false : list.isModified());
 		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+		_btnPlay.setEnabled(hasSelected || (_playlist == null ? false : _playlist.getFile().exists() && !_playlist.isModified()));
 		getTableModel().fireTableDataChanged();
 	}
 
