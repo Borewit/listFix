@@ -124,7 +124,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		FontHelper.recursiveSetFont(jSaveFileChooser.getComponents());
 		splashScreen.setVisible(false);
 
-        UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", 0, 9)));
+		UIManager.put("OptionPane.font", new FontUIResource(new Font("Verdana", 0, 9)));
 		UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("Verdana", 0, 9)));
 		UIManager.put("OptionPane.buttonFont", new FontUIResource(new Font("Verdana", 0, 9)));
 
@@ -194,6 +194,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _mainMenuBar = new javax.swing.JMenuBar();
         _fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
+        saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
         _miBatchRepair = new javax.swing.JMenuItem();
@@ -234,7 +235,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         _statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
         statusLabel.setForeground(new java.awt.Color(75, 75, 75));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
@@ -266,7 +267,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
 
-        addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         addMediaDirButton.setText("Add");
         addMediaDirButton.setToolTipText("Where do you keep your music?");
         addMediaDirButton.setFocusable(false);
@@ -279,7 +280,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         mediaLibraryButtonPanel.add(addMediaDirButton);
 
-        removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         removeMediaDirButton.setText("Remove");
         removeMediaDirButton.setToolTipText("Remove a directory from the search list");
         removeMediaDirButton.setFocusable(false);
@@ -292,7 +293,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         mediaLibraryButtonPanel.add(removeMediaDirButton);
 
-        refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
         refreshMediaDirsButton.setText("Refresh");
         refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
         refreshMediaDirsButton.setFocusable(false);
@@ -342,7 +343,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistPanel.setLayout(new java.awt.CardLayout());
 
         _uiTabs.setFocusable(false);
-        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 onTabStateChanged(evt);
@@ -398,6 +399,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
             }
         });
         _fileMenu.add(loadMenuItem);
+
+        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        saveMenuItem.setMnemonic('S');
+        saveMenuItem.setText("Save");
+        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMenuItemsaveButtonActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(saveMenuItem);
 
         saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         saveAsMenuItem.setMnemonic('V');
@@ -573,27 +585,27 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				PlaylistEntry.BasePath = playlist.getParent();
 
 				final File finalPlaylistFile = playlist;
-                String oldPath = _currentPlaylist.getFile().getCanonicalPath();
+				String oldPath = _currentPlaylist.getFile().getCanonicalPath();
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
 					@Override
 					protected Void doInBackground() throws IOException
 					{
-                        boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-                        _currentPlaylist.saveAs(finalPlaylistFile, saveRelative, this);
+						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+						_currentPlaylist.saveAs(finalPlaylistFile, saveRelative, this);
 						return null;
 					}
 				};
 				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
 				pd.setVisible(true);
 
-                worker.get();
-                int tabIx = getPlaylistTabIx(_currentPlaylist);
-                String newPath = finalPlaylistFile.getCanonicalPath();
-                _uiTabs.setToolTipTextAt(tabIx, newPath);
-                _pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
-                _pathToEditorMap.remove(oldPath);
-                updatePlaylistDirectoryPanel();
+				worker.get();
+				int tabIx = getPlaylistTabIx(_currentPlaylist);
+				String newPath = finalPlaylistFile.getCanonicalPath();
+				_uiTabs.setToolTipTextAt(tabIx, newPath);
+				_pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
+				_pathToEditorMap.remove(oldPath);
+				updatePlaylistDirectoryPanel();
 
 				// update playlist history
 				guiDriver.getHistory().add(newPath);
@@ -605,10 +617,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 			}
-            finally
-            {
+			finally
+			{
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
+			}
 		}
 	}//GEN-LAST:event_saveAsMenuItemActionPerformed
 
@@ -717,9 +729,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 					updateRecentMenu();
 
-                    // update title and status bar if list was modified during loading
-                    if (list.isModified())
-                        onPlaylistModified(list);
+					// update title and status bar if list was modified during loading
+					if (list.isModified())
+					{
+						onPlaylistModified(list);
+					}
 
 					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 				}
@@ -1605,17 +1619,64 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 	_leftSplitPane.setDividerLocation(.60);
 }//GEN-LAST:event__leftSplitPaneResized
 
+private void saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveMenuItemsaveButtonActionPerformed
+{//GEN-HEADEREND:event_saveMenuItemsaveButtonActionPerformed
+
+	if (_currentPlaylist == null)
+	{
+		return;
+	}
+	try
+	{
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		PlaylistEntry.BasePath = _currentPlaylist.getFile().getParent();
+
+		ProgressWorker worker = new ProgressWorker<Void, Void>()
+		{
+			@Override
+			protected Void doInBackground() throws IOException
+			{
+				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+				_currentPlaylist.save(saveRelative, this);
+				return null;
+			}
+		};
+		ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
+		pd.setVisible(true);
+
+		worker.get();
+	}
+	catch (Exception e)
+	{
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+	}
+	finally
+	{
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
+}//GEN-LAST:event_saveMenuItemsaveButtonActionPerformed
+
 	private void updateMediaDirButtons()
 	{
 		if (mediaLibraryList.getModel().getSize() == 0)
 		{
 			removeMediaDirButton.setEnabled(false);
 			refreshMediaDirsButton.setEnabled(false);
+
+
+
+
 		}
 		else if (mediaLibraryList.getModel().getSize() != 0)
 		{
 			removeMediaDirButton.setEnabled(true);
 			refreshMediaDirsButton.setEnabled(true);
+
+
+
+
 		}
 	}
 
@@ -1623,14 +1684,27 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 	{
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
+
+
+
+
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+
+
+
 	}
 
 	private void recentPlaylistActionPerformed(java.awt.event.ActionEvent evt)
 	{
 		JMenuItem temp = (JMenuItem) evt.getSource();
 		File playlist = new File(temp.getText());
-		openPlaylist(playlist);
+		openPlaylist(
+			playlist);
+
+
+
+
 	}
 
 	private void setLookAndFeel(String className)
@@ -1646,9 +1720,17 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
 
+
+
+
+
 			if (_tabPaneInsets != null)
 			{
 				setTabAreaInsets(_tabPaneInsets);
+
+
+
+
 			}
 		}
 		catch (Exception e)
@@ -1657,6 +1739,10 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 		finally
 		{
 			syncJMenuFonts();
+
+
+
+
 		}
 	}
 
@@ -1670,9 +1756,17 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 		java.awt.Dimension labelSize = mainWindow.getPreferredSize();
 		mainWindow.setLocation(screenSize.width / 2 - (labelSize.width / 2), screenSize.height / 2 - (labelSize.height / 2));
 		mainWindow.setVisible(true);
+
+
+
+
 		if (mainWindow.getOptions().getAutoRefreshMediaLibraryOnStartup())
 		{
 			mainWindow.refreshMediaDirs();
+
+
+
+
 		}
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
@@ -1712,6 +1806,7 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
     private javax.swing.JButton refreshMediaDirsButton;
     private javax.swing.JButton removeMediaDirButton;
     private javax.swing.JMenuItem saveAsMenuItem;
+    private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JScrollPane treeScrollPane;
     private javax.swing.JMenuItem updateCheckMenuItem;
