@@ -40,4 +40,11 @@ public class AudioFileFilter extends FileExtensionFilterBase
     {
         _extensions = createExtensionSet("m3u", "m3u8", "pls", "mp3", "flac", "aac", "ogg", "aiff", "au", "wma");
     }
+
+	@Override
+	// Fixes display in linux
+	public String toString()
+	{
+		return getDescription();
+	}
 }

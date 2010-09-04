@@ -50,4 +50,11 @@ public class PlaylistFileChooserFilter extends FileExtensionFilterBase
     {
         _extensions = createExtensionSet("m3u", "m3u8", "pls");
     }
+
+	@Override
+	// Fixes display in linux
+	public String toString()
+	{
+		return getDescription();
+	}
 }
