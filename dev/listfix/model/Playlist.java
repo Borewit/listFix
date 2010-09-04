@@ -733,6 +733,13 @@ public class Playlist
 
 		// change original _entries
 		setEntries(_entries);
+
+		// set entries unfixed
+		for(PlaylistEntry entry : _entries)
+		{
+			entry.setFixed(false);
+		}
+
 		_isModified = false;
 		firePlaylistModified();
 	}
