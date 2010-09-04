@@ -20,7 +20,6 @@
 package listfix.io;
 
 import java.io.File;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import listfix.model.BatchRepair;
