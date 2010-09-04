@@ -125,6 +125,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
+        _btnOk.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _btnOk.setText("OK");
         _btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -133,6 +134,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
         });
         jPanel1.add(_btnOk);
 
+        _btnCancel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _btnCancel.setText("Cancel");
         _btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -306,6 +308,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			_combo = new JComboBox(_model);
 			_combo.setMaximumRowCount(25);
 			_combo.setFocusable(false);
+			_combo.setFont(new Font("Verdana", 0, 9));
 		}
 		JComboBox _combo;
 		MatchComboBoxModel _model;
