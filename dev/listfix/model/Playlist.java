@@ -76,7 +76,7 @@ public class Playlist
 
 	private Playlist(List<PlaylistEntry> sublist) throws IOException
 	{
-		_utfFormat = true;
+		_utfFormat = false;
 		setEntries(sublist);
 		_file = File.createTempFile("yay", ".m3u");
 		_file.deleteOnExit();
