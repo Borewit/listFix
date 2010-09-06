@@ -53,7 +53,10 @@ import listfix.view.support.ProgressAdapter;
 
 public class Playlist
 {
-	private static final String BR = System.getProperty("line.separator");
+	private final static String FS = System.getProperty("file.separator");
+	private final static String BR = System.getProperty("line.separator");
+	private final static String HOME_DIR = System.getProperty("user.home");
+	private static int _newListCount = -1;
 	private File _file;
 	private List<PlaylistEntry> _entries = new ArrayList<PlaylistEntry>();
 	private List<PlaylistEntry> _originalEntries = new ArrayList<PlaylistEntry>();
@@ -63,6 +66,7 @@ public class Playlist
 	private int _urlCount;
 	private int _missingCount;
 	private boolean _isModified;
+	private boolean _isNew;
 
 	public enum SortIx
 	{
@@ -94,11 +98,13 @@ public class Playlist
 
 	public Playlist() throws IOException
 	{
-		_file = File.createTempFile("tmp", ".m3u");
+		_newListCount++;
+		_file = new File(HOME_DIR + FS + "Untitled-" + _newListCount + ".m3u");
 		_file.deleteOnExit();
 		_utfFormat = false;
 		_type = PlaylistType.M3U;
 		_isModified = false;
+		_isNew = true;
 		refreshStatus();
 	}
 
@@ -372,6 +378,11 @@ public class Playlist
 	public void setUtfFormat(boolean utfFormat)
 	{
 		this._utfFormat = utfFormat;
+	}
+	
+	public boolean isNew()
+	{
+		return _isNew;
 	}
 
 	public void replace(int index, PlaylistEntry newEntry)
@@ -779,6 +790,7 @@ public class Playlist
 		}
 
 		_isModified = false;
+		_isNew = false;
 		firePlaylistModified();
 	}
 

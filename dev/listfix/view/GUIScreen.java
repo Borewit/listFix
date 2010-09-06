@@ -196,6 +196,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _uiTabs = new javax.swing.JTabbedPane();
         _mainMenuBar = new javax.swing.JMenuBar();
         _fileMenu = new javax.swing.JMenu();
+        _newPlaylistMenuItem = new javax.swing.JMenuItem();
         _loadMenuItem = new javax.swing.JMenuItem();
         _saveMenuItem = new javax.swing.JMenuItem();
         _saveAsMenuItem = new javax.swing.JMenuItem();
@@ -409,7 +410,18 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _fileMenu.setMnemonic('F');
         _fileMenu.setText("File");
-        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+
+        _newPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        _newPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _newPlaylistMenuItem.setMnemonic('L');
+        _newPlaylistMenuItem.setText("New Playlist");
+        _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _newPlaylistMenuItemActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(_newPlaylistMenuItem);
 
         _loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         _loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -423,12 +435,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_loadMenuItem);
 
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
+        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _saveMenuItem.setMnemonic('S');
         _saveMenuItem.setText("Save");
         _saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _saveMenuItemsaveButtonActionPerformed(evt);
+                _saveMenuItemActionPerformed(evt);
             }
         });
         _fileMenu.add(_saveMenuItem);
@@ -470,7 +482,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
-        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
         _fileMenu.add(recentMenu);
 
         _clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
@@ -1643,44 +1655,49 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 	_leftSplitPane.setDividerLocation(.60);
 }//GEN-LAST:event__leftSplitPaneResized
 
-private void _saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveMenuItemsaveButtonActionPerformed
-{//GEN-HEADEREND:event__saveMenuItemsaveButtonActionPerformed
+private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveMenuItemActionPerformed
+{//GEN-HEADEREND:event__saveMenuItemActionPerformed
 
 	if (_currentPlaylist == null)
 	{
 		return;
 	}
-	try
+
+	if (_currentPlaylist.isNew())
 	{
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-		PlaylistEntry.BasePath = _currentPlaylist.getFile().getParent();
-
-		ProgressWorker worker = new ProgressWorker<Void, Void>()
+		_saveAsMenuItemActionPerformed(evt);
+	}
+	else
+	{
+		try
 		{
-			@Override
-			protected Void doInBackground() throws IOException
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			PlaylistEntry.BasePath = _currentPlaylist.getFile().getParent();
+			ProgressWorker worker = new ProgressWorker<Void, Void>()
 			{
-				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-				_currentPlaylist.save(saveRelative, this);
-				return null;
-			}
-		};
-		ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
-		pd.setVisible(true);
-
-		worker.get();
+				@Override
+				protected Void doInBackground() throws IOException
+				{
+					boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+					_currentPlaylist.save(saveRelative, this);
+					return null;
+				}
+			};
+			ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
+			pd.setVisible(true);
+			worker.get();
+		}
+		catch (Exception ex)
+		{
+			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+			JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+		}
+		finally
+		{
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
 	}
-	catch (Exception ex)
-	{
-		Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
-		JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
-	}
-	finally
-	{
-		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	}
-}//GEN-LAST:event__saveMenuItemsaveButtonActionPerformed
+}//GEN-LAST:event__saveMenuItemActionPerformed
 
 private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__newIconButtonActionPerformed
 {//GEN-HEADEREND:event__newIconButtonActionPerformed
@@ -1712,6 +1729,11 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	}
 
 }//GEN-LAST:event__newIconButtonActionPerformed
+
+private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__newPlaylistMenuItemActionPerformed
+{//GEN-HEADEREND:event__newPlaylistMenuItemActionPerformed
+	_newIconButtonActionPerformed(evt);
+}//GEN-LAST:event__newPlaylistMenuItemActionPerformed
 
 	private void updateMediaDirButtons()
 	{
@@ -1833,6 +1855,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
     private javax.swing.JMenuBar _mainMenuBar;
     private javax.swing.JMenuItem _miBatchRepair;
     private javax.swing.JButton _newIconButton;
+    private javax.swing.JMenuItem _newPlaylistMenuItem;
     private javax.swing.JButton _openIconButton;
     private javax.swing.JPanel _playlistPanel;
     private javax.swing.JMenuItem _saveAsMenuItem;

@@ -43,6 +43,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -553,7 +555,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
 		{
 			File file = chooser.getSelectedFile();
-			
+
 			// make sure the replacement file is not a playlist
 			if (Playlist.isPlaylist(file))
 			{
@@ -590,41 +592,101 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private void savePlaylist()
 	{
-		ProgressWorker worker = new ProgressWorker<Void, Void>()
+		if (_playlist.isNew())
 		{
-			@Override
-			protected Void doInBackground() throws IOException
+			JFileChooser chooser = new JFileChooser();
+			FontHelper.recursiveSetFont(chooser.getComponents());
+			chooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
+			chooser.setSelectedFile(_playlist.getFile());
+			int rc = chooser.showSaveDialog(getParentFrame());
+			if (rc == JFileChooser.APPROVE_OPTION)
 			{
-				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 				try
 				{
-					_playlist.save(saveRelative, this);
+					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+					File playlist = chooser.getSelectedFile();
+
+					// make sure file has correct extension
+					String normalizedName = playlist.getName().trim().toLowerCase();
+					if (!Playlist.isPlaylist(playlist)
+						|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls")))
+					{
+						if (_playlist.isUtfFormat())
+						{
+							playlist = new File(playlist.getPath() + ".m3u8");
+						}
+						else
+						{
+							playlist = new File(playlist.getPath() + ".m3u");
+						}
+					}
+
+					PlaylistEntry.BasePath = playlist.getParent();
+
+					final File finalPlaylistFile = playlist;
+					String oldPath = _playlist.getFile().getCanonicalPath();
+					ProgressWorker worker = new ProgressWorker<Void, Void>()
+					{
+						@Override
+						protected Void doInBackground() throws IOException
+						{
+							boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+							_playlist.saveAs(finalPlaylistFile, saveRelative, this);
+							return null;
+						}
+					};
+					ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
+					pd.setVisible(true);
+
+					worker.get();
+
+					if (getParentFrame() instanceof GUIScreen)
+					{
+						((GUIScreen) getParentFrame()).updateCurrentTab(_playlist);
+					}
 				}
 				catch (Exception e)
 				{
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 				}
-				return null;
+				finally
+				{
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
 			}
-
-			@Override
-			protected void done()
+		}
+		else
+		{
+			try
 			{
-				try
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				PlaylistEntry.BasePath = _playlist.getFile().getParent();
+				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
-					get();
-				}
-				catch (InterruptedException ex)
-				{
-				}
-				catch (ExecutionException ex)
-				{
-					JOptionPane.showMessageDialog(getParentFrame(), ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
-				}
+					@Override
+					protected Void doInBackground() throws IOException
+					{
+						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+						_playlist.save(saveRelative, this);
+						return null;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
+				pd.setVisible(true);
+				worker.get();
 			}
-		};
-		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
-		pd.setVisible(true);
+			catch (Exception ex)
+			{
+				Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+			}
+			finally
+			{
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
 	}
 
 	private void playSelectedEntries()
@@ -1294,7 +1356,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			playSelectedEntries();
 		}
 	}//GEN-LAST:event__uiTableKeyPressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
