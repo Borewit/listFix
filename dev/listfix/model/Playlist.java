@@ -100,7 +100,6 @@ public class Playlist
 		_type = PlaylistType.M3U;
 		_isModified = false;
 		refreshStatus();
-		save(false, null);
 	}
 
 	private void init(File playlist, IProgressObserver observer)
