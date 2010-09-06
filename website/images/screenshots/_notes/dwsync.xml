@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="brokenPlaylist.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="128844081757496716" remote="128844089310000000" />
-<file name="findingClosestMatch.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="128844081652846716" remote="128844089310000000" />
-<file name="fixingBrokenPlaylist.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="128844081500346716" remote="128844089310000000" />
-<file name="mostlyFixedPlaylist.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="128844081328586716" remote="128844089320000000" />
-<file name="optionsScreen.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="128844081185466716" remote="128844089320000000" />
-<file name="batchRepairResults.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="128844091191484384" remote="128844091250000000" />
+<file name="brokenPlaylist.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278635644440000" remote="129282618080000000" />
+<file name="batchFindingClosestMatches.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278600507690000" remote="129282617950000000" />
+<file name="batchPlaylistRepairResults.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278608030190000" remote="129282618020000000" />
+<file name="batchRepairingPlaylists.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278636510830000" remote="129282618040000000" />
+<file name="batchRepairWinampPlaylistsResults.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278636967530000" remote="129282618060000000" />
+<file name="choosingBatchClosestMatchesResults.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278607179400000" remote="129282618110000000" />
+<file name="exactMatchesFound.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278632632460000" remote="129282618130000000" />
+<file name="findingExactMatches.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278635282040000" remote="129282618150000000" />
+<file name="fixedList.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278630657370000" remote="129282618170000000" />
+<file name="gettingStarted.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278629169380000" remote="129282618190000000" />
+<file name="startBatchFindingClosestEntries.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278637404110000" remote="129282618210000000" />
+<file name="startBatchPlaylistRepair.png" server="web.sourceforge.net//home/groups/l/li/listfix/htdocs/" local="129278636061860000" remote="129282618230000000" />
 </dwsync>
