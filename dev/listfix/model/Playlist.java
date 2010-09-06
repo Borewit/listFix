@@ -632,20 +632,48 @@ public class Playlist
 					rc = lhs.getPath().compareToIgnoreCase(rhs.getPath());
 					break;
 				case Status:
-					boolean lhsOk = lhs.isFound() || lhs.isURL();
-					boolean rhsOk = rhs.isFound() || rhs.isURL();
-					if (lhsOk == rhsOk)
+					// Randomly chosen order... Found > Fixed > Missing > URL (seemed reasonable)
+					if (lhs.isURL())
 					{
-						rc = 0;
+						if (rhs.isURL())
+						{
+							rc = 0;
+							break;
+						}
+						rc =  1;
+						break;
 					}
-					else if (lhsOk)
+					else if (!lhs.isFound())
 					{
+						if (rhs.isURL())
+						{
+							rc =  -1;
+							break;
+						}
+						else if (!rhs.isFound())
+						{
+							rc =  0;
+							break;
+						}
+						rc =  1;
+						break;
+					}
+					else if (lhs.isFixed())
+					{
+						if (!rhs.isFound() || rhs.isURL())
+						{
+							rc = -1;
+							break;
+						}
+						else if (rhs.isFixed())
+						{
+							rc = 0;
+							break;
+						}
 						rc = 1;
+						break;
 					}
-					else if (rhsOk)
-					{
-						rc = -1;
-					}
+					rc =  -1;
 					break;
 			}
 
