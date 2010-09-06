@@ -92,6 +92,17 @@ public class Playlist
 		init(playlist, observer);
 	}
 
+	public Playlist() throws IOException
+	{
+		_file = File.createTempFile("tmp", ".m3u");
+		_file.deleteOnExit();
+		_utfFormat = false;
+		_type = PlaylistType.M3U;
+		_isModified = false;
+		refreshStatus();
+		save(false, null);
+	}
+
 	private void init(File playlist, IProgressObserver observer)
 	{
 		try

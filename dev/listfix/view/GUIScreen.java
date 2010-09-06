@@ -153,7 +153,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 		if (!OperatingSystem.isWindows())
 		{
-			batchRepairWinampMenuItem.setVisible(false);
+			_batchRepairWinampMenuItem.setVisible(false);
 		}
 
 		syncJMenuFonts();
@@ -190,28 +190,29 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         treeScrollPane = new javax.swing.JScrollPane();
         playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
         _playlistPanel = new javax.swing.JPanel();
-        _uiTabs = new javax.swing.JTabbedPane();
         _gettingStartedPanel = new javax.swing.JPanel();
         _openIconButton = new javax.swing.JButton();
+        _newIconButton = new javax.swing.JButton();
+        _uiTabs = new javax.swing.JTabbedPane();
         _mainMenuBar = new javax.swing.JMenuBar();
         _fileMenu = new javax.swing.JMenu();
-        loadMenuItem = new javax.swing.JMenuItem();
-        saveMenuItem = new javax.swing.JMenuItem();
-        saveAsMenuItem = new javax.swing.JMenuItem();
+        _loadMenuItem = new javax.swing.JMenuItem();
+        _saveMenuItem = new javax.swing.JMenuItem();
+        _saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
         _miBatchRepair = new javax.swing.JMenuItem();
-        batchRepairWinampMenuItem = new javax.swing.JMenuItem();
+        _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         recentMenu = new javax.swing.JMenu();
-        clearHistoryMenuItem = new javax.swing.JMenuItem();
+        _clearHistoryMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
-        appOptionsMenuItem = new javax.swing.JMenuItem();
+        _appOptionsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
-        exit = new javax.swing.JMenuItem();
+        _exitMenuItem = new javax.swing.JMenuItem();
         _helpMenu = new javax.swing.JMenu();
-        aboutMenuItem = new javax.swing.JMenuItem();
-        helpMenuItem = new javax.swing.JMenuItem();
-        updateCheckMenuItem = new javax.swing.JMenuItem();
+        _helpMenuItem = new javax.swing.JMenuItem();
+        _updateCheckMenuItem = new javax.swing.JMenuItem();
+        _aboutMenuItem = new javax.swing.JMenuItem();
 
         playlistTreeRightClickMenu.setPreferredSize(new java.awt.Dimension(160, 28));
 
@@ -225,7 +226,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         playlistTreeRightClickMenu.add(batchPlaylistRepairMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("listFix( ) - v2.0.0");
+        setTitle("listFix( ) - v2.1.0");
         setMinimumSize(new java.awt.Dimension(600, 149));
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -344,19 +345,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistPanel.setBackground(java.awt.SystemColor.window);
         _playlistPanel.setLayout(new java.awt.CardLayout());
 
-        _uiTabs.setFocusable(false);
-        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9));
-        _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                onTabStateChanged(evt);
-            }
-        });
-        _playlistPanel.add(_uiTabs, "_uiTabs");
-
         _gettingStartedPanel.setBackground(new java.awt.Color(255, 255, 255));
-        _gettingStartedPanel.setLayout(new java.awt.GridBagLayout());
 
-        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -366,8 +357,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _openIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _openIconButton.setIconTextGap(-2);
         _openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        _openIconButton.setMaximumSize(new java.awt.Dimension(300, 25));
-        _openIconButton.setMinimumSize(new java.awt.Dimension(256, 25));
+        _openIconButton.setMaximumSize(new java.awt.Dimension(220, 180));
+        _openIconButton.setMinimumSize(new java.awt.Dimension(220, 180));
         _openIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
         _openIconButton.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         _openIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -376,58 +367,89 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
                 _openIconButtonActionPerformed1(evt);
             }
         });
-        _gettingStartedPanel.add(_openIconButton, new java.awt.GridBagConstraints());
+        _gettingStartedPanel.add(_openIconButton);
+
+        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
+        _newIconButton.setText("New Playlist");
+        _newIconButton.setToolTipText("Open A Playlist");
+        _newIconButton.setAlignmentY(0.0F);
+        _newIconButton.setBorder(null);
+        _newIconButton.setFocusable(false);
+        _newIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _newIconButton.setIconTextGap(-2);
+        _newIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        _newIconButton.setMaximumSize(new java.awt.Dimension(220, 180));
+        _newIconButton.setMinimumSize(new java.awt.Dimension(220, 180));
+        _newIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
+        _newIconButton.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        _newIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _newIconButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _newIconButtonActionPerformed(evt);
+            }
+        });
+        _gettingStartedPanel.add(_newIconButton);
 
         _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
+
+        _uiTabs.setFocusable(false);
+        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                onTabStateChanged(evt);
+            }
+        });
+        _playlistPanel.add(_uiTabs, "_uiTabs");
 
         _splitPane.setRightComponent(_playlistPanel);
 
         getContentPane().add(_splitPane, java.awt.BorderLayout.CENTER);
 
         _mainMenuBar.setBorder(null);
-        _mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9));
+        _mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
         _fileMenu.setMnemonic('F');
         _fileMenu.setText("File");
-        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
-        loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        loadMenuItem.setMnemonic('L');
-        loadMenuItem.setText("Open Playlist");
-        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        _loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _loadMenuItem.setMnemonic('L');
+        _loadMenuItem.setText("Open Playlist");
+        _loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openIconButtonActionPerformed(evt);
             }
         });
-        _fileMenu.add(loadMenuItem);
+        _fileMenu.add(_loadMenuItem);
 
-        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
-        saveMenuItem.setMnemonic('S');
-        saveMenuItem.setText("Save");
-        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _saveMenuItem.setMnemonic('S');
+        _saveMenuItem.setText("Save");
+        _saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveMenuItemsaveButtonActionPerformed(evt);
+                _saveMenuItemsaveButtonActionPerformed(evt);
             }
         });
-        _fileMenu.add(saveMenuItem);
+        _fileMenu.add(_saveMenuItem);
 
-        saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
-        saveAsMenuItem.setMnemonic('V');
-        saveAsMenuItem.setText("Save As");
-        saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _saveAsMenuItem.setMnemonic('V');
+        _saveAsMenuItem.setText("Save As");
+        _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAsMenuItemActionPerformed(evt);
+                _saveAsMenuItemActionPerformed(evt);
             }
         });
-        _fileMenu.add(saveAsMenuItem);
+        _fileMenu.add(_saveAsMenuItem);
 
         jSeparator6.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator6);
 
-        _miBatchRepair.setFont(loadMenuItem.getFont());
+        _miBatchRepair.setFont(_loadMenuItem.getFont());
         _miBatchRepair.setText("Batch Repair...");
         _miBatchRepair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -436,14 +458,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _fileMenu.add(_miBatchRepair);
 
-        batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
-        batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
+        _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                batchRepairWinampMenuItemActionPerformed(evt);
+                _batchRepairWinampMenuItemActionPerformed(evt);
             }
         });
-        _fileMenu.add(batchRepairWinampMenuItem);
+        _fileMenu.add(_batchRepairWinampMenuItem);
 
         jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator3);
@@ -453,87 +475,90 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
         _fileMenu.add(recentMenu);
 
-        clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        clearHistoryMenuItem.setMnemonic('H');
-        clearHistoryMenuItem.setText("Clear Playlist History");
-        clearHistoryMenuItem.setToolTipText("");
-        clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        _clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _clearHistoryMenuItem.setMnemonic('H');
+        _clearHistoryMenuItem.setText("Clear Playlist History");
+        _clearHistoryMenuItem.setToolTipText("");
+        _clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearHistoryMenuItemActionPerformed(evt);
+                _clearHistoryMenuItemActionPerformed(evt);
             }
         });
-        _fileMenu.add(clearHistoryMenuItem);
+        _fileMenu.add(_clearHistoryMenuItem);
 
         jSeparator1.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator1);
 
-        appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        appOptionsMenuItem.setMnemonic('H');
-        appOptionsMenuItem.setText("Options...");
-        appOptionsMenuItem.setToolTipText("");
-        appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
+        _appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _appOptionsMenuItem.setMnemonic('H');
+        _appOptionsMenuItem.setText("Options...");
+        _appOptionsMenuItem.setToolTipText("");
+        _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                appOptionsMenuItemActionPerformed(evt);
+                _appOptionsMenuItemActionPerformed(evt);
             }
         });
-        _fileMenu.add(appOptionsMenuItem);
+        _fileMenu.add(_appOptionsMenuItem);
 
         jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator2);
 
-        exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        exit.setFont(new java.awt.Font("Verdana", 0, 9));
-        exit.setMnemonic('x');
-        exit.setText("Exit");
-        exit.addActionListener(new java.awt.event.ActionListener() {
+        _exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        _exitMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _exitMenuItem.setMnemonic('x');
+        _exitMenuItem.setText("Exit");
+        _exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitActionPerformed(evt);
+                _exitMenuItemActionPerformed(evt);
             }
         });
-        _fileMenu.add(exit);
+        _fileMenu.add(_exitMenuItem);
 
         _mainMenuBar.add(_fileMenu);
 
         _helpMenu.setMnemonic('H');
         _helpMenu.setText("Help");
-        _helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        _helpMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
-        aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        aboutMenuItem.setMnemonic('A');
-        aboutMenuItem.setText("About");
-        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        _helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _helpMenuItem.setMnemonic('e');
+        _helpMenuItem.setText("Help");
+        _helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aboutMenuItemActionPerformed(evt);
+                _helpMenuItemActionPerformed(evt);
             }
         });
-        _helpMenu.add(aboutMenuItem);
+        _helpMenu.add(_helpMenuItem);
 
-        helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.ALT_MASK));
-        helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        helpMenuItem.setMnemonic('e');
-        helpMenuItem.setText("Help");
-        helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _updateCheckMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
+        _updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _updateCheckMenuItem.setText("Check For Updates");
+        _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpMenuItemActionPerformed(evt);
+                _updateCheckMenuItemActionPerformed(evt);
             }
         });
-        _helpMenu.add(helpMenuItem);
+        _helpMenu.add(_updateCheckMenuItem);
 
-        updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
-        updateCheckMenuItem.setText("Check For Updates");
-        updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
+        _aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _aboutMenuItem.setMnemonic('A');
+        _aboutMenuItem.setText("About");
+        _aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateCheckMenuItemActionPerformed(evt);
+                _aboutMenuItemActionPerformed(evt);
             }
         });
-        _helpMenu.add(updateCheckMenuItem);
+        _helpMenu.add(_aboutMenuItem);
 
         _mainMenuBar.add(_helpMenu);
 
         setJMenuBar(_mainMenuBar);
+
+        getAccessibleContext().setAccessibleName("listFix( ) - v2.1.0");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -547,14 +572,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
 	}
 
-	private void clearHistoryMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clearHistoryMenuItemActionPerformed
-	{//GEN-HEADEREND:event_clearHistoryMenuItemActionPerformed
+	private void _clearHistoryMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__clearHistoryMenuItemActionPerformed
+	{//GEN-HEADEREND:event__clearHistoryMenuItemActionPerformed
 		guiDriver.clearM3UHistory();
 		updateRecentMenu();
-	}//GEN-LAST:event_clearHistoryMenuItemActionPerformed
+	}//GEN-LAST:event__clearHistoryMenuItemActionPerformed
 
-	private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveAsMenuItemActionPerformed
-	{//GEN-HEADEREND:event_saveAsMenuItemActionPerformed
+	private void _saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveAsMenuItemActionPerformed
+	{//GEN-HEADEREND:event__saveAsMenuItemActionPerformed
 		if (_currentPlaylist == null)
 		{
 			return;
@@ -625,7 +650,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
-	}//GEN-LAST:event_saveAsMenuItemActionPerformed
+	}//GEN-LAST:event__saveAsMenuItemActionPerformed
 
 	private void openIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_openIconButtonActionPerformed
 	{//GEN-HEADEREND:event_openIconButtonActionPerformed
@@ -1405,15 +1430,15 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		updateMediaDirButtons();
 	}
 
-	private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
+	private void _aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		JOptionPane.showMessageDialog(this, "listFix( ) v2.0.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) \n          Kennedy Akala (user22735 at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, "listFix( ) v2.1.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) \n          Kennedy Akala (user22735 at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	private void exitActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_exitActionPerformed
-	{//GEN-HEADEREND:event_exitActionPerformed
+	private void _exitMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__exitMenuItemActionPerformed
+	{//GEN-HEADEREND:event__exitMenuItemActionPerformed
 		confirmCloseApp();
-	}//GEN-LAST:event_exitActionPerformed
+	}//GEN-LAST:event__exitMenuItemActionPerformed
 
 	/** Exit the Application */
 	private void exitForm(java.awt.event.WindowEvent evt)//GEN-FIRST:event_exitForm
@@ -1439,8 +1464,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		updateMediaLibraryProgressDialog.setBusyCursor(false);
 	}
 
-	private void appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_appOptionsMenuItemActionPerformed
-	{//GEN-HEADEREND:event_appOptionsMenuItemActionPerformed
+	private void _appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__appOptionsMenuItemActionPerformed
+	{//GEN-HEADEREND:event__appOptionsMenuItemActionPerformed
 		String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();
 		AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
 		AppOptions options = optDialog.showDialog();
@@ -1463,7 +1488,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 			this.setLookAndFeel(options.getLookAndFeel());
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
-	}//GEN-LAST:event_appOptionsMenuItemActionPerformed
+	}//GEN-LAST:event__appOptionsMenuItemActionPerformed
 
     private void playlistDirectoryTreeMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistDirectoryTreeMouseClicked
     {//GEN-HEADEREND:event_playlistDirectoryTreeMouseClicked
@@ -1529,15 +1554,15 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
     }//GEN-LAST:event_playlistDirectoryTreeMousePressed
 
-private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
-        BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");//GEN-LAST:event_helpMenuItemActionPerformed
+private void _helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__helpMenuItemActionPerformed
+        BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");//GEN-LAST:event__helpMenuItemActionPerformed
 	}
 
-private void updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCheckMenuItemActionPerformed
+private void _updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__updateCheckMenuItemActionPerformed
 	BrowserLauncher.launch("http://sourceforge.net/projects/listfix/");
-}//GEN-LAST:event_updateCheckMenuItemActionPerformed
+}//GEN-LAST:event__updateCheckMenuItemActionPerformed
 
-private void batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_batchRepairWinampMenuItemActionPerformed
+private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
 
 	final BatchRepair br = WinampHelper.getWinampBatchRepair(guiDriver.getMediaLibraryFileList());
 	if (br == null || br.isEmpty())
@@ -1549,7 +1574,7 @@ private void batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent
 	BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
 	dlg.setLocationRelativeTo(this);
 	dlg.setVisible(true);
-}//GEN-LAST:event_batchRepairWinampMenuItemActionPerformed
+}//GEN-LAST:event__batchRepairWinampMenuItemActionPerformed
 
 private void onTabStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_onTabStateChanged
 {//GEN-HEADEREND:event_onTabStateChanged
@@ -1622,8 +1647,8 @@ private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST
 	_leftSplitPane.setDividerLocation(.60);
 }//GEN-LAST:event__leftSplitPaneResized
 
-private void saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_saveMenuItemsaveButtonActionPerformed
-{//GEN-HEADEREND:event_saveMenuItemsaveButtonActionPerformed
+private void _saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveMenuItemsaveButtonActionPerformed
+{//GEN-HEADEREND:event__saveMenuItemsaveButtonActionPerformed
 
 	if (_currentPlaylist == null)
 	{
@@ -1650,16 +1675,47 @@ private void saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent ev
 
 		worker.get();
 	}
-	catch (Exception e)
+	catch (Exception ex)
 	{
-		e.printStackTrace();
+		Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
 		JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 	}
 	finally
 	{
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
-}//GEN-LAST:event_saveMenuItemsaveButtonActionPerformed
+}//GEN-LAST:event__saveMenuItemsaveButtonActionPerformed
+
+private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__newIconButtonActionPerformed
+{//GEN-HEADEREND:event__newIconButtonActionPerformed
+		try
+		{
+			_currentPlaylist = new Playlist();
+			// _currentPlaylist.addModifiedListener(this);
+			String path = _currentPlaylist.getFile().getCanonicalPath();
+			PlaylistEditCtrl editor = new PlaylistEditCtrl();
+			editor.setPlaylist(_currentPlaylist);
+			String title = _currentPlaylist.getFilename();
+			_uiTabs.addTab(title, null, editor, path);
+			int ix = _uiTabs.getTabCount() - 1;
+			_uiTabs.setSelectedIndex(ix);
+			_pathToEditorMap.put(path, editor);
+			_playlistToEditorMap.put(_currentPlaylist, editor);
+
+			// add custom tab controls
+			_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
+			refreshStatusLabel(_currentPlaylist);
+			_currentPlaylist.addModifiedListener(_playlistListener);
+
+			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
+		}
+		catch (IOException ex)
+		{
+			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+			JOptionPane.showMessageDialog(this, "Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.");
+		}
+
+}//GEN-LAST:event__newIconButtonActionPerformed
 
 	private void updateMediaDirButtons()
 	{
@@ -1767,30 +1823,34 @@ private void saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent ev
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem _aboutMenuItem;
+    private javax.swing.JMenuItem _appOptionsMenuItem;
+    private javax.swing.JMenuItem _batchRepairWinampMenuItem;
+    private javax.swing.JMenuItem _clearHistoryMenuItem;
+    private javax.swing.JMenuItem _exitMenuItem;
     private javax.swing.JMenu _fileMenu;
     private javax.swing.JPanel _gettingStartedPanel;
     private javax.swing.JMenu _helpMenu;
+    private javax.swing.JMenuItem _helpMenuItem;
     private javax.swing.JSplitPane _leftSplitPane;
+    private javax.swing.JMenuItem _loadMenuItem;
     private javax.swing.JMenuBar _mainMenuBar;
     private javax.swing.JMenuItem _miBatchRepair;
+    private javax.swing.JButton _newIconButton;
     private javax.swing.JButton _openIconButton;
     private javax.swing.JPanel _playlistPanel;
+    private javax.swing.JMenuItem _saveAsMenuItem;
+    private javax.swing.JMenuItem _saveMenuItem;
     private javax.swing.JSplitPane _splitPane;
     private javax.swing.JPanel _statusPanel;
     private javax.swing.JTabbedPane _uiTabs;
-    private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JButton addMediaDirButton;
-    private javax.swing.JMenuItem appOptionsMenuItem;
     private javax.swing.JMenuItem batchPlaylistRepairMenuItem;
-    private javax.swing.JMenuItem batchRepairWinampMenuItem;
-    private javax.swing.JMenuItem clearHistoryMenuItem;
-    private javax.swing.JMenuItem exit;
-    private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JPanel mediaLibraryButtonPanel;
     private javax.swing.JList mediaLibraryList;
     private javax.swing.JPanel mediaLibraryPanel;
@@ -1801,11 +1861,8 @@ private void saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent ev
     private javax.swing.JMenu recentMenu;
     private javax.swing.JButton refreshMediaDirsButton;
     private javax.swing.JButton removeMediaDirButton;
-    private javax.swing.JMenuItem saveAsMenuItem;
-    private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JScrollPane treeScrollPane;
-    private javax.swing.JMenuItem updateCheckMenuItem;
     // End of variables declaration//GEN-END:variables
 	// </editor-fold>
 }
