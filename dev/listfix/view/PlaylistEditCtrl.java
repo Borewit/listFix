@@ -1352,7 +1352,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnLocate.setEnabled(hasPlaylist);
 		_btnReorder.setEnabled(hasPlaylist);
 		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
-		_btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+		_btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists() && !_playlist.isModified());
 		_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 
 		if (_playlist != null && !_playlist.isEmpty())
