@@ -45,9 +45,10 @@ public class SplashScreen extends JFrame
 		pack();
 
 		Toolkit toolKit = getToolkit();
-		Dimension scrSize = toolKit.getScreenSize();
 
-		setBounds(scrSize.width / 2 - getWidth() / 2, scrSize.height / 2 - getHeight() / 2, getWidth(), getHeight());
+                DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+
+		setBounds(dm.getWidth() / 2 - getWidth() / 2, dm.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

@@ -23,7 +23,9 @@ package listfix.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.DisplayMode;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
@@ -1753,22 +1755,15 @@ private void saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent ev
 	public static void main(String args[])
 	{
 		GUIScreen mainWindow = new GUIScreen();
-		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
 		java.awt.Dimension labelSize = mainWindow.getPreferredSize();
-		mainWindow.setLocation(screenSize.width / 2 - (labelSize.width / 2), screenSize.height / 2 - (labelSize.height / 2));
+		mainWindow.setLocation(dm.getWidth() / 2 - (labelSize.width / 2), dm.getHeight() / 2 - (labelSize.height / 2));
 		mainWindow.setVisible(true);
-
-
-
 
 		if (mainWindow.getOptions().getAutoRefreshMediaLibraryOnStartup())
 		{
 			mainWindow.refreshMediaDirs();
-
-
-
-
-		}
+                }
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
