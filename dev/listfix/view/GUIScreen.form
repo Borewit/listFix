@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.5" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -284,9 +284,6 @@
     </Property>
     <Property name="name" type="java.lang.String" value="mainFrame" noResource="true"/>
   </Properties>
-  <AccessibilityProperties>
-    <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="listFix( ) - v2.1.0"/>
-  </AccessibilityProperties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="_mainMenuBar"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -611,9 +608,6 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="iconTextGap" type="int" value="-2"/>
-                    <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                      <Insets value="[0, 0, 0, 0]"/>
-                    </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[220, 180]"/>
                     </Property>
@@ -647,9 +641,6 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="iconTextGap" type="int" value="-2"/>
-                    <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                      <Insets value="[0, 0, 0, 0]"/>
-                    </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[220, 180]"/>
                     </Property>

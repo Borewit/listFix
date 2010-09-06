@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2009 Jeremy Caron
+ * Copyright (C) 2001-2010 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -347,7 +347,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _gettingStartedPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -356,7 +356,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _openIconButton.setFocusable(false);
         _openIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _openIconButton.setIconTextGap(-2);
-        _openIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         _openIconButton.setMaximumSize(new java.awt.Dimension(220, 180));
         _openIconButton.setMinimumSize(new java.awt.Dimension(220, 180));
         _openIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
@@ -369,7 +368,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _gettingStartedPanel.add(_openIconButton);
 
-        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _newIconButton.setText("New Playlist");
         _newIconButton.setToolTipText("Open A Playlist");
@@ -378,7 +377,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _newIconButton.setFocusable(false);
         _newIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _newIconButton.setIconTextGap(-2);
-        _newIconButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         _newIconButton.setMaximumSize(new java.awt.Dimension(220, 180));
         _newIconButton.setMinimumSize(new java.awt.Dimension(220, 180));
         _newIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
@@ -407,14 +405,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         getContentPane().add(_splitPane, java.awt.BorderLayout.CENTER);
 
         _mainMenuBar.setBorder(null);
-        _mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _fileMenu.setMnemonic('F');
         _fileMenu.setText("File");
         _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
         _loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        _loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _loadMenuItem.setMnemonic('L');
         _loadMenuItem.setText("Open Playlist");
         _loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -425,7 +423,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_loadMenuItem);
 
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _saveMenuItem.setMnemonic('S');
         _saveMenuItem.setText("Save");
         _saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -436,7 +434,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_saveMenuItem);
 
         _saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        _saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _saveAsMenuItem.setMnemonic('V');
         _saveAsMenuItem.setText("Save As");
         _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -458,7 +456,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _fileMenu.add(_miBatchRepair);
 
-        _batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
         _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -472,11 +470,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
-        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _fileMenu.add(recentMenu);
 
         _clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        _clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _clearHistoryMenuItem.setMnemonic('H');
         _clearHistoryMenuItem.setText("Clear Playlist History");
         _clearHistoryMenuItem.setToolTipText("");
@@ -491,7 +489,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(jSeparator1);
 
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        _appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _appOptionsMenuItem.setMnemonic('H');
         _appOptionsMenuItem.setText("Options...");
         _appOptionsMenuItem.setToolTipText("");
@@ -506,7 +504,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(jSeparator2);
 
         _exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        _exitMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _exitMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _exitMenuItem.setMnemonic('x');
         _exitMenuItem.setText("Exit");
         _exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -520,10 +518,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _helpMenu.setMnemonic('H');
         _helpMenu.setText("Help");
-        _helpMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        _helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _helpMenuItem.setMnemonic('e');
         _helpMenuItem.setText("Help");
         _helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -534,7 +532,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _helpMenu.add(_helpMenuItem);
 
         _updateCheckMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
-        _updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _updateCheckMenuItem.setText("Check For Updates");
         _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -544,7 +542,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _helpMenu.add(_updateCheckMenuItem);
 
         _aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
-        _aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _aboutMenuItem.setMnemonic('A');
         _aboutMenuItem.setText("About");
         _aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -557,8 +555,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _mainMenuBar.add(_helpMenu);
 
         setJMenuBar(_mainMenuBar);
-
-        getAccessibleContext().setAccessibleName("listFix( ) - v2.1.0");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1688,32 +1684,32 @@ private void _saveMenuItemsaveButtonActionPerformed(java.awt.event.ActionEvent e
 
 private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__newIconButtonActionPerformed
 {//GEN-HEADEREND:event__newIconButtonActionPerformed
-		try
-		{
-			_currentPlaylist = new Playlist();
-			// _currentPlaylist.addModifiedListener(this);
-			String path = _currentPlaylist.getFile().getCanonicalPath();
-			PlaylistEditCtrl editor = new PlaylistEditCtrl();
-			editor.setPlaylist(_currentPlaylist);
-			String title = _currentPlaylist.getFilename();
-			_uiTabs.addTab(title, null, editor, path);
-			int ix = _uiTabs.getTabCount() - 1;
-			_uiTabs.setSelectedIndex(ix);
-			_pathToEditorMap.put(path, editor);
-			_playlistToEditorMap.put(_currentPlaylist, editor);
+	try
+	{
+		_currentPlaylist = new Playlist();
+		// _currentPlaylist.addModifiedListener(this);
+		String path = _currentPlaylist.getFile().getCanonicalPath();
+		PlaylistEditCtrl editor = new PlaylistEditCtrl();
+		editor.setPlaylist(_currentPlaylist);
+		String title = _currentPlaylist.getFilename();
+		_uiTabs.addTab(title, null, editor, path);
+		int ix = _uiTabs.getTabCount() - 1;
+		_uiTabs.setSelectedIndex(ix);
+		_pathToEditorMap.put(path, editor);
+		_playlistToEditorMap.put(_currentPlaylist, editor);
 
-			// add custom tab controls
-			_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
-			refreshStatusLabel(_currentPlaylist);
-			_currentPlaylist.addModifiedListener(_playlistListener);
+		// add custom tab controls
+		_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
+		refreshStatusLabel(_currentPlaylist);
+		_currentPlaylist.addModifiedListener(_playlistListener);
 
-			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
-		}
-		catch (IOException ex)
-		{
-			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
-			JOptionPane.showMessageDialog(this, "Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.");
-		}
+		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
+	}
+	catch (IOException ex)
+	{
+		Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+		JOptionPane.showMessageDialog(this, "Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.");
+	}
 
 }//GEN-LAST:event__newIconButtonActionPerformed
 
@@ -1819,7 +1815,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		if (mainWindow.getOptions().getAutoRefreshMediaLibraryOnStartup())
 		{
 			mainWindow.refreshMediaDirs();
-                }
+		}
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables

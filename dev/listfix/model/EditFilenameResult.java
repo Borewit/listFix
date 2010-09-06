@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2009 Jeremy Caron
+ * Copyright (C) 2001-2010 Jeremy Caron
  * 
  * This file is part of listFix().
  *

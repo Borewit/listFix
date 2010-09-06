@@ -46,7 +46,7 @@ public class SplashScreen extends JFrame
 
 		Toolkit toolKit = getToolkit();
 
-                DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
 
 		setBounds(dm.getWidth() / 2 - getWidth() / 2, dm.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
 
