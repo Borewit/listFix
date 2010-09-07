@@ -354,7 +354,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _verticalPanel.setBackground(new java.awt.Color(255, 255, 255));
         _verticalPanel.setLayout(new javax.swing.BoxLayout(_verticalPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -379,18 +379,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _verticalPanel.add(_spacerPanel);
 
         _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
+        _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icon_new_file.png"))); // NOI18N
         _newIconButton.setText("New Playlist");
-        _newIconButton.setToolTipText("Open A Playlist");
+        _newIconButton.setToolTipText("New Playlist");
         _newIconButton.setAlignmentY(0.0F);
         _newIconButton.setBorder(null);
         _newIconButton.setFocusable(false);
         _newIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _newIconButton.setIconTextGap(-2);
+        _newIconButton.setIconTextGap(3);
         _newIconButton.setMaximumSize(new java.awt.Dimension(220, 180));
         _newIconButton.setMinimumSize(new java.awt.Dimension(220, 180));
         _newIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
-        _newIconButton.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         _newIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _newIconButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
