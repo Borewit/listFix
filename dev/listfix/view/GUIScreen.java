@@ -191,7 +191,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
         _playlistPanel = new javax.swing.JPanel();
         _gettingStartedPanel = new javax.swing.JPanel();
+        _verticalPanel = new javax.swing.JPanel();
         _openIconButton = new javax.swing.JButton();
+        _spacerPanel = new javax.swing.JPanel();
         _newIconButton = new javax.swing.JButton();
         _uiTabs = new javax.swing.JTabbedPane();
         _mainMenuBar = new javax.swing.JMenuBar();
@@ -347,8 +349,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistPanel.setLayout(new java.awt.CardLayout());
 
         _gettingStartedPanel.setBackground(new java.awt.Color(255, 255, 255));
+        _gettingStartedPanel.setLayout(new java.awt.GridBagLayout());
 
-        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
+        _verticalPanel.setBackground(new java.awt.Color(255, 255, 255));
+        _verticalPanel.setLayout(new javax.swing.BoxLayout(_verticalPanel, javax.swing.BoxLayout.Y_AXIS));
+
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -367,9 +373,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
                 _openIconButtonActionPerformed1(evt);
             }
         });
-        _gettingStartedPanel.add(_openIconButton);
+        _verticalPanel.add(_openIconButton);
 
-        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
+        _spacerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        _verticalPanel.add(_spacerPanel);
+
+        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _newIconButton.setText("New Playlist");
         _newIconButton.setToolTipText("Open A Playlist");
@@ -388,7 +397,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
                 _newIconButtonActionPerformed(evt);
             }
         });
-        _gettingStartedPanel.add(_newIconButton);
+        _verticalPanel.add(_newIconButton);
+
+        _gettingStartedPanel.add(_verticalPanel, new java.awt.GridBagConstraints());
 
         _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
@@ -413,7 +424,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _newPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        _newPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _newPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _newPlaylistMenuItem.setMnemonic('L');
         _newPlaylistMenuItem.setText("New Playlist");
         _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -435,7 +446,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_loadMenuItem);
 
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _saveMenuItem.setMnemonic('S');
         _saveMenuItem.setText("Save");
         _saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1860,10 +1871,12 @@ private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     private javax.swing.JPanel _playlistPanel;
     private javax.swing.JMenuItem _saveAsMenuItem;
     private javax.swing.JMenuItem _saveMenuItem;
+    private javax.swing.JPanel _spacerPanel;
     private javax.swing.JSplitPane _splitPane;
     private javax.swing.JPanel _statusPanel;
     private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem _updateCheckMenuItem;
+    private javax.swing.JPanel _verticalPanel;
     private javax.swing.JButton addMediaDirButton;
     private javax.swing.JMenuItem batchPlaylistRepairMenuItem;
     private javax.swing.JSeparator jSeparator1;
