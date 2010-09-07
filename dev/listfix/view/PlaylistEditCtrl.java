@@ -1157,6 +1157,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					_playlist.moveTo(oldModelRow, newModelRow);
 					currentlySelectedRow = tableRow;
 				}
+				else if (_uiPopupMenu.isEnabled())
+				{
+					_uiTable.setRowSelectionInterval(newModelRow, newModelRow);
+				}
 			}
 			else
 			{
