@@ -1760,7 +1760,15 @@ private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__extractPlaylistsMenuItemActionPerformed
 {//GEN-HEADEREND:event__extractPlaylistsMenuItemActionPerformed
-	int response = jMediaDirChooser.showOpenDialog(this);
+	
+	final JFileChooser dlg = new JFileChooser();
+	dlg.setDialogTitle("Extract to...");
+	dlg.setAcceptAllFileFilterUsed(true);
+	dlg.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	dlg.setMultiSelectionEnabled(false);
+	FontHelper.recursiveSetFont(dlg.getComponents());
+	int response = dlg.showOpenDialog(this);
+	
 	if (response == JFileChooser.APPROVE_OPTION)
 	{
 		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
@@ -1770,7 +1778,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 			{
 				try
 				{
-					WinampHelper.extractPlaylists(jMediaDirChooser.getSelectedFile(), this);
+					WinampHelper.extractPlaylists(dlg.getSelectedFile(), this);
 				}
 				catch (Exception ex)
 				{
