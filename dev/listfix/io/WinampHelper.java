@@ -35,6 +35,7 @@ import listfix.model.BatchRepairItem;
 
 import listfix.model.winamp.generated.Playlist;
 import listfix.model.winamp.generated.Playlists;
+import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
@@ -86,6 +87,11 @@ public class WinampHelper
 				new File(destDir.getPath() + System.getProperty("file.separator") + list.getTitle() + ".m3u8"));
 			progress.stepCompleted();
 		}
+	}
+
+	public static boolean isWinampInstalled()
+	{
+		return OperatingSystem.isWindows() && (new File(WINAMP_PATH)).exists();
 	}
 
 	private static List<Playlist> getWinampPlaylists() throws JAXBException
