@@ -59,7 +59,7 @@ public class CopyFilesTask extends listfix.controller.Task
 					dest = new File(destination.getPath() + fs + tempEntry.getFileName());
 					try
 					{
-						FileCopier.copy(new FileInputStream(fileToCopy), new FileOutputStream(dest));
+						FileCopier.copy(fileToCopy, dest);
 					}
 					catch (IOException e)
 					{

@@ -205,6 +205,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         jSeparator6 = new javax.swing.JSeparator();
         _miBatchRepair = new javax.swing.JMenuItem();
         _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
+        _extractPlaylistsMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         recentMenu = new javax.swing.JMenu();
         _clearHistoryMenuItem = new javax.swing.JMenuItem();
@@ -378,7 +379,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _spacerPanel.setBackground(new java.awt.Color(255, 255, 255));
         _verticalPanel.add(_spacerPanel);
 
-        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icon_new_file.png"))); // NOI18N
         _newIconButton.setText("New Playlist");
         _newIconButton.setToolTipText("New Playlist");
@@ -420,7 +421,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _fileMenu.setMnemonic('F');
         _fileMenu.setText("File");
-        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
         _newPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         _newPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -486,6 +487,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
             }
         });
         _fileMenu.add(_batchRepairWinampMenuItem);
+
+        _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        _extractPlaylistsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
+        _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
+        _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _extractPlaylistsMenuItemActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(_extractPlaylistsMenuItem);
 
         jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator3);
@@ -1745,6 +1757,35 @@ private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	_newIconButtonActionPerformed(evt);
 }//GEN-LAST:event__newPlaylistMenuItemActionPerformed
 
+private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__extractPlaylistsMenuItemActionPerformed
+{//GEN-HEADEREND:event__extractPlaylistsMenuItemActionPerformed
+	int response = jMediaDirChooser.showOpenDialog(this);
+	if (response == JFileChooser.APPROVE_OPTION)
+	{
+		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+		{
+			@Override
+			protected Void doInBackground() throws Exception
+			{
+				try
+				{
+					WinampHelper.extractPlaylists(jMediaDirChooser.getSelectedFile(), this);
+				}
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(GUIScreen.this, "Sorry, there was a problem extracting your playlists.  The error was: " + ex.getMessage(), "Extraction Error", JOptionPane.ERROR_MESSAGE);
+				}
+				finally
+				{
+					return null;
+				}
+			}
+		};
+		ProgressDialog pd = new ProgressDialog(this, true, worker, "Extracting...");
+		pd.setVisible(true);
+	}
+}//GEN-LAST:event__extractPlaylistsMenuItemActionPerformed
+
 	private void updateMediaDirButtons()
 	{
 		if (mediaLibraryList.getModel().getSize() == 0)
@@ -1856,6 +1897,7 @@ private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     private javax.swing.JMenuItem _batchRepairWinampMenuItem;
     private javax.swing.JMenuItem _clearHistoryMenuItem;
     private javax.swing.JMenuItem _exitMenuItem;
+    private javax.swing.JMenuItem _extractPlaylistsMenuItem;
     private javax.swing.JMenu _fileMenu;
     private javax.swing.JPanel _gettingStartedPanel;
     private javax.swing.JMenu _helpMenu;

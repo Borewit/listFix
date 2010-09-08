@@ -22,9 +22,10 @@ package listfix.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /** Copies a source file to the destination file. */
 public class FileCopier
@@ -37,8 +38,11 @@ public class FileCopier
 	 * @param dest: The destination.
 	 * @exception IOException
 	 */
-	public static void copy(InputStream src, OutputStream dest) throws IOException
+	public static void copy(File input, File output) throws IOException
 	{
+		FileInputStream src = new FileInputStream(input);
+		FileOutputStream dest = new FileOutputStream(output);
+
 		BufferedInputStream in = null;
 		BufferedOutputStream out = null;
 

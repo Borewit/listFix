@@ -1,3 +1,4 @@
+
 /**
  * listFix() - Fix Broken Playlists!
  *
@@ -16,66 +17,89 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
-
 package listfix.io;
 
 import java.io.File;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
+
+import listfix.model.winamp.generated.Playlist;
+import listfix.model.winamp.generated.Playlists;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
 
 public class WinampHelper
 {
-    // all exceptions are ignored - returns null if any exception is thrown
-    public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
-    {
-        try
-        {
-            String homePath = System.getenv("APPDATA");
-            final String winAmpPath = homePath + "\\Winamp\\Plugins\\ml\\";
-            String playlistPath = winAmpPath + "playlists.xml";
-            File listsFile = new File(playlistPath);
-            if (!listsFile.canRead())
-                return null;
+	private static final String HOME_PATH = System.getenv("APPDATA");
+	public static final String WINAMP_PATH = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
+	// all exceptions are ignored - returns null if any exception is thrown
 
-            final BatchRepair br = new BatchRepair(mediaFiles, new File(winAmpPath));
-            br.setDescription("Batch Repair: Winamp Playlists");
+	public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
+	{
+		try
+		{
+			final BatchRepair br = new BatchRepair(mediaFiles, new File(WINAMP_PATH));
+			br.setDescription("Batch Repair: Winamp Playlists");
+			List<Playlist> winLists = getWinampPlaylists();
+			for (Playlist list : winLists)
+			{
+				br.add(new BatchRepairItem(WINAMP_PATH + list.getFilename(), list.getTitle()));
+			}
+			return br;
+		}
+		catch (Exception ex)
+		{
+			Logger.getLogger(WinampHelper.class.getName()).log(Level.SEVERE, null, ex);
+			return null;
+		}
+	}
 
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
-            XMLReader parser = saxParser.getXMLReader();
-            parser.setContentHandler(new DefaultHandler()
-            {
-                @Override
-                public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException
-                {
-                    if (name.equals("playlist"))
-                    {
-                        String title = attributes.getValue("title");
-                        String filename = attributes.getValue("filename");
-                        if (filename != null && !filename.isEmpty())
-                        {
-                            br.add(new BatchRepairItem(winAmpPath + filename, title));
-                        }
-                    }
-                }
-            });
+	public static void extractPlaylists(File destDir, IProgressObserver observer) throws JAXBException, IOException
+	{
+		// avoid resetting total if part of batch operation
+		boolean hasTotal = observer instanceof ProgressAdapter;
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 
-            // parse using URI to workaround a java bug [affects some 1.6 versions, but not all]
-            parser.parse(listsFile.toURI().toString());
-            return br;
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-            return null;
-        }
-    }
+		if (!destDir.exists())
+		{
+			destDir.mkdir();
+		}
 
+		List<Playlist> winLists = getWinampPlaylists();
+		if (!hasTotal)
+		{
+			progress.setTotal(winLists.size());
+		}
+		for (Playlist list : winLists)
+		{
+			FileCopier.copy(new File(WINAMP_PATH + list.getFilename()),
+				new File(destDir.getPath() + System.getProperty("file.separator") + list.getTitle() + ".m3u8"));
+			progress.stepCompleted();
+		}
+	}
+
+	private static List<Playlist> getWinampPlaylists() throws JAXBException
+	{
+		String playlistPath = WINAMP_PATH + "playlists.xml";
+		File listsFile = new File(playlistPath);
+		if (!listsFile.canRead())
+		{
+			return null;
+		}
+
+		JAXBContext context = JAXBContext.newInstance("listfix.model.winamp.generated");
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		Playlists lists = (Playlists) unmarshaller.unmarshal(listsFile);
+		return lists.getPlaylist();
+	}
 }
-
