@@ -151,7 +151,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 		addOpenPlaylistTabButton(_uiTabs);
 
-		if (WinampHelper.isWinampInstalled())
+		if (!WinampHelper.isWinampInstalled())
 		{
 			_batchRepairWinampMenuItem.setVisible(false);
 			_extractPlaylistsMenuItem.setVisible(false);
