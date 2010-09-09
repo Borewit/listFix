@@ -122,34 +122,41 @@ public class M3UReader implements IPlaylistReader
 
 				while (line1 != null)
 				{
-					cacheSize = _cache.toString().getBytes().length;
-					if (cacheSize < fileLength)
+					if (!observer.getCancelled())
 					{
-						progress.setCompleted(cacheSize);
-					}
-					processEntry(line1, line2);
-					line1 = readLine();
-					if (line1 != null)
-					{
-						if (!line1.startsWith("#"))
+						cacheSize = _cache.toString().getBytes().length;
+						if (cacheSize < fileLength)
 						{
-							line2 = line1;
-							line1 = "";
+							progress.setCompleted(cacheSize);
 						}
-						else
+						processEntry(line1, line2);
+						line1 = readLine();
+						if (line1 != null)
 						{
-							line2 = readLine();
-							while (line2.startsWith("#"))
+							if (!line1.startsWith("#"))
 							{
-								line1 = line1 + br + line2;
+								line2 = line1;
+								line1 = "";
+							}
+							else
+							{
 								line2 = readLine();
+								while (line2.startsWith("#"))
+								{
+									line1 = line1 + br + line2;
+									line2 = readLine();
+								}
 							}
 						}
+						cacheSize = _cache.toString().getBytes().length;
+						if (cacheSize < fileLength)
+						{
+							progress.setCompleted(cacheSize);
+						}
 					}
-					cacheSize = _cache.toString().getBytes().length;
-					if (cacheSize < fileLength)
+					else
 					{
-						progress.setCompleted(cacheSize);
+						return null;
 					}
 				}
 			}

@@ -44,6 +44,12 @@ public class DualProgressAdapter<T> implements IDualProgressObserver<T>
             {
                 _observer.reportTaskProgress(progress, state);
             }
+
+			@Override
+			public boolean getCancelled()
+			{
+				return _observer.getCancelled();
+			}
         };
         _task = ProgressAdapter.wrap(taskObserver);
 
@@ -58,6 +64,12 @@ public class DualProgressAdapter<T> implements IDualProgressObserver<T>
             {
                 _observer.reportOverallProgress(progress, state);
             }
+
+			@Override
+			public boolean getCancelled()
+			{
+				return _observer.getCancelled();
+			}
         };
         _overall = ProgressAdapter.wrap(overallObserver);
     }
@@ -87,5 +99,11 @@ public class DualProgressAdapter<T> implements IDualProgressObserver<T>
         return _overall;
     }
     ProgressAdapter<T> _overall;
+
+	@Override
+	public boolean getCancelled()
+	{
+		return _observer.getCancelled();
+	}
 
 }

@@ -23,4 +23,5 @@ public interface IProgressObserver<T>
 {
 	public void reportProgress(int progress);
     public void reportProgress(int progress, T state);
+	public boolean getCancelled();
 }

@@ -107,34 +107,61 @@ public class ProgressDialog extends javax.swing.JDialog
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
+        jPanel2 = new javax.swing.JPanel();
+        _cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
-        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         jLabel1.setText("jLabel1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
-        getContentPane().add(jLabel1, gridBagConstraints);
+        jPanel1.add(jLabel1, gridBagConstraints);
 
         jProgressBar1.setMinimumSize(new java.awt.Dimension(250, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
-        getContentPane().add(jProgressBar1, gridBagConstraints);
+        jPanel1.add(jProgressBar1, gridBagConstraints);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        _cancelButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _cancelButton.setText("Cancel");
+        _cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _cancelButtonActionPerformed(evt);
+            }
+        });
+        jPanel2.add(_cancelButton);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+	private void _cancelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__cancelButtonActionPerformed
+	{//GEN-HEADEREND:event__cancelButtonActionPerformed
+		_worker.cancel(true);
+	}//GEN-LAST:event__cancelButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton _cancelButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 

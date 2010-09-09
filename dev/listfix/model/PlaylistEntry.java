@@ -512,13 +512,20 @@ public class PlaylistEntry implements Cloneable
 		String entryName = getFileName().replaceAll("\'", "");
 		for (String mediaFilePath : mediaFiles)
 		{
-			progress.stepCompleted();
-
-			File mediaFile = new File(mediaFilePath);
-			int score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", ""));
-			if (score > 0)
+			if (observer == null || !observer.getCancelled())
 			{
-				matches.add(new MatchedPlaylistEntry(mediaFile, score));
+				progress.stepCompleted();
+
+				File mediaFile = new File(mediaFilePath);
+				int score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", ""));
+				if (score > 0)
+				{
+					matches.add(new MatchedPlaylistEntry(mediaFile, score));
+				}
+			}
+			else
+			{
+				return null;
 			}
 		}
 		Collections.sort(matches, new MatchedPlaylistEntryComparator());

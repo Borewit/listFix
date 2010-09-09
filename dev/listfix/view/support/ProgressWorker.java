@@ -36,4 +36,9 @@ public abstract class ProgressWorker<T,V> extends SwingWorker<T,V> implements IP
         if (state != null)
             publish(state);
     }
+
+	public boolean getCancelled()
+	{
+		return this.isCancelled();
+	}
 }

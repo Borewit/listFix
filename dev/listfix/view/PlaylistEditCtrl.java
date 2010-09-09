@@ -42,6 +42,7 @@ import java.text.NumberFormat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -363,6 +364,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						_uiTable.addRowSelectionInterval(viewIx, viewIx);
 					}
 				}
+				catch (CancellationException ex)
+				{
+				}
 				catch (InterruptedException ex)
 				{
 				}
@@ -481,6 +485,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 				}
 				catch (InterruptedException ex)
+				{
+				}
+				catch (CancellationException ex)
 				{
 				}
 				catch (ExecutionException ex)
@@ -1205,8 +1212,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						{
 							get();
 						}
+						catch (CancellationException ex)
+						{
+							return;
+						}
 						catch (InterruptedException ex)
 						{
+							return;
 						}
 						catch (ExecutionException ex)
 						{
@@ -1273,6 +1285,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					{
 						list = get();
 					}
+					catch (CancellationException ex)
+					{
+						return;
+					}
 					catch (Exception ex)
 					{
 						JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
@@ -1324,8 +1340,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						openInternal();
 					}
 				}
+				catch (CancellationException ex)
+				{
+					return;
+				}
 				catch (InterruptedException ex)
 				{
+					return;
 				}
 				catch (ExecutionException ex)
 				{

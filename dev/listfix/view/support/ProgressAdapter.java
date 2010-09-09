@@ -110,4 +110,9 @@ public class ProgressAdapter<T> implements IProgressObserver<T>
 
     private int _percentComplete;
 
+	public boolean getCancelled()
+	{
+		return _observer.getCancelled();
+	}
+
 }

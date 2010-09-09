@@ -127,7 +127,7 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 
     public void reportProgress(int progress, Object state)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        reportProgress(progress);
     }
 
 	private void paintImmediately(Component c)
@@ -195,5 +195,11 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 		_main = new JPanel();
 		_main.setOpaque(true);
 		getContentPane().add(_main);
+	}
+
+	@Override
+	public boolean getCancelled()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

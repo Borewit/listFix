@@ -42,8 +42,7 @@ import listfix.view.support.ProgressAdapter;
 public class WinampHelper
 {
 	private static final String HOME_PATH = System.getenv("APPDATA");
-	public static final String WINAMP_PATH = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
-	// all exceptions are ignored - returns null if any exception is thrown
+	private static final String WINAMP_PATH = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
 
 	public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
 	{

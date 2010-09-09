@@ -81,8 +81,15 @@ public class PLSReader implements IPlaylistReader
 
 		for (int i = 1; i <= entries; i++)
 		{
-			processEntry(propBag, i);
-			progress.setCompleted(i);
+			if (!observer.getCancelled())
+			{
+				processEntry(propBag, i);
+				progress.setCompleted(i);
+			}
+			else
+			{
+				return null;
+			}
 		}
 		return results;
 	}

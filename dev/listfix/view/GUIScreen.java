@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -671,6 +672,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				(new FileWriter()).writeMruPlaylists(guiDriver.getHistory());
 				updateRecentMenu();
 			}
+			catch (CancellationException exception)
+			{
+				
+			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
@@ -762,6 +767,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 					try
 					{
 						list = get();
+					}
+					catch (CancellationException ex)
+					{
+						return;
 					}
 					catch (Exception ex)
 					{
@@ -1760,7 +1769,7 @@ private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__extractPlaylistsMenuItemActionPerformed
 {//GEN-HEADEREND:event__extractPlaylistsMenuItemActionPerformed
-	
+
 	final JFileChooser dlg = new JFileChooser();
 	dlg.setDialogTitle("Extract to...");
 	dlg.setAcceptAllFileFilterUsed(true);
@@ -1768,7 +1777,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 	dlg.setMultiSelectionEnabled(false);
 	FontHelper.recursiveSetFont(dlg.getComponents());
 	int response = dlg.showOpenDialog(this);
-	
+
 	if (response == JFileChooser.APPROVE_OPTION)
 	{
 		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
