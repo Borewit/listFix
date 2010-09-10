@@ -44,7 +44,6 @@ public class ProgressDialog extends javax.swing.JDialog
         Dimension sz = getSize();
         sz.width = 400;
         setSize(sz);
-        setLocationRelativeTo(parent);
 
         initWorker(worker);
 
@@ -73,6 +72,8 @@ public class ProgressDialog extends javax.swing.JDialog
 			_progressBar.setVisible(true);
 			_progressMessage.setVisible(false);
 		}
+
+        setLocationRelativeTo(parent);
     }
 
     public JProgressBar getProgressBar()
