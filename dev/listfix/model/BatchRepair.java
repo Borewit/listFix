@@ -65,17 +65,24 @@ public class BatchRepair
 
 		for (BatchRepairItem item : _items)
 		{
-			// load
-			progress.getOverall().stepCompleted();
-			progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
-			File file = new File(item.getPath());
-			item.setPlaylist(new Playlist(file, progress.getTask()));
+			if (!observer.getCancelled())
+			{
+				// load
+				progress.getOverall().stepCompleted();
+				progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
+				File file = new File(item.getPath());
+				item.setPlaylist(new Playlist(file, progress.getTask()));
 
-			// repair
-			progress.getOverall().stepCompleted();
-			progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
-			Playlist list = item.getPlaylist();
-			list.batchRepair(_mediaFiles, progress.getTask());
+				// repair
+				progress.getOverall().stepCompleted();
+				progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
+				Playlist list = item.getPlaylist();
+				list.batchRepair(_mediaFiles, progress.getTask());
+			}
+			else
+			{
+				return;
+			}
 		}
 	}
 

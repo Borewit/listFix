@@ -1575,10 +1575,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
 
 		BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
-		dlg.setLocationRelativeTo(this);
-		dlg.setVisible(true);
+		if (!dlg.getUserCancelled())
+		{
+			dlg.setLocationRelativeTo(this);
+			dlg.setVisible(true);
 
-		updatePlaylistDirectoryPanel();
+			updatePlaylistDirectoryPanel();
+		}
 	}//GEN-LAST:event_batchPlaylistRepairMenuItemActionPerformed
 
     private void playlistDirectoryTreeMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_playlistDirectoryTreeMousePressed
@@ -1612,8 +1615,11 @@ private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEven
 	}
 
 	BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
-	dlg.setLocationRelativeTo(this);
-	dlg.setVisible(true);
+	if (!dlg.getUserCancelled())
+	{
+		dlg.setLocationRelativeTo(this);
+		dlg.setVisible(true);
+	}
 }//GEN-LAST:event__batchRepairWinampMenuItemActionPerformed
 
 private void onTabStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_onTabStateChanged

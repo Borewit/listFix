@@ -45,6 +45,8 @@ import listfix.view.support.ProgressWorker;
 
 public class BatchRepairDialog extends javax.swing.JDialog
 {
+	private boolean _userCancelled = false;
+
 	/** Creates new form BatchRepairDialog */
 	public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
 	{
@@ -98,25 +100,30 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		};
 		pd.show(dpw);
 
-		InitPlaylistsList();
-
-		for (BatchRepairItem item : batch.getItems())
+		if (!dpw.getCancelled())
 		{
-			item.getPlaylist().addModifiedListener(listener);
-		}
+			InitPlaylistsList();
 
-		String listCountTxt;
-		if (batch.getItems().size() == 1)
-		{
-			listCountTxt = "1 playlist";
+			for (BatchRepairItem item : batch.getItems())
+			{
+				item.getPlaylist().addModifiedListener(listener);
+			}
+
+			String listCountTxt;
+			if (batch.getItems().size() == 1)
+			{
+				listCountTxt = "1 playlist";
+			}
+			else
+			{
+				listCountTxt = String.format("%d playlists", batch.getItems().size());
+			}
+			_labListCount.setText(listCountTxt);
 		}
 		else
 		{
-			listCountTxt = String.format("%d playlists", batch.getItems().size());
+			_userCancelled = true;
 		}
-		_labListCount.setText(listCountTxt);
-
-
 	}
 
 	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
@@ -427,6 +434,27 @@ public class BatchRepairDialog extends javax.swing.JDialog
 	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.png"));
 	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.png"));
 	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.png"));
+
+	/**
+	 * @return the _userCancelled
+	 */ public boolean isUserCancelled()
+	{
+		return getUserCancelled();
+	}
+
+	/**
+	 * @param userCancelled the _userCancelled to set
+	 */ public void setUserCancelled(boolean userCancelled)
+	{
+		this._userCancelled = userCancelled;
+	}
+
+	/**
+	 * @return the _userCancelled
+	 */ public boolean getUserCancelled()
+	{
+		return _userCancelled;
+	}
 
 	private class PlaylistsTableModel extends AbstractTableModel
 	{
