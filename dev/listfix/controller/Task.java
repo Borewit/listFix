@@ -21,9 +21,10 @@
 package listfix.controller;
 
 import java.util.ArrayList;
-import listfix.view.support.*;
-
 import java.util.List;
+
+import listfix.view.dialogs.ProgressPopup;
+import listfix.view.support.IProgressObserver;
 
 public abstract class Task extends Thread
 {

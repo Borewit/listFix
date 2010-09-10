@@ -95,7 +95,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 	private final JFileChooser jM3UChooser;
 	private final JFileChooser jMediaDirChooser;
 	private final JFileChooser jSaveFileChooser;
-	private final listfix.view.support.ProgressPopup updateMediaLibraryProgressDialog;
+	private final listfix.view.dialogs.ProgressPopup updateMediaLibraryProgressDialog;
 	private GUIDriver guiDriver = null;
 
 	/** Creates new form GUIScreen */
@@ -109,7 +109,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		jM3UChooser = new JFileChooser();
 		jMediaDirChooser = new JFileChooser();
 		jSaveFileChooser = new JFileChooser();
-		updateMediaLibraryProgressDialog = new listfix.view.support.ProgressPopup(this, "Updating Media Library", true, 450, 40, true);
+		updateMediaLibraryProgressDialog = new listfix.view.dialogs.ProgressPopup(this, "Updating Media Library", true, 450, 40, true);
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
 		jM3UChooser.setDialogTitle("Choose a Playlist...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
@@ -1405,6 +1405,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 						}
 					}
 				}
+
 				updateMediaLibraryProgressDialog.go();
 				AddMediaDirectoryTask thisTask = new AddMediaDirectoryTask(dir, guiDriver);
 				updateMediaLibraryProgressDialog.setBusyCursor(true);

@@ -178,6 +178,7 @@ public class DualProgressDialog extends javax.swing.JDialog
 	{
 		return _overallProgress;
 	}
+	
 	SwingWorker _worker;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel _bottomPanel;

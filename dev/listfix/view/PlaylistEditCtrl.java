@@ -78,7 +78,7 @@ import listfix.model.PlaylistEntry;
 import listfix.view.support.FontHelper;
 
 import listfix.view.support.IPlaylistModifiedListener;
-import listfix.view.support.ProgressPopup;
+import listfix.view.dialogs.ProgressPopup;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
 
@@ -1098,7 +1098,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			{
 				File destDir = destDirFileChooser.getSelectedFile();
 
-				final listfix.view.support.ProgressPopup copyFilesProgressDialog = new ProgressPopup(getParentFrame(), "Copying Files", true, 250, 25, false);
+				final listfix.view.dialogs.ProgressPopup copyFilesProgressDialog = new ProgressPopup(getParentFrame(), "Copying Files", true, 250, 25, false);
 				copyFilesProgressDialog.go();
 				CopyFilesTask thisTask = new CopyFilesTask(_playlist, destDir);
 				copyFilesProgressDialog.track(thisTask);

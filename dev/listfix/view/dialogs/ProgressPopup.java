@@ -18,12 +18,13 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view.support;
+package listfix.view.dialogs;
 
 import listfix.controller.Task;
 import java.awt.*;
 
 import javax.swing.*;
+import listfix.view.support.IProgressObserver;
 
 public class ProgressPopup extends JDialog implements IProgressObserver
 {
@@ -32,35 +33,16 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 	private JLabel label, iconLabel;
 	private JPanel _main;
 
-	protected JPanel getMainContainer()
-	{
-		return (_main);
-	}
-
 	@Override
 	public void setVisible(boolean flag)
 	{
-		if (flag)
-		{
-			startFocus();
-		}
-
 		super.setVisible(flag);
-	}
-
-	protected void startFocus()
-	{
 	}
 
 	public void setBusyCursor(boolean flag)
 	{
 		setCursor(Cursor.getPredefinedCursor(flag ? Cursor.WAIT_CURSOR
 			: Cursor.DEFAULT_CURSOR));
-	}
-
-	protected boolean canClose()
-	{
-		return (true);
 	}
 
 	public ProgressPopup(Frame parent, String title, boolean modal, int labelWidth, int labelHeight, boolean messageOnlyMode) //, boolean supportsCancel)
@@ -71,7 +53,7 @@ public class ProgressPopup extends JDialog implements IProgressObserver
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-		JPanel main = this.getMainContainer();
+		JPanel main = _main;
 
 		main.setLayout(new BorderLayout(5, 5));
 
