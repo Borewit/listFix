@@ -1665,8 +1665,13 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 		}
 
 		BatchRepairDialog repairDlg = new BatchRepairDialog(this, true, br);
-		repairDlg.setLocationRelativeTo(this);
-		repairDlg.setVisible(true);
+		if (!repairDlg.getUserCancelled())
+		{
+			repairDlg.setLocationRelativeTo(this);
+			repairDlg.setVisible(true);
+			
+			updatePlaylistDirectoryPanel();
+		}
 	}
 }//GEN-LAST:event_onMenuBatchRepairActionPerformed
 
