@@ -47,7 +47,7 @@ public class WriteIniFileTask extends listfix.controller.Task
 	{
 		try
 		{
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if (mediaDir != null)
 			{
 				buffer.append("[Media Directories]").append(br);
@@ -60,17 +60,13 @@ public class WriteIniFileTask extends listfix.controller.Task
 			if (options != null)
 			{
 				buffer.append("[Options]").append(br);
-				buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD="
-					+ Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(br);
-				buffer.append("MAX_PLAYLIST_HISTORY_SIZE="
-					+ options.getMaxPlaylistHistoryEntries() + br);
-				buffer.append("SAVE_RELATIVE_REFERENCES="
-					+ Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
-				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD="
-					+ Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
-				buffer.append("LOOK_AND_FEEL=" + options.getLookAndFeel()).append(br);
-				buffer.append("ALWAYS_USE_UNC_PATHS=" + options.getAlwaysUseUNCPaths()).append(br);
-				buffer.append("PLAYLISTS_DIRECTORY=" + options.getPlaylistsDirectory()).append(br);
+				buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(br);
+				buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(br);
+				buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
+				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
+				buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(br);
+				buffer.append("ALWAYS_USE_UNC_PATHS=").append(options.getAlwaysUseUNCPaths()).append(br);
+				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
 			}
 
 			if (mediaLibraryDirList != null)

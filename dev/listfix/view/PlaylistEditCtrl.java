@@ -65,9 +65,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
-import listfix.controller.tasks.CopyFilesTask;
 
 import listfix.io.AudioFileFilter;
+import listfix.io.PlaylistEntryFileCopier;
 import listfix.io.PlaylistFileChooserFilter;
 
 import listfix.model.BatchMatchItem;
@@ -78,7 +78,6 @@ import listfix.model.PlaylistEntry;
 import listfix.view.support.FontHelper;
 
 import listfix.view.support.IPlaylistModifiedListener;
-import listfix.view.dialogs.ProgressPopup;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
 
@@ -1096,12 +1095,28 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		{
 			try
 			{
-				File destDir = destDirFileChooser.getSelectedFile();
+				final File destDir = destDirFileChooser.getSelectedFile();
 
-				final listfix.view.dialogs.ProgressPopup copyFilesProgressDialog = new ProgressPopup(getParentFrame(), "Copying Files", true, 250, 25, false);
-				copyFilesProgressDialog.go();
-				CopyFilesTask thisTask = new CopyFilesTask(_playlist, destDir);
-				copyFilesProgressDialog.track(thisTask);
+				ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+				{
+					@Override
+					protected Void doInBackground()
+					{
+						PlaylistEntryFileCopier copier = new PlaylistEntryFileCopier(_playlist, destDir, this);
+						copier.copy();
+						return null;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Copying Files...");
+				pd.setVisible(true);
+
+				try
+				{
+					worker.get();
+				}
+				catch (CancellationException ex)
+				{
+				}
 			}
 			catch (Exception e)
 			{
