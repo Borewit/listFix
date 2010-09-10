@@ -198,6 +198,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu = new javax.swing.JMenu();
         _newPlaylistMenuItem = new javax.swing.JMenuItem();
         _loadMenuItem = new javax.swing.JMenuItem();
+        _closeMenuItem = new javax.swing.JMenuItem();
         _saveMenuItem = new javax.swing.JMenuItem();
         _saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
@@ -442,6 +443,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
             }
         });
         _fileMenu.add(_loadMenuItem);
+
+        _closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        _closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _closeMenuItem.setText("Close");
+        _closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _closeMenuItemActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(_closeMenuItem);
 
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
@@ -1849,6 +1860,11 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 	}
 }//GEN-LAST:event__extractPlaylistsMenuItemActionPerformed
 
+private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__closeMenuItemActionPerformed
+{//GEN-HEADEREND:event__closeMenuItemActionPerformed
+	this.tryCloseTab((ClosableTabCtrl) _uiTabs.getTabComponentAt(_uiTabs.getSelectedIndex()));
+}//GEN-LAST:event__closeMenuItemActionPerformed
+
 	private void updateMediaDirButtons()
 	{
 		if (_mediaLibraryList.getModel().getSize() == 0)
@@ -1925,6 +1941,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem _appOptionsMenuItem;
     private javax.swing.JMenuItem _batchRepairWinampMenuItem;
     private javax.swing.JMenuItem _clearHistoryMenuItem;
+    private javax.swing.JMenuItem _closeMenuItem;
     private javax.swing.JMenuItem _exitMenuItem;
     private javax.swing.JMenuItem _extractPlaylistsMenuItem;
     private javax.swing.JMenu _fileMenu;
