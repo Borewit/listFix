@@ -27,11 +27,16 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
+import listfix.view.support.ProgressWorker;
 
 public class ProgressDialog extends javax.swing.JDialog
 {
-    public ProgressDialog(java.awt.Frame parent, boolean modal, SwingWorker worker, String label)
+	public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label)
+	{
+		this(parent, modal, worker, label, false);
+	}
+
+    public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode)
     {
         super(parent, modal);
         initComponents();
@@ -43,7 +48,7 @@ public class ProgressDialog extends javax.swing.JDialog
 
         initWorker(worker);
 
-        jLabel1.setText(label);
+        _progressTitle.setText(label);
 
         addWindowListener(new WindowAdapter()
         {
@@ -54,19 +59,33 @@ public class ProgressDialog extends javax.swing.JDialog
             }
         });
 
+		if (textMode)
+		{
+			_progressBar.setVisible(false);
+			_progressMessage.setVisible(true);
+
+			sz.width = 500;
+			sz.height = 125;
+			setSize(sz);
+		}
+		else
+		{
+			_progressBar.setVisible(true);
+			_progressMessage.setVisible(false);
+		}
     }
 
     public JProgressBar getProgressBar()
     {
-        return jProgressBar1;
+        return _progressBar;
     }
 
     public JLabel getProgressLabel()
     {
-        return jLabel1;
+        return _progressTitle;
     }
     
-    private void initWorker(SwingWorker worker)
+    private void initWorker(ProgressWorker worker)
     {
         _worker = worker;
         PropertyChangeSupport pcs = _worker.getPropertyChangeSupport();
@@ -77,7 +96,16 @@ public class ProgressDialog extends javax.swing.JDialog
             public void propertyChange(PropertyChangeEvent evt)
             {
                 int progress = (Integer)evt.getNewValue();
-                jProgressBar1.setValue(progress);
+                _progressBar.setValue(progress);
+            }
+        });
+
+		// Update progress message when message changes
+		pcs.addPropertyChangeListener("message", new PropertyChangeListener()
+        {
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                _progressMessage.setText(_worker.getMessage());
             }
         });
         
@@ -95,7 +123,7 @@ public class ProgressDialog extends javax.swing.JDialog
         
     }
 
-    SwingWorker _worker;
+    ProgressWorker _worker;
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -108,8 +136,9 @@ public class ProgressDialog extends javax.swing.JDialog
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        _progressTitle = new javax.swing.JLabel();
+        _progressBar = new javax.swing.JProgressBar();
+        _progressMessage = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         _cancelButton = new javax.swing.JButton();
 
@@ -118,26 +147,39 @@ public class ProgressDialog extends javax.swing.JDialog
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
-        jLabel1.setText("jLabel1");
+        _progressTitle.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _progressTitle.setText("Title");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
-        jPanel1.add(jLabel1, gridBagConstraints);
+        jPanel1.add(_progressTitle, gridBagConstraints);
 
-        jProgressBar1.setMinimumSize(new java.awt.Dimension(250, 14));
+        _progressBar.setMinimumSize(new java.awt.Dimension(250, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
-        jPanel1.add(jProgressBar1, gridBagConstraints);
+        jPanel1.add(_progressBar, gridBagConstraints);
+
+        _progressMessage.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _progressMessage.setText("Message");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
+        jPanel1.add(_progressMessage, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        _cancelButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _cancelButton.setFont(new java.awt.Font("Verdana", 0, 9));
         _cancelButton.setText("Cancel");
         _cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,10 +201,11 @@ public class ProgressDialog extends javax.swing.JDialog
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _cancelButton;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JProgressBar _progressBar;
+    private javax.swing.JLabel _progressMessage;
+    private javax.swing.JLabel _progressTitle;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 
 }

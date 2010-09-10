@@ -59,8 +59,8 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
-import listfix.controller.tasks.AddMediaDirectoryTask;
-import listfix.controller.tasks.UpdateMediaLibraryTask;
+import listfix.controller.MediaLibraryOperator;
+import listfix.controller.tasks.RefreshMediaLibraryTask;
 
 import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
@@ -655,7 +655,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
 				pd.setVisible(true);
 
 				worker.get();
@@ -805,7 +805,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 				}
 			};
-			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading...");
+			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading...", false);
 			pd.setVisible(true);
 		}
 		else
@@ -1274,7 +1274,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 						return true;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
 				pd.setVisible(true);
 
 				try
@@ -1377,7 +1377,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 						mediaDir = new UNCFile(mediaDir.getUNCPath());
 					}
 				}
-				String dir = mediaDir.getPath();
+				final String dir = mediaDir.getPath();
 				if (guiDriver.getMediaDirs() != null && mediaDir != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
@@ -1406,13 +1406,27 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 					}
 				}
 
-				updateMediaLibraryProgressDialog.go();
-				AddMediaDirectoryTask thisTask = new AddMediaDirectoryTask(dir, guiDriver);
-				updateMediaLibraryProgressDialog.setBusyCursor(true);
-				updateMediaLibraryProgressDialog.track(thisTask);
-				updateMediaLibraryProgressDialog.setBusyCursor(false);
-				updateMediaLibraryProgressDialog.setEnabled(false);
-				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+				ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+				{
+					@Override
+					protected Void doInBackground()
+					{
+						MediaLibraryOperator operator = new MediaLibraryOperator(dir, guiDriver, this);
+						operator.addDirectory();
+						return null;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true);
+				pd.setVisible(true);
+
+				try
+				{
+					worker.get();
+					_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+				}
+				catch (CancellationException ex)
+				{
+				}
 			}
 			catch (Exception e)
 			{
@@ -1488,17 +1502,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 	private void _refreshMediaDirsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__refreshMediaDirsButtonActionPerformed
 	{//GEN-HEADEREND:event__refreshMediaDirsButtonActionPerformed
-		updateMediaLibraryProgressDialog.go();
-		UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
-		updateMediaLibraryProgressDialog.setBusyCursor(true);
-		updateMediaLibraryProgressDialog.track(thisTask);
-		updateMediaLibraryProgressDialog.setBusyCursor(false);
+		refreshMediaDirs();
 	}//GEN-LAST:event__refreshMediaDirsButtonActionPerformed
 
 	private void refreshMediaDirs()
 	{
 		updateMediaLibraryProgressDialog.go();
-		UpdateMediaLibraryTask thisTask = new UpdateMediaLibraryTask(guiDriver);
+		RefreshMediaLibraryTask thisTask = new RefreshMediaLibraryTask(guiDriver);
 		updateMediaLibraryProgressDialog.setBusyCursor(true);
 		updateMediaLibraryProgressDialog.track(thisTask);
 		updateMediaLibraryProgressDialog.setBusyCursor(false);
@@ -1726,7 +1736,7 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 					return null;
 				}
 			};
-			ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...");
+			ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
 			pd.setVisible(true);
 			worker.get();
 		}
@@ -1810,7 +1820,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 				}
 			}
 		};
-		ProgressDialog pd = new ProgressDialog(this, true, worker, "Extracting...");
+		ProgressDialog pd = new ProgressDialog(this, true, worker, "Extracting...", false);
 		pd.setVisible(true);
 	}
 }//GEN-LAST:event__extractPlaylistsMenuItemActionPerformed

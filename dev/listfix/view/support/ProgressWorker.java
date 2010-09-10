@@ -23,22 +23,46 @@ import javax.swing.SwingWorker;
 
 // implement doInBackground() for easiest use. Designed for the single progress
 // bar operation of ProgressDialog.
-public abstract class ProgressWorker<T,V> extends SwingWorker<T,V> implements IProgressObserver<V>
+public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements IProgressObserver<V>
 {
-    public void reportProgress(int progress)
-    {
-        setProgress(progress);
-    }
+	private String _message = "";
 
-    public void reportProgress(int progress, V state)
-    {
-        setProgress(progress);
-        if (state != null)
-            publish(state);
-    }
+	public void reportProgress(int progress)
+	{
+		setProgress(progress);
+	}
+
+	public void reportProgress(int progress, V state)
+	{
+		setProgress(progress);
+		if (state != null)
+		{
+			publish(state);
+		}
+	}
 
 	public boolean getCancelled()
 	{
 		return this.isCancelled();
+	}
+
+	public void setMessage(String message)
+	{
+		if (message.equals(_message))
+		{
+			return;
+		}
+
+		String oldMessage = _message;
+		_message = message;
+		if (getPropertyChangeSupport().hasListeners("message"))
+		{
+			firePropertyChange("message", oldMessage, _message);
+		}
+	}
+
+	public String getMessage()
+	{
+		return _message;
 	}
 }

@@ -28,14 +28,14 @@ package listfix.controller.tasks;
 import listfix.io.*;
 import listfix.controller.*;
 
-public class UpdateMediaLibraryTask extends listfix.controller.Task
+public class RefreshMediaLibraryTask extends listfix.controller.Task
 {
 	private GUIDriver guiDriver;
 	private String[] mediaDirs;
 	private String[] mediaLibraryDirectoryList;
 	private String[] mediaLibraryFileList;
 
-	public UpdateMediaLibraryTask(GUIDriver gd)
+	public RefreshMediaLibraryTask(GUIDriver gd)
 	{
 		guiDriver = gd;
 		mediaDirs = gd.getMediaDirs();
