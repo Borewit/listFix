@@ -27,31 +27,19 @@ import listfix.view.support.ProgressWorker;
 public class MediaLibraryOperator
 {
 	private GUIDriver guiDriver;
-	private String dir;
 	private String[] mediaDir;
 	private String[] mediaLibraryDirectoryList;
 	private String[] mediaLibraryFileList;
+	private String[] mediaDirs;
 	private ProgressWorker _observer;
 
-	public MediaLibraryOperator(String d, GUIDriver gd, ProgressWorker observer)
+	public MediaLibraryOperator(ProgressWorker observer)
 	{
-		dir = d;
-		guiDriver = gd;
 		_observer = observer;
+		guiDriver = GUIDriver.getInstance();
 	}
 
-	public String getAddedDirectory()
-	{
-		return dir;
-	}
-
-	public String[] getMediaDirectories()
-	{
-		return guiDriver.getMediaDirs();
-	}
-
-	/** Run the task. This method is the body of the thread for this task.  */
-	public void addDirectory()
+	public void addDirectory(String dir)
 	{
 		if (!guiDriver.hasAddedMediaDirectory())
 		{
@@ -92,6 +80,29 @@ public class MediaLibraryOperator
 				java.util.Arrays.sort(mediaLibraryFileList);
 				guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
 				(new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+			}
+		}
+	}
+
+	public void refresh()
+	{
+		mediaDirs = guiDriver.getMediaDirs();
+		if (mediaDirs != null)
+		{
+			DirectoryScanner ds = new DirectoryScanner();
+			ds.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), _observer);
+			if (!_observer.getCancelled())
+			{
+				_observer.setMessage("Finishing...");
+				mediaLibraryDirectoryList = ds.getDirectoryList();
+				mediaLibraryFileList = ds.getFileList();
+				ds.reset();
+				guiDriver.setMediaDirs(mediaDirs);
+				java.util.Arrays.sort(mediaLibraryDirectoryList);
+				guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
+				java.util.Arrays.sort(mediaLibraryFileList);
+				guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
+				(new FileWriter()).writeIni(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
 			}
 		}
 	}

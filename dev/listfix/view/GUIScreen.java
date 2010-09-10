@@ -60,7 +60,6 @@ import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-import listfix.controller.RefreshMediaLibraryTask;
 
 import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
@@ -1408,8 +1407,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 					@Override
 					protected Void doInBackground()
 					{
-						MediaLibraryOperator operator = new MediaLibraryOperator(dir, guiDriver, this);
-						operator.addDirectory();
+						MediaLibraryOperator operator = new MediaLibraryOperator(this);
+						operator.addDirectory(dir);
 						return null;
 					}
 				};
@@ -1515,8 +1514,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 			@Override
 			protected Void doInBackground()
 			{
-				RefreshMediaLibraryTask operator = new RefreshMediaLibraryTask(guiDriver, this);
-				operator.run();
+				MediaLibraryOperator operator = new MediaLibraryOperator(this);
+				operator.refresh();
 				return null;
 			}
 		};
