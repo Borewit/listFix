@@ -216,7 +216,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel2 = new javax.swing.JPanel();
+        _backupPanel = new javax.swing.JPanel();
         _chkBackup = new javax.swing.JCheckBox();
         _txtBackup = new javax.swing.JTextField();
         _btnCancel = new javax.swing.JButton();
@@ -255,7 +255,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
-        _btnSave.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _btnSave.setFont(new java.awt.Font("Verdana", 0, 9));
         _btnSave.setText("Save All Repairs");
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -271,11 +271,11 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout _backupPanelLayout = new javax.swing.GroupLayout(_backupPanel);
+        _backupPanel.setLayout(_backupPanelLayout);
+        _backupPanelLayout.setHorizontalGroup(
+            _backupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(_backupPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(_chkBackup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -288,11 +288,11 @@ public class BatchRepairDialog extends javax.swing.JDialog
                 .addComponent(_btnCancel)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        _backupPanelLayout.setVerticalGroup(
+            _backupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(_backupPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(_backupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(_chkBackup)
                     .addComponent(_txtBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(_btnCancel)
@@ -301,7 +301,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
+        getContentPane().add(_backupPanel, java.awt.BorderLayout.PAGE_END);
 
         jSplitPane1.setDividerLocation(184);
         jSplitPane1.setContinuousLayout(true);
@@ -537,6 +537,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		private List<BatchRepairItem> _items;
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel _backupPanel;
     private javax.swing.JButton _btnBrowse;
     private javax.swing.JButton _btnCancel;
     private javax.swing.JButton _btnSave;
@@ -548,7 +549,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
