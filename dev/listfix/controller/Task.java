@@ -23,7 +23,6 @@ package listfix.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import listfix.view.dialogs.ProgressPopup;
 import listfix.view.support.IProgressObserver;
 
 public abstract class Task extends Thread
@@ -68,11 +67,5 @@ public abstract class Task extends Thread
 	public int getProgress()
 	{
 		return progress;
-	}
-
-	public void setMessage(String message)
-	{
-        for (IProgressObserver e : observers)
-            ((ProgressPopup)e).setMessage(message);
 	}
 }

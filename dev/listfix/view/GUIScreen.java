@@ -60,7 +60,7 @@ import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-import listfix.controller.tasks.RefreshMediaLibraryTask;
+import listfix.controller.RefreshMediaLibraryTask;
 
 import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
@@ -95,7 +95,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 	private final JFileChooser jM3UChooser;
 	private final JFileChooser jMediaDirChooser;
 	private final JFileChooser jSaveFileChooser;
-	private final listfix.view.dialogs.ProgressPopup updateMediaLibraryProgressDialog;
 	private GUIDriver guiDriver = null;
 
 	/** Creates new form GUIScreen */
@@ -109,7 +108,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		jM3UChooser = new JFileChooser();
 		jMediaDirChooser = new JFileChooser();
 		jSaveFileChooser = new JFileChooser();
-		updateMediaLibraryProgressDialog = new listfix.view.dialogs.ProgressPopup(this, "Updating Media Library", true, 450, 40, true);
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
 		jM3UChooser.setDialogTitle("Choose a Playlist...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
@@ -673,7 +671,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 			}
 			catch (CancellationException exception)
 			{
-				
 			}
 			catch (Exception e)
 			{
@@ -1424,6 +1421,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 					worker.get();
 					_mediaLibraryList.setListData(guiDriver.getMediaDirs());
 				}
+				catch (InterruptedException ex)
+				{
+				}
+				catch (ExecutionException ex)
+				{
+				}
 				catch (CancellationException ex)
 				{
 				}
@@ -1507,11 +1510,33 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 	private void refreshMediaDirs()
 	{
-		updateMediaLibraryProgressDialog.go();
-		RefreshMediaLibraryTask thisTask = new RefreshMediaLibraryTask(guiDriver);
-		updateMediaLibraryProgressDialog.setBusyCursor(true);
-		updateMediaLibraryProgressDialog.track(thisTask);
-		updateMediaLibraryProgressDialog.setBusyCursor(false);
+		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+		{
+			@Override
+			protected Void doInBackground()
+			{
+				RefreshMediaLibraryTask operator = new RefreshMediaLibraryTask(guiDriver, this);
+				operator.run();
+				return null;
+			}
+		};
+		ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true);
+		pd.setVisible(true);
+
+		try
+		{
+			worker.get();
+			_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+		}
+		catch (InterruptedException ex)
+		{
+		}
+		catch (ExecutionException ex)
+		{
+		}
+		catch (CancellationException ex)
+		{
+		}
 	}
 
 	private void _appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__appOptionsMenuItemActionPerformed
@@ -1679,7 +1704,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 		{
 			repairDlg.setLocationRelativeTo(this);
 			repairDlg.setVisible(true);
-			
+
 			updatePlaylistDirectoryPanel();
 		}
 	}
@@ -1862,7 +1887,6 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 			SwingUtilities.updateComponentTreeUI(jM3UChooser);
 			SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
 			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
-			SwingUtilities.updateComponentTreeUI(updateMediaLibraryProgressDialog);
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
 			if (_tabPaneInsets != null)

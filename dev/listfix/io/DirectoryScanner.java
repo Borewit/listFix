@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import listfix.controller.Task;
 import listfix.view.support.ProgressWorker;
 
 /*
@@ -41,19 +40,6 @@ public class DirectoryScanner
 	private List<String> thisFileList;
 	private final String fs = System.getProperty("file.separator");
 	private int recursiveCount = 0;
-
-	public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, Task task)
-	{
-		this.reset();
-		for (int i = 0; i < baseDirs.length; i++)
-		{
-			if (new File(baseDirs[i]).exists())
-			{
-				thisDirList.add(baseDirs[i]);
-				this.recursiveDir(baseDirs[i], task);
-			}
-		}
-	}
 
 	public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
 	{
@@ -85,58 +71,6 @@ public class DirectoryScanner
 			|| input.endsWith(".aiff") || input.endsWith(".au")
 			|| input.endsWith(".wmv") || input.endsWith(".asf")
 			|| input.endsWith(".mpc"));
-	}
-
-	private void recursiveDir(String baseDir, Task task)
-	{
-		recursiveCount++;
-		task.setMessage("<html><body>Scanning Directory #" + recursiveCount + "<BR><BR>" + (baseDir.length() < 70 ? baseDir : baseDir.substring(0, 70) + "...") + "</body></html>");
-
-		File mediaDir = new File(baseDir);
-		String[] entryList = mediaDir.list();
-		List<String> fileList = new ArrayList<String>();
-		List<String> dirList = new ArrayList<String>();
-		StringBuilder s = new StringBuilder();
-
-		if (entryList != null)
-		{
-			for (int i = 0; i < entryList.length; i++)
-			{
-				s.append(baseDir);
-				if (!baseDir.endsWith(fs))
-				{
-					s.append(fs);
-				}
-				s.append(entryList[i]);
-				File tempFile = new File(s.toString());
-				if (tempFile.isDirectory())
-				{
-					dirList.add(s.toString());
-				}
-				else
-				{
-					if (endsWithIndexedExtension(s.toString()))
-					{
-						fileList.add(s.toString());
-					}
-				}
-				s.setLength(0);
-			}
-		}
-
-		Collections.sort(fileList);
-		Collections.sort(dirList);
-
-		for (String file : fileList)
-		{
-			thisFileList.add(file);
-		}
-
-		for (String dir : dirList)
-		{
-			thisDirList.add(dir);
-			recursiveDir(dir, task);
-		}
 	}
 
 	private void recursiveDir(String baseDir, ProgressWorker task)
