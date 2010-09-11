@@ -189,14 +189,6 @@ public class EditFilenameDialog extends javax.swing.JDialog
 		dispose();
     }//GEN-LAST:event_closeDialog
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[])
-	{
-		new EditFilenameDialog(new java.awt.Frame(), "Edit Filename", true, "").setVisible(true);
-	}
-
 	public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal, String filename)
 	{
 		EditFilenameDialog tempDBox = new EditFilenameDialog(parent, title, modal, filename);

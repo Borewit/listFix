@@ -412,14 +412,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		}
 	}//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[])
-	{
-		new AppOptionsDialog(new java.awt.Frame(), "listFix() options", true, null).setVisible(true);
-	}
-
 	public AppOptions showDialog()
 	{
 		this.setVisible(true);

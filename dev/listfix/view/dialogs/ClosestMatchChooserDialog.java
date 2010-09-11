@@ -232,14 +232,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 		}
     }//GEN-LAST:event_resultsTableMousePressed
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[])
-	{
-		new ClosestMatchChooserDialog(new javax.swing.JFrame(), null, true).setVisible(true);
-	}
-
 	private void initColumnSizesAndSorting(JTable table)
 	{
 		MatchedFileTableModel model = (MatchedFileTableModel) table.getModel();
