@@ -307,7 +307,7 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Play"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="_playlist == null ? false : _playlist.getFile().exists()" type="code"/>
+              <Connection code="_playlist != null" type="code"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>

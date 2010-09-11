@@ -116,7 +116,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnDelete.setEnabled(hasSelected);
 				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-				_btnPlay.setEnabled(hasSelected || (_playlist == null ? false : _playlist.getFile().exists() && !_playlist.isModified()));
+				_btnPlay.setEnabled(_playlist != null);
 				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
 				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 				if (_isSortedByFileIx)
@@ -214,7 +214,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnSave.setEnabled(list == null ? false : list.isModified());
 		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-		_btnPlay.setEnabled(hasSelected || (_playlist == null ? false : _playlist.getFile().exists() && !_playlist.isModified()));
+		_btnPlay.setEnabled(_playlist != null);
 		getTableModel().fireTableDataChanged();
 	}
 
@@ -699,7 +699,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{
 		try
 		{
-			int[] rows = _uiTable.getSelectedRows();
+			int[] rows;
+			if (_uiTable.getSelectedRowCount() > 0)
+			{
+				rows = _uiTable.getSelectedRows();
+			}
+			else
+			{
+				rows = new int[_uiTable.getRowCount()];
+				for (int r = 0; r < rows.length; r++)
+				{
+					rows[r] = r;
+				}
+			}
+
 			for (int r = 0; r < rows.length; r++)
 			{
 				rows[r] = _uiTable.convertRowIndexToModel(rows[r]);
@@ -749,9 +762,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
-        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
-        _miEditFilename.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miEditFilename.setFont(new java.awt.Font("Verdana", 0, 9));
         _miEditFilename.setText("Edit Filename");
         _miEditFilename.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -760,7 +773,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miEditFilename);
 
-        _miReplace.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miReplace.setFont(new java.awt.Font("Verdana", 0, 9));
         _miReplace.setText("Replace Selected Entry");
         _miReplace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -770,7 +783,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiPopupMenu.add(_miReplace);
         _uiPopupMenu.add(jSeparator3);
 
-        _miFindClosest.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miFindClosest.setFont(new java.awt.Font("Verdana", 0, 9));
         _miFindClosest.setText("Find Closest Matches");
         _miFindClosest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -779,7 +792,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miFindClosest);
 
-        _miBatchFindClosest.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miBatchFindClosest.setFont(new java.awt.Font("Verdana", 0, 9));
         _miBatchFindClosest.setText("Batch Find Closest Matches");
         _miBatchFindClosest.setToolTipText("Finds best closest match for all missing files in list");
         _miBatchFindClosest.addActionListener(new java.awt.event.ActionListener() {
@@ -790,7 +803,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiPopupMenu.add(_miBatchFindClosest);
         _uiPopupMenu.add(jSeparator4);
 
-        _miRemoveDups.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miRemoveDups.setFont(new java.awt.Font("Verdana", 0, 9));
         _miRemoveDups.setText("Remove Duplicates");
         _miRemoveDups.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -799,7 +812,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miRemoveDups);
 
-        _miRemoveMissing.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miRemoveMissing.setFont(new java.awt.Font("Verdana", 0, 9));
         _miRemoveMissing.setText("Remove Missing");
         _miRemoveMissing.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -808,7 +821,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiPopupMenu.add(_miRemoveMissing);
 
-        _miCopyFiles.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _miCopyFiles.setFont(new java.awt.Font("Verdana", 0, 9));
         _miCopyFiles.setText("Copy Files");
         _miCopyFiles.setToolTipText("");
         _miCopyFiles.addActionListener(new java.awt.event.ActionListener() {
@@ -904,7 +917,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnUp.setEnabled(false);
         _btnUp.setFocusable(false);
         _btnUp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnUp.setMargin(new java.awt.Insets(0, 0, 0, 0));
         _btnUp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -918,7 +930,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnDown.setEnabled(false);
         _btnDown.setFocusable(false);
         _btnDown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnDown.setMargin(new java.awt.Insets(0, 0, 0, 0));
         _btnDown.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -946,7 +957,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
         _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
         _btnPlay.setToolTipText("Play");
-        _btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+        _btnPlay.setEnabled(_playlist != null);
         _btnPlay.setFocusable(false);
         _btnPlay.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnPlay.setMaximumSize(new java.awt.Dimension(31, 31));
@@ -1073,14 +1084,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     private void onBtnPlayActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnPlayActionPerformed
     {//GEN-HEADEREND:event_onBtnPlayActionPerformed
-		if (_uiTable.getSelectedRow() < 0)
-		{
-			_playlist.play();
-		}
-		else
-		{
-			playSelectedEntries();
-		}
+		playSelectedEntries();
     }//GEN-LAST:event_onBtnPlayActionPerformed
 
     private void onMenuCopyFiles(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuCopyFiles
@@ -1453,7 +1457,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnLocate.setEnabled(hasPlaylist);
 		_btnReorder.setEnabled(hasPlaylist);
 		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
-		_btnPlay.setEnabled(_playlist == null ? false : _playlist.getFile().exists() && !_playlist.isModified());
+		_btnPlay.setEnabled(hasPlaylist);
 		_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 
 		if (_playlist != null && !_playlist.isEmpty())

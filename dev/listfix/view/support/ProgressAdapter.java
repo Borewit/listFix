@@ -112,7 +112,7 @@ public class ProgressAdapter<T> implements IProgressObserver<T>
 
 	public boolean getCancelled()
 	{
-		return _observer.getCancelled();
+		return _observer != null ? _observer.getCancelled() : false;
 	}
 
 }

@@ -827,15 +827,19 @@ public class Playlist
 		// change original _entries
 		setEntries(_entries);
 
-		// set entries unfixed
-		for(PlaylistEntry entry : _entries)
+		// set entries unfixed if we're being watched...
+		// (otherwise writing out a temp file for playback, at least right now)
+		if (observer != null)
 		{
-			entry.setFixed(false);
-		}
+			for(PlaylistEntry entry : _entries)
+			{
+				entry.setFixed(false);
+			}
 
-		_isModified = false;
-		_isNew = false;
-		firePlaylistModified();
+			_isModified = false;
+			_isNew = false;
+			firePlaylistModified();
+		}
 	}
 
 	// TODO: Make cancellable
