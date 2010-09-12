@@ -98,230 +98,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	public PlaylistEditCtrl()
 	{
 		initComponents();
-
-		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
-		_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
-
-		_uiTable.setShowHorizontalLines(false);
-		_uiTable.setShowVerticalLines(false);
-		_uiTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
-
-		// resize columns
-		TableColumnModel cm = _uiTable.getColumnModel();
-		cm.getColumn(0).setPreferredWidth(20);
-		cm.getColumn(1).setPreferredWidth(20);
-		cm.getColumn(2).setPreferredWidth(100);
-		cm.getColumn(3).setPreferredWidth(100);
-		_uiTable.setFillerColumnWidth(_uiTableScrollPane);
-
-		// add selection listener
-		_uiTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-		{
-			public void valueChanged(ListSelectionEvent e)
-			{
-				if (e.getValueIsAdjusting())
-				{
-					return;
-				}
-
-				boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-				_btnDelete.setEnabled(hasSelected);
-				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
-				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-				_btnPlay.setEnabled(_playlist != null);
-				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
-				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
-				if (_isSortedByFileIx)
-				{
-					refreshAddTooltip(hasSelected);
-				}
-			}
-		});
-
-		// add sort listener
-		RowSorter sorter = _uiTable.getRowSorter();
-		sorter.addRowSorterListener(new RowSorterListener()
-		{
-			public void sorterChanged(RowSorterEvent e)
-			{
-				RowSorter sorter = e.getSource();
-				List<RowSorter.SortKey> keys = sorter.getSortKeys();
-				if ((keys.size() < 1) || (keys.get(0).getColumn() != 0) || (keys.get(0).getSortOrder() != SortOrder.ASCENDING))
-				{
-					// # is not the first sort column - disable move up / move down
-					if (_isSortedByFileIx)
-					{
-						_isSortedByFileIx = false;
-						_btnUp.setEnabled(false);
-						_btnDown.setEnabled(false);
-						_btnUp.setToolTipText("Move Up (sort by # to enable)");
-						_btnDown.setToolTipText("Move Down (sort by # to enable)");
-						refreshAddTooltip(false);
-					}
-				}
-				else
-				{
-					if (!_isSortedByFileIx)
-					{
-						_isSortedByFileIx = true;
-						boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-						_btnUp.setEnabled(hasSelected);
-						_btnDown.setEnabled(hasSelected);
-						_btnUp.setToolTipText("Move Up");
-						_btnDown.setToolTipText("Move Down");
-						refreshAddTooltip(hasSelected);
-					}
-				}
-			}
-		});
-
-		// set sort to #
-		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
-		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-		sorter.setSortKeys(keys);
-
-		// add popup menu to list
-		_uiTable.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mousePressed(MouseEvent e)
-			{
-				showMenu(e);
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e)
-			{
-				showMenu(e);
-			}
-
-			private void showMenu(MouseEvent e)
-			{
-				if (_playlist != null && e.isPopupTrigger())
-				{
-					Point p = e.getPoint();
-					int rowIx = _uiTable.rowAtPoint(p);
-					boolean isOverItem = rowIx >= 0;
-					if (isOverItem)
-					{
-						_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
-					}
-
-					_miEditFilename.setEnabled(isOverItem);
-					_miFindClosest.setEnabled(isOverItem);
-					_miReplace.setEnabled(isOverItem);
-
-					_uiPopupMenu.show(e.getComponent(), p.x, p.y);
-				}
-			}
-		});
-
-		_uiTable.setTransferHandler(new TransferHandler()
-		{
-			@Override
-			public boolean canImport(TransferHandler.TransferSupport info)
-			{				
-				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
-				{
-					return false;
-				}
-
-				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-				if (dl.getRow() == -1)
-				{
-					return false;
-				}
-				return true;
-			}
-
-			private void displayDropLocation(final String string)
-			{
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						JOptionPane.showMessageDialog(null, string);
-					}
-				});
-			}
-
-			public boolean importData(TransferHandler.TransferSupport info)
-			{
-				if (!info.isDrop())
-				{
-					return false;
-				}
-
-				// Check for custom PlaylistEntry flavor
-				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
-				{
-					displayDropLocation("list doesn't accept a drop of this type.");
-					return false;
-				}
-
-				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-
-				// Get the Playlist that is being dropped.
-				Transferable t = info.getTransferable();
-				try
-				{
-					PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
-					List<PlaylistEntry> entries = data.getList();
-					int removedAt = 0;
-					int insertAtUpdated = dl.getRow();
-					int i = 0;
-					for (PlaylistEntry entry : entries)
-					{
-						// remove them all, we'll re-add them in bulk...
-						removedAt = _playlist.remove(entry);
-						
-						// Was the thing we just removed above where we're inserting?
-						if (removedAt < insertAtUpdated)
-						{
-							insertAtUpdated--;
-						}
-						i++;
-					}
-
-					_playlist.addAll(insertAtUpdated, entries);
-
-					return true;
-				}
-				catch (Exception e)
-				{
-					return false;
-				}
-			}
-
-			@Override
-			public int getSourceActions(JComponent c)
-			{
-				return COPY_OR_MOVE;
-			}
-
-			@Override
-			protected Transferable createTransferable(JComponent c)
-			{
-				JTable table = (JTable) c;
-				int[] rowIndexes = table.getSelectedRows();
-				for (int i = 0; i < rowIndexes.length; i++)
-				{
-					rowIndexes[i] = _uiTable.convertRowIndexToModel(rowIndexes[i]);
-				}
-				try
-				{
-					return new PlaylistEntryList(_playlist.getSelectedEntries(rowIndexes));
-				}
-				catch (IOException ex)
-				{
-					Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
-					return null;
-				}
-			}
-		});
-
-		_uiTable.setDropMode(DropMode.ON_OR_INSERT);
-
+		configurePlaylistTable();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 
@@ -1638,6 +1415,228 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				return super.getToolTipText(event);
 			}
 		};
+	}
+
+	private void configurePlaylistTable()
+	{
+		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
+		_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
+
+		_uiTable.setShowHorizontalLines(false);
+		_uiTable.setShowVerticalLines(false);
+		_uiTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
+
+		// resize columns
+		TableColumnModel cm = _uiTable.getColumnModel();
+		cm.getColumn(0).setPreferredWidth(20);
+		cm.getColumn(1).setPreferredWidth(20);
+		cm.getColumn(2).setPreferredWidth(100);
+		cm.getColumn(3).setPreferredWidth(100);
+		_uiTable.setFillerColumnWidth(_uiTableScrollPane);
+
+		// add selection listener
+		_uiTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		{
+			public void valueChanged(ListSelectionEvent e)
+			{
+				if (e.getValueIsAdjusting())
+				{
+					return;
+				}
+
+				boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
+				_btnDelete.setEnabled(hasSelected);
+				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
+				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+				_btnPlay.setEnabled(_playlist != null);
+				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
+				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+				if (_isSortedByFileIx)
+				{
+					refreshAddTooltip(hasSelected);
+				}
+			}
+		});
+
+		// add sort listener
+		RowSorter sorter = _uiTable.getRowSorter();
+		sorter.addRowSorterListener(new RowSorterListener()
+		{
+			public void sorterChanged(RowSorterEvent e)
+			{
+				RowSorter sorter = e.getSource();
+				List<RowSorter.SortKey> keys = sorter.getSortKeys();
+				if ((keys.size() < 1) || (keys.get(0).getColumn() != 0) || (keys.get(0).getSortOrder() != SortOrder.ASCENDING))
+				{
+					// # is not the first sort column - disable move up / move down
+					if (_isSortedByFileIx)
+					{
+						_isSortedByFileIx = false;
+						_btnUp.setEnabled(false);
+						_btnDown.setEnabled(false);
+						_btnUp.setToolTipText("Move Up (sort by # to enable)");
+						_btnDown.setToolTipText("Move Down (sort by # to enable)");
+						refreshAddTooltip(false);
+					}
+				}
+				else
+				{
+					if (!_isSortedByFileIx)
+					{
+						_isSortedByFileIx = true;
+						boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
+						_btnUp.setEnabled(hasSelected);
+						_btnDown.setEnabled(hasSelected);
+						_btnUp.setToolTipText("Move Up");
+						_btnDown.setToolTipText("Move Down");
+						refreshAddTooltip(hasSelected);
+					}
+				}
+			}
+		});
+
+		// set sort to #
+		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+		sorter.setSortKeys(keys);
+
+		// add popup menu to list
+		_uiTable.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				showMenu(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				showMenu(e);
+			}
+
+			private void showMenu(MouseEvent e)
+			{
+				if (_playlist != null && e.isPopupTrigger())
+				{
+					Point p = e.getPoint();
+					int rowIx = _uiTable.rowAtPoint(p);
+					boolean isOverItem = rowIx >= 0;
+					if (isOverItem)
+					{
+						_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
+					}
+
+					_miEditFilename.setEnabled(isOverItem);
+					_miFindClosest.setEnabled(isOverItem);
+					_miReplace.setEnabled(isOverItem);
+
+					_uiPopupMenu.show(e.getComponent(), p.x, p.y);
+				}
+			}
+		});
+
+		_uiTable.setTransferHandler(new TransferHandler()
+		{
+			@Override
+			public boolean canImport(TransferHandler.TransferSupport info)
+			{
+				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
+				{
+					return false;
+				}
+
+				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+				if (dl.getRow() == -1)
+				{
+					return false;
+				}
+
+				return _isSortedByFileIx;
+			}
+
+			public boolean importData(TransferHandler.TransferSupport info)
+			{
+				if (!info.isDrop())
+				{
+					return false;
+				}
+
+				// Check for custom PlaylistEntry flavor
+				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
+				{
+					return false;
+				}
+
+				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+
+				// Get the Playlist that is being dropped.
+				Transferable t = info.getTransferable();
+				try
+				{
+					PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
+					List<PlaylistEntry> entries = data.getList();
+					int removedAt = 0;
+					int insertAtUpdated = dl.getRow();
+					int i = 0;
+					for (PlaylistEntry entry : entries)
+					{
+						// remove them all, we'll re-add them in bulk...
+						removedAt = _playlist.remove(entry);
+
+						// Was the thing we just removed above where we're inserting?
+						if (removedAt < insertAtUpdated)
+						{
+							insertAtUpdated--;
+						}
+						i++;
+					}
+
+					_playlist.addAll(insertAtUpdated, entries);
+
+					return true;
+				}
+				catch (Exception e)
+				{
+					return false;
+				}
+			}
+
+			@Override
+			public int getSourceActions(JComponent c)
+			{
+				return COPY_OR_MOVE;
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c)
+			{
+				if (_isSortedByFileIx)
+				{
+					JTable table = (JTable) c;
+					int[] rowIndexes = table.getSelectedRows();
+					for (int i = 0; i < rowIndexes.length; i++)
+					{
+						rowIndexes[i] = _uiTable.convertRowIndexToModel(rowIndexes[i]);
+					}
+					try
+					{
+						return new PlaylistEntryList(_playlist.getSelectedEntries(rowIndexes));
+					}
+					catch (IOException ex)
+					{
+						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+						return null;
+					}
+				}
+				else
+				{
+					return null;
+				}
+			}
+		});
+
+		_uiTable.setDropMode(DropMode.ON_OR_INSERT);
 	}
 
 	private class PlaylistTableModel extends AbstractTableModel

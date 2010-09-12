@@ -55,10 +55,6 @@ public class PlaylistEntryList implements Transferable
 		return this;
 	}
 
-	public PlaylistEntryList()
-	{
-	}
-
 	public PlaylistEntryList(List<PlaylistEntry> list)
 	{
 		_list = list;

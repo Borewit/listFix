@@ -102,7 +102,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
 		if (!dpw.getCancelled())
 		{
-			InitPlaylistsList();
+			initPlaylistsList();
 
 			for (BatchRepairItem item : batch.getItems())
 			{
@@ -135,7 +135,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		}
 	};
 
-	private void InitPlaylistsList()
+	private void initPlaylistsList()
 	{
 		_uiLists.setFont(new Font("Verdana", 0, 9));
 		_uiLists.initFillColumnForScrollPane(_uiScrollLists);
@@ -159,7 +159,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 				{
 					return;
 				}
-				UpdateSelectedPlaylist();
+				updateSelectedPlaylist();
 			}
 		});
 
@@ -190,7 +190,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		}
 	}
 
-	private void UpdateSelectedPlaylist()
+	private void updateSelectedPlaylist()
 	{
 		int selIx = _uiLists.getSelectedRow();
 		if (selIx >= 0)
