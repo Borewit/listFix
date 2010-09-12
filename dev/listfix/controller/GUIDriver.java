@@ -281,4 +281,44 @@ public class GUIDriver
 			}
 		}
 	}
+
+	public void switchMediaLibraryToMappedDrives()
+	{
+		if (mediaDir != null)
+		{
+			for (int i = 0; i < mediaDir.length; i++)
+			{
+				UNCFile file = new UNCFile(mediaDir[i]);
+				if (file.onNetworkDrive())
+				{
+					mediaDir[i] = file.getDrivePath();
+				}
+			}
+		}
+
+		if (mediaLibraryDirectoryList != null)
+		{
+			for (int i = 0; i < mediaLibraryDirectoryList.length; i++)
+			{
+				UNCFile file = new UNCFile(mediaLibraryDirectoryList[i]);
+				if (file.onNetworkDrive())
+				{
+					mediaLibraryDirectoryList[i] = file.getDrivePath();
+				}
+			}
+		}
+
+		if (mediaLibraryFileList != null)
+		{
+			for (int i = 0; i < mediaLibraryFileList.length; i++)
+			{
+				UNCFile file = new UNCFile(mediaLibraryFileList[i]);
+				if (file.onNetworkDrive())
+				{
+					mediaLibraryFileList[i] = file.getDrivePath();
+				}
+
+			}
+		}
+	}
 }

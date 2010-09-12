@@ -1564,6 +1564,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				guiDriver.switchMediaLibraryToUNCPaths();
 				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
 			}
+			else
+			{
+				guiDriver.switchMediaLibraryToMappedDrives();
+				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+			}
 			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
 			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
 			{
