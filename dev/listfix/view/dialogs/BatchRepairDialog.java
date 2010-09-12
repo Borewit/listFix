@@ -198,6 +198,9 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			selIx = _uiLists.convertRowIndexToModel(selIx);
 			BatchRepairItem item = _batch.getItem(selIx);
 			playlistEditCtrl1.setPlaylist(item.getPlaylist());
+			
+			// Keep the table anchored left...
+			_uiLists.getSelectionModel().setAnchorSelectionIndex(0);
 		}
 		else
 		{
