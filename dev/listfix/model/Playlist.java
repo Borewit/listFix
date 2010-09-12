@@ -74,7 +74,10 @@ public class Playlist implements Transferable
 	@Override
 	public DataFlavor[] getTransferDataFlavors()
 	{
-		return new DataFlavor[] { new DataFlavor(Playlist.class, "Playlist") };
+		return new DataFlavor[]
+			{
+				new DataFlavor(Playlist.class, "Playlist")
+			};
 	}
 
 	@Override
@@ -258,7 +261,7 @@ public class Playlist implements Transferable
 		return _entries.size();
 	}
 
-	public boolean playlistModified()
+	private boolean playlistModified()
 	{
 		boolean result = false;
 		if (_originalEntries.size() != _entries.size())
@@ -302,11 +305,6 @@ public class Playlist implements Transferable
 
 	private void refreshStatus()
 	{
-		if (_originalEntries.size() != _entries.size())
-		{
-			_isModified = true;
-		}
-
 		_urlCount = 0;
 		_missingCount = 0;
 		_fixedCount = 0;
@@ -327,34 +325,9 @@ public class Playlist implements Transferable
 			{
 				_fixedCount++;
 			}
-
-			if (!isModified())
-			{
-				PlaylistEntry origEntry = _originalEntries.get(ix);
-				boolean origIsUrl = origEntry.isURL();
-				if (entryIsUrl == origIsUrl)
-				{
-					if (!entryIsUrl)
-					{
-						if (!entry.getFile().getPath().equalsIgnoreCase(origEntry.getFile().getPath()))
-						{
-							_isModified = true;
-						}
-					}
-					else
-					{
-						if (!entry.getURI().equals(origEntry.getURI()))
-						{
-							_isModified = true;
-						}
-					}
-				}
-				else
-				{
-					_isModified = true;
-				}
-			}
 		}
+
+		_isModified = playlistModified();
 	}
 
 	public int getFixedCount()
@@ -412,7 +385,7 @@ public class Playlist implements Transferable
 	{
 		this._utfFormat = utfFormat;
 	}
-	
+
 	public boolean isNew()
 	{
 		return _isNew;
@@ -745,22 +718,22 @@ public class Playlist implements Transferable
 							rc = 0;
 							break;
 						}
-						rc =  1;
+						rc = 1;
 						break;
 					}
 					else if (!lhs.isFound())
 					{
 						if (rhs.isURL())
 						{
-							rc =  -1;
+							rc = -1;
 							break;
 						}
 						else if (!rhs.isFound())
 						{
-							rc =  0;
+							rc = 0;
 							break;
 						}
-						rc =  1;
+						rc = 1;
 						break;
 					}
 					else if (lhs.isFixed())
@@ -778,7 +751,7 @@ public class Playlist implements Transferable
 						rc = 1;
 						break;
 					}
-					rc =  -1;
+					rc = -1;
 					break;
 			}
 
@@ -871,7 +844,7 @@ public class Playlist implements Transferable
 		// (otherwise writing out a temp file for playback, at least right now)
 		if (observer != null)
 		{
-			for(PlaylistEntry entry : _entries)
+			for (PlaylistEntry entry : _entries)
 			{
 				entry.setFixed(false);
 			}
