@@ -98,7 +98,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	public PlaylistEditCtrl()
 	{
 		initComponents();
-		configurePlaylistTable();
+		initPlaylistTable();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 
@@ -334,16 +334,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}
 
-	private void editFilename()
+	private void editFilenames()
 	{
-		int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		PlaylistEntry entry = _playlist.get(rowIx);
-		EditFilenameResult response = EditFilenameDialog.showDialog(getParentFrame(), "Edit Filename", true, entry.getFileName());
-		if (response.getResultCode() == EditFilenameDialog.OK)
+		int[] rows = _uiTable.getSelectedRows();
+		for (int row : rows)
 		{
-			_playlist.changeEntryFileName(rowIx, response.getFileName());
-			//entry.setFileName(response.getFileName());
-			getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+			int rowIx = _uiTable.convertRowIndexToModel(row);
+			PlaylistEntry entry = _playlist.get(rowIx);
+			EditFilenameResult response = EditFilenameDialog.showDialog(getParentFrame(), "Edit Filename", true, entry.getFileName());
+			if (response.getResultCode() == EditFilenameDialog.OK)
+			{
+				_playlist.changeEntryFileName(rowIx, response.getFileName());
+				//entry.setFileName(response.getFileName());
+				getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+			}
 		}
 	}
 
@@ -436,37 +440,43 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}
 
-	private void replaceSelectedEntry()
+	private void replaceSelectedEntries()
 	{
-		int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		PlaylistEntry entry = _playlist.get(rowIx);
-
-		JFileChooser chooser = new JFileChooser();
-		FontHelper.recursiveSetFont(chooser.getComponents());
-		chooser.addChoosableFileFilter(new AudioFileFilter());
-		if (GUIDriver.getInstance().hasAddedMediaDirectory())
+		int[] rows = _uiTable.getSelectedRows();
+		for (int row : rows)
 		{
-			chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
-		}
+			int rowIx = _uiTable.convertRowIndexToModel(row);
+			PlaylistEntry entry = _playlist.get(rowIx);
 
-		if (!entry.isURL())
-		{
-			chooser.setSelectedFile(entry.getAbsoluteFile());
-		}
-		if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
-		{
-			File file = chooser.getSelectedFile();
-
-			// make sure the replacement file is not a playlist
-			if (Playlist.isPlaylist(file))
+			JFileChooser chooser = new JFileChooser();
+			FontHelper.recursiveSetFont(chooser.getComponents());
+			chooser.addChoosableFileFilter(new AudioFileFilter());
+			chooser.setDialogTitle("Replacing '" + entry.getFileName() + "'");
+			if (GUIDriver.getInstance().hasAddedMediaDirectory())
 			{
-				JOptionPane.showMessageDialog(getParentFrame(), "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
-				return;
+				chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
 			}
-			PlaylistEntry newEntry = new PlaylistEntry(file, null);
-			_playlist.replace(rowIx, newEntry);
-			getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+
+			if (!entry.isURL())
+			{
+				chooser.setSelectedFile(entry.getAbsoluteFile());
+			}
+			if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
+			{
+				File file = chooser.getSelectedFile();
+
+				// make sure the replacement file is not a playlist
+				if (Playlist.isPlaylist(file))
+				{
+					JOptionPane.showMessageDialog(getParentFrame(), "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				PlaylistEntry newEntry = new PlaylistEntry(file, null);
+				_playlist.replace(rowIx, newEntry);
+				getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+			}
 		}
+
 	}
 
 	private void removeDuplicates()
@@ -947,7 +957,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     private void onMenuEditFilenameActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuEditFilenameActionPerformed
     {//GEN-HEADEREND:event_onMenuEditFilenameActionPerformed
-		editFilename();
+		editFilenames();
     }//GEN-LAST:event_onMenuEditFilenameActionPerformed
 
     private void onMenuFindClosestActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuFindClosestActionPerformed
@@ -957,7 +967,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     private void onMenuReplaceSelectedEntry(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuReplaceSelectedEntry
     {//GEN-HEADEREND:event_onMenuReplaceSelectedEntry
-		replaceSelectedEntry();
+		replaceSelectedEntries();
     }//GEN-LAST:event_onMenuReplaceSelectedEntry
 
     private void onMenuRemoveDuplicatesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuRemoveDuplicatesActionPerformed
@@ -1417,7 +1427,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		};
 	}
 
-	private void configurePlaylistTable()
+	private void initPlaylistTable()
 	{
 		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
 		_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
@@ -1437,6 +1447,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		// add selection listener
 		_uiTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
+			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
 				if (e.getValueIsAdjusting())
@@ -1500,7 +1511,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 		sorter.setSortKeys(keys);
 
-		// add popup menu to list
+		// add popup menu to list, handle's right click actions.
 		_uiTable.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -1522,7 +1533,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					Point p = e.getPoint();
 					int rowIx = _uiTable.rowAtPoint(p);
 					boolean isOverItem = rowIx >= 0;
-					if (isOverItem)
+					if (isOverItem && (e.getModifiers() & ActionEvent.CTRL_MASK) > 0)
+					{
+						_uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
+					}
+					else if((isOverItem && _uiTable.getSelectedRowCount() == 0) ||
+						(!_uiTable.isRowSelected(rowIx)))
 					{
 						_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
 					}
@@ -1531,11 +1547,23 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					_miFindClosest.setEnabled(isOverItem);
 					_miReplace.setEnabled(isOverItem);
 
+					if (_uiTable.getSelectedRowCount() > 1)
+					{
+						_miReplace.setText("Replace Selected Entries");
+						_miEditFilename.setText("Edit Filenames");
+					}
+					else
+					{
+						_miEditFilename.setText("Edit Filename");
+						_miReplace.setText("Replace Selected Entry");
+					}
+
 					_uiPopupMenu.show(e.getComponent(), p.x, p.y);
 				}
 			}
 		});
 
+		// drag-n-drop support
 		_uiTable.setTransferHandler(new TransferHandler()
 		{
 			@Override
@@ -1562,7 +1590,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					return false;
 				}
 
-				// Check for custom PlaylistEntry flavor
+				// Check for custom PlaylistEntryList flavor
 				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
 				{
 					return false;
@@ -1605,7 +1633,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			@Override
 			public int getSourceActions(JComponent c)
 			{
-				return COPY_OR_MOVE;
+				return MOVE;
 			}
 
 			@Override
@@ -1636,7 +1664,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 		});
 
-		_uiTable.setDropMode(DropMode.ON_OR_INSERT);
+		_uiTable.setDropMode(DropMode.INSERT);
 	}
 
 	private class PlaylistTableModel extends AbstractTableModel

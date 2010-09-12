@@ -503,7 +503,6 @@ public class Playlist
 	public void changeEntryFileName(int ix, String newName)
 	{
 		_entries.get(ix).setFileName(newName);
-		_entries.get(ix).markFixedIfFound();
 		firePlaylistModified();
 	}
 
