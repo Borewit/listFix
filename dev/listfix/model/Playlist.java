@@ -20,9 +20,6 @@
 
 package listfix.model;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import listfix.model.enums.PlaylistType;
 
 import java.io.BufferedOutputStream;
@@ -54,7 +51,7 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
-public class Playlist implements Transferable
+public class Playlist
 {
 	private final static String FS = System.getProperty("file.separator");
 	private final static String BR = System.getProperty("line.separator");
@@ -70,27 +67,6 @@ public class Playlist implements Transferable
 	private int _missingCount;
 	private boolean _isModified;
 	private boolean _isNew;
-
-	@Override
-	public DataFlavor[] getTransferDataFlavors()
-	{
-		return new DataFlavor[]
-			{
-				new DataFlavor(Playlist.class, "Playlist")
-			};
-	}
-
-	@Override
-	public boolean isDataFlavorSupported(DataFlavor flavor)
-	{
-		return flavor.equals(new DataFlavor(Playlist.class, "Playlist"));
-	}
-
-	@Override
-	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException
-	{
-		return this;
-	}
 
 	public enum SortIx
 	{
@@ -180,9 +156,14 @@ public class Playlist implements Transferable
 		return new Playlist(tempList);
 	}
 
-	public List<PlaylistEntry> getEntries()
+	public List<PlaylistEntry> getSelectedEntries(int[] rows) throws IOException
 	{
-		return _entries;
+		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+		for (int i : rows)
+		{
+			tempList.add(_entries.get(i));
+		}
+		return tempList;
 	}
 
 	/**

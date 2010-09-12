@@ -20,19 +20,11 @@
 package listfix.view;
 
 import java.awt.Component;
-import listfix.view.dialogs.ReorderPlaylistDialog;
-import listfix.view.dialogs.EditFilenameDialog;
-import listfix.view.dialogs.BatchClosestMatchResultsDialog;
-import listfix.view.dialogs.ProgressDialog;
-import listfix.view.dialogs.BatchRepairDialog;
-import listfix.view.dialogs.ClosestMatchChooserDialog;
-
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -49,8 +41,8 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DropMode;
 
+import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -67,7 +59,6 @@ import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -83,14 +74,26 @@ import listfix.model.EditFilenameResult;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
-import listfix.view.support.FontHelper;
+import listfix.model.PlaylistEntryList;
 
+import listfix.view.dialogs.ReorderPlaylistDialog;
+import listfix.view.dialogs.EditFilenameDialog;
+import listfix.view.dialogs.BatchClosestMatchResultsDialog;
+import listfix.view.dialogs.ProgressDialog;
+import listfix.view.dialogs.BatchRepairDialog;
+import listfix.view.dialogs.ClosestMatchChooserDialog;
+
+import listfix.view.support.FontHelper;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
 
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
+	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
+	private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
+	int currentlySelectedRow = 0;
+
 	public PlaylistEditCtrl()
 	{
 		initComponents();
@@ -214,10 +217,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 		_uiTable.setTransferHandler(new TransferHandler()
 		{
+			@Override
 			public boolean canImport(TransferHandler.TransferSupport info)
-			{
-				// we only import Strings
-				if (!info.isDataFlavorSupported(new DataFlavor(Playlist.class, "Playlist")))
+			{				
+				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
 				{
 					return false;
 				}
@@ -249,7 +252,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 
 				// Check for custom PlaylistEntry flavor
-				if (!info.isDataFlavorSupported(new DataFlavor(Playlist.class, "Playlist")))
+				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
 				{
 					displayDropLocation("list doesn't accept a drop of this type.");
 					return false;
@@ -259,14 +262,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 				// Get the Playlist that is being dropped.
 				Transferable t = info.getTransferable();
-				Playlist data;
 				try
 				{
-					data = (Playlist) t.getTransferData(new DataFlavor(Playlist.class, "Playlist"));
-					List<PlaylistEntry> entries = data.getEntries();
+					PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
+					List<PlaylistEntry> entries = data.getList();
 					int removedAt = 0;
-					int insertAt = dl.getRow();
-					int insertAtUpdated = insertAt;
+					int insertAtUpdated = dl.getRow();
 					int i = 0;
 					for (PlaylistEntry entry : entries)
 					{
@@ -308,7 +309,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 				try
 				{
-					return _playlist.getSublist(rowIndexes);
+					return new PlaylistEntryList(_playlist.getSelectedEntries(rowIndexes));
 				}
 				catch (IOException ex)
 				{
@@ -1793,6 +1794,4 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			setText((value == null) ? "" : _intFormatter.format(value));
 		}
 	}
-	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
-	int currentlySelectedRow = 0;
 }
