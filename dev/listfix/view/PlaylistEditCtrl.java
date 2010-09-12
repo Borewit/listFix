@@ -1675,6 +1675,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 								{
 									list = get();
 									_playlist.addAll(dl.getRow(), list.getEntries());
+
+									if (_playlist.size() == list.size())
+									{
+										resizeAllColumns();
+									}
 								}
 								catch (CancellationException ex)
 								{
