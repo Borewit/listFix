@@ -20,6 +20,9 @@
 
 package listfix.model;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import listfix.model.enums.PlaylistType;
 
 import java.io.BufferedOutputStream;
@@ -51,7 +54,7 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
-public class Playlist
+public class Playlist implements Transferable
 {
 	private final static String FS = System.getProperty("file.separator");
 	private final static String BR = System.getProperty("line.separator");
@@ -67,6 +70,24 @@ public class Playlist
 	private int _missingCount;
 	private boolean _isModified;
 	private boolean _isNew;
+
+	@Override
+	public DataFlavor[] getTransferDataFlavors()
+	{
+		return new DataFlavor[] { new DataFlavor(Playlist.class, "Playlist") };
+	}
+
+	@Override
+	public boolean isDataFlavorSupported(DataFlavor flavor)
+	{
+		return flavor.equals(new DataFlavor(Playlist.class, "Playlist"));
+	}
+
+	@Override
+	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException
+	{
+		return this;
+	}
 
 	public enum SortIx
 	{
@@ -154,6 +175,11 @@ public class Playlist
 			tempList.add(_entries.get(i));
 		}
 		return new Playlist(tempList);
+	}
+
+	public List<PlaylistEntry> getEntries()
+	{
+		return _entries;
 	}
 
 	/**
@@ -329,7 +355,6 @@ public class Playlist
 				}
 			}
 		}
-
 	}
 
 	public int getFixedCount()
@@ -450,6 +475,13 @@ public class Playlist
 			}
 		}
 		firePlaylistModified();
+	}
+
+	public int addAll(int i, List<PlaylistEntry> entries)
+	{
+		_entries.addAll(i, entries);
+		firePlaylistModified();
+		return entries.size();
 	}
 
 	public int add(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
@@ -653,6 +685,14 @@ public class Playlist
 		firePlaylistModified();
 	}
 
+	public int remove(PlaylistEntry entry)
+	{
+		int result = _entries.indexOf(entry);
+		_entries.remove(entry);
+		firePlaylistModified();
+		return result;
+	}
+
 	public void reorder(SortIx sortIx, boolean isDescending)
 	{
 		switch (sortIx)
@@ -842,7 +882,6 @@ public class Playlist
 		}
 	}
 
-	// TODO: Make cancellable
 	private void saveM3U(boolean saveRelative, ProgressAdapter progress) throws IOException
 	{
 		boolean track = progress != null;
@@ -917,7 +956,6 @@ public class Playlist
 		}
 	}
 
-	// TODO: Make cancellable
 	private void savePLS(boolean saveRelative, ProgressAdapter progress) throws IOException
 	{
 		boolean track = progress != null;

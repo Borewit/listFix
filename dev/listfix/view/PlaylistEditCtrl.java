@@ -31,6 +31,9 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,20 +49,25 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DropMode;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -203,6 +211,114 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 			}
 		});
+
+		_uiTable.setTransferHandler(new TransferHandler()
+		{
+			public boolean canImport(TransferHandler.TransferSupport info)
+			{
+				// we only import Strings
+				if (!info.isDataFlavorSupported(new DataFlavor(Playlist.class, "Playlist")))
+				{
+					return false;
+				}
+
+				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+				if (dl.getRow() == -1)
+				{
+					return false;
+				}
+				return true;
+			}
+
+			private void displayDropLocation(final String string)
+			{
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
+						JOptionPane.showMessageDialog(null, string);
+					}
+				});
+			}
+
+			public boolean importData(TransferHandler.TransferSupport info)
+			{
+				if (!info.isDrop())
+				{
+					return false;
+				}
+
+				// Check for custom PlaylistEntry flavor
+				if (!info.isDataFlavorSupported(new DataFlavor(Playlist.class, "Playlist")))
+				{
+					displayDropLocation("list doesn't accept a drop of this type.");
+					return false;
+				}
+
+				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+
+				// Get the Playlist that is being dropped.
+				Transferable t = info.getTransferable();
+				Playlist data;
+				try
+				{
+					data = (Playlist) t.getTransferData(new DataFlavor(Playlist.class, "Playlist"));
+					List<PlaylistEntry> entries = data.getEntries();
+					int removedAt = 0;
+					int insertAt = dl.getRow();
+					int insertAtUpdated = insertAt;
+					int i = 0;
+					for (PlaylistEntry entry : entries)
+					{
+						// remove them all, we'll re-add them in bulk...
+						removedAt = _playlist.remove(entry);
+						
+						// Was the thing we just removed above where we're inserting?
+						if (removedAt < insertAtUpdated)
+						{
+							insertAtUpdated--;
+						}
+						i++;
+					}
+
+					_playlist.addAll(insertAtUpdated, entries);
+
+					return true;
+				}
+				catch (Exception e)
+				{
+					return false;
+				}
+			}
+
+			@Override
+			public int getSourceActions(JComponent c)
+			{
+				return COPY_OR_MOVE;
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c)
+			{
+				JTable table = (JTable) c;
+				int[] rowIndexes = table.getSelectedRows();
+				for (int i = 0; i < rowIndexes.length; i++)
+				{
+					rowIndexes[i] = _uiTable.convertRowIndexToModel(rowIndexes[i]);
+				}
+				try
+				{
+					return _playlist.getSublist(rowIndexes);
+				}
+				catch (IOException ex)
+				{
+					Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+					return null;
+				}
+			}
+		});
+
+		_uiTable.setDropMode(DropMode.ON_OR_INSERT);
 
 		SwingUtilities.updateComponentTreeUI(this);
 	}
@@ -762,7 +878,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
-        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
 
         _miEditFilename.setFont(new java.awt.Font("Verdana", 0, 9));
         _miEditFilename.setText("Edit Filename");
@@ -993,8 +1109,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new PlaylistTableModel());
+        _uiTable.setDragEnabled(true);
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
@@ -1137,22 +1254,22 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private void _uiTableMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMouseDragged
 	{//GEN-HEADEREND:event__uiTableMouseDragged
-		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-		{
-			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
-			if (rowAtPoint > -1)
-			{
-				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
-				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
-				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
-				if ((currentlySelectedRow != tableRow) && (tableRow != -1) && (tableRow < _playlist.size()))
-				{
-					_playlist.moveTo(oldModelRow, newModelRow);
-					currentlySelectedRow = tableRow;
-					_uiTable.setRowSelectionInterval(tableRow, tableRow);
-				}
-			}
-		}
+//		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+//		{
+//			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
+//			if (rowAtPoint > -1)
+//			{
+//				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
+//				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
+//				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
+//				if ((currentlySelectedRow != tableRow) && (tableRow != -1) && (tableRow < _playlist.size()))
+//				{
+//					_playlist.moveTo(oldModelRow, newModelRow);
+//					currentlySelectedRow = tableRow;
+//					_uiTable.setRowSelectionInterval(tableRow, tableRow);
+//				}
+//			}
+//		}
 	}//GEN-LAST:event__uiTableMouseDragged
 
 	private void _uiTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed
@@ -1169,30 +1286,30 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private void _uiTableMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMouseReleased
 	{//GEN-HEADEREND:event__uiTableMouseReleased
-		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-		{
-			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
-			if (rowAtPoint > -1)
-			{
-				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
-				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
-				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
-				// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
-				if ((currentlySelectedRow != tableRow) && (!_uiPopupMenu.isEnabled()) && (tableRow != -1))
-				{
-					_playlist.moveTo(oldModelRow, newModelRow);
-					currentlySelectedRow = tableRow;
-				}
-				else if (_uiPopupMenu.isEnabled())
-				{
-					_uiTable.setRowSelectionInterval(newModelRow, newModelRow);
-				}
-			}
-			else
-			{
-				_uiTable.clearSelection();
-			}
-		}
+//		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+//		{
+//			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
+//			if (rowAtPoint > -1)
+//			{
+//				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
+//				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
+//				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
+//				// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
+//				if ((currentlySelectedRow != tableRow) && (!_uiPopupMenu.isEnabled()) && (tableRow != -1))
+//				{
+//					_playlist.moveTo(oldModelRow, newModelRow);
+//					currentlySelectedRow = tableRow;
+//				}
+//				else if (_uiPopupMenu.isEnabled())
+//				{
+//					_uiTable.setRowSelectionInterval(newModelRow, newModelRow);
+//				}
+//			}
+//			else
+//			{
+//				_uiTable.clearSelection();
+//			}
+//		}
 	}//GEN-LAST:event__uiTableMouseReleased
 
 	private void _btnReloadMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event__btnReloadMouseClicked
