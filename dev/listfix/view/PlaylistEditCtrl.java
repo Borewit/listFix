@@ -26,6 +26,7 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -879,7 +880,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
-        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _uiPopupMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _miEditFilename.setFont(new java.awt.Font("Verdana", 0, 9));
         _miEditFilename.setText("Edit Filename");
@@ -1121,14 +1122,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 _uiTableMousePressed(evt);
             }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                _uiTableMouseReleased(evt);
-            }
-        });
-        _uiTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                _uiTableMouseDragged(evt);
-            }
         });
         _uiTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -1253,65 +1246,17 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		bulkFindClosestMatches();
     }//GEN-LAST:event_onMenuBatchFindClosestMatchActionPerformed
 
-	private void _uiTableMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMouseDragged
-	{//GEN-HEADEREND:event__uiTableMouseDragged
-//		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-//		{
-//			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
-//			if (rowAtPoint > -1)
-//			{
-//				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
-//				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
-//				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
-//				if ((currentlySelectedRow != tableRow) && (tableRow != -1) && (tableRow < _playlist.size()))
-//				{
-//					_playlist.moveTo(oldModelRow, newModelRow);
-//					currentlySelectedRow = tableRow;
-//					_uiTable.setRowSelectionInterval(tableRow, tableRow);
-//				}
-//			}
-//		}
-	}//GEN-LAST:event__uiTableMouseDragged
-
 	private void _uiTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed
 	{//GEN-HEADEREND:event__uiTableMousePressed
-		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		if (SwingUtilities.isLeftMouseButton(evt))
 		{
 			currentlySelectedRow = _uiTable.rowAtPoint(evt.getPoint());
-			if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
+			if (currentlySelectedRow != -1 && evt.getClickCount() == 2 && (evt.getModifiers() & ActionEvent.CTRL_MASK) <= 0)
 			{
 				playSelectedEntries();
 			}
 		}
 	}//GEN-LAST:event__uiTableMousePressed
-
-	private void _uiTableMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMouseReleased
-	{//GEN-HEADEREND:event__uiTableMouseReleased
-//		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-//		{
-//			int rowAtPoint = _uiTable.rowAtPoint(evt.getPoint());
-//			if (rowAtPoint > -1)
-//			{
-//				int newModelRow = _uiTable.convertRowIndexToModel(rowAtPoint);
-//				int oldModelRow = _uiTable.convertRowIndexToModel(currentlySelectedRow);
-//				int tableRow = _uiTable.rowAtPoint(evt.getPoint());
-//				// if this point is in a row different than where it was clicked and the right click menu isn't active, move the row...
-//				if ((currentlySelectedRow != tableRow) && (!_uiPopupMenu.isEnabled()) && (tableRow != -1))
-//				{
-//					_playlist.moveTo(oldModelRow, newModelRow);
-//					currentlySelectedRow = tableRow;
-//				}
-//				else if (_uiPopupMenu.isEnabled())
-//				{
-//					_uiTable.setRowSelectionInterval(newModelRow, newModelRow);
-//				}
-//			}
-//			else
-//			{
-//				_uiTable.clearSelection();
-//			}
-//		}
-	}//GEN-LAST:event__uiTableMouseReleased
 
 	private void _btnReloadMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event__btnReloadMouseClicked
 	{//GEN-HEADEREND:event__btnReloadMouseClicked
