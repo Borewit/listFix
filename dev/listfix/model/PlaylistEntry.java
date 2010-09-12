@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import listfix.comparators.MatchedPlaylistEntryComparator;
+import listfix.controller.GUIDriver;
 
 import listfix.io.BrowserLauncher;
 import listfix.io.FileLauncher;
@@ -480,7 +481,7 @@ public class PlaylistEntry implements Cloneable
 		return result.toString();
 	}
 
-	public void findNewLocationFromFileList(String[] fileList)
+	public boolean findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
 		String trimmedFileName = FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();
@@ -498,9 +499,10 @@ public class PlaylistEntry implements Cloneable
 			this.setFile(foundFile);
 			_status = PlaylistEntryStatus.Found;
 			_isFixed = true;
-			return;
+			return true;
 		}
 		_status = PlaylistEntryStatus.Missing;
+		return false;
 	}
 
 	public List<MatchedPlaylistEntry> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
@@ -595,5 +597,15 @@ public class PlaylistEntry implements Cloneable
 				_title = extra;
 			}
 		}
+	}
+
+	public boolean updatePathToMediaLibraryIfFoundOutside()
+	{
+		if (_status == PlaylistEntryStatus.Found &&
+			!ArrayFunctions.ContainsStringWithPrefix(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.fileSystemIsCaseSensitive))
+		{
+			return findNewLocationFromFileList(GUIDriver.getInstance().getMediaLibraryFileList());
+		}
+		return false;
 	}
 }

@@ -526,6 +526,15 @@ public class Playlist
 					if (entry.isFound())
 					{
 						fixed.add(ix);
+						firePlaylistModified();
+					}
+				}
+				else if(entry.isFound() && !entry.isURL())
+				{
+					if (entry.updatePathToMediaLibraryIfFoundOutside())
+					{
+						fixed.add(ix);
+						firePlaylistModified();
 					}
 				}
 			}
@@ -534,11 +543,7 @@ public class Playlist
 				return null;
 			}
 		}
-
-		if (!fixed.isEmpty())
-		{
-			firePlaylistModified();
-		}
+		
 		return fixed;
 	}
 
