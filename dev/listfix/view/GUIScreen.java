@@ -28,6 +28,8 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -155,6 +157,44 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		}
 
 		syncJMenuFonts();
+
+		// drag-n-drop support
+		_playlistDirectoryTree.setTransferHandler(new TransferHandler()
+		{
+			@Override
+			public boolean canImport(TransferHandler.TransferSupport info)
+			{
+				return false;
+			}
+
+			public boolean importData(TransferHandler.TransferSupport info)
+			{
+				return false;
+			}
+
+			@Override
+			public int getSourceActions(JComponent c)
+			{
+				return MOVE;
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c)
+			{
+				try
+				{
+					JTree table = (JTree) c;
+					int selRow = _playlistDirectoryTree.getSelectionRows()[0];
+					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
+					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+				}
+				catch  (Exception exception)
+				{
+					return null;
+				}
+
+			}
+		});
 	}
 
 	public AppOptions getOptions()
@@ -328,7 +368,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistDirectoryPanel.setAlignmentY(0.0F);
         _playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
-        _playlistDirectoryTree.setFont(new java.awt.Font("Verdana", 0, 9));
+        _playlistDirectoryTree.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _playlistDirectoryTree.setDragEnabled(true);
         _playlistDirectoryTree.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 _playlistDirectoryTreeMouseClicked(evt);
@@ -445,7 +486,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_loadMenuItem);
 
         _closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
-        _closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _closeMenuItem.setText("Close");
         _closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -20,6 +20,9 @@
 
 package listfix.model;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import listfix.model.enums.PlaylistType;
 
 import java.io.BufferedOutputStream;
@@ -67,6 +70,11 @@ public class Playlist
 	private int _missingCount;
 	private boolean _isModified;
 	private boolean _isNew;
+
+	public List<PlaylistEntry> getEntries()
+	{
+		return _entries;
+	}
 
 	public enum SortIx
 	{

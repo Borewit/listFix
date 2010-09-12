@@ -25,7 +25,9 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -93,6 +95,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 {
 	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
 	private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
+	private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
 	int currentlySelectedRow = 0;
 
 	public PlaylistEditCtrl()
@@ -1537,8 +1540,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					{
 						_uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
 					}
-					else if((isOverItem && _uiTable.getSelectedRowCount() == 0) ||
-						(!_uiTable.isRowSelected(rowIx)))
+					else if ((isOverItem && _uiTable.getSelectedRowCount() == 0)
+						|| (!_uiTable.isRowSelected(rowIx)))
 					{
 						_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
 					}
@@ -1569,7 +1572,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			@Override
 			public boolean canImport(TransferHandler.TransferSupport info)
 			{
-				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
+				if (!info.isDataFlavorSupported(_playlistEntryListFlavor) && !info.isDataFlavorSupported(DataFlavor.stringFlavor))
 				{
 					return false;
 				}
@@ -1591,44 +1594,114 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 
 				// Check for custom PlaylistEntryList flavor
-				if (!info.isDataFlavorSupported(_playlistEntryListFlavor))
+				if (!info.isDataFlavorSupported(_playlistEntryListFlavor) && !info.isDataFlavorSupported(DataFlavor.stringFlavor))
 				{
 					return false;
 				}
 
-				JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+				final JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
 
-				// Get the Playlist that is being dropped.
-				Transferable t = info.getTransferable();
-				try
+				if (info.isDataFlavorSupported(_playlistEntryListFlavor))
 				{
-					PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
-					List<PlaylistEntry> entries = data.getList();
-					int removedAt = 0;
-					int insertAtUpdated = dl.getRow();
-					int i = 0;
-					for (PlaylistEntry entry : entries)
+					// Get the entries that are being dropped.
+					Transferable t = info.getTransferable();
+					try
 					{
-						// remove them all, we'll re-add them in bulk...
-						removedAt = _playlist.remove(entry);
-
-						// Was the thing we just removed above where we're inserting?
-						if (removedAt < insertAtUpdated)
+						PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
+						List<PlaylistEntry> entries = data.getList();
+						int removedAt = 0;
+						int insertAtUpdated = dl.getRow();
+						int i = 0;
+						for (PlaylistEntry entry : entries)
 						{
-							insertAtUpdated--;
+							// remove them all, we'll re-add them in bulk...
+							removedAt = _playlist.remove(entry);
+
+							// Was the thing we just removed above where we're inserting?
+							if (removedAt < insertAtUpdated)
+							{
+								insertAtUpdated--;
+							}
+							i++;
 						}
-						i++;
+
+						_playlist.addAll(insertAtUpdated, entries);
+
+						return true;
 					}
-
-					_playlist.addAll(insertAtUpdated, entries);
-
-					return true;
+					catch (Exception e)
+					{
+						return false;
+					}
 				}
-				catch (Exception e)
+				else
 				{
+					// Currently we're only dealing w/ a string that represents the path to a playlist
+					// Get the entries that are being dropped.
+					Transferable t = info.getTransferable();
+					final String data;
+					try
+					{
+						data = (String) t.getTransferData(DataFlavor.stringFlavor);
+
+						final String[] libraryFiles;
+						if (GUIDriver.getInstance().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+						{
+							libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+						}
+						else
+						{
+							libraryFiles = null;
+						}
+
+						ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+						{
+							@Override
+							protected Playlist doInBackground() throws Exception
+							{
+								Playlist list = new Playlist(new File(data), this);
+								if (libraryFiles != null)
+								{
+									list.repair(libraryFiles, this);
+								}
+								return list;
+							}
+
+							@Override
+							protected void done()
+							{
+								Playlist list;
+								try
+								{
+									list = get();
+									_playlist.addAll(dl.getRow(), list.getEntries());
+								}
+								catch (CancellationException ex)
+								{
+									return;
+								}
+								catch (Exception ex)
+								{
+									JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+									return;
+								}
+							}
+						};
+						ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading...");
+						pd.setVisible(true);
+						return true;
+					}
+					catch (UnsupportedFlavorException ex)
+					{
+						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+					}
+					catch (IOException ex)
+					{
+						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+					}
 					return false;
 				}
-			}
+			};
 
 			@Override
 			public int getSourceActions(JComponent c)
