@@ -138,7 +138,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				@Override
 				protected Object doInBackground() throws IOException
 				{
-					int insertIx = _isSortedByFileIx ? _uiTable.getSelectedRow() : -1;
+					int insertIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
 
 					if (insertIx >= 0)
 					{
@@ -148,9 +148,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					else
 					{
-						firstIx = _playlist.size();
-						_playlist.add(files, this);
-						lastIx = _playlist.size() - 1;
+						firstIx = 0;
+						_playlist.add(0, files, this);
+						lastIx = files.length - 1;
 					}
 
 					return null;
