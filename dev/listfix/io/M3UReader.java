@@ -93,12 +93,12 @@ public class M3UReader implements IPlaylistReader
 		if (line1 != null)
 		{
 			String line2 = "";
-			if (line1.contains("#EXTM3U"))
-			{
-				line1 = readLine();
-			}
 			if (line1 != null)
 			{
+				while (line1.contains("#EXTM3U") || line1.startsWith("#EXTINFUTF8"))
+				{
+					line1 = readLine();
+				}
 				if (!line1.startsWith("#"))
 				{
 					line2 = line1;
@@ -109,7 +109,11 @@ public class M3UReader implements IPlaylistReader
 					line2 = readLine();
 					while (line2.startsWith("#"))
 					{
-						line1 = line1 + br + line2;
+						// throw away non-standard metadata added by mediamonkey...
+						if (!line2.startsWith("#UTF8"))
+						{
+							line1 = line1 + br + line2;
+						}
 						line2 = readLine();
 					}
 				}
@@ -133,6 +137,10 @@ public class M3UReader implements IPlaylistReader
 						line1 = readLine();
 						if (line1 != null)
 						{
+							if (line1.startsWith("#EXTINFUTF8"))
+							{
+								line1 = readLine();
+							}
 							if (!line1.startsWith("#"))
 							{
 								line2 = line1;
@@ -143,7 +151,11 @@ public class M3UReader implements IPlaylistReader
 								line2 = readLine();
 								while (line2.startsWith("#"))
 								{
-									line1 = line1 + br + line2;
+									// throw away non-standard metadata added by mediamonkey...
+									if (!line2.startsWith("#UTF8"))
+									{
+										line1 = line1 + br + line2;
+									}
 									line2 = readLine();
 								}
 							}
@@ -171,12 +183,13 @@ public class M3UReader implements IPlaylistReader
 		if (line1 != null)
 		{
 			String line2 = "";
-			if (line1.contains("#EXTM3U"))
-			{
-				line1 = buffer.readLine();
-			}
+
 			if (line1 != null)
 			{
+				while (line1.contains("#EXTM3U") || line1.startsWith("#EXTINFUTF8"))
+				{
+					line1 = buffer.readLine();
+				}
 				if (!line1.startsWith("#"))
 				{
 					line2 = line1;
@@ -187,16 +200,23 @@ public class M3UReader implements IPlaylistReader
 					line2 = buffer.readLine();
 					while (line2.startsWith("#"))
 					{
-						line1 = line1 + br + line2;
+						// throw away non-standard metadata added by mediamonkey...
+						if (!line2.startsWith("#UTF8"))
+						{
+							line1 = line1 + br + line2;
+						}
 						line2 = buffer.readLine();
 					}
 				}
 				while (line1 != null)
 				{
 					processEntry(line1, line2);
-					line1 = buffer.readLine();
 					if (line1 != null)
 					{
+						if (line1.startsWith("#EXTINFUTF8"))
+						{
+							line1 = readLine();
+						}
 						if (!line1.startsWith("#"))
 						{
 							line2 = line1;
@@ -207,7 +227,11 @@ public class M3UReader implements IPlaylistReader
 							line2 = buffer.readLine();
 							while (line2.startsWith("#"))
 							{
-								line1 = line1 + br + line2;
+								// throw away non-standard metadata added by mediamonkey...
+								if (!line2.startsWith("#UTF8"))
+								{
+									line1 = line1 + br + line2;
+								}
 								line2 = buffer.readLine();
 							}
 						}

@@ -501,7 +501,6 @@ public class PlaylistEntry implements Cloneable
 			_isFixed = true;
 			return true;
 		}
-		_status = PlaylistEntryStatus.Missing;
 		return false;
 	}
 
