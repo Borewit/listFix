@@ -27,15 +27,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URI;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
+
 import listfix.util.ArrayFunctions;
 import listfix.util.UnicodeUtils;
+
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
@@ -57,6 +61,8 @@ public class M3UReader implements IPlaylistReader
 	private String encoding = "";
 	private File _listFile;
 	private static final PlaylistType type = PlaylistType.M3U;
+
+	StringBuilder _cache;
 
 	public M3UReader(File in) throws FileNotFoundException
 	{
@@ -80,6 +86,24 @@ public class M3UReader implements IPlaylistReader
 			buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
 		}
 		fileLength = in.length();
+	}
+
+	@Override
+	public String getEncoding()
+	{
+		return encoding;
+	}
+
+	@Override
+	public void setEncoding(String encoding)
+	{
+		this.encoding = encoding;
+	}
+
+	@Override
+	public PlaylistType getPlaylistType()
+	{
+		return type;
 	}
 
 	@Override
@@ -177,6 +201,7 @@ public class M3UReader implements IPlaylistReader
 		return results;
 	}
 
+	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
 		String line1 = buffer.readLine();
@@ -249,7 +274,6 @@ public class M3UReader implements IPlaylistReader
 		_cache.append(line);
 		return line;
 	}
-	StringBuilder _cache;
 
 	private void processEntry(String L1, String L2) throws IOException
 	{
@@ -259,7 +283,7 @@ public class M3UReader implements IPlaylistReader
 		{
 			// do nothing, leave tokenizer null
 		}
-		else if (fs.equalsIgnoreCase("/")) //OS Specific Hack
+		else if (fs.equalsIgnoreCase("/")) // OS Specific Hack
 		{
 			if (!L2.startsWith("\\\\") && !L2.startsWith("."))
 			{
@@ -267,11 +291,11 @@ public class M3UReader implements IPlaylistReader
 			}
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
-		else if (fs.equalsIgnoreCase(":")) //OS Specific Hack
+		else if (fs.equalsIgnoreCase(":")) // OS Specific Hack
 		{
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
-		else if (fs.equalsIgnoreCase("\\")) //OS Specific Hack
+		else if (fs.equalsIgnoreCase("\\")) // OS Specific Hack
 		{
 			pathTokenizer = new StringTokenizer(L2, "\\/");
 			if (!L2.startsWith("\\\\") && L2.startsWith("\\"))
@@ -360,20 +384,5 @@ public class M3UReader implements IPlaylistReader
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public String getEncoding()
-	{
-		return encoding;
-	}
-
-	public void setEncoding(String encoding)
-	{
-		this.encoding = encoding;
-	}
-
-	public PlaylistType getPlaylistType()
-	{
-		return type;
 	}
 }

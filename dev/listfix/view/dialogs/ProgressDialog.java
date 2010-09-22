@@ -146,6 +146,8 @@ public class ProgressDialog extends javax.swing.JDialog
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
+        jPanel1.setMinimumSize(new java.awt.Dimension(270, 45));
+        jPanel1.setPreferredSize(new java.awt.Dimension(166, 45));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         _progressTitle.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
@@ -178,10 +180,13 @@ public class ProgressDialog extends javax.swing.JDialog
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel2.setMinimumSize(new java.awt.Dimension(77, 30));
+        jPanel2.setPreferredSize(new java.awt.Dimension(77, 30));
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 0));
 
-        _cancelButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        _cancelButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _cancelButton.setText("Cancel");
+        _cancelButton.setAlignmentY(-5.0F);
         _cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _cancelButtonActionPerformed(evt);
