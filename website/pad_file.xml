@@ -70,7 +70,7 @@
 			<Keywords>playlist, M3U, PLS, fix, broken, list, MP3, MP3s, playlists, find, lost, moved, missing, renamed, repair, search, media library, files</Keywords>
 			<Char_Desc_45>Fixes broken M3U/PLS playlists</Char_Desc_45>
 			<Char_Desc_80>Fixes playlists by finding lost/moved/renamed files from a media library</Char_Desc_80>
-			<Char_Desc_250>An M3U/PLS editor that can fix "broken" playlists, alone or in batch, by searching a media library for relocated files. Also searches for MP3s that have been renamed, removes duplicates, sorts and randomizes lists, and much more!</Char_Desc_250>
+			<Char_Desc_250>A Java application that can fix/repair playlists by searching a media library for lost, missing, &amp; renamed files. Supports absolute &amp; relative references, UTF-8, UNC paths, and URLs. Removes duplicates, sorts and randomizes lists, and much more!</Char_Desc_250>
 			<Char_Desc_450 />
 			<Char_Desc_2000 />
 		</English>
