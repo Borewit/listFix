@@ -466,7 +466,7 @@ public class Playlist
 		List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
 		if (newEntries != null)
 		{
-			_entries.addAll(ix + 1, newEntries);
+			_entries.addAll(ix, newEntries);
 			firePlaylistModified();
 			return newEntries.size();
 		}

@@ -141,18 +141,19 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				@Override
 				protected Object doInBackground() throws IOException
 				{
-					int insertIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
+					int selected = _uiTable.getSelectedRow();
+					int insertIx = selected >= 0 ? _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow()) : -1;
 
 					if (insertIx >= 0)
 					{
 						int count = _playlist.add(insertIx, files, this);
-						firstIx = insertIx + 1;
+						firstIx = insertIx;
 						lastIx = firstIx + count - 1;
 					}
 					else
 					{
 						firstIx = 0;
-						_playlist.add(0, files, this);
+						_playlist.add(files, this);
 						lastIx = files.length - 1;
 					}
 
