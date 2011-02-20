@@ -482,7 +482,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					JOptionPane.showMessageDialog(getParentFrame(), "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				PlaylistEntry newEntry = new PlaylistEntry(file, null);
+				PlaylistEntry newEntry = new PlaylistEntry(file, null, _playlist.getFile());
 				_playlist.replace(rowIx, newEntry);
 				getTableModel().fireTableRowsUpdated(rowIx, rowIx);
 			}
@@ -544,8 +544,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						}
 					}
 
-					PlaylistEntry.BasePath = playlist.getParent();
-
 					final File finalPlaylistFile = playlist;
 					String oldPath = _playlist.getFile().getCanonicalPath();
 					ProgressWorker worker = new ProgressWorker<Void, Void>()
@@ -584,7 +582,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			try
 			{
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				PlaylistEntry.BasePath = _playlist.getFile().getParent();
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
 					@Override
@@ -634,7 +631,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				rows[r] = _uiTable.convertRowIndexToModel(rows[r]);
 			}
 			Playlist tempList = _playlist.getSublist(rows);
-			tempList.play();
+			tempList.removeMissing();
+			tempList.save(false, null);
+			if (tempList.size() > 0)
+			{
+				tempList.play();
+			}
 		}
 		catch (Exception ex)
 		{
@@ -1438,6 +1440,18 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		};
 	}
 
+	private boolean selectedRowsContainFoundEntry()
+	{
+		for (int row : _uiTable.getSelectedRows())
+		{
+			if (_playlist.get(_uiTable.convertRowIndexToModel(row)).isFound())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void initPlaylistTable()
 	{
 		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
@@ -1470,7 +1484,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnDelete.setEnabled(hasSelected);
 				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-				_btnPlay.setEnabled(_playlist != null);
+				_btnPlay.setEnabled(_playlist != null && ( _uiTable.getSelectedRow() < 0 || ( _uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry() ) ) );
 				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
 				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 				if (_isSortedByFileIx)

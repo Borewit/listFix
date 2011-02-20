@@ -126,7 +126,7 @@ public class PLSReader implements IPlaylistReader
 		}
 		else
 		{
-			results.add(new PlaylistEntry(new File(file), title, length));
+			results.add(new PlaylistEntry(new File(file), title, length, plsFile));
 		}
 	}
 

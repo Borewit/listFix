@@ -27,9 +27,9 @@ public class MatchedPlaylistEntry
 	private PlaylistEntry thisEntry = null;
 	private int score = 0;
 
-	public MatchedPlaylistEntry(File f, int c)
+	public MatchedPlaylistEntry(File f, int c, File list)
 	{
-		thisEntry = new PlaylistEntry(f, "");
+		thisEntry = new PlaylistEntry(f, "", list);
 		thisEntry.setFixed(true);
 		score = c;
 	}

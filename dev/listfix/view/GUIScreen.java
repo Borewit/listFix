@@ -690,8 +690,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 					}
 				}
 
-				PlaylistEntry.BasePath = playlist.getParent();
-
 				final File finalPlaylistFile = playlist;
 				String oldPath = _currentPlaylist.getFile().getCanonicalPath();
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
@@ -1806,7 +1804,6 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 		try
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			PlaylistEntry.BasePath = _currentPlaylist.getFile().getParent();
 			ProgressWorker worker = new ProgressWorker<Void, Void>()
 			{
 				@Override

@@ -32,6 +32,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import listfix.controller.GUIDriver;
 
 import listfix.controller.tasks.WriteIniFileTask;
 import listfix.model.AppOptions;
@@ -75,7 +76,7 @@ public class FileWriter
 			boolean tokenMatch = false;
 			for (int i = 0; i < maxSize; i++)
 			{
-				if (fileTokens.get(i).equals(relativeToTokens.get(i)))
+				if (GUIDriver.fileSystemIsCaseSensitive ? fileTokens.get(i).equals(relativeToTokens.get(i)) : fileTokens.get(i).equalsIgnoreCase(relativeToTokens.get(i)))
 				{
 					tokenMatch = true;
 					fileTokens.remove(i);

@@ -370,7 +370,7 @@ public class M3UReader implements IPlaylistReader
 				}
 				tokenNumber++;
 			}
-			results.add(new PlaylistEntry(path.toString(), fileName, extInf, _listFile.getParentFile()));
+			results.add(new PlaylistEntry(path.toString(), fileName, extInf, _listFile));
 		}
 		else
 		{

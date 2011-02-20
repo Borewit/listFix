@@ -495,7 +495,7 @@ public class Playlist
 				else
 				{
 					// regular file
-					ents.add(new PlaylistEntry(file, null));
+					ents.add(new PlaylistEntry(file, null, _file));
 				}
 			}
 			else
@@ -505,6 +505,7 @@ public class Playlist
 
 			progress.stepCompleted();
 		}
+
 		return ents;
 	}
 
@@ -864,20 +865,20 @@ public class Playlist
 					progress.stepCompleted();
 				}
 				PlaylistEntry entry = _entries.get(i);
-
+				entry.setPlaylist(_file);
 				if (!entry.isURL())
 				{
-					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
+					if (!saveRelative && entry.getAbsoluteFile() != null)
 					{
 						// replace existing relative entry with a new absolute one
-						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf());
+						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
-					else if (saveRelative && !entry.isRelative() && !entry.isURL())
+					else if (saveRelative && !entry.isURL())
 					{
 						// replace existing absolute entry with a new relative one
-						String relativePath = FileWriter.getRelativePath(entry.getFile().getAbsoluteFile(), _file);
-						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf());
+						String relativePath = FileWriter.getRelativePath(entry.getAbsoluteFile(), _file);
+						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
 				}
@@ -939,16 +940,16 @@ public class Playlist
 					progress.stepCompleted();
 				}
 				tempEntry = _entries.get(i);
-				if (!saveRelative && tempEntry.isRelative() && tempEntry.getAbsoluteFile() != null)
+				if (!saveRelative && tempEntry.getAbsoluteFile() != null)
 				{
-					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength());
+					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength(), _file);
 					_entries.set(i, tempEntry);
 				}
-				else if (saveRelative && !tempEntry.isRelative() && !tempEntry.isURL())
+				else if (saveRelative && !tempEntry.isURL())
 				{
 					// replace existing absolute entry with a new relative one
-					String relativePath = FileWriter.getRelativePath(tempEntry.getFile().getAbsoluteFile(), _file);
-					tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf());
+					String relativePath = FileWriter.getRelativePath(tempEntry.getAbsoluteFile(), _file);
+					tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf(), _file);
 					_entries.set(i, tempEntry);
 				}
 				buffer.append(tempEntry.toPLSString(i + 1));
