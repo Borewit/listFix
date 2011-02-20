@@ -25,7 +25,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
@@ -424,8 +423,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				return;
 			}
 		}
+		catch (CancellationException ex)
+		{
+			// do nothing, the user cancelled
+			return;
+		}
 		catch (Exception ex)
 		{
+			System.out.println(ex.getMessage());
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(this.getParentFrame(), ex);
 			return;
 		}
 

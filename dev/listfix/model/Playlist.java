@@ -596,6 +596,7 @@ public class Playlist
 			if (!observer.getCancelled())
 			{
 				entry = _entries.get(ix);
+				System.out.println("Checking: " + entry.getFileName());
 				if (!entry.isFound())
 				{
 					matches = entry.findClosestMatches(librayFiles, null);

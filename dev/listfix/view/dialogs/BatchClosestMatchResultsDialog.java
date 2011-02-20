@@ -30,6 +30,8 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
@@ -42,6 +44,7 @@ import javax.swing.table.TableColumnModel;
 import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.view.support.ZebraJTable;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
@@ -306,6 +309,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		{
 			_model = new MatchComboBoxModel();
 			_combo = new JComboBox(_model);
+			_combo.setRenderer(new MyComboBoxRenderer());
 			_combo.setMaximumRowCount(25);
 			_combo.setFocusable(false);
 			_combo.setFont(new Font("Verdana", 0, 9));
@@ -326,6 +330,25 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			_model.setMatches(item.getMatches());
 			_combo.setSelectedIndex(item.getSelectedIx() + 1);
 			return _combo;
+		}
+
+		private class MyComboBoxRenderer extends BasicComboBoxRenderer
+		{
+			public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus)
+			{
+				JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+				if (isSelected)
+				{
+					if (-1 < index)
+					{
+						list.setToolTipText(((MatchedPlaylistEntry)((MatchComboBoxModel)list.getModel())._matches.get(index)).getPlaylistFile().getPath());
+					}
+				}
+				
+				return comp;
+			}
 		}
 	}
 
