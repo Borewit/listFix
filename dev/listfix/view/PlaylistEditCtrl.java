@@ -77,6 +77,7 @@ import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistEntryList;
+import listfix.util.ArrayFunctions;
 
 import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
@@ -631,7 +632,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				rows[r] = _uiTable.convertRowIndexToModel(rows[r]);
 			}
 
-			/*
+			// Get a list of the selected rows that aren't missing, effectively stripping those entries from the selection
 			List<Integer> rowList = new ArrayList<Integer>();
 			for (int i : rows)
 			{
@@ -640,18 +641,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					rowList.add(i);
 				}
 			}
-			rows = new int[rowList.size()];
-			for (int i = 0; i < rowList.size(); i++)
-			{
-				rows[i] = rowList.get(i);
-			}
-			 * */			 
+			rows = ArrayFunctions.integerListToArray(rowList);
 
+			// Get a temp playlist
 			Playlist tempList = _playlist.getSublist(rows);
 
-			// tempList.removeMissing();
-			// tempList.save(false, null);
-
+			// Sanity check, don't launch an empty list
 			if (tempList.size() > 0)
 			{
 				tempList.play();

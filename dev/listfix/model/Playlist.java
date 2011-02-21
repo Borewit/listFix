@@ -847,10 +847,9 @@ public class Playlist
 		}
 	}
 
-	private void quickSave()
+	private void quickSave() throws IOException
 	{
-		quickSaveM3U();
-
+		saveM3U(false, null);
 	}
 
 	private void saveM3U(boolean saveRelative, ProgressAdapter progress) throws IOException

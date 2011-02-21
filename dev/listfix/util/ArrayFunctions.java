@@ -185,4 +185,14 @@ public class ArrayFunctions
 		}
 		return result;
 	}
+
+	public static int[] integerListToArray(List<Integer> list)
+	{
+		int[] rows = new int[list.size()];
+		for (int i = 0; i < list.size(); i++)
+		{
+			rows[i] = list.get(i);
+		}
+		return rows;
+	}
 }

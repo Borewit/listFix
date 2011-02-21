@@ -245,6 +245,20 @@ public class PlaylistEntry implements Cloneable
 		}
 	}
 
+	// Copy constructor...
+	public PlaylistEntry(PlaylistEntry entry)
+	{
+		_fileName = entry._fileName;
+		_extInf = entry._extInf;
+		_title = entry._title;
+		_length = entry._length;
+		_thisFile = entry._thisFile;
+		_playlist = entry._playlist;
+		_status = entry._status;
+		_absoluteFile = entry._absoluteFile;
+		_thisURI = entry._thisURI;
+	}
+
 	public void markFixedIfFound()
 	{
 		if (getStatus() == PlaylistEntryStatus.Found)
@@ -281,7 +295,7 @@ public class PlaylistEntry implements Cloneable
 
 	private void recheckFoundStatus()
 	{
-		if (_thisFile.exists() && _thisFile.isFile())
+		if (_thisFile.isFile() && _thisFile.exists())
 		{
 			_status = PlaylistEntryStatus.Found;
 		}
@@ -563,7 +577,7 @@ public class PlaylistEntry implements Cloneable
 		PlaylistEntry result = null;
 		if (!this.isURL())
 		{
-			result = new PlaylistEntry(new File(this.getFile().getPath()), this.getTitle(), this.getLength(), _playlist);
+			result = new PlaylistEntry(this); // new PlaylistEntry(new File(this.getFile().getPath()), this.getTitle(), this.getLength(), _playlist);
 		}
 		else
 		{
