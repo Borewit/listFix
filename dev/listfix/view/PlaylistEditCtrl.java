@@ -630,9 +630,28 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			{
 				rows[r] = _uiTable.convertRowIndexToModel(rows[r]);
 			}
+
+			/*
+			List<Integer> rowList = new ArrayList<Integer>();
+			for (int i : rows)
+			{
+				if (_playlist.get(i).isFound())
+				{
+					rowList.add(i);
+				}
+			}
+			rows = new int[rowList.size()];
+			for (int i = 0; i < rowList.size(); i++)
+			{
+				rows[i] = rowList.get(i);
+			}
+			 * */			 
+
 			Playlist tempList = _playlist.getSublist(rows);
-			tempList.removeMissing();
-			tempList.save(false, null);
+
+			// tempList.removeMissing();
+			// tempList.save(false, null);
+
 			if (tempList.size() > 0)
 			{
 				tempList.play();
@@ -642,7 +661,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		{
 			JOptionPane.showMessageDialog(getParentFrame(), "Could not open these playlist entries, error was: \n\n" + ex.toString());
 		}
-
 	}
 
 	/** This method is called from within the constructor to

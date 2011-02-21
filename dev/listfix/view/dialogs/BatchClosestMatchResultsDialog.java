@@ -341,9 +341,9 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
 				if (isSelected)
 				{
-					if (-1 < index)
+					if (index > 0)
 					{
-						list.setToolTipText(((MatchedPlaylistEntry)((MatchComboBoxModel)list.getModel())._matches.get(index)).getPlaylistFile().getPath());
+						list.setToolTipText(((MatchedPlaylistEntry)((MatchComboBoxModel)list.getModel())._matches.get(index - 1)).getPlaylistFile().getPath());
 					}
 				}
 				

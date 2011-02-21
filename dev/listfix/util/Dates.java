@@ -36,11 +36,5 @@ public class Dates
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
 		return sdf.format(cal.getTime());
-
-	}
-
-	public static void main(String arg[])
-	{
-		System.out.println("Now : " + Dates.now());
 	}
 }

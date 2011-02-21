@@ -88,6 +88,7 @@ public class DirectoryScanner
 
 			if (entryList != null)
 			{
+				File tempFile = null;
 				for (int i = 0; i < entryList.length; i++)
 				{
 					s.append(baseDir);
@@ -96,7 +97,7 @@ public class DirectoryScanner
 						s.append(fs);
 					}
 					s.append(entryList[i]);
-					File tempFile = new File(s.toString());
+					tempFile = new File(s.toString());
 					if (tempFile.isDirectory())
 					{
 						dirList.add(s.toString());
@@ -125,6 +126,9 @@ public class DirectoryScanner
 				thisDirList.add(dir);
 				recursiveDir(dir, task);
 			}
+
+			fileList.clear();
+			dirList.clear();
 		}
 		else
 		{

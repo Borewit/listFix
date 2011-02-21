@@ -20,9 +20,6 @@
 
 package listfix.model;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import listfix.model.enums.PlaylistType;
 
 import java.io.BufferedOutputStream;
@@ -96,7 +93,7 @@ public class Playlist
 		_type = PlaylistType.M3U;
 		_isModified = false;
 		refreshStatus();
-		save(false, null);
+		quickSave();
 	}
 
 	public Playlist(File playlist, IProgressObserver observer) throws IOException
@@ -850,12 +847,20 @@ public class Playlist
 		}
 	}
 
+	private void quickSave()
+	{
+		quickSaveM3U();
+
+	}
+
 	private void saveM3U(boolean saveRelative, ProgressAdapter progress) throws IOException
 	{
 		boolean track = progress != null;
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#EXTM3U").append(BR);
+		PlaylistEntry entry = null;
+		String relativePath = "";
 		for (int i = 0; i < _entries.size(); i++)
 		{
 			if (!track || !progress.getCancelled())
@@ -864,11 +869,11 @@ public class Playlist
 				{
 					progress.stepCompleted();
 				}
-				PlaylistEntry entry = _entries.get(i);
+				entry = _entries.get(i);
 				entry.setPlaylist(_file);
 				if (!entry.isURL())
 				{
-					if (!saveRelative && entry.getAbsoluteFile() != null)
+					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
 					{
 						// replace existing relative entry with a new absolute one
 						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf(), _file);
@@ -877,7 +882,7 @@ public class Playlist
 					else if (saveRelative && !entry.isURL())
 					{
 						// replace existing absolute entry with a new relative one
-						String relativePath = FileWriter.getRelativePath(entry.getAbsoluteFile(), _file);
+						relativePath = FileWriter.getRelativePath(entry.getAbsoluteFile(), _file);
 						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -893,14 +898,10 @@ public class Playlist
 
 		if (!track || !progress.getCancelled())
 		{
-			// TODO: remove saveRelative check?
-			if (!saveRelative)
+			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
+			if (!dirToSaveIn.exists())
 			{
-				File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
-				if (!dirToSaveIn.exists())
-				{
-					dirToSaveIn.mkdirs();
-				}
+				dirToSaveIn.mkdirs();
 			}
 
 			FileOutputStream outputStream = new FileOutputStream(_file);
