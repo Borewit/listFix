@@ -533,7 +533,7 @@ public class PlaylistEntry implements Cloneable
 		progress.setTotal(mediaFiles.length);
 
 		matches.clear();
-		String entryName = getFileName().replaceAll("\'", "");
+		String entryName = getFileName().replaceAll("\'", "").toLowerCase();
 		File mediaFile = null;
 		int score = 0;
 		for (String mediaFilePath : mediaFiles)
@@ -543,7 +543,7 @@ public class PlaylistEntry implements Cloneable
 				progress.stepCompleted();
 
 				mediaFile = new File(mediaFilePath);
-				score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", ""));
+				score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", "").toLowerCase());
 				if (score > 0)
 				{
 					// JCaron - Keep only the top 20 rated matches, anything more than that will probably use too much memory

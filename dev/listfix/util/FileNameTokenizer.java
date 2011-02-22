@@ -79,7 +79,7 @@ public class FileNameTokenizer
 		for (int i = 0; i < tokenCount; i++)
 		{
 			token = tokenMaker.nextToken();
-			if (token.length() > 1 && !ignoreList.contains(token.toLowerCase()))
+			if (token.length() > 1 && !ignoreList.contains(token))
 			{
 				result.add(token);
 			}
@@ -92,37 +92,35 @@ public class FileNameTokenizer
 		HashMap<String, Integer> array1Counts = new HashMap<String, Integer>();
 		HashMap<String, Integer> array2Counts = new HashMap<String, Integer>();
 
-		String token;
 		for (String t : array1)
 		{
-			token = t.toLowerCase();
-			if (array1Counts.containsKey(token))
+			if (array1Counts.containsKey(t))
 			{
-				array1Counts.put(token, new Integer(array1Counts.get(token).intValue() + 1));
+				array1Counts.put(t, new Integer(array1Counts.get(t).intValue() + 1));
 			}
 			else
 			{
-				array1Counts.put(token, new Integer(1));
+				array1Counts.put(t, new Integer(1));
 			}
 		}
 
 		for (String t : array2)
 		{
-			token = t.toLowerCase();
-			if (array1Counts.containsKey(token))
+			if (array1Counts.containsKey(t))
 			{
-				if (array2Counts.containsKey(token))
+				if (array2Counts.containsKey(t))
 				{
-					array2Counts.put(token, new Integer(array2Counts.get(token).intValue() + 1));
+					array2Counts.put(t, new Integer(array2Counts.get(t).intValue() + 1));
 				}
 				else
 				{
-					array2Counts.put(token, new Integer(1));
+					array2Counts.put(t, new Integer(1));
 				}
 			}
 		}
 
 		int result = 0;
+		String token;
 		if (array2Counts.keySet().size() > 0)
 		{
 			result = array2Counts.keySet().size() == 1 ? 1 : (int) Math.pow(3.0, (double) array2Counts.keySet().size());
