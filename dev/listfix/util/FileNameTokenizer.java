@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 public class FileNameTokenizer
 {
 	public static final List<String> ignoreList = new ArrayList<String>();
+	public static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";
 
 	static
 	{
@@ -71,12 +72,13 @@ public class FileNameTokenizer
 	private static List<String> splitFileName(String fileName)
 	{
 		fileName = removeExtensionFromFileName(fileName);
-		StringTokenizer tokenMaker = new StringTokenizer(fileName, " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;");
+		StringTokenizer tokenMaker = new StringTokenizer(fileName, separators);
 		int tokenCount = tokenMaker.countTokens();
 		List<String> result = new ArrayList<String>();
+		String token = "";
 		for (int i = 0; i < tokenCount; i++)
 		{
-			String token = tokenMaker.nextToken();
+			token = tokenMaker.nextToken();
 			if (token.length() > 1 && !ignoreList.contains(token.toLowerCase()))
 			{
 				result.add(token);
