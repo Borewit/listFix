@@ -90,9 +90,10 @@ public class FileNameTokenizer
 		HashMap<String, Integer> array1Counts = new HashMap<String, Integer>();
 		HashMap<String, Integer> array2Counts = new HashMap<String, Integer>();
 
+		String token;
 		for (String t : array1)
 		{
-			String token = t.toLowerCase();
+			token = t.toLowerCase();
 			if (array1Counts.containsKey(token))
 			{
 				array1Counts.put(token, new Integer(array1Counts.get(token).intValue() + 1));
@@ -105,7 +106,7 @@ public class FileNameTokenizer
 
 		for (String t : array2)
 		{
-			String token = t.toLowerCase();
+			token = t.toLowerCase();
 			if (array1Counts.containsKey(token))
 			{
 				if (array2Counts.containsKey(token))
@@ -126,7 +127,7 @@ public class FileNameTokenizer
 			Iterator<String> array2CountsIterator = array2Counts.keySet().iterator();
 			while (array2CountsIterator.hasNext())
 			{
-				String token = array2CountsIterator.next();
+				token = array2CountsIterator.next();
 				int array1Count = array1Counts.get(token).intValue();
 				int array2Count = array2Counts.get(token).intValue();
 				if (array1Count < array2Count)

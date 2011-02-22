@@ -675,6 +675,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 				File playlist = jSaveFileChooser.getSelectedFile();
 
+				// prompt for confirmation if the file already exists...
+				if (playlist.exists())
+				{
+					int result = JOptionPane.showConfirmDialog(this, "You picked a file that already exists, should I really overwrite it?", "File Exists:", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.NO_OPTION)
+					{
+						return;
+					}
+				}
+
 				// make sure file has correct extension
 				String normalizedName = playlist.getName().trim().toLowerCase();
 				if (!Playlist.isPlaylist(playlist)
