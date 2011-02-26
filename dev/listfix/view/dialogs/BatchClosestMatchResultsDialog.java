@@ -29,6 +29,7 @@ import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -56,11 +57,12 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
 		int cwidth = 0;
 		TableColumnModel cm = _uiTable.getColumnModel();
-		cm.getColumn(3).setMinWidth(0);
+		cm.getColumn(4).setMinWidth(0);
 		_uiTable.setDefaultRenderer(Integer.class, new ZebraJTable.IntRenderer());
 		_uiTable.initFillColumnForScrollPane(_uiScrollPane);
 		cwidth += _uiTable.autoResizeColumn(1);
-		cwidth += _uiTable.autoResizeColumn(2);
+		cwidth += cm.getColumn(2).getWidth();
+		cwidth += _uiTable.autoResizeColumn(3);
 		_uiTable.setFillerColumnWidth(_uiScrollPane);
 
 		TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
@@ -72,7 +74,8 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		col.setPreferredWidth(width);
 		cwidth += width;
 
-		cm.getColumn(2).setCellEditor(new MatchEditor());
+		cm.getColumn(2).setCellRenderer(new JTableButtonRenderer(_uiTable.getDefaultRenderer(JButton.class)));
+		cm.getColumn(3).setCellEditor(new MatchEditor());
 
         // get screenwidth using workaround for vmware/linux bug
         int screenWidth;
@@ -219,6 +222,29 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		};
 	}
 
+	private class JTableButtonRenderer implements TableCellRenderer
+	{
+		private TableCellRenderer __defaultRenderer;
+
+		public JTableButtonRenderer(TableCellRenderer renderer)
+		{
+			__defaultRenderer = renderer;
+		}
+
+		public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected,
+			boolean hasFocus,
+			int row, int column)
+		{
+			if (value instanceof Component)
+			{
+				return (Component) value;
+			}
+			return __defaultRenderer.getTableCellRendererComponent(
+				table, value, isSelected, hasFocus, row, column);
+		}
+	}
+
 	private class MatchTableModel extends AbstractTableModel
 	{
 		@Override
@@ -230,7 +256,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		@Override
 		public int getColumnCount()
 		{
-			return 4;
+			return 5;
 		}
 
 		@Override
@@ -246,6 +272,9 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 					return item.getEntry().getFileName();
 
 				case 2:
+					return new JButton("Test");
+
+				case 3:
 					MatchedPlaylistEntry match = item.getSelectedMatch();
 					if (match != null)
 					{
@@ -271,6 +300,8 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 				case 1:
 					return "Original Name";
 				case 2:
+					return "Preview";
+				case 3:
 					return "Matched Name";
 				default:
 					return null;
@@ -287,13 +318,13 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		public boolean isCellEditable(int rowIndex, int columnIndex)
 		{
 			//return super.isCellEditable(rowIndex, columnIndex);
-			return columnIndex == 2;
+			return columnIndex == 3;
 		}
 
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex)
 		{
-			if (columnIndex == 2)
+			if (columnIndex == 3)
 			{
 				int ix = (Integer) aValue;
 				//Log.write("set %d to %d", rowIndex, ix);
