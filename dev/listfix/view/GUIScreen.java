@@ -110,9 +110,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		jMediaDirChooser = new JFileChooser();
 		jSaveFileChooser = new JFileChooser();
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
-		jM3UChooser.setDialogTitle("Choose a Playlist...");
+		jM3UChooser.setDialogTitle("Choose Playlists...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
 		jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
+		jM3UChooser.setMultiSelectionEnabled(true);
 		FontHelper.recursiveSetFont(jM3UChooser.getComponents());
 		jMediaDirChooser.setDialogTitle("Specify a media directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
@@ -227,6 +228,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistDirectoryPanel = new javax.swing.JPanel();
         _treeScrollPane = new javax.swing.JScrollPane();
         _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
+        jPanel1 = new javax.swing.JPanel();
+        _refreshPlaylistPanelButton = new javax.swing.JButton();
         _playlistPanel = new javax.swing.JPanel();
         _gettingStartedPanel = new javax.swing.JPanel();
         _verticalPanel = new javax.swing.JPanel();
@@ -259,7 +262,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         playlistTreeRightClickMenu.setPreferredSize(new java.awt.Dimension(160, 28));
 
-        batchPlaylistRepairMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        batchPlaylistRepairMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         batchPlaylistRepairMenuItem.setText("Repair Playlist(s)...");
         batchPlaylistRepairMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -281,7 +284,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         _statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("SansSerif", 0, 10));
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
         statusLabel.setForeground(new java.awt.Color(75, 75, 75));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
@@ -306,14 +309,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
             }
         });
 
-        _mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("SansSerif", 0, 10))); // NOI18N
+        _mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         _mediaLibraryPanel.setAlignmentX(0.0F);
         _mediaLibraryPanel.setAlignmentY(0.0F);
         _mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
 
         _mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
 
-        _addMediaDirButton.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         _addMediaDirButton.setText("Add");
         _addMediaDirButton.setToolTipText("Where do you keep your music?");
         _addMediaDirButton.setFocusable(false);
@@ -326,7 +329,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _mediaLibraryButtonPanel.add(_addMediaDirButton);
 
-        _removeMediaDirButton.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
         _removeMediaDirButton.setText("Remove");
         _removeMediaDirButton.setToolTipText("Remove a directory from the search list");
         _removeMediaDirButton.setFocusable(false);
@@ -339,7 +342,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _mediaLibraryButtonPanel.add(_removeMediaDirButton);
 
-        _refreshMediaDirsButton.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
         _refreshMediaDirsButton.setText("Refresh");
         _refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
         _refreshMediaDirsButton.setFocusable(false);
@@ -354,7 +357,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _mediaLibraryPanel.add(_mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
-        _mediaLibraryList.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _mediaLibraryList.setFont(new java.awt.Font("Verdana", 0, 9));
         _mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         _mediaLibraryList.setPreferredSize(null);
         _mediaLibraryScrollPane.setViewportView(_mediaLibraryList);
@@ -363,12 +366,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _leftSplitPane.setBottomComponent(_mediaLibraryPanel);
 
-        _playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("SansSerif", 0, 10))); // NOI18N
+        _playlistDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Playlists Directory", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Verdana", 0, 9))); // NOI18N
         _playlistDirectoryPanel.setAlignmentX(0.0F);
         _playlistDirectoryPanel.setAlignmentY(0.0F);
         _playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
-        _playlistDirectoryTree.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _playlistDirectoryTree.setFont(new java.awt.Font("Verdana", 0, 9));
         _playlistDirectoryTree.setDragEnabled(true);
         _playlistDirectoryTree.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -381,6 +384,21 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _treeScrollPane.setViewportView(_playlistDirectoryTree);
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
+
+        _refreshPlaylistPanelButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _refreshPlaylistPanelButton.setText("Refresh");
+        _refreshPlaylistPanelButton.setToolTipText("Refresh Playlists Tree");
+        _refreshPlaylistPanelButton.setFocusable(false);
+        _refreshPlaylistPanelButton.setMinimumSize(new java.awt.Dimension(71, 25));
+        _refreshPlaylistPanelButton.setPreferredSize(null);
+        _refreshPlaylistPanelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _refreshPlaylistPanelButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_refreshPlaylistPanelButton);
+
+        _playlistDirectoryPanel.add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
         _leftSplitPane.setTopComponent(_playlistDirectoryPanel);
 
@@ -395,7 +413,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _verticalPanel.setBackground(new java.awt.Color(255, 255, 255));
         _verticalPanel.setLayout(new javax.swing.BoxLayout(_verticalPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        _openIconButton.setFont(new java.awt.Font("SansSerif", 0, 12));
+        _openIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
@@ -419,7 +437,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _spacerPanel.setBackground(new java.awt.Color(255, 255, 255));
         _verticalPanel.add(_spacerPanel);
 
-        _newIconButton.setFont(new java.awt.Font("SansSerif", 0, 12));
+        _newIconButton.setFont(new java.awt.Font("Verdana", 0, 12));
         _newIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icon_new_file.png"))); // NOI18N
         _newIconButton.setText("New Playlist");
         _newIconButton.setToolTipText("New Playlist");
@@ -444,7 +462,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
         _uiTabs.setFocusable(false);
-        _uiTabs.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _uiTabs.setFont(new java.awt.Font("Verdana", 0, 9));
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 onTabStateChanged(evt);
@@ -457,14 +475,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         getContentPane().add(_splitPane, java.awt.BorderLayout.CENTER);
 
         _mainMenuBar.setBorder(null);
-        _mainMenuBar.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _mainMenuBar.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _fileMenu.setMnemonic('F');
         _fileMenu.setText("File");
-        _fileMenu.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _fileMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _newPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        _newPlaylistMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _newPlaylistMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _newPlaylistMenuItem.setMnemonic('L');
         _newPlaylistMenuItem.setText("New Playlist");
         _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -475,7 +493,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_newPlaylistMenuItem);
 
         _loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        _loadMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _loadMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _loadMenuItem.setMnemonic('L');
         _loadMenuItem.setText("Open Playlist");
         _loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -486,7 +504,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_loadMenuItem);
 
         _closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
-        _closeMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _closeMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _closeMenuItem.setText("Close");
         _closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -496,7 +514,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_closeMenuItem);
 
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        _saveMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _saveMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _saveMenuItem.setMnemonic('S');
         _saveMenuItem.setText("Save");
         _saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -507,7 +525,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_saveMenuItem);
 
         _saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        _saveAsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _saveAsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _saveAsMenuItem.setMnemonic('V');
         _saveAsMenuItem.setText("Save As");
         _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -529,7 +547,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _fileMenu.add(_miBatchRepair);
 
-        _batchRepairWinampMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _batchRepairWinampMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
         _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -539,7 +557,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(_batchRepairWinampMenuItem);
 
         _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
-        _extractPlaylistsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _extractPlaylistsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
         _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
         _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -554,11 +572,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         recentMenu.setText("Recent Playlists");
         recentMenu.setToolTipText("Recently Opened Playlists");
-        recentMenu.setFont(new java.awt.Font("SansSerif", 0, 10));
+        recentMenu.setFont(new java.awt.Font("Verdana", 0, 9));
         _fileMenu.add(recentMenu);
 
         _clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        _clearHistoryMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _clearHistoryMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _clearHistoryMenuItem.setMnemonic('H');
         _clearHistoryMenuItem.setText("Clear Playlist History");
         _clearHistoryMenuItem.setToolTipText("");
@@ -573,7 +591,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(jSeparator1);
 
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        _appOptionsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _appOptionsMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _appOptionsMenuItem.setMnemonic('H');
         _appOptionsMenuItem.setText("Options...");
         _appOptionsMenuItem.setToolTipText("");
@@ -588,7 +606,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _fileMenu.add(jSeparator2);
 
         _exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        _exitMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _exitMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _exitMenuItem.setMnemonic('x');
         _exitMenuItem.setText("Exit");
         _exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -602,10 +620,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _helpMenu.setMnemonic('H');
         _helpMenu.setText("Help");
-        _helpMenu.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _helpMenu.setFont(new java.awt.Font("Verdana", 0, 9));
 
         _helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        _helpMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _helpMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _helpMenuItem.setMnemonic('e');
         _helpMenuItem.setText("Help");
         _helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -616,7 +634,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _helpMenu.add(_helpMenuItem);
 
         _updateCheckMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
-        _updateCheckMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _updateCheckMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _updateCheckMenuItem.setText("Check For Updates");
         _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -626,7 +644,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _helpMenu.add(_updateCheckMenuItem);
 
         _aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
-        _aboutMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _aboutMenuItem.setFont(new java.awt.Font("Verdana", 0, 9));
         _aboutMenuItem.setMnemonic('A');
         _aboutMenuItem.setText("About");
         _aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -752,8 +770,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 		int response = jM3UChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
-			File playlist = jM3UChooser.getSelectedFile();
-			this.openPlaylist(playlist);
+			File[] playlists = jM3UChooser.getSelectedFiles();
+			for (File file : playlists)
+				this.openPlaylist(file);
 		}
 	}//GEN-LAST:event_openIconButtonActionPerformed
 
@@ -1783,8 +1802,9 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 	int response = jM3UChooser.showOpenDialog(this);
 	if (response == JFileChooser.APPROVE_OPTION)
 	{
-		File playlist = jM3UChooser.getSelectedFile();
-		this.openPlaylist(playlist);
+		File[] playlists = jM3UChooser.getSelectedFiles();
+		for (File file : playlists)
+			this.openPlaylist(file);
 	}
 	else
 	{
@@ -1918,6 +1938,11 @@ private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	this.tryCloseTab((ClosableTabCtrl) _uiTabs.getTabComponentAt(_uiTabs.getSelectedIndex()));
 }//GEN-LAST:event__closeMenuItemActionPerformed
 
+private void _refreshPlaylistPanelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__refreshPlaylistPanelButtonActionPerformed
+{//GEN-HEADEREND:event__refreshPlaylistPanelButtonActionPerformed
+	updatePlaylistDirectoryPanel();
+}//GEN-LAST:event__refreshPlaylistPanelButtonActionPerformed
+
 	private void updateMediaDirButtons()
 	{
 		if (_mediaLibraryList.getModel().getSize() == 0)
@@ -2016,6 +2041,7 @@ private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-
     private javax.swing.JTree _playlistDirectoryTree;
     private javax.swing.JPanel _playlistPanel;
     private javax.swing.JButton _refreshMediaDirsButton;
+    private javax.swing.JButton _refreshPlaylistPanelButton;
     private javax.swing.JButton _removeMediaDirButton;
     private javax.swing.JMenuItem _saveAsMenuItem;
     private javax.swing.JMenuItem _saveMenuItem;
@@ -2027,6 +2053,7 @@ private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-
     private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JPanel _verticalPanel;
     private javax.swing.JMenuItem batchPlaylistRepairMenuItem;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;

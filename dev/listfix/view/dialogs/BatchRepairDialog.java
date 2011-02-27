@@ -54,7 +54,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		//super(parent, modal);
 		_batch = batch;
 		initComponents();
-		playlistEditCtrl1.suppressOpenButton();
 		getRootPane().setDefaultButton(_btnSave);
 		_txtBackup.setText(_batch.getDefaultBackupName());
 
