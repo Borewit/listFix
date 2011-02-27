@@ -636,7 +636,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			List<Integer> rowList = new ArrayList<Integer>();
 			for (int i : rows)
 			{
-				if (_playlist.get(i).isFound())
+				if (_playlist.get(i).isFound() || _playlist.get(i).isURL())
 				{
 					rowList.add(i);
 				}
@@ -1458,7 +1458,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{
 		for (int row : _uiTable.getSelectedRows())
 		{
-			if (_playlist.get(_uiTable.convertRowIndexToModel(row)).isFound())
+			if (_playlist.get(_uiTable.convertRowIndexToModel(row)).isFound() || _playlist.get(_uiTable.convertRowIndexToModel(row)).isURL())
 			{
 				return true;
 			}

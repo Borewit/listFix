@@ -179,7 +179,7 @@ public class PlaylistEntry implements Cloneable
 		{
 			if (!_thisFile.isAbsolute())
 			{
-				_absoluteFile = new File(list.getParentFile(), _fileName);
+				_absoluteFile = new File(list.getParentFile(), _path + _fileName);
 				if (_absoluteFile.exists())
 				{
 					_status = PlaylistEntryStatus.Found;
@@ -201,6 +201,7 @@ public class PlaylistEntry implements Cloneable
 	public PlaylistEntry(File input, String t, String l, File list)
 	{
 		_fileName = input.getName();
+		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 		_extInf = "#EXTINF:" + l + "," + t;
 		_title = t;
 		_length = l;
@@ -221,17 +222,15 @@ public class PlaylistEntry implements Cloneable
 			{
 				_absoluteFile = new File(_thisFile.getAbsolutePath());
 			}
-			_path = input.getPath().substring(0, input.getPath().indexOf(_absoluteFile.getName()));
 		}
 		else
 		{
 			if (!_thisFile.isAbsolute())
 			{
-				_absoluteFile = new File(list.getParentFile(), _fileName);
+				_absoluteFile = new File(list.getParentFile(), _path + _fileName);
 				if (_absoluteFile.exists())
 				{
 					_status = PlaylistEntryStatus.Found;
-					// _path = parentPath.getPath();
 				}
 				else
 				{
@@ -249,6 +248,7 @@ public class PlaylistEntry implements Cloneable
 	public PlaylistEntry(PlaylistEntry entry)
 	{
 		_fileName = entry._fileName;
+		_path = entry._path;
 		_extInf = entry._extInf;
 		_title = entry._title;
 		_length = entry._length;
@@ -388,19 +388,11 @@ public class PlaylistEntry implements Cloneable
 	// Try to open the file with the "default" MP3 player (only works on some systems).
 	public void play() throws IOException, InterruptedException
 	{
-		File absFile = null;
-		if (this.isURL())
+		if (this.isFound() || this.isURL())
 		{
-			BrowserLauncher.launch(this._thisURI.toString());
-		}
-		else
-		{
-			if (this.isFound())
-			{
-				List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
-				tempList.add(this);
-				(new Playlist(tempList)).play();
-			}
+			List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+			tempList.add(this);
+			(new Playlist(tempList)).play();
 		}
 	}
 
