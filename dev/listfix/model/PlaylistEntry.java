@@ -397,15 +397,9 @@ public class PlaylistEntry implements Cloneable
 		{
 			if (this.isFound())
 			{
-				if (this.isRelative())
-				{
-					absFile = this._absoluteFile.getCanonicalFile();
-				}
-				else
-				{
-					absFile = this._thisFile.getCanonicalFile();
-				}
-				FileLauncher.launch(absFile);
+				List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+				tempList.add(this);
+				(new Playlist(tempList)).play();
 			}
 		}
 	}

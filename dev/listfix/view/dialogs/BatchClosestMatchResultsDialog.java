@@ -270,14 +270,17 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			int row = table.getEditingRow();
 			int rowIx = table.getRowSorter().convertRowIndexToModel(row);
 			BatchMatchItem item = _items.get(rowIx);
-			MatchedPlaylistEntry match = item.getSelectedMatch();
+			MatchedPlaylistEntry match = item.getSelectedMatch();		
+
 			try
 			{
-				List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
-				tempList.add(match.getPlaylistFile());
-				(new Playlist(tempList)).play();
+				match.getPlaylistFile().play();
 			}
 			catch (IOException ex)
+			{
+				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			catch (InterruptedException ex)
 			{
 				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
 			}

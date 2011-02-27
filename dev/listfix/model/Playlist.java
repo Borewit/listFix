@@ -83,6 +83,7 @@ public class Playlist
 		Reverse
 	}
 
+	// This constructor creates a temp-file backed playlist from a list of entries, currently used for playback.
 	public Playlist(List<PlaylistEntry> sublist) throws IOException
 	{
 		_utfFormat = false;
@@ -487,7 +488,7 @@ public class Playlist
 				{
 					// playlist file
 					IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file);
-					ents.addAll(reader.readPlaylist());
+					ents.addAll(reader.readPlaylist(progress));
 				}
 				else
 				{

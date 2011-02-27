@@ -204,16 +204,15 @@ public class M3UReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
-		String line1 = buffer.readLine();
+		String line1 = readLine();
 		if (line1 != null)
 		{
 			String line2 = "";
-
 			if (line1 != null)
 			{
 				while (line1.contains("#EXTM3U") || line1.startsWith("#EXTINFUTF8"))
 				{
-					line1 = buffer.readLine();
+					line1 = readLine();
 				}
 				if (!line1.startsWith("#"))
 				{
@@ -222,7 +221,7 @@ public class M3UReader implements IPlaylistReader
 				}
 				else
 				{
-					line2 = buffer.readLine();
+					line2 = readLine();
 					while (line2.startsWith("#"))
 					{
 						// throw away non-standard metadata added by mediamonkey...
@@ -230,12 +229,14 @@ public class M3UReader implements IPlaylistReader
 						{
 							line1 = line1 + br + line2;
 						}
-						line2 = buffer.readLine();
+						line2 = readLine();
 					}
 				}
+
 				while (line1 != null)
 				{
 					processEntry(line1, line2);
+					line1 = readLine();
 					if (line1 != null)
 					{
 						if (line1.startsWith("#EXTINFUTF8"))
@@ -249,7 +250,7 @@ public class M3UReader implements IPlaylistReader
 						}
 						else
 						{
-							line2 = buffer.readLine();
+							line2 = readLine();
 							while (line2.startsWith("#"))
 							{
 								// throw away non-standard metadata added by mediamonkey...
@@ -257,7 +258,7 @@ public class M3UReader implements IPlaylistReader
 								{
 									line1 = line1 + br + line2;
 								}
-								line2 = buffer.readLine();
+								line2 = readLine();
 							}
 						}
 					}
@@ -271,7 +272,10 @@ public class M3UReader implements IPlaylistReader
 	private String readLine() throws IOException
 	{
 		String line = buffer.readLine();
-		_cache.append(line);
+		if (_cache != null)
+		{
+			_cache.append(line);
+		}
 		return line;
 	}
 
