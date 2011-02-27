@@ -83,7 +83,7 @@ public class Playlist
 		Reverse
 	}
 
-	private Playlist(List<PlaylistEntry> sublist) throws IOException
+	public Playlist(List<PlaylistEntry> sublist) throws IOException
 	{
 		_utfFormat = false;
 		setEntries(sublist);

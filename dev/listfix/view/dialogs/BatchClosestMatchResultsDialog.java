@@ -23,9 +23,15 @@ import java.awt.Component;
 import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -46,6 +52,8 @@ import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.view.support.ZebraJTable;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import listfix.model.Playlist;
+import listfix.model.PlaylistEntry;
 
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
@@ -58,7 +66,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		int cwidth = 0;
 		TableColumnModel cm = _uiTable.getColumnModel();
 		cm.getColumn(4).setMinWidth(0);
-		_uiTable.setDefaultRenderer(Integer.class, new ZebraJTable.IntRenderer());
+		// _uiTable.setDefaultRenderer(Integer.class, new ZebraJTable.IntRenderer());
 		_uiTable.initFillColumnForScrollPane(_uiScrollPane);
 		cwidth += _uiTable.autoResizeColumn(1);
 		cwidth += cm.getColumn(2).getWidth();
@@ -72,9 +80,11 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		col.setMinWidth(width);
 		col.setMaxWidth(width);
 		col.setPreferredWidth(width);
-		cwidth += width;
+		cwidth += width + 20;
+		_uiTable.setCellSelectionEnabled(true);
 
-		cm.getColumn(2).setCellRenderer(new JTableButtonRenderer(_uiTable.getDefaultRenderer(JButton.class)));
+		cm.getColumn(2).setCellRenderer(new ButtonRenderer());
+		cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
 		cm.getColumn(3).setCellEditor(new MatchEditor());
 
         // get screenwidth using workaround for vmware/linux bug
@@ -97,6 +107,92 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		_uiTable.getRowSorter().setSortKeys(keys);
 
 		_uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	}
+	
+	class ButtonRenderer implements TableCellRenderer
+	{
+		JButton button = new JButton();
+
+		public Component getTableCellRendererComponent(JTable table,
+			Object value,
+			boolean isSelected,
+			boolean hasFocus,
+			int row, int column)
+		{
+			button.setText("PLAY");
+			button.setFont(new Font("Verdana", 0, 9));
+			return button;
+		}
+	}
+
+	class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
+	{
+		JTable table;
+		JButton button = new JButton();
+		int clickCountToStart = 1;
+
+		public ButtonEditor(JTable table)
+		{
+			this.table = table;
+			button.addActionListener(this);
+		}
+
+		public void actionPerformed(ActionEvent e)
+		{
+			int row = table.getEditingRow();
+			int rowIx = table.getRowSorter().convertRowIndexToModel(row);
+			BatchMatchItem item = _items.get(rowIx);
+			MatchedPlaylistEntry match = item.getSelectedMatch();
+			try
+			{
+				List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+				tempList.add(match.getPlaylistFile());
+				(new Playlist(tempList)).play();
+			}
+			catch (IOException ex)
+			{
+				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+			Object value,
+			boolean isSelected,
+			int row, int column)
+		{
+			button.setText("PLAY");
+			button.setFont(new Font("Verdana", 0, 9));
+			return button;
+		}
+
+		public Object getCellEditorValue()
+		{
+			return button.getText();
+		}
+
+		public boolean isCellEditable(EventObject anEvent)
+		{
+			if (anEvent instanceof MouseEvent)
+			{
+				return ((MouseEvent) anEvent).getClickCount() >= clickCountToStart;
+			}
+			return true;
+		}
+
+		public boolean shouldSelectCell(EventObject anEvent)
+		{
+			return true;
+		}
+
+		public boolean stopCellEditing()
+		{
+			return super.stopCellEditing();
+		}
+
+		public void cancelCellEditing()
+		{
+			super.cancelCellEditing();
+		}
 	}
 
 	public boolean isAccepted()
@@ -165,7 +261,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
     private void onBtnOkActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnOkActionPerformed
     {//GEN-HEADEREND:event_onBtnOkActionPerformed
 		_isAccepted = true;
-		if (_uiTable.getSelectedRow() > -1 && _uiTable.getSelectedColumn() == 2)
+		if (_uiTable.getSelectedRow() > -1 && _uiTable.getSelectedColumn() == 3)
 		{
 			TableCellEditor cellEditor = _uiTable.getCellEditor(_uiTable.getSelectedRow(), _uiTable.getSelectedColumn());
 			cellEditor.stopCellEditing();
@@ -200,7 +296,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 				{
 					int rowIx = convertRowIndexToModel(rawRowIx);
 					int colIx = convertColumnIndexToModel(rawColIx);
-					if (rowIx >= 0 && rowIx < _items.size() && (colIx == 1 || colIx == 2))
+					if (rowIx >= 0 && rowIx < _items.size() && (colIx == 1 || colIx == 2 || colIx == 3))
 					{
 						BatchMatchItem item = _items.get(rowIx);
 						if (colIx == 1)
@@ -222,29 +318,6 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		};
 	}
 
-	private class JTableButtonRenderer implements TableCellRenderer
-	{
-		private TableCellRenderer __defaultRenderer;
-
-		public JTableButtonRenderer(TableCellRenderer renderer)
-		{
-			__defaultRenderer = renderer;
-		}
-
-		public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected,
-			boolean hasFocus,
-			int row, int column)
-		{
-			if (value instanceof Component)
-			{
-				return (Component) value;
-			}
-			return __defaultRenderer.getTableCellRendererComponent(
-				table, value, isSelected, hasFocus, row, column);
-		}
-	}
-
 	private class MatchTableModel extends AbstractTableModel
 	{
 		@Override
@@ -262,7 +335,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex)
 		{
-			BatchMatchItem item = _items.get(rowIndex);
+			final BatchMatchItem item = _items.get(rowIndex);
 			switch (columnIndex)
 			{
 				case 0:
@@ -272,8 +345,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 					return item.getEntry().getFileName();
 
 				case 2:
-					return new JButton("Test");
-
+					return "";
 				case 3:
 					MatchedPlaylistEntry match = item.getSelectedMatch();
 					if (match != null)
@@ -318,7 +390,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		public boolean isCellEditable(int rowIndex, int columnIndex)
 		{
 			//return super.isCellEditable(rowIndex, columnIndex);
-			return columnIndex == 3;
+			return columnIndex == 2 || columnIndex == 3;
 		}
 
 		@Override

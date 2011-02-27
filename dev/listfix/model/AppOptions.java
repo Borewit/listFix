@@ -39,6 +39,7 @@ public class AppOptions
 	private int maxPlaylistHistoryEntries = 5;
 	private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
 	private String playlistsDirectory = EMPTY_STRING;
+	
 	public static final Hashtable<String, Integer> optionEnumTable = new Hashtable<String, Integer>();
 
 	static

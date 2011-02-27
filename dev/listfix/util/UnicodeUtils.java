@@ -40,7 +40,7 @@ public class UnicodeUtils
 {
 	public static byte[] convert(byte[] bytes, String encout) throws Exception
 	{
-		// Workaround for bug that will not be fixed by SUN
+		// Workaround for bug that will not be fixed by Sun/Oracle
 		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
 		UnicodeInputStream uis = new UnicodeInputStream(new ByteArrayInputStream(bytes), "ASCII");
 		boolean unicodeOutputReqd = (getBOM(encout) != null) ? true : false;

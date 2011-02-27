@@ -59,7 +59,7 @@ public class FileLauncher
 			cmdLine = tempFile.toString();
 
 			Process proc = Runtime.getRuntime().exec(cmdLine);
-			System.out.println("command was: " + cmdLine);
+			// System.out.println("command was: " + cmdLine);
 			synchronized (proc)
 			{
 				proc.wait(100);
