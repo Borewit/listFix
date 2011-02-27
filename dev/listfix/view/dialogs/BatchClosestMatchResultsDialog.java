@@ -26,12 +26,15 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -43,17 +46,19 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
 import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
-import listfix.view.support.ZebraJTable;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
+
+import listfix.view.support.ZebraJTable;
 
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
@@ -107,92 +112,6 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 		_uiTable.getRowSorter().setSortKeys(keys);
 
 		_uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	}
-	
-	class ButtonRenderer implements TableCellRenderer
-	{
-		JButton button = new JButton();
-
-		public Component getTableCellRendererComponent(JTable table,
-			Object value,
-			boolean isSelected,
-			boolean hasFocus,
-			int row, int column)
-		{
-			button.setText("PLAY");
-			button.setFont(new Font("Verdana", 0, 9));
-			return button;
-		}
-	}
-
-	class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
-	{
-		JTable table;
-		JButton button = new JButton();
-		int clickCountToStart = 1;
-
-		public ButtonEditor(JTable table)
-		{
-			this.table = table;
-			button.addActionListener(this);
-		}
-
-		public void actionPerformed(ActionEvent e)
-		{
-			int row = table.getEditingRow();
-			int rowIx = table.getRowSorter().convertRowIndexToModel(row);
-			BatchMatchItem item = _items.get(rowIx);
-			MatchedPlaylistEntry match = item.getSelectedMatch();
-			try
-			{
-				List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
-				tempList.add(match.getPlaylistFile());
-				(new Playlist(tempList)).play();
-			}
-			catch (IOException ex)
-			{
-				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-
-		public Component getTableCellEditorComponent(JTable table,
-			Object value,
-			boolean isSelected,
-			int row, int column)
-		{
-			button.setText("PLAY");
-			button.setFont(new Font("Verdana", 0, 9));
-			return button;
-		}
-
-		public Object getCellEditorValue()
-		{
-			return button.getText();
-		}
-
-		public boolean isCellEditable(EventObject anEvent)
-		{
-			if (anEvent instanceof MouseEvent)
-			{
-				return ((MouseEvent) anEvent).getClickCount() >= clickCountToStart;
-			}
-			return true;
-		}
-
-		public boolean shouldSelectCell(EventObject anEvent)
-		{
-			return true;
-		}
-
-		public boolean stopCellEditing()
-		{
-			return super.stopCellEditing();
-		}
-
-		public void cancelCellEditing()
-		{
-			super.cancelCellEditing();
-		}
 	}
 
 	public boolean isAccepted()
@@ -316,6 +235,92 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 				return super.getToolTipText(event);
 			}
 		};
+	}
+	
+	private class ButtonRenderer implements TableCellRenderer
+	{
+		JButton button = new JButton();
+
+		public Component getTableCellRendererComponent(JTable table,
+			Object value,
+			boolean isSelected,
+			boolean hasFocus,
+			int row, int column)
+		{
+			button.setText("PLAY");
+			button.setFont(new Font("Verdana", 0, 9));
+			return button;
+		}
+	}
+
+	private class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener
+	{
+		JTable table;
+		JButton button = new JButton();
+		int clickCountToStart = 1;
+
+		public ButtonEditor(JTable table)
+		{
+			this.table = table;
+			button.addActionListener(this);
+		}
+
+		public void actionPerformed(ActionEvent e)
+		{
+			int row = table.getEditingRow();
+			int rowIx = table.getRowSorter().convertRowIndexToModel(row);
+			BatchMatchItem item = _items.get(rowIx);
+			MatchedPlaylistEntry match = item.getSelectedMatch();
+			try
+			{
+				List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+				tempList.add(match.getPlaylistFile());
+				(new Playlist(tempList)).play();
+			}
+			catch (IOException ex)
+			{
+				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+			Object value,
+			boolean isSelected,
+			int row, int column)
+		{
+			button.setText("PLAY");
+			button.setFont(new Font("Verdana", 0, 9));
+			return button;
+		}
+
+		public Object getCellEditorValue()
+		{
+			return button.getText();
+		}
+
+		public boolean isCellEditable(EventObject anEvent)
+		{
+			if (anEvent instanceof MouseEvent)
+			{
+				return ((MouseEvent) anEvent).getClickCount() >= clickCountToStart;
+			}
+			return true;
+		}
+
+		public boolean shouldSelectCell(EventObject anEvent)
+		{
+			return true;
+		}
+
+		public boolean stopCellEditing()
+		{
+			return super.stopCellEditing();
+		}
+
+		public void cancelCellEditing()
+		{
+			super.cancelCellEditing();
+		}
 	}
 
 	private class MatchTableModel extends AbstractTableModel
