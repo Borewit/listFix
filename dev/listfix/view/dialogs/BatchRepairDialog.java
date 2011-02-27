@@ -60,7 +60,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
 		_uiLists.setShowHorizontalLines(false);
 		_uiLists.setShowVerticalLines(false);
-		_uiLists.getTableHeader().setFont(new Font("Verdana", 0, 9));
+		_uiLists.getTableHeader().setFont(new Font("SansSerif", 0, 10));
 
 		// load and repair lists
 		final DualProgressDialog pd = new DualProgressDialog(parent, "Please wait...", "Loading Batch Repairs...");
@@ -137,7 +137,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
 	private void initPlaylistsList()
 	{
-		_uiLists.setFont(new Font("Verdana", 0, 9));
+		_uiLists.setFont(new Font("SansSerif", 0, 10));
 		_uiLists.initFillColumnForScrollPane(_uiScrollLists);
 
 		_uiLists.autoResizeColumn(0);
@@ -239,7 +239,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        _chkBackup.setFont(new java.awt.Font("Verdana", 0, 9));
+        _chkBackup.setFont(new java.awt.Font("SansSerif", 0, 10));
         _chkBackup.setText("Backup original files to zip file:");
         _chkBackup.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -247,10 +247,10 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
-        _txtBackup.setFont(new java.awt.Font("Verdana", 0, 9));
+        _txtBackup.setFont(new java.awt.Font("SansSerif", 0, 10));
         _txtBackup.setEnabled(false);
 
-        _btnCancel.setFont(new java.awt.Font("Verdana", 0, 9));
+        _btnCancel.setFont(new java.awt.Font("SansSerif", 0, 10));
         _btnCancel.setText("Cancel");
         _btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -258,7 +258,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
             }
         });
 
-        _btnSave.setFont(new java.awt.Font("Verdana", 0, 9));
+        _btnSave.setFont(new java.awt.Font("SansSerif", 0, 10));
         _btnSave.setText("Save All Repairs");
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -313,7 +313,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("Playlist details");
         jPanel3.add(jLabel1);
 
@@ -326,10 +326,10 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jPanel5.setFont(new java.awt.Font("Verdana", 0, 9));
+        jPanel5.setFont(new java.awt.Font("SansSerif", 0, 10));
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel2.setText("Playlists");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -337,7 +337,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
         jPanel5.add(jLabel2, gridBagConstraints);
 
-        _labListCount.setFont(new java.awt.Font("Verdana", 0, 9));
+        _labListCount.setFont(new java.awt.Font("SansSerif", 0, 10));
         _labListCount.setForeground(javax.swing.UIManager.getDefaults().getColor("controlShadow"));
         _labListCount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         _labListCount.setText("0 lists");
@@ -356,7 +356,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         _uiLists.setAutoCreateRowSorter(true);
         _uiLists.setModel(new PlaylistsTableModel());
         _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        _uiLists.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiLists.setFont(new java.awt.Font("SansSerif", 0, 10));
         _uiLists.getTableHeader().setReorderingAllowed(false);
         _uiScrollLists.setViewportView(_uiLists);
 

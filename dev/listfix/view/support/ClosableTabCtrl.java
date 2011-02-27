@@ -84,12 +84,12 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         setOpaque(false);
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         jLabel1.setText("playlist");
         jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 5));
         add(jLabel1);
 
-        jButton1.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         jButton1.setText("X");
         add(jButton1);
     }// </editor-fold>//GEN-END:initComponents

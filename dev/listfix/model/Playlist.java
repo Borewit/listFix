@@ -88,7 +88,7 @@ public class Playlist
 	{
 		_utfFormat = false;
 		setEntries(sublist);
-		_file = File.createTempFile("yay", ".m3u");
+		_file = File.createTempFile("yay", ".m3u8");
 		_file.deleteOnExit();
 
 		_type = PlaylistType.M3U;
@@ -105,9 +105,9 @@ public class Playlist
 	public Playlist() throws IOException
 	{
 		_newListCount++;
-		_file = new File(HOME_DIR + FS + "Untitled-" + _newListCount + ".m3u");
+		_file = new File(HOME_DIR + FS + "Untitled-" + _newListCount + ".m3u8");
 		_file.deleteOnExit();
-		_utfFormat = false;
+		_utfFormat = true;
 		_type = PlaylistType.M3U;
 		_isModified = false;
 		_isNew = true;
@@ -234,7 +234,6 @@ public class Playlist
 
 	private void setEntries(List<PlaylistEntry> aEntries)
 	{
-		// TODO: Somehow track this part of the task
 		_entries = aEntries;
 		_originalEntries.clear();
 		for (int i = 0; i < _entries.size(); i++)
@@ -594,10 +593,10 @@ public class Playlist
 			progress.stepCompleted();
 			if (!observer.getCancelled())
 			{
-				entry = _entries.get(ix);
-				System.out.println("Checking: " + entry.getFileName());
+				entry = _entries.get(ix);				
 				if (!entry.isFound())
 				{
+					System.out.println("Checking: " + entry.getFileName());
 					matches = entry.findClosestMatches(librayFiles, null);
 					if (!matches.isEmpty())
 					{

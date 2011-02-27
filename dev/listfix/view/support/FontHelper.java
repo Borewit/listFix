@@ -39,7 +39,7 @@ public class FontHelper
 			}
 			try
 			{
-				comp[x].setFont(new Font("Verdana", 0, 9));
+				comp[x].setFont(new Font("SansSerif", 0, 10));
 			}
 			catch (Exception e)
 			{

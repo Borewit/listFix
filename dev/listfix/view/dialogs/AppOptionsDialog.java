@@ -204,21 +204,21 @@ public class AppOptionsDialog extends javax.swing.JDialog
         topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Config", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 0, 9))); // NOI18N
+        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Config", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 10))); // NOI18N
         optionsPanel.setMinimumSize(new java.awt.Dimension(1210, 60));
         optionsPanel.setPreferredSize(new java.awt.Dimension(380, 280));
         optionsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("Recent Playlist Limit: ");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel1.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel3.add(jLabel1);
 
-        recentPlaylistLimitComboBox.setFont(new java.awt.Font("Verdana", 0, 9));
+        recentPlaylistLimitComboBox.setFont(new java.awt.Font("SansSerif", 0, 10));
         recentPlaylistLimitComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" }));
         recentPlaylistLimitComboBox.setSelectedItem("" + options.getMaxPlaylistHistoryEntries());
         recentPlaylistLimitComboBox.setPreferredSize(new java.awt.Dimension(50, 20));
@@ -228,14 +228,14 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
         jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel5.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel5.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel5.setText("Look and Feel:");
         jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel5.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel5.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel8.add(jLabel5);
 
-        lookAndFeelComboBox.setFont(new java.awt.Font("Verdana", 0, 9));
+        lookAndFeelComboBox.setFont(new java.awt.Font("SansSerif", 0, 10));
         lookAndFeelComboBox.setModel(this.getLookAndFeelMenuItems());
         lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(options.getLookAndFeel()).getName());
         lookAndFeelComboBox.setPreferredSize(new java.awt.Dimension(120, 20));
@@ -246,7 +246,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel4.setMinimumSize(new java.awt.Dimension(165, 20));
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel2.setText("Auto-locate missing playlist entries on load:");
         jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel2.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -261,7 +261,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel5.setMinimumSize(new java.awt.Dimension(165, 20));
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel3.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel3.setText("Save playlists with relative file references:");
         jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel3.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -276,7 +276,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel7.setMinimumSize(new java.awt.Dimension(165, 20));
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel4.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel4.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel4.setText("Auto refresh media library at startup:");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel4.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -291,7 +291,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel9.setMinimumSize(new java.awt.Dimension(165, 20));
         jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel6.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel6.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel6.setText("Media library uses UNC paths for directories on mapped drives:");
         jLabel6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel6.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -305,14 +305,14 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel7.setFont(new java.awt.Font("Verdana", 0, 9));
+        jLabel7.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel7.setText("Playlists Directory:");
         jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel7.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel7.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel6.add(jLabel7);
 
-        playlistDirectoryTextField.setFont(new java.awt.Font("Verdana", 0, 9));
+        playlistDirectoryTextField.setFont(new java.awt.Font("SansSerif", 0, 10));
         playlistDirectoryTextField.setText(options.getPlaylistsDirectory());
         playlistDirectoryTextField.setAlignmentX(0.0F);
         playlistDirectoryTextField.setAlignmentY(0.0F);
@@ -321,7 +321,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         playlistDirectoryTextField.setRequestFocusEnabled(false);
         jPanel6.add(playlistDirectoryTextField);
 
-        playlistDirectoryBrowseButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        playlistDirectoryBrowseButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         playlistDirectoryBrowseButton.setText("...");
         playlistDirectoryBrowseButton.setAlignmentY(0.0F);
         playlistDirectoryBrowseButton.setMargin(new java.awt.Insets(2, 6, 2, 6));
@@ -341,7 +341,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         buttonPanel.setPreferredSize(new java.awt.Dimension(350, 32));
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jButton1.setFont(new java.awt.Font("Verdana", 0, 9));
+        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton1.setText("OK");
         jButton1.setMinimumSize(new java.awt.Dimension(49, 20));
         jButton1.setPreferredSize(null);
@@ -352,7 +352,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         });
         buttonPanel.add(jButton1);
 
-        jButton2.setFont(new java.awt.Font("Verdana", 0, 9));
+        jButton2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton2.setText("Cancel");
         jButton2.setMinimumSize(new java.awt.Dimension(67, 20));
         jButton2.setPreferredSize(null);

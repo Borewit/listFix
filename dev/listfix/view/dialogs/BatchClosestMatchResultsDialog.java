@@ -104,7 +104,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
 		_uiTable.setShowHorizontalLines(false);
 		_uiTable.setShowVerticalLines(false);
-		_uiTable.getTableHeader().setFont(new Font("Verdana", 0, 9));
+		_uiTable.getTableHeader().setFont(new Font("SansSerif", 0, 10));
 
 		// set sort to #
 		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
@@ -146,7 +146,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        _btnOk.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _btnOk.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _btnOk.setText("OK");
         _btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -155,7 +155,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
         });
         jPanel1.add(_btnOk);
 
-        _btnCancel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _btnCancel.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _btnCancel.setText("Cancel");
         _btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,7 +169,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
         _uiTable.setAutoCreateRowSorter(true);
         _uiTable.setModel(new MatchTableModel());
         _uiTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        _uiTable.setFont(new java.awt.Font("Verdana", 0, 9));
+        _uiTable.setFont(new java.awt.Font("SansSerif", 0, 10));
         _uiScrollPane.setViewportView(_uiTable);
 
         getContentPane().add(_uiScrollPane, java.awt.BorderLayout.CENTER);
@@ -248,7 +248,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			int row, int column)
 		{
 			button.setText("PLAY");
-			button.setFont(new Font("Verdana", 0, 9));
+			button.setFont(new Font("SansSerif", 0, 10));
 			return button;
 		}
 	}
@@ -292,7 +292,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			int row, int column)
 		{
 			button.setText("PLAY");
-			button.setFont(new Font("Verdana", 0, 9));
+			button.setFont(new Font("SansSerif", 0, 10));
 			return button;
 		}
 
@@ -423,7 +423,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			_combo.setRenderer(new MyComboBoxRenderer());
 			_combo.setMaximumRowCount(25);
 			_combo.setFocusable(false);
-			_combo.setFont(new Font("Verdana", 0, 9));
+			_combo.setFont(new Font("SansSerif", 0, 10));
 		}
 		JComboBox _combo;
 		MatchComboBoxModel _model;
