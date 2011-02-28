@@ -86,7 +86,7 @@ public class Playlist
 	// This constructor creates a temp-file backed playlist from a list of entries, currently used for playback.
 	public Playlist(List<PlaylistEntry> sublist) throws IOException
 	{
-		_utfFormat = false;
+		_utfFormat = true;
 		setEntries(sublist);
 		_file = File.createTempFile("yay", ".m3u8");
 		_file.deleteOnExit();

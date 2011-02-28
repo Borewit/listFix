@@ -833,6 +833,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnUp.setEnabled(false);
         _btnUp.setFocusable(false);
         _btnUp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnUp.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnUp.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnUp.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnUp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -846,6 +849,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnDown.setEnabled(false);
         _btnDown.setFocusable(false);
         _btnDown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnDown.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnDown.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnDown.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnDown.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
