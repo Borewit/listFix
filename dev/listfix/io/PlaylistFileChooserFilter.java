@@ -30,7 +30,6 @@ import java.util.Set;
 ============================================================================
  */
 
-// allows selection of playlists (m3u, m3u8) and directories (M3UFileFilter does not allow directories)
 public class PlaylistFileChooserFilter extends FileExtensionFilterBase
 {
     public PlaylistFileChooserFilter()

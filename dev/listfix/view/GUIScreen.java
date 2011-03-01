@@ -232,6 +232,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _treeScrollPane = new javax.swing.JScrollPane();
         _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
         jPanel1 = new javax.swing.JPanel();
+        _openSelectedPlaylistsButton = new javax.swing.JButton();
         _refreshPlaylistPanelButton = new javax.swing.JButton();
         _playlistPanel = new javax.swing.JPanel();
         _gettingStartedPanel = new javax.swing.JPanel();
@@ -287,7 +288,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         _statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9));
+        statusLabel.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         statusLabel.setForeground(new java.awt.Color(75, 75, 75));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
@@ -332,7 +333,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _mediaLibraryButtonPanel.add(_addMediaDirButton);
 
-        _removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        _removeMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _removeMediaDirButton.setText("Remove");
         _removeMediaDirButton.setToolTipText("Remove a directory from the search list");
         _removeMediaDirButton.setFocusable(false);
@@ -345,7 +346,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         });
         _mediaLibraryButtonPanel.add(_removeMediaDirButton);
 
-        _refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        _refreshMediaDirsButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _refreshMediaDirsButton.setText("Refresh");
         _refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
         _refreshMediaDirsButton.setFocusable(false);
@@ -393,7 +394,19 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
-        _refreshPlaylistPanelButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        _openSelectedPlaylistsButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _openSelectedPlaylistsButton.setText("Open");
+        _openSelectedPlaylistsButton.setToolTipText("Open Selected Playlists");
+        _openSelectedPlaylistsButton.setFocusable(false);
+        _openSelectedPlaylistsButton.setMinimumSize(new java.awt.Dimension(71, 25));
+        _openSelectedPlaylistsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _openSelectedPlaylistsButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_openSelectedPlaylistsButton);
+
+        _refreshPlaylistPanelButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _refreshPlaylistPanelButton.setText("Refresh");
         _refreshPlaylistPanelButton.setToolTipText("Refresh Playlists Tree");
         _refreshPlaylistPanelButton.setFocusable(false);
@@ -1955,7 +1968,15 @@ private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN
 {//GEN-HEADEREND:event__playlistDirectoryTreeKeyReleased
 	if (evt.getKeyCode() == KeyEvent.VK_ENTER)
 	{
-		int[] selRows = _playlistDirectoryTree.getSelectionRows();
+		_openSelectedPlaylistsButtonActionPerformed(null);
+	}
+}//GEN-LAST:event__playlistDirectoryTreeKeyReleased
+
+private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__openSelectedPlaylistsButtonActionPerformed
+{//GEN-HEADEREND:event__openSelectedPlaylistsButtonActionPerformed
+	int[] selRows = _playlistDirectoryTree.getSelectionRows();
+	if (selRows != null && selRows.length > 0)
+	{
 		for (int i : selRows)
 		{
 			TreePath selPath = _playlistDirectoryTree.getPathForRow(i);
@@ -1963,7 +1984,7 @@ private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN
 			if (toOpen.isDirectory())
 			{
 				// not yet supported, need a method to generate a list of all playlists under a folder...
-				List<File> files = FileTypeSearch.findFiles(toOpen, new PlaylistFileFilter());
+				List<File> files = (new FileTypeSearch()).findFiles(toOpen, new PlaylistFileFilter());
 				for (File f : files)
 				{
 					openPlaylist(f);
@@ -1975,7 +1996,7 @@ private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN
 			}
 		}
 	}
-}//GEN-LAST:event__playlistDirectoryTreeKeyReleased
+}//GEN-LAST:event__openSelectedPlaylistsButtonActionPerformed
 
 	private void updateMediaDirButtons()
 	{
@@ -2071,6 +2092,7 @@ private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN
     private javax.swing.JButton _newIconButton;
     private javax.swing.JMenuItem _newPlaylistMenuItem;
     private javax.swing.JButton _openIconButton;
+    private javax.swing.JButton _openSelectedPlaylistsButton;
     private javax.swing.JPanel _playlistDirectoryPanel;
     private javax.swing.JTree _playlistDirectoryTree;
     private javax.swing.JPanel _playlistPanel;

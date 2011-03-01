@@ -20,7 +20,7 @@ import listfix.comparators.FileComparator;
  */
 public class FileTypeSearch
 {
-	public static List<File> findFiles(File directoryToSearch, FileFilter filter)
+	public List<File> findFiles(File directoryToSearch, FileFilter filter)
 	{
 		if (directoryToSearch.exists())
 		{
@@ -36,18 +36,12 @@ public class FileTypeSearch
 				Collections.sort(ol, new FileComparator());
 				File f;
 				List<File> files = new ArrayList<File>();
-				// Make two passes, one for Dirs and one for Files. This is #1.
 				for (int i = 0; i < ol.size(); i++)
 				{
 					f = ol.get(i);
 					if (f.isDirectory())
 					{
-						File[] tmp = f.listFiles(filter);
-
-						if (tmp != null && tmp.length > 0)
-						{
-							findFiles(f, filter);
-						}
+						files.addAll(findFiles(f, filter));
 					}
 					else
 					{

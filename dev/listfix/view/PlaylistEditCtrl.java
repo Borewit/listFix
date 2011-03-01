@@ -894,7 +894,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnPlay);
 
         _btnMagicFix.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magic-fix.png"))); // NOI18N
-        _btnMagicFix.setToolTipText("Find Exact Matches");
+        _btnMagicFix.setToolTipText("Fix Everything");
         _btnMagicFix.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
         _btnMagicFix.setFocusable(false);
         _btnMagicFix.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

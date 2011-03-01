@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
@@ -324,7 +324,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/images/magic-fix.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Find Exact Matches"/>
+            <Property name="toolTipText" type="java.lang.String" value="Fix Everything"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="_playlist == null ? false : _playlist.getFile().exists()" type="code"/>
             </Property>
