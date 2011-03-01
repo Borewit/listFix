@@ -16,7 +16,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="batchPlaylistRepairMenuItem">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Repair Playlist(s)..."/>
           </Properties>
@@ -32,7 +32,7 @@
           <Border info="null"/>
         </Property>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Verdana" size="9" style="0"/>
+          <Font name="SansSerif" size="10" style="0"/>
         </Property>
       </Properties>
       <SubComponents>
@@ -43,7 +43,7 @@
             </Property>
             <Property name="text" type="java.lang.String" value="File"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
           </Properties>
           <SubComponents>
@@ -53,7 +53,7 @@
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;L&apos;" valueType="int"/>
@@ -70,7 +70,7 @@
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;L&apos;" valueType="int"/>
@@ -87,7 +87,7 @@
                   <KeyStroke key="Ctrl+W"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Close"/>
               </Properties>
@@ -101,7 +101,7 @@
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;S&apos;" valueType="int"/>
@@ -118,7 +118,7 @@
                   <KeyStroke key="Shift+Ctrl+S"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;V&apos;" valueType="int"/>
@@ -150,7 +150,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="_batchRepairWinampMenuItem">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Batch Repair Winamp Playlists..."/>
               </Properties>
@@ -164,7 +164,7 @@
                   <KeyStroke key="Ctrl+E"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Extract Winamp Playlists"/>
                 <Property name="toolTipText" type="java.lang.String" value="Extract Winamp Media Library Playlists"/>
@@ -185,7 +185,7 @@
                 <Property name="text" type="java.lang.String" value="Recent Playlists"/>
                 <Property name="toolTipText" type="java.lang.String" value="Recently Opened Playlists"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
               </Properties>
             </Menu>
@@ -195,7 +195,7 @@
                   <KeyStroke key="Ctrl+H"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;H&apos;" valueType="int"/>
@@ -220,7 +220,7 @@
                   <KeyStroke key="Alt+O"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;H&apos;" valueType="int"/>
@@ -245,7 +245,7 @@
                   <KeyStroke key="Alt+F4"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;x&apos;" valueType="int"/>
@@ -265,7 +265,7 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Help"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
           </Properties>
           <SubComponents>
@@ -275,7 +275,7 @@
                   <KeyStroke key="F1"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;e&apos;" valueType="int"/>
@@ -292,7 +292,7 @@
                   <KeyStroke key="Ctrl+U"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Check For Updates"/>
               </Properties>
@@ -306,7 +306,7 @@
                   <KeyStroke key="Alt+A"/>
                 </Property>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection type="value" value="&apos;A&apos;" valueType="int"/>
@@ -372,7 +372,7 @@
         <Component class="javax.swing.JLabel" name="statusLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="4b" green="4b" red="4b" type="rgb"/>
@@ -438,7 +438,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder justification="1" position="2" title="Media Directories">
-                      <Font PropertyName="font" name="Verdana" size="9" style="0"/>
+                      <Font PropertyName="font" name="SansSerif" size="10" style="0"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -470,7 +470,7 @@
                     <Component class="javax.swing.JButton" name="_addMediaDirButton">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Add"/>
                         <Property name="toolTipText" type="java.lang.String" value="Where do you keep your music?"/>
@@ -489,7 +489,7 @@
                     <Component class="javax.swing.JButton" name="_removeMediaDirButton">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Remove"/>
                         <Property name="toolTipText" type="java.lang.String" value="Remove a directory from the search list"/>
@@ -508,7 +508,7 @@
                     <Component class="javax.swing.JButton" name="_refreshMediaDirsButton">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Refresh"/>
                         <Property name="toolTipText" type="java.lang.String" value="The contents of your media library are cached, refresh to pickup changes"/>
@@ -538,7 +538,7 @@
                     <Component class="javax.swing.JList" name="_mediaLibraryList">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                           <StringArray count="0"/>
@@ -561,7 +561,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder justification="1" position="2" title="Playlists Directory">
-                      <Font PropertyName="font" name="Verdana" size="9" style="0"/>
+                      <Font PropertyName="font" name="SansSerif" size="10" style="0"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -591,7 +591,7 @@
                     <Component class="javax.swing.JTree" name="_playlistDirectoryTree">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="dragEnabled" type="boolean" value="true"/>
                       </Properties>
@@ -619,7 +619,7 @@
                     <Component class="javax.swing.JButton" name="_openSelectedPlaylistsButton">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Open"/>
                         <Property name="toolTipText" type="java.lang.String" value="Open Selected Playlists"/>
@@ -635,7 +635,7 @@
                     <Component class="javax.swing.JButton" name="_refreshPlaylistPanelButton">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Verdana" size="9" style="0"/>
+                          <Font name="SansSerif" size="10" style="0"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Refresh"/>
                         <Property name="toolTipText" type="java.lang.String" value="Refresh Playlists Tree"/>
@@ -783,7 +783,7 @@
               <Properties>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
               </Properties>
               <Events>

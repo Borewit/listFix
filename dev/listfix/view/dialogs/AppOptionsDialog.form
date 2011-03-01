@@ -48,7 +48,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="General Config">
-                  <Font PropertyName="font" name="Verdana" size="9" style="0"/>
+                  <Font PropertyName="font" name="SansSerif" size="10" style="0"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -75,7 +75,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Recent Playlist Limit: "/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -88,7 +88,7 @@
                 <Component class="javax.swing.JComboBox" name="recentPlaylistLimitComboBox">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="15">
@@ -130,7 +130,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel5">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Look and Feel:"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -143,7 +143,7 @@
                 <Component class="javax.swing.JComboBox" name="lookAndFeelComboBox">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="this.getLookAndFeelMenuItems()" type="code"/>
@@ -174,7 +174,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Auto-locate missing playlist entries on load:"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -209,7 +209,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel3">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Save playlists with relative file references:"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -244,7 +244,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel4">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Auto refresh media library at startup:"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -279,7 +279,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel6">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Media library uses UNC paths for directories on mapped drives:"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -309,7 +309,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel7">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Playlists Directory:"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
@@ -322,7 +322,7 @@
                 <Component class="javax.swing.JTextField" name="playlistDirectoryTextField">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="options.getPlaylistsDirectory()" type="code"/>
@@ -341,7 +341,7 @@
                 <Component class="javax.swing.JButton" name="playlistDirectoryBrowseButton">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Verdana" size="9" style="0"/>
+                      <Font name="SansSerif" size="10" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="..."/>
                     <Property name="alignmentY" type="float" value="0.0"/>
@@ -377,7 +377,7 @@
             <Component class="javax.swing.JButton" name="jButton1">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="OK"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -394,7 +394,7 @@
             <Component class="javax.swing.JButton" name="jButton2">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Verdana" size="9" style="0"/>
+                  <Font name="SansSerif" size="10" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Cancel"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

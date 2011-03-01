@@ -5,7 +5,7 @@
     <Container class="javax.swing.JPopupMenu" name="_uiPopupMenu">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Verdana" size="9" style="0"/>
+          <Font name="SansSerif" size="10" style="0"/>
         </Property>
       </Properties>
 
@@ -16,7 +16,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miEditFilename">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Edit Filename"/>
           </Properties>
@@ -27,7 +27,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miReplace">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Replace Selected Entry"/>
           </Properties>
@@ -40,7 +40,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miFindClosest">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Find Closest Matches"/>
           </Properties>
@@ -51,7 +51,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miBatchFindClosest">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Batch Find Closest Matches"/>
             <Property name="toolTipText" type="java.lang.String" value="Finds best closest match for all missing files in list"/>
@@ -65,7 +65,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miRemoveDups">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Remove Duplicates"/>
           </Properties>
@@ -76,7 +76,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miRemoveMissing">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Remove Missing"/>
           </Properties>
@@ -87,7 +87,7 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miCopyFiles">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Verdana" size="9" style="0"/>
+              <Font name="SansSerif" size="10" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Copy Files"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
