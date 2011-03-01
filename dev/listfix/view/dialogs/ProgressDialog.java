@@ -64,7 +64,7 @@ public class ProgressDialog extends javax.swing.JDialog
 			_progressMessage.setVisible(true);
 
 			sz.width = 500;
-			sz.height = 125;
+			sz.height = 120;
 			setSize(sz);
 		}
 		else

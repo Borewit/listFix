@@ -78,7 +78,7 @@ public class DirectoryScanner
 		recursiveCount++;
 		if (!task.getCancelled())
 		{
-			task.setMessage("<html><body>Scanning Directory #" + recursiveCount + "<BR><BR>" + (baseDir.length() < 70 ? baseDir : baseDir.substring(0, 70) + "...") + "</body></html>");
+			task.setMessage("<html><body>Scanning Directory #" + recursiveCount + "<BR>" + (baseDir.length() < 70 ? baseDir : baseDir.substring(0, 70) + "...") + "</body></html>");
 
 			File mediaDir = new File(baseDir);
 			String[] entryList = mediaDir.list();
