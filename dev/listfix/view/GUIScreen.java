@@ -32,6 +32,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -67,6 +68,7 @@ import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
 import listfix.io.FileWriter;
 import listfix.io.PlaylistFileChooserFilter;
+import listfix.io.PlaylistFileFilter;
 import listfix.io.PlaylistScanner;
 import listfix.io.UNCFile;
 import listfix.io.WinampHelper;
@@ -79,6 +81,7 @@ import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistHistory;
 
 import listfix.util.ArrayFunctions;
+import listfix.util.FileTypeSearch;
 
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
@@ -316,7 +319,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
         _mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
 
-        _addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9));
+        _addMediaDirButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _addMediaDirButton.setText("Add");
         _addMediaDirButton.setToolTipText("Where do you keep your music?");
         _addMediaDirButton.setFocusable(false);
@@ -371,7 +374,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
         _playlistDirectoryPanel.setAlignmentY(0.0F);
         _playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
-        _playlistDirectoryTree.setFont(new java.awt.Font("Verdana", 0, 9));
+        _playlistDirectoryTree.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
         _playlistDirectoryTree.setDragEnabled(true);
         _playlistDirectoryTree.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -381,11 +384,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
                 _playlistDirectoryTreeMousePressed(evt);
             }
         });
+        _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                _playlistDirectoryTreeKeyReleased(evt);
+            }
+        });
         _treeScrollPane.setViewportView(_playlistDirectoryTree);
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
-        _refreshPlaylistPanelButton.setFont(new java.awt.Font("Verdana", 0, 9)); // NOI18N
+        _refreshPlaylistPanelButton.setFont(new java.awt.Font("Verdana", 0, 9));
         _refreshPlaylistPanelButton.setText("Refresh");
         _refreshPlaylistPanelButton.setToolTipText("Refresh Playlists Tree");
         _refreshPlaylistPanelButton.setFocusable(false);
@@ -1942,6 +1950,32 @@ private void _refreshPlaylistPanelButtonActionPerformed(java.awt.event.ActionEve
 {//GEN-HEADEREND:event__refreshPlaylistPanelButtonActionPerformed
 	updatePlaylistDirectoryPanel();
 }//GEN-LAST:event__refreshPlaylistPanelButtonActionPerformed
+
+private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN-FIRST:event__playlistDirectoryTreeKeyReleased
+{//GEN-HEADEREND:event__playlistDirectoryTreeKeyReleased
+	if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+	{
+		int[] selRows = _playlistDirectoryTree.getSelectionRows();
+		for (int i : selRows)
+		{
+			TreePath selPath = _playlistDirectoryTree.getPathForRow(i);
+			File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+			if (toOpen.isDirectory())
+			{
+				// not yet supported, need a method to generate a list of all playlists under a folder...
+				List<File> files = FileTypeSearch.findFiles(toOpen, new PlaylistFileFilter());
+				for (File f : files)
+				{
+					openPlaylist(f);
+				}
+			}
+			else
+			{
+				openPlaylist(toOpen);
+			}
+		}
+	}
+}//GEN-LAST:event__playlistDirectoryTreeKeyReleased
 
 	private void updateMediaDirButtons()
 	{
