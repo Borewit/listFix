@@ -139,7 +139,7 @@ public class ArrayFunctions
 		return cArray;
 	}
 
-	public static boolean ContainsStringWithPrefix(String[] a, String b, boolean ignoreCase)
+	public static boolean ContainsStringPrefixingAnotherString(String[] a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
 		if (a != null && a.length > 0)
@@ -157,7 +157,7 @@ public class ArrayFunctions
 		return result;
 	}
 
-	public static boolean ContainsStringWithPrefix(List<String> a, String b, boolean ignoreCase)
+	public static boolean ContainsStringPrefixingAnotherString(List<String> a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
 		if (a != null && a.size() > 0)

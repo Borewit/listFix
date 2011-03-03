@@ -28,8 +28,6 @@ import java.util.*;
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.controller.GUIDriver;
 
-import listfix.io.BrowserLauncher;
-import listfix.io.FileLauncher;
 import listfix.util.*;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -357,7 +355,7 @@ public class PlaylistEntry implements Cloneable
 	{
 		String[] emptyPaths = new String[NonExistentDirectories.size()];
 		NonExistentDirectories.toArray(emptyPaths);
-		return isFound() || this.isURL() || ArrayFunctions.ContainsStringWithPrefix(emptyPaths, _path, false);
+		return isFound() || this.isURL() || ArrayFunctions.ContainsStringPrefixingAnotherString(emptyPaths, _path, false);
 	}
 
 	public boolean isFound()
@@ -625,7 +623,7 @@ public class PlaylistEntry implements Cloneable
 	public boolean updatePathToMediaLibraryIfFoundOutside()
 	{
 		if (_status == PlaylistEntryStatus.Found
-			&& !ArrayFunctions.ContainsStringWithPrefix(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.fileSystemIsCaseSensitive))
+			&& !ArrayFunctions.ContainsStringPrefixingAnotherString(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.fileSystemIsCaseSensitive))
 		{
 			return findNewLocationFromFileList(GUIDriver.getInstance().getMediaLibraryFileList());
 		}

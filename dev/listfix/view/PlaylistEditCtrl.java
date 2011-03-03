@@ -399,6 +399,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		};
 		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches...");
 		pd.setVisible(true);
+		_uiTable.setRowSelectionInterval(rowIx, rowIx);
 	}
 
 	private void bulkFindClosestMatches()

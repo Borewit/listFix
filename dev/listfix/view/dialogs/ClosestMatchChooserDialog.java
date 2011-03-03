@@ -147,8 +147,8 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         resultsTable.setShowHorizontalLines(false);
         resultsTable.setShowVerticalLines(false);
         resultsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                resultsTableMousePressed(evt);
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                resultsTableMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(resultsTable);
@@ -215,8 +215,8 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 		dispose();
     }//GEN-LAST:event_closeDialog
 
-    private void resultsTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_resultsTableMousePressed
-    {//GEN-HEADEREND:event_resultsTableMousePressed
+	private void resultsTableMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_resultsTableMouseClicked
+	{//GEN-HEADEREND:event_resultsTableMouseClicked
 		if (resultsTable.getSelectedRowCount() > 0)
 		{
 			jButton1.setEnabled(true);
@@ -225,12 +225,12 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 		int currentlySelectedRow = resultsTable.getSelectedRow();
 		if (currentlySelectedRow != -1 && evt.getClickCount() == 2)
 		{
-			setVisible(false);
 			choice = currentlySelectedRow;
-			dispose();
 			setResultCode(OK);
+			dispose();
+			setVisible(false);
 		}
-    }//GEN-LAST:event_resultsTableMousePressed
+	}//GEN-LAST:event_resultsTableMouseClicked
 
 	private void initColumnSizesAndSorting(JTable table)
 	{

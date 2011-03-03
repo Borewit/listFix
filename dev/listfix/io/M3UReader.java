@@ -318,6 +318,7 @@ public class M3UReader implements IPlaylistReader
 			}
 
 			String firstToken = "";
+			String secondToken = "";
 			int tokenNumber = 0;
 			File firstPathToExist = null;
 			while (pathTokenizer.hasMoreTokens())
@@ -327,6 +328,10 @@ public class M3UReader implements IPlaylistReader
 				if (tokenNumber == 0)
 				{
 					firstToken = word;
+				}
+				if (tokenNumber == 1)
+				{
+					secondToken = word;
 				}
 				if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + fs))
 				{
@@ -339,9 +344,9 @@ public class M3UReader implements IPlaylistReader
 					}
 				}
 				else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1
-					&& !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken)
-					&& !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.ExistingDirectories, tempPath, true)
-					&& !ArrayFunctions.ContainsStringWithPrefix(PlaylistEntry.NonExistentDirectories, tempPath, true))
+					&& !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken + fs)
+					&& !ArrayFunctions.ContainsStringPrefixingAnotherString(PlaylistEntry.ExistingDirectories, tempPath, true)
+					&& !ArrayFunctions.ContainsStringPrefixingAnotherString(PlaylistEntry.NonExistentDirectories, tempPath, true))
 				{
 					// Handle UNC paths specially
 					File testFile = new File(tempPath);
@@ -360,7 +365,8 @@ public class M3UReader implements IPlaylistReader
 					}
 					if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
 					{
-						PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken);
+						// don't want to knock out the whole drive, as other folders might be accessible there...
+						PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken + fs + secondToken + fs);
 					}
 				}
 				if (pathTokenizer.hasMoreTokens())

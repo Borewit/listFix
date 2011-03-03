@@ -1477,7 +1477,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				if (guiDriver.getMediaDirs() != null && mediaDir != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-					if (ArrayFunctions.ContainsStringWithPrefix(guiDriver.getMediaDirs(), dir, !GUIDriver.fileSystemIsCaseSensitive))
+					if (ArrayFunctions.ContainsStringPrefixingAnotherString(guiDriver.getMediaDirs(), dir, !GUIDriver.fileSystemIsCaseSensitive))
 					{
 						JOptionPane.showMessageDialog(this, "The directory you attempted to add is a subdirectory of one already in your media library, no change was made.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
 						return;
