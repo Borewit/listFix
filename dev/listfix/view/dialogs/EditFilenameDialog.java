@@ -40,7 +40,8 @@ public class EditFilenameDialog extends javax.swing.JDialog
 	{
 		super(parent, title, modal);
 		initComponents();
-		jTextField1.setText(filename);
+		txtFilename.setText(filename);
+		this.getRootPane().setDefaultButton(btnOk);
 		this.center();
 	}
 
@@ -94,10 +95,10 @@ public class EditFilenameDialog extends javax.swing.JDialog
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtFilename = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnOk = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -138,50 +139,50 @@ public class EditFilenameDialog extends javax.swing.JDialog
         jLabel1.setText("New Filename:");
         jPanel2.add(jLabel1);
 
-        jTextField1.setFont(new java.awt.Font("SansSerif", 0, 10));
-        jTextField1.setMinimumSize(new java.awt.Dimension(150, 20));
-        jTextField1.setPreferredSize(new java.awt.Dimension(250, 20));
-        jPanel2.add(jTextField1);
+        txtFilename.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        txtFilename.setMinimumSize(new java.awt.Dimension(150, 20));
+        txtFilename.setPreferredSize(new java.awt.Dimension(250, 20));
+        jPanel2.add(txtFilename);
 
         getContentPane().add(jPanel2);
 
         jPanel3.setMaximumSize(null);
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnOk.setFont(new java.awt.Font("SansSerif", 0, 10));
+        btnOk.setText("OK");
+        btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnOkActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton1);
+        jPanel3.add(btnOk);
 
-        jButton2.setFont(new java.awt.Font("SansSerif", 0, 10));
-        jButton2.setText("Cancel");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnCancel.setFont(new java.awt.Font("SansSerif", 0, 10));
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnCancelActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton2);
+        jPanel3.add(btnCancel);
 
         getContentPane().add(jPanel3);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
 		setVisible(false);
 		dispose();
 		setResultCode(CANCEL);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnCancelActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
 		setVisible(false);
-		setFileName(jTextField1.getText());
+		setFileName(txtFilename.getText());
 		dispose();
 		setResultCode(OK);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnOkActionPerformed
 
 	/** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
@@ -196,8 +197,8 @@ public class EditFilenameDialog extends javax.swing.JDialog
 		return new EditFilenameResult(tempDBox.getResultCode(), tempDBox.getFileName());
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnOk;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -205,6 +206,6 @@ public class EditFilenameDialog extends javax.swing.JDialog
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField txtFilename;
     // End of variables declaration//GEN-END:variables
 }
