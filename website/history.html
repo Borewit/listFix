@@ -61,7 +61,7 @@
                 <td> 
                 <div align="center"><a href="index.html" class="topHeaderLinks">Home</a></div>                 </td>
                 <td> 
-                <div align="center"><a href="screenshots.html" class="topHeaderLinks"></a><a href="history.html" class="topHeaderLinks">Change Log</a></div>                </td>
+                <div align="center"><a href="screenshots.html" class="topHeaderLinks"></a><a href="history.html" class="topHeaderLinks">Release Notes</a></div>                </td>
                 <td><div align="center"><a href="history.html" class="topHeaderLinks"></a><a href="screenshots.html" class="topHeaderLinks">Screenshots</a></div></td>
                 <td align="center" class="topHeaderLinks"><a href="http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page" class="topHeaderLinks">Wiki</a></td>
                 <td><div align="center"><font size="2"><a href="https://sourceforge.net/users/firewyre/" class="topHeaderLinks">Contact 
@@ -115,12 +115,12 @@
                           <p align="center" class="boxText">
                           <br>
                           <strong>Project News</strong><BR>
-                          <a name="a2a_dd" onmouseover="a2a_show_dropdown(this)" onmouseout="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20News&amp;linkurl=https%3A//sourceforge.net/export/rss2_projnews.php%3Fgroup_id%3D113978%26rss_fulltext%3D1"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
+                          <a name="a2a_dd" onMouseOver="a2a_show_dropdown(this)" onMouseOut="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20News&amp;linkurl=https%3A//sourceforge.net/export/rss2_projnews.php%3Fgroup_id%3D113978%26rss_fulltext%3D1"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
 						  <script type="text/javascript">a2a_linkname="listFix() News";a2a_linkurl="https://sourceforge.net/export/rss2_projnews.php?group_id=113978&rss_fulltext=1";</script><script type="text/javascript" src="http://www.addtoany.com/js.dropdown.js?type=feed"></script>
                           <br>
                           <br>
                           <strong>Project Releases</strong><br>
-                          <a name="a2a_dd" onmouseover="a2a_show_dropdown(this)" onmouseout="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20Releases&amp;linkurl=https%3A//sourceforge.net/export/rss2_projfiles.php%3Fgroup_id%3D113978"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
+                          <a name="a2a_dd" onMouseOver="a2a_show_dropdown(this)" onMouseOut="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20Releases&amp;linkurl=https%3A//sourceforge.net/export/rss2_projfiles.php%3Fgroup_id%3D113978"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
 						  <script type="text/javascript">a2a_linkname="listFix() Releases";a2a_linkurl="https://sourceforge.net/export/rss2_projfiles.php?group_id=113978";</script><script type="text/javascript" src="http://www.addtoany.com/js.dropdown.js?type=feed"></script><br>
                             <br>
                         </p>                        </td>
@@ -135,10 +135,42 @@
 					<a href="history.html" class="topHeaderLinks"></a><!-- InstanceBeginEditable name="mainContent" --><br>
 					<table width="95%" border="1" align="center" cellpadding="3" cellspacing="0" bgcolor="#EEEEEE" class="tableBorder">
                       <tr bgcolor="#006699">
-                        <td height="20" class="tableBorder"><div align="left" class="boxHeader">Change Log</div></td>
+                        <td height="20" class="tableBorder"><div align="left" class="boxHeader">Release Notes</div></td>
                       </tr>
                       <tr>
                         <td class="tableBorder"><div class="boxText">
+                          <p><strong>Version 2.1.0 Improvements (2011.03.06)</strong></p>
+                          <p><em>Notes:</em></p>
+                          <blockquote>
+                            <p> Version 2.1.0 contains some critical bug fixes and lots of new features building on what was introduced in 2.0.0.  I have much more to add, but it was time to get this set of improvements stable and out there for everyone to try.  Thanks to Sarah for putting up with all the time I spend in front of a computer, to Pierre for taking the time to help me improve this app, and those those few generous souls who have donated :)</p>
+                            <p>As always, please <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">report any bugs you find</a>.</p>
+                          </blockquote>
+                          <p><em>New Features:</em></p>
+                          <ul>
+                            <li>&quot;Fix everything&quot; button (magic wand icon) - first finds exact matches, then runs a closest match search on all the missing entries that remain</li>
+                            <li>Can now create a playlist from scratch (Ctrl-N, menu item under &quot;File&quot;, or via the &quot;getting started&quot; panel)</li>
+                            <li>A play button in each row of the closest matches results screen to preview potential matches</li>
+                            <li>Ability to extract all the playlists from the winamp media library to a new location</li>
+                            <li>Cancel button for all long-running opeations</li>
+                            <li>Saving a playlist is now nearly instantaneous</li>
+                            <li>Major memory usage improvements and a roughly 40% running time improvement for the batch find closest matches operation</li>
+                            <li>Swtiched font to SansSerif for much better international support (shows Latin, Japanese, Korean, etc. characters that Verdana couldn't handle, among other reasons)</li>
+                            <li>Entries that are aren't missing but are found outside the media library are now updated to a location inside the media library if found there too</li>
+                            <li>Switching off &quot;use UNC paths for mapped drives&quot; will revert the media library to a mapped drive representation if applicable</li>
+                            <li>Can now drag multiple entries through the playlist at once (this should feel more natural now, implemented via Java's Drag-n-Drop API)</li>
+                            <li>Can drag a playlist from the playlist panel into the current playlist as an insert</li>
+                            <li>&quot;Edit filenames&quot; and &quot;Replace&quot; will operate on multiple entries</li>
+                            <li>Open dialogs for playlists now let you pick multiple files</li>
+                            <li>Refresh button for the playlists panel</li>
+                            <li>Can also multi-select (even directories) in the playlist panel and hit either the enter key, or the Open button, to open playlists (recursively for playlists)</li>
+                            <li>More flexible parsing of M3U files to deal w/ extra data added by some players (lookin' at you MediaMonkey...)</li>
+                            <li>Can launch URLs for playback</li>
+                          </ul>
+                          <p><em>Bug Fixes:</em></p>
+                          <ul>
+                            <li> Solved a major problem with saving files out relatively</li>
+                            <li> Fix playlist appending/insertion via the '+' button</li>
+                          </ul>
                           <p class="boxText"><strong><span class="boxText">Version 2.0.0 Improvements (2010.09.06)</span></strong></p>
                           <p><em>Notes: </em> </p>
                           <blockquote>
@@ -164,7 +196,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li>&quot;Remove Missing Entries&quot; was removing URLs</li>
                             <li>Recent Playlists menu didn't update when doing a &quot;Save As&quot;</li>
                           </ul>
-<p><strong>Version 1.5.3 Improvements (2009.04.16):</strong></p>
+<p><strong>Version 1.5.3 Improvements (2009.04.16)</strong></p>
                           <p><em>Notes: </em> </p>
                           <blockquote>
                             <p>Version 1.5.3 picks up where 1.5.2 left off.  There are lots of new features (including batch playlist repair), see the change log for more information. Please report any bugs you find!</p>
@@ -206,7 +238,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li> Now updating the playlist panel after playlist saving or batch repairing operations</li>
                             <li> Editing a filename to a missing file didn't break that entry in the UI (as it should've)</li>
                           </ul>
-                          <p><strong>Version 1.5.2 Improvements (2008.07.18):</strong> <br>
+                          <p><strong>Version 1.5.2 Improvements (2008.07.18)</strong><br>
   &nbsp;<br>
   <em>Notes:&nbsp;</em><strong><br>
 </strong></p>
@@ -228,7 +260,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li>"Find Closest Matches" crashed when operating on an empty media library.&nbsp;</li>
                             <li> Fixed M3U8 (UTF-8) support, should be rock solid now.</li>
                           </ul>
-                          <p><strong>Version 1.5.1.5 Improvements (2008.06.02):</strong> </p>
+                          <p><strong>Version 1.5.1.5 Improvements (2008.06.02)</strong></p>
                           <p><em>Notes:</em></p>
                           <blockquote>
                             <p>Version 1.5.1.5 is mainly a bug fix release for users of 1.5.1. Please upgrade as soon as possible.</p>
@@ -264,7 +296,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             </li>
                             <li>Allow &quot;find closest matches&quot; on entries that are already found on the file system</li>
                           </ul>
-                          <p><strong>Version 1.5.1 Improvements (2008.04.06):</strong>                          </p>
+                          <p><strong>Version 1.5.1 Improvements (2008.04.06)</strong></p>
                           <p><em>Notes:</em></p>
                           <blockquote>
                             <p>If you were previously running version 1.5, please refresh your media library to index the newly supported file types after installation. </p>
@@ -285,7 +317,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li>Fixed a bug in removing media directories.</li>
                             <li>Fixed a bug where adding a media directory that's the parent of an existing entry would cause double indexing and other nasty problems.</li>
                           </ul>
-                          <p><strong>Version 1.5.1 Beta Improvements (2008.03.29):</strong></p>
+                          <p><strong>Version 1.5.1 Beta Improvements (2008.03.29)</strong></p>
                           <p><em>Notes: </em></p>
                           <blockquote>
                             <p>If you were previously running version 1.5, please refresh your media library to index the newly supported file types after installation. </p>
@@ -316,21 +348,21 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li>Many bug fixes and speed improvements</li>
                           </ul>
                           <p><em>Versions 1.3.4 to 1.4.9 were skipped to celebrate initial public release to SourceForge</em></p>
-                          <p><strong>Version 1.3.3 Improvements: </strong></p>
+                          <p><strong>Version 1.3.3 Improvements</strong></p>
                           <ul>
                             <li>Recently opened M3U list.</li>
                             <li>Ability to clear the history list.</li>
                             <li>Better support for creating new playlists.</li>
                           </ul>
-                          <p><strong>Version 1.3.2 Improvements: </strong></p>
+                          <p><strong>Version 1.3.2 Improvements</strong></p>
                           <ul>
                             <li>Cut the size of the jar file.</li>
                           </ul>
-                          <p><strong>Version 1.3.1 Improvements: </strong></p>
+                          <p><strong>Version 1.3.1 Improvements</strong></p>
                           <ul>
                             <li>Added a status bar to display the name of the currently open playlist, the number of songs in the list, and the number of songs that are lost.</li>
                           </ul>
-                          <p><strong>Version 1.3.0 Improvements: </strong></p>
+                          <p><strong>Version 1.3.0 Improvements</strong></p>
                           <ul>
                             <li>New feature allows you to copy the MP3s in the list to a directory for easy file transfers and/or burning to CD.</li>
                             <li>New feature removes all duplicate entries in the playlist.</li>
@@ -344,7 +376,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li>Removed redundant buttons under the playlist table. </li>
                           </ul>
                           <p><em>Versions 1.2.4 to 1.2.9 were skipped</em></p>
-                          <p><strong>Version 1.2.3 Improvements:</strong></p>
+                          <p><strong>Version 1.2.3 Improvements</strong></p>
                           <ul>
                             <li>listfix() now works in Linux!!</li>
                           </ul>
@@ -352,11 +384,11 @@ We've done as much testing as we possibly can, but there are only two of us and 
                           <ul>
                             <li>Bux fixes involving the table. It now displays the new location in the playlist on the fly as it is dragged through the list.</li>
                           </ul>
-                          <p><strong>Version 1.2.1 Improvements:</strong></p>
+                          <p><strong>Version 1.2.1 Improvements</strong></p>
                           <ul>
                             <li>Several minor changes (title bar, greyed out remove button when media dir list is empty, fixed greyed out button bug when no list was loaded, etc...). </li>
                           </ul>
-                          <p><strong>Version 1.2.0 Improvements:</strong></p>
+                          <p><strong>Version 1.2.0 Improvements</strong></p>
                           <ul>
                             <li>Made buttons grey out until they can be used.</li>
                             <li>Added the ability to append a playlist to another.</li>
@@ -365,7 +397,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
                             <li>Ability to insert mp3s into the list.</li>
                             <li>New icons for move up / move down / delete.</li>
                           </ul>
-                          <p><strong>Version 1.1.0 Improvements:</strong></p>
+                          <p><strong>Version 1.1.0 Improvements</strong></p>
                           <ul>
                             <li>Fixed bug that limited the display of playlist entries to 50.</li>
                         </ul></div></td>
@@ -380,10 +412,10 @@ We've done as much testing as we possibly can, but there are only two of us and 
 					    <td class="tableBorder"><div class="boxText">
 					      <p>Just so I don't someday forget the details, here's how listFix() got started...</p>
 					      <ul>
-					        <li>1998-2000: Started playing with and building winamp playlists.  As I moved MP3s around in my collection, playlists would break (wicked lame).<br>
+					        <li>1998-2000: Started playing with and building winamp playlists.  &nbsp;As I moved MP3s around in my collection, playlists would break (wicked lame).<br>
 					          <br>
                             </li>
-					        <li>Summer 2001: Had loads of time to kill while driving cross country in a minivan. Had just finished my sophmore year at UMass Amherst and wanted a Java project to work on in my spare time (to practice coding) - remembered how much broken playlists bothered me  and got to work. Was calling it &quot;Playlist Repair 2000&quot; at this time.<br>
+					        <li>Summer 2001: Had loads of time to kill while driving cross country in a minivan. Had just finished my sophmore year at UMass Amherst and wanted a Java project to work on in my spare time, mainly to practice coding. &nbsp;Remembered how much broken playlists bothered me  and got to work. &nbsp;Was calling it &quot;Playlist Repair 2000&quot; at this time.<br>
 					          <br>
                             </li>
 					        <li>Spring 2002: Work had proceeded randomly up until this point, but I did an &quot;independent study&quot; that semester that was little more than doing tons of work on listFix(). IIRC, versions 1.3.0-1.3.3 were produced during this time.<br>
@@ -402,6 +434,9 @@ We've done as much testing as we possibly can, but there are only two of us and 
 					          <br>
                             </li>
 					        <li>September 2010: Version 2.0.0 released<br>
+					          <br>
+                            </li>
+					        <li>March 2011: Version 2.1.0 released<br>
 					          <br>
 					          </li>
 					        <li>Present: An active SourceForge project and an application people actually use :)</li>
@@ -427,8 +462,9 @@ We've done as much testing as we possibly can, but there are only two of us and 
                     
                     <a href='http://www.softsea.com/review/listFix.html'><img src='http://www.softsea.com/images/pro-logo-4stars-1.gif' border='0' /></a><br>
                     <br>
-                    <a href='http://www.softsea.com/review/listFix.html'><img src='http://www.softsea.com/images/pro-logo-clean-1.gif' border='0' /></a>
+                    <a href='http://www.softsea.com/review/listFix.html'><img src='http://www.softsea.com/images/pro-logo-clean-1.gif' border='0' /></a><br>
                     <br>
+                    <a href="http://www.thefreewindows.com/?p=3591"><img src="http://www.thefreewindows.com/tfw-excellence.jpg" border="0"></a><br>
                     <br>
                     </p></td>
                   </tr>
@@ -440,7 +476,7 @@ We've done as much testing as we possibly can, but there are only two of us and 
         <tr valign="middle"> 
           <td colspan="3" height="35"> 
             <hr size="1" align="center" width="98%">
-          <div align="right"> <span class="copyright">Copyright © 2001-2010 Jeremy Caron. All Rights Reserved&nbsp;&nbsp;&nbsp; </span></div>          </td>
+          <div align="right"> <span class="copyright">Copyright © 2001-2011 Jeremy Caron. All Rights Reserved&nbsp;&nbsp;&nbsp; </span></div>          </td>
         </tr>
     </table>    </td>
     <td bgcolor="#000000" width="1"><img src="images/000000.gif" width="1" height="1"></td>
