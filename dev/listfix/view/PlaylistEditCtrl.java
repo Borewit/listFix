@@ -785,6 +785,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnSave);
 
         _btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
+        _btnReload.setToolTipText("Reload");
         _btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
         _btnReload.setFocusable(false);
         _btnReload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
