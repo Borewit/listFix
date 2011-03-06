@@ -995,7 +995,21 @@ public class Playlist
 
 	public void reload(IProgressObserver observer)
 	{
-		init(_file, observer);
+		if (_isNew)
+		{
+			_file = new File(HOME_DIR + FS + "Untitled-" + _newListCount + ".m3u8");
+			_file.deleteOnExit();
+			_utfFormat = true;
+			_type = PlaylistType.M3U;
+			_isModified = false;
+			_isNew = true;
+			_entries.clear();
+			_originalEntries.clear();
+		}
+		else
+		{
+			init(_file, observer);
+		}
 		firePlaylistModified();
 	}
 
