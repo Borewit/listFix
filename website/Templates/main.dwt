@@ -56,19 +56,19 @@
         </tr>
         <tr bgcolor="#003366"> 
           <td colspan="2" height="23"> 
-            <table width="85%" border="0" align="right" cellpadding="0" cellspacing="0">
+            <table width="75%" border="0" align="right" cellpadding="0" cellspacing="0">
               <tr> 
-                <td> 
+                <td align="center"> 
                 <div align="center"><a href="../index.html" class="topHeaderLinks">Home</a></div>                 </td>
-                <td> 
+                <td align="center"> 
                 <div align="center"><a href="../screenshots.html" class="topHeaderLinks"></a><a href="../history.html" class="topHeaderLinks">Release Notes</a></div>                </td>
-                <td><div align="center"><a href="../history.html" class="topHeaderLinks"></a><a href="../screenshots.html" class="topHeaderLinks">Screenshots</a></div></td>
+                <td align="center"><div align="center"><a href="../history.html" class="topHeaderLinks"></a><a href="../screenshots.html" class="topHeaderLinks">Screenshots</a></div></td>
                 <td align="center" class="topHeaderLinks"><a href="http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page" class="topHeaderLinks">Wiki</a></td>
-                <td><div align="center"><font size="2"><a href="https://sourceforge.net/users/firewyre/" class="topHeaderLinks">Contact 
+                <td align="center"><div align="center"><font size="2"><a href="https://sourceforge.net/users/firewyre/" class="topHeaderLinks">Contact 
                 Info</a></font></div></td>
-                <td> 
+                <td align="center"> 
                 <div align="center"><a href="https://sourceforge.net/projects/listfix/" class="topHeaderLinks">Project Info</a></div>                </td>
-                <td><div align="center"><a href="https://sourceforge.net/projects/listfix/forums" class="topHeaderLinks">Project Forums</a></div></td>
+                <td align="center"><div align="center"><a href="https://sourceforge.net/projects/listfix/forums" class="topHeaderLinks">Project Forums</a></div></td>
               </tr>
           </table>          </td>
         </tr>
