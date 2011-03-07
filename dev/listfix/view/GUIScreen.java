@@ -82,6 +82,7 @@ import listfix.model.PlaylistHistory;
 
 import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
+import listfix.util.OperatingSystem;
 
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
@@ -152,7 +153,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 		initPlaylistListener();
 
-		addOpenPlaylistTabButton(_uiTabs);
+		if (!OperatingSystem.isMac())
+		{
+			// The default L&F on macs doesn't support tab insets...
+			addOpenPlaylistTabButton(_uiTabs);
+		}
 
 		if (!WinampHelper.isWinampInstalled())
 		{
@@ -2037,9 +2042,16 @@ private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEv
 			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
-			if (_tabPaneInsets != null)
+			try
 			{
-				setTabAreaInsets(_tabPaneInsets);
+				if (_tabPaneInsets != null)
+				{
+					setTabAreaInsets(_tabPaneInsets);
+				}
+			}
+			catch (Exception e)
+			{
+				// Eat the error and get on with life...
 			}
 		}
 		catch (Exception e)
