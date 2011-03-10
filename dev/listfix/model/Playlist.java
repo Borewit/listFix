@@ -481,7 +481,7 @@ public class Playlist
 		List<PlaylistEntry> ents = new ArrayList<PlaylistEntry>();
 		for (File file : files)
 		{
-			if (!observer.getCancelled())
+			if (observer == null || !observer.getCancelled())
 			{
 				if (Playlist.isPlaylist(file))
 				{

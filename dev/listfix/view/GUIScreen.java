@@ -28,8 +28,15 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -77,11 +84,11 @@ import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
-import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistHistory;
 
 import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
+import listfix.util.OperatingSystem;
 
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
@@ -93,13 +100,14 @@ import listfix.view.support.FontHelper;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
 
-public final class GUIScreen extends JFrame implements ICloseableTabManager
+public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
 	private static final long serialVersionUID = 7691786927987534889L;
 	private final JFileChooser jM3UChooser;
 	private final JFileChooser jMediaDirChooser;
 	private final JFileChooser jSaveFileChooser;
 	private GUIDriver guiDriver = null;
+	private DropTarget dropTarget = null;
 
 	/** Creates new form GUIScreen */
 	public GUIScreen()
@@ -152,7 +160,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 		initPlaylistListener();
 
-		addOpenPlaylistTabButton(_uiTabs);
+		if (!OperatingSystem.isMac())
+		{
+			// The default L&F on macs doesn't support tab insets...
+			addOpenPlaylistTabButton(_uiTabs);
+		}
 
 		if (!WinampHelper.isWinampInstalled())
 		{
@@ -162,7 +174,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 		syncJMenuFonts();
 
-		// drag-n-drop support
+		// drag-n-drop support for the playlist directory tree
 		_playlistDirectoryTree.setTransferHandler(new TransferHandler()
 		{
 			@Override
@@ -171,6 +183,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 				return false;
 			}
 
+			@Override
 			public boolean importData(TransferHandler.TransferSupport info)
 			{
 				return false;
@@ -199,6 +212,69 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager
 
 			}
 		});
+
+		dropTarget = new DropTarget(this, this);
+	}
+
+	public void dragEnter(DropTargetDragEvent dtde)
+	{
+		
+	}
+
+	public void dragExit(DropTargetEvent dte)
+	{
+		
+	}
+
+	public void dragOver(DropTargetDragEvent dtde)
+	{
+		
+	}
+
+	public void dropActionChanged(DropTargetDragEvent dtde)
+	{
+		
+	}
+
+	public void drop(DropTargetDropEvent dtde)
+	{
+		try
+		{
+			// Ok, get the dropped object and try to figure out what it is
+			Transferable tr = dtde.getTransferable();
+			DataFlavor[] flavors = tr.getTransferDataFlavors();
+			for (int i = 0; i < flavors.length; i++)
+			{
+				System.out.println("Possible flavor: " + flavors[i].getMimeType());
+				// Check for file lists specifically
+				if (flavors[i].isFlavorJavaFileListType())
+				{
+					// Great!  Accept copy drops...
+					dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+
+					// And add the list of file names to our text area
+					java.util.List list = (java.util.List) tr.getTransferData(flavors[i]);
+					for (int j = 0; j < list.size(); j++)
+					{
+						if (list.get(j) instanceof File)
+						{
+							openPlaylist((File) list.get(j));
+						}
+					}
+
+					// If we made it this far, everything worked.
+					dtde.dropComplete(true);
+					return;
+				}
+			}
+			// Hmm, the user must not have dropped a file list
+			dtde.rejectDrop();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			dtde.rejectDrop();
+		}
 	}
 
 	public AppOptions getOptions()
@@ -2037,9 +2113,16 @@ private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEv
 			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
 			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
-			if (_tabPaneInsets != null)
+			try
 			{
-				setTabAreaInsets(_tabPaneInsets);
+				if (_tabPaneInsets != null)
+				{
+					setTabAreaInsets(_tabPaneInsets);
+				}
+			}
+			catch (Exception e)
+			{
+				// Eat the error and get on with life...
 			}
 		}
 		catch (Exception e)
