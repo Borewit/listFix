@@ -22,4 +22,8 @@ package listfix.view.support;
 public interface ICloseableTabManager
 {
     boolean tryCloseTab(ClosableTabCtrl ctrl);
+
+	boolean tryCloseAllTabs();
+
+	void closeAllOtherTabs(int tabIx);
 }

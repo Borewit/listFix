@@ -245,7 +245,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			DataFlavor[] flavors = tr.getTransferDataFlavors();
 			for (int i = 0; i < flavors.length; i++)
 			{
-				System.out.println("Possible flavor: " + flavors[i].getMimeType());
 				// Check for file lists specifically
 				if (flavors[i].isFlavorJavaFileListType())
 				{
@@ -256,7 +255,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					java.util.List list = (java.util.List) tr.getTransferData(flavors[i]);
 					for (int j = 0; j < list.size(); j++)
 					{
-						if (list.get(j) instanceof File)
+						if (list.get(j) instanceof File && Playlist.isPlaylist((File)list.get(j)))
 						{
 							openPlaylist((File) list.get(j));
 						}
@@ -352,7 +351,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         playlistTreeRightClickMenu.add(batchPlaylistRepairMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("listFix( ) - v2.1.0");
+        setTitle("listFix( ) - v2.2.0");
         setMinimumSize(new java.awt.Dimension(600, 149));
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -364,7 +363,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         _statusPanel.setLayout(new java.awt.BorderLayout());
 
-        statusLabel.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        statusLabel.setFont(new java.awt.Font("SansSerif", 0, 10));
         statusLabel.setForeground(new java.awt.Color(75, 75, 75));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
@@ -396,7 +395,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
 
-        _addMediaDirButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _addMediaDirButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _addMediaDirButton.setText("Add");
         _addMediaDirButton.setToolTipText("Where do you keep your music?");
         _addMediaDirButton.setFocusable(false);
@@ -409,7 +408,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         _mediaLibraryButtonPanel.add(_addMediaDirButton);
 
-        _removeMediaDirButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _removeMediaDirButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _removeMediaDirButton.setText("Remove");
         _removeMediaDirButton.setToolTipText("Remove a directory from the search list");
         _removeMediaDirButton.setFocusable(false);
@@ -422,7 +421,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         _mediaLibraryButtonPanel.add(_removeMediaDirButton);
 
-        _refreshMediaDirsButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _refreshMediaDirsButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _refreshMediaDirsButton.setText("Refresh");
         _refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
         _refreshMediaDirsButton.setFocusable(false);
@@ -451,7 +450,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryPanel.setAlignmentY(0.0F);
         _playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
-        _playlistDirectoryTree.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _playlistDirectoryTree.setFont(new java.awt.Font("SansSerif", 0, 10));
         _playlistDirectoryTree.setDragEnabled(true);
         _playlistDirectoryTree.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -470,7 +469,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
-        _openSelectedPlaylistsButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _openSelectedPlaylistsButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _openSelectedPlaylistsButton.setText("Open");
         _openSelectedPlaylistsButton.setToolTipText("Open Selected Playlists");
         _openSelectedPlaylistsButton.setFocusable(false);
@@ -482,7 +481,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         jPanel1.add(_openSelectedPlaylistsButton);
 
-        _refreshPlaylistPanelButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _refreshPlaylistPanelButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _refreshPlaylistPanelButton.setText("Refresh");
         _refreshPlaylistPanelButton.setToolTipText("Refresh Playlists Tree");
         _refreshPlaylistPanelButton.setFocusable(false);
@@ -515,7 +514,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _openIconButton.setText("Open A Playlist");
         _openIconButton.setToolTipText("Open A Playlist");
         _openIconButton.setAlignmentY(0.0F);
-        _openIconButton.setBorder(null);
         _openIconButton.setFocusable(false);
         _openIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _openIconButton.setIconTextGap(-2);
@@ -539,7 +537,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _newIconButton.setText("New Playlist");
         _newIconButton.setToolTipText("New Playlist");
         _newIconButton.setAlignmentY(0.0F);
-        _newIconButton.setBorder(null);
         _newIconButton.setFocusable(false);
         _newIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _newIconButton.setIconTextGap(3);
@@ -1366,7 +1363,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			return null;
 		}
 		Component comp = _uiTabs.getComponentAt(tabIx);
-		BasicTabbedPaneUI ui;
 		return comp != null ? ((PlaylistEditCtrl) _uiTabs.getComponentAt(tabIx)).getPlaylist() : null;
 	}
 
@@ -1417,6 +1413,35 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 	}
 
+	@Override
+	public boolean tryCloseAllTabs()
+	{
+		boolean result = true;
+		while (_uiTabs.getTabCount() > 0 && result)
+		{
+			result = result && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
+		}
+		return result;
+	}
+
+	@Override
+	public void closeAllOtherTabs(int tabIx)
+	{
+		if (_uiTabs.getTabCount() > 1)
+		{
+			for (int i = 0; i < tabIx; i++)
+			{
+				tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
+			}
+			int toRemove = _uiTabs.getTabCount() - 1;
+			for (int i = 0; i < toRemove; i++)
+			{
+				tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(1));
+			}
+		}
+	}
+
+	@Override
 	public boolean tryCloseTab(ClosableTabCtrl ctrl)
 	{
 		int tabIx = _uiTabs.indexOfTabComponent(ctrl);
@@ -1664,7 +1689,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		JOptionPane.showMessageDialog(this, "listFix( ) v2.1.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) \n          Kennedy Akala (kennedyakala at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, "listFix( ) v2.2.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) \n          Kennedy Akala (kennedyakala at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void _exitMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__exitMenuItemActionPerformed

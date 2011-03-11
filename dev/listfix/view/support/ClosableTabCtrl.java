@@ -38,10 +38,13 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class ClosableTabCtrl extends javax.swing.JPanel
 {
+	private Component _comp = null;
+
     public ClosableTabCtrl(ICloseableTabManager tabMgr, JTabbedPane tabPane, String title)
     {
         _tabPane = tabPane;
         _tabMgr = tabMgr;
+		// _comp = comp;
         initComponents();
 
         // need to set the title here but not the tooltip (tooltip setting messes up tab tooltip)
@@ -77,27 +80,100 @@ public class ClosableTabCtrl extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        rightClickMenu = new javax.swing.JPopupMenu();
+        closeAllTabsMenuItem = new javax.swing.JMenuItem();
+        closeAllOtherTabsMenuItem = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = createTabButton();
 
+        closeAllTabsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        closeAllTabsMenuItem.setText("Close All");
+        closeAllTabsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeAllTabsMenuItemActionPerformed(evt);
+            }
+        });
+        rightClickMenu.add(closeAllTabsMenuItem);
+
+        closeAllOtherTabsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        closeAllOtherTabsMenuItem.setText("Close All Other Tabs");
+        closeAllOtherTabsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeAllOtherTabsMenuItemActionPerformed(evt);
+            }
+        });
+        rightClickMenu.add(closeAllOtherTabsMenuItem);
+
         setFocusable(false);
         setOpaque(false);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                formMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                formMouseReleased(evt);
+            }
+        });
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("playlist");
         jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 5));
         add(jLabel1);
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton1.setText("X");
         add(jButton1);
     }// </editor-fold>//GEN-END:initComponents
 
+	private void formMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseClicked
+	{//GEN-HEADEREND:event_formMouseClicked
+//		if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
+//		{
+//			rightClickMenu.show(this, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
+//		}
+//		else if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+//		{
+//			_tabPane.setSelectedIndex(getTabIx());
+//		}
+	}//GEN-LAST:event_formMouseClicked
+
+	private void closeAllTabsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeAllTabsMenuItemActionPerformed
+	{//GEN-HEADEREND:event_closeAllTabsMenuItemActionPerformed
+		_tabMgr.tryCloseAllTabs();
+	}//GEN-LAST:event_closeAllTabsMenuItemActionPerformed
+
+	private void closeAllOtherTabsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeAllOtherTabsMenuItemActionPerformed
+	{//GEN-HEADEREND:event_closeAllOtherTabsMenuItemActionPerformed
+		_tabMgr.closeAllOtherTabs(getTabIx());
+	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
+
+	private void formMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseReleased
+	{//GEN-HEADEREND:event_formMouseReleased
+		if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
+		{
+			rightClickMenu.show(this, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
+		}
+	}//GEN-LAST:event_formMouseReleased
+
+	private void formMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMousePressed
+	{//GEN-HEADEREND:event_formMousePressed
+		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			_tabPane.setSelectedIndex(getTabIx());
+		}
+	}//GEN-LAST:event_formMousePressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem closeAllOtherTabsMenuItem;
+    private javax.swing.JMenuItem closeAllTabsMenuItem;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPopupMenu rightClickMenu;
     // End of variables declaration//GEN-END:variables
 
 
