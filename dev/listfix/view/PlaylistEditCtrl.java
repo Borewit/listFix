@@ -668,7 +668,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        _uiPopupMenu = new javax.swing.JPopupMenu();
+        _playlistEntryRightClickMenu = new javax.swing.JPopupMenu();
         _miEditFilename = new javax.swing.JMenuItem();
         _miReplace = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
@@ -694,7 +694,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
-        _uiPopupMenu.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _playlistEntryRightClickMenu.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
 
         _miEditFilename.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miEditFilename.setText("Edit Filename");
@@ -703,7 +703,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuEditFilenameActionPerformed(evt);
             }
         });
-        _uiPopupMenu.add(_miEditFilename);
+        _playlistEntryRightClickMenu.add(_miEditFilename);
 
         _miReplace.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miReplace.setText("Replace Selected Entry");
@@ -712,8 +712,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuReplaceSelectedEntry(evt);
             }
         });
-        _uiPopupMenu.add(_miReplace);
-        _uiPopupMenu.add(jSeparator3);
+        _playlistEntryRightClickMenu.add(_miReplace);
+        _playlistEntryRightClickMenu.add(jSeparator3);
 
         _miFindClosest.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miFindClosest.setText("Find Closest Matches");
@@ -722,7 +722,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuFindClosestActionPerformed(evt);
             }
         });
-        _uiPopupMenu.add(_miFindClosest);
+        _playlistEntryRightClickMenu.add(_miFindClosest);
 
         _miBatchFindClosest.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miBatchFindClosest.setText("Batch Find Closest Matches");
@@ -732,8 +732,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuBatchFindClosestMatchActionPerformed(evt);
             }
         });
-        _uiPopupMenu.add(_miBatchFindClosest);
-        _uiPopupMenu.add(jSeparator4);
+        _playlistEntryRightClickMenu.add(_miBatchFindClosest);
+        _playlistEntryRightClickMenu.add(jSeparator4);
 
         _miRemoveDups.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miRemoveDups.setText("Remove Duplicates");
@@ -742,7 +742,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuRemoveDuplicatesActionPerformed(evt);
             }
         });
-        _uiPopupMenu.add(_miRemoveDups);
+        _playlistEntryRightClickMenu.add(_miRemoveDups);
 
         _miRemoveMissing.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miRemoveMissing.setText("Remove Missing");
@@ -751,7 +751,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuRemoveMissingActionPerformed(evt);
             }
         });
-        _uiPopupMenu.add(_miRemoveMissing);
+        _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
         _miCopyFiles.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miCopyFiles.setText("Copy Files");
@@ -761,7 +761,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 onMenuCopyFiles(evt);
             }
         });
-        _uiPopupMenu.add(_miCopyFiles);
+        _playlistEntryRightClickMenu.add(_miCopyFiles);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -1248,7 +1248,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JMenuItem _miRemoveDups;
     private javax.swing.JMenuItem _miRemoveMissing;
     private javax.swing.JMenuItem _miReplace;
-    private javax.swing.JPopupMenu _uiPopupMenu;
+    private javax.swing.JPopupMenu _playlistEntryRightClickMenu;
     private listfix.view.support.ZebraJTable _uiTable;
     private javax.swing.JScrollPane _uiTableScrollPane;
     private javax.swing.JToolBar _uiToolbar;
@@ -1546,7 +1546,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						_miReplace.setText("Replace Selected Entry");
 					}
 
-					_uiPopupMenu.show(e.getComponent(), p.x, p.y);
+					_playlistEntryRightClickMenu.show(e.getComponent(), p.x, p.y);
 				}
 			}
 		});

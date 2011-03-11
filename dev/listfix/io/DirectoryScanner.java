@@ -34,6 +34,7 @@ import listfix.view.support.ProgressWorker;
 =           list of input directories.
 ============================================================================
  */
+
 public class DirectoryScanner
 {
 	private List<String> thisDirList;

@@ -290,8 +290,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
-        batchPlaylistRepairMenuItem = new javax.swing.JMenuItem();
+        _playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
+        _miOpenSelectedPlaylists = new javax.swing.JMenuItem();
+        _miBatchPlaylistRepair = new javax.swing.JMenuItem();
         _statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         _splitPane = new javax.swing.JSplitPane();
@@ -339,16 +340,26 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _updateCheckMenuItem = new javax.swing.JMenuItem();
         _aboutMenuItem = new javax.swing.JMenuItem();
 
-        playlistTreeRightClickMenu.setPreferredSize(new java.awt.Dimension(160, 28));
+        _playlistTreeRightClickMenu.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _playlistTreeRightClickMenu.setPreferredSize(null);
 
-        batchPlaylistRepairMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
-        batchPlaylistRepairMenuItem.setText("Repair Playlist(s)...");
-        batchPlaylistRepairMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        _miOpenSelectedPlaylists.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _miOpenSelectedPlaylists.setText("Open");
+        _miOpenSelectedPlaylists.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                batchPlaylistRepairMenuItemActionPerformed(evt);
+                _miOpenSelectedPlaylistsActionPerformed(evt);
             }
         });
-        playlistTreeRightClickMenu.add(batchPlaylistRepairMenuItem);
+        _playlistTreeRightClickMenu.add(_miOpenSelectedPlaylists);
+
+        _miBatchPlaylistRepair.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _miBatchPlaylistRepair.setText("Repair Playlist(s)...");
+        _miBatchPlaylistRepair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _miBatchPlaylistRepairActionPerformed(evt);
+            }
+        });
+        _playlistTreeRightClickMenu.add(_miBatchPlaylistRepair);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("listFix( ) - v2.2.0");
@@ -469,7 +480,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
-        _openSelectedPlaylistsButton.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _openSelectedPlaylistsButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _openSelectedPlaylistsButton.setText("Open");
         _openSelectedPlaylistsButton.setToolTipText("Open Selected Playlists");
         _openSelectedPlaylistsButton.setFocusable(false);
@@ -754,6 +765,32 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+	private void openTreeSelectedPlaylists()
+	{
+		int[] selRows = _playlistDirectoryTree.getSelectionRows();
+		if (selRows != null && selRows.length > 0)
+		{
+			for (int i : selRows)
+			{
+				TreePath selPath = _playlistDirectoryTree.getPathForRow(i);
+				File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+				if (toOpen.isDirectory())
+				{
+					// not yet supported, need a method to generate a list of all playlists under a folder...
+					List<File> files = (new FileTypeSearch()).findFiles(toOpen, new PlaylistFileFilter());
+					for (File f : files)
+					{
+						openPlaylist(f);
+					}
+				}
+				else
+				{
+					openPlaylist(toOpen);
+				}
+			}
+		}
+	}
 
 	private void playlistDirectoryTreeNodeDoubleClicked(TreePath selPath)
 	{
@@ -1776,18 +1813,20 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			if (_playlistDirectoryTree.getSelectionCount() > 0)
 			{
-				batchPlaylistRepairMenuItem.setEnabled(true);
+				_miBatchPlaylistRepair.setEnabled(true);
+				_miOpenSelectedPlaylists.setEnabled(true);
 			}
 			else
 			{
-				batchPlaylistRepairMenuItem.setEnabled(false);
+				_miBatchPlaylistRepair.setEnabled(false);
+				_miOpenSelectedPlaylists.setEnabled(false);
 			}
-			playlistTreeRightClickMenu.show(_playlistDirectoryTree, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
+			_playlistTreeRightClickMenu.show(_playlistDirectoryTree, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
 		}
     }//GEN-LAST:event__playlistDirectoryTreeMouseClicked
 
-    private void batchPlaylistRepairMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_batchPlaylistRepairMenuItemActionPerformed
-    {//GEN-HEADEREND:event_batchPlaylistRepairMenuItemActionPerformed
+    private void _miBatchPlaylistRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miBatchPlaylistRepairActionPerformed
+    {//GEN-HEADEREND:event__miBatchPlaylistRepairActionPerformed
 		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
 		List<File> files = new ArrayList<File>();
 		for (TreePath path : paths)
@@ -1822,7 +1861,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 			updatePlaylistDirectoryPanel();
 		}
-	}//GEN-LAST:event_batchPlaylistRepairMenuItemActionPerformed
+	}//GEN-LAST:event__miBatchPlaylistRepairActionPerformed
 
     private void _playlistDirectoryTreeMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__playlistDirectoryTreeMousePressed
     {//GEN-HEADEREND:event__playlistDirectoryTreeMousePressed
@@ -2075,29 +2114,13 @@ private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN
 
 private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__openSelectedPlaylistsButtonActionPerformed
 {//GEN-HEADEREND:event__openSelectedPlaylistsButtonActionPerformed
-	int[] selRows = _playlistDirectoryTree.getSelectionRows();
-	if (selRows != null && selRows.length > 0)
-	{
-		for (int i : selRows)
-		{
-			TreePath selPath = _playlistDirectoryTree.getPathForRow(i);
-			File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
-			if (toOpen.isDirectory())
-			{
-				// not yet supported, need a method to generate a list of all playlists under a folder...
-				List<File> files = (new FileTypeSearch()).findFiles(toOpen, new PlaylistFileFilter());
-				for (File f : files)
-				{
-					openPlaylist(f);
-				}
-			}
-			else
-			{
-				openPlaylist(toOpen);
-			}
-		}
-	}
+	openTreeSelectedPlaylists();
 }//GEN-LAST:event__openSelectedPlaylistsButtonActionPerformed
+
+private void _miOpenSelectedPlaylistsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miOpenSelectedPlaylistsActionPerformed
+{//GEN-HEADEREND:event__miOpenSelectedPlaylistsActionPerformed
+	openTreeSelectedPlaylists();
+}//GEN-LAST:event__miOpenSelectedPlaylistsActionPerformed
 
 	private void updateMediaDirButtons()
 	{
@@ -2136,7 +2159,7 @@ private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEv
 			SwingUtilities.updateComponentTreeUI(jM3UChooser);
 			SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
 			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
-			SwingUtilities.updateComponentTreeUI(playlistTreeRightClickMenu);
+			SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
 			SwingUtilities.updateComponentTreeUI(_uiTabs);
 			try
 			{
@@ -2196,7 +2219,9 @@ private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEv
     private javax.swing.JList _mediaLibraryList;
     private javax.swing.JPanel _mediaLibraryPanel;
     private javax.swing.JScrollPane _mediaLibraryScrollPane;
+    private javax.swing.JMenuItem _miBatchPlaylistRepair;
     private javax.swing.JMenuItem _miBatchRepair;
+    private javax.swing.JMenuItem _miOpenSelectedPlaylists;
     private javax.swing.JButton _newIconButton;
     private javax.swing.JMenuItem _newPlaylistMenuItem;
     private javax.swing.JButton _openIconButton;
@@ -2204,6 +2229,7 @@ private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEv
     private javax.swing.JPanel _playlistDirectoryPanel;
     private javax.swing.JTree _playlistDirectoryTree;
     private javax.swing.JPanel _playlistPanel;
+    private javax.swing.JPopupMenu _playlistTreeRightClickMenu;
     private javax.swing.JButton _refreshMediaDirsButton;
     private javax.swing.JButton _refreshPlaylistPanelButton;
     private javax.swing.JButton _removeMediaDirButton;
@@ -2216,13 +2242,11 @@ private void _openSelectedPlaylistsButtonActionPerformed(java.awt.event.ActionEv
     private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JPanel _verticalPanel;
-    private javax.swing.JMenuItem batchPlaylistRepairMenuItem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JPopupMenu playlistTreeRightClickMenu;
     private javax.swing.JMenu recentMenu;
     private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
