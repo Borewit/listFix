@@ -27,6 +27,7 @@ import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -37,6 +38,7 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -60,6 +62,9 @@ import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.TabbedPaneUI;
@@ -214,6 +219,84 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		});
 
 		dropTarget = new DropTarget(this, this);
+		
+		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
+		{
+			@Override
+			public void valueChanged(TreeSelectionEvent e)
+			{
+//				if (e.getValueIsAdjusting())
+//				{
+//					return;
+//				}
+
+				boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
+				_openSelectedPlaylistsButton.setEnabled(hasSelected);
+				_repairPlaylistsButton.setEnabled(hasSelected);
+			}
+		});
+		
+		// add popup menu to list, handle's right click actions.
+		_playlistDirectoryTree.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				handleMouseEvent(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				handleMouseEvent(e);
+			}
+
+			private void handleMouseEvent(MouseEvent e)
+			{				
+				Point p = e.getPoint();
+				if (e.isPopupTrigger())
+				{
+					int rowIx = _playlistDirectoryTree.getRowForLocation(p.x, p.y);
+					boolean isOverItem = rowIx >= 0;
+					if (isOverItem && (e.getModifiers() & ActionEvent.CTRL_MASK) > 0)
+					{
+						_playlistDirectoryTree.addSelectionRow(rowIx);
+					}
+					else if (isOverItem && !_playlistDirectoryTree.isRowSelected(rowIx))
+					{
+						_playlistDirectoryTree.setSelectionRow(rowIx);
+					}
+
+					if (_playlistDirectoryTree.getSelectionCount() > 0)
+					{
+						_miBatchPlaylistRepair.setEnabled(true);
+						_miOpenSelectedPlaylists.setEnabled(true);
+					}
+					else
+					{
+						_miBatchPlaylistRepair.setEnabled(false);
+						_miOpenSelectedPlaylists.setEnabled(false);
+					}
+					_playlistTreeRightClickMenu.show(e.getComponent(), p.x, p.y);
+				}
+				else
+				{
+					int selRow = _playlistDirectoryTree.getRowForLocation(p.x, p.y);
+					TreePath selPath = _playlistDirectoryTree.getPathForLocation(p.x, p.y);
+					if (selRow != -1)
+					{
+						if (e.getClickCount() == 2)
+						{
+							playlistDirectoryTreeNodeDoubleClicked(selPath);
+						}
+					}
+					else
+					{
+						_playlistDirectoryTree.setSelectionRow(-1);
+					}
+				}
+			}
+		});
 	}
 
 	public void dragEnter(DropTargetDragEvent dtde)
@@ -281,6 +364,37 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		return guiDriver.getAppOptions();
 	}
 
+	private void fireOptionsPopup()
+	{
+		String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();
+		AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
+		AppOptions options = optDialog.showDialog();
+		if (optDialog.getResultCode() == AppOptionsDialog.OK)
+		{
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			guiDriver.setAppOptions(options);
+			guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
+			if (options.getAlwaysUseUNCPaths())
+			{
+				guiDriver.switchMediaLibraryToUNCPaths();
+				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+			}
+			else
+			{
+				guiDriver.switchMediaLibraryToMappedDrives();
+				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+			}
+			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
+			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
+			{
+				_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
+			}
+			updateRecentMenu();
+			this.setLookAndFeel(options.getLookAndFeel());
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+	}
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -308,8 +422,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _treeScrollPane = new javax.swing.JScrollPane();
         _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
         jPanel1 = new javax.swing.JPanel();
-        _openSelectedPlaylistsButton = new javax.swing.JButton();
+        _setPlaylistsDirectoryButton = new javax.swing.JButton();
         _refreshPlaylistPanelButton = new javax.swing.JButton();
+        _openSelectedPlaylistsButton = new javax.swing.JButton();
+        _repairPlaylistsButton = new javax.swing.JButton();
         _playlistPanel = new javax.swing.JPanel();
         _gettingStartedPanel = new javax.swing.JPanel();
         _verticalPanel = new javax.swing.JPanel();
@@ -340,8 +456,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _updateCheckMenuItem = new javax.swing.JMenuItem();
         _aboutMenuItem = new javax.swing.JMenuItem();
 
-        _playlistTreeRightClickMenu.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
-        _playlistTreeRightClickMenu.setPreferredSize(null);
+        _playlistTreeRightClickMenu.setFont(new java.awt.Font("SansSerif", 0, 10));
 
         _miOpenSelectedPlaylists.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _miOpenSelectedPlaylists.setText("Open");
@@ -410,8 +525,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _addMediaDirButton.setText("Add");
         _addMediaDirButton.setToolTipText("Where do you keep your music?");
         _addMediaDirButton.setFocusable(false);
+        _addMediaDirButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
-        _addMediaDirButton.setPreferredSize(null);
         _addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _addMediaDirButtonActionPerformed(evt);
@@ -423,8 +538,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _removeMediaDirButton.setText("Remove");
         _removeMediaDirButton.setToolTipText("Remove a directory from the search list");
         _removeMediaDirButton.setFocusable(false);
+        _removeMediaDirButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
-        _removeMediaDirButton.setPreferredSize(null);
         _removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _removeMediaDirButtonActionPerformed(evt);
@@ -436,8 +551,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _refreshMediaDirsButton.setText("Refresh");
         _refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
         _refreshMediaDirsButton.setFocusable(false);
+        _refreshMediaDirsButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
-        _refreshMediaDirsButton.setPreferredSize(null);
         _refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _refreshMediaDirsButtonActionPerformed(evt);
@@ -447,7 +562,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _mediaLibraryPanel.add(_mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
-        _mediaLibraryList.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _mediaLibraryList.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         _mediaLibraryList.setPreferredSize(null);
         _mediaLibraryScrollPane.setViewportView(_mediaLibraryList);
@@ -461,16 +576,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryPanel.setAlignmentY(0.0F);
         _playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
-        _playlistDirectoryTree.setFont(new java.awt.Font("SansSerif", 0, 10));
+        _playlistDirectoryTree.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _playlistDirectoryTree.setDragEnabled(true);
-        _playlistDirectoryTree.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                _playlistDirectoryTreeMouseClicked(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                _playlistDirectoryTreeMousePressed(evt);
-            }
-        });
         _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 _playlistDirectoryTreeKeyReleased(evt);
@@ -480,10 +587,36 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
+        _setPlaylistsDirectoryButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _setPlaylistsDirectoryButton.setText("Set");
+        _setPlaylistsDirectoryButton.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
+        _setPlaylistsDirectoryButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
+        _setPlaylistsDirectoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _setPlaylistsDirectoryButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_setPlaylistsDirectoryButton);
+
+        _refreshPlaylistPanelButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _refreshPlaylistPanelButton.setText("Refresh");
+        _refreshPlaylistPanelButton.setToolTipText("Refresh Playlists Tree");
+        _refreshPlaylistPanelButton.setFocusable(false);
+        _refreshPlaylistPanelButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
+        _refreshPlaylistPanelButton.setMinimumSize(new java.awt.Dimension(71, 25));
+        _refreshPlaylistPanelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _refreshPlaylistPanelButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_refreshPlaylistPanelButton);
+
         _openSelectedPlaylistsButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _openSelectedPlaylistsButton.setText("Open");
-        _openSelectedPlaylistsButton.setToolTipText("Open Selected Playlists");
+        _openSelectedPlaylistsButton.setToolTipText("Open Selected Playlist(s)");
+        _openSelectedPlaylistsButton.setEnabled(false);
         _openSelectedPlaylistsButton.setFocusable(false);
+        _openSelectedPlaylistsButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _openSelectedPlaylistsButton.setMinimumSize(new java.awt.Dimension(71, 25));
         _openSelectedPlaylistsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -492,18 +625,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         jPanel1.add(_openSelectedPlaylistsButton);
 
-        _refreshPlaylistPanelButton.setFont(new java.awt.Font("SansSerif", 0, 10));
-        _refreshPlaylistPanelButton.setText("Refresh");
-        _refreshPlaylistPanelButton.setToolTipText("Refresh Playlists Tree");
-        _refreshPlaylistPanelButton.setFocusable(false);
-        _refreshPlaylistPanelButton.setMinimumSize(new java.awt.Dimension(71, 25));
-        _refreshPlaylistPanelButton.setPreferredSize(null);
-        _refreshPlaylistPanelButton.addActionListener(new java.awt.event.ActionListener() {
+        _repairPlaylistsButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _repairPlaylistsButton.setText("Repair");
+        _repairPlaylistsButton.setToolTipText("Repair Selected Playlist(s)");
+        _repairPlaylistsButton.setEnabled(false);
+        _repairPlaylistsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _refreshPlaylistPanelButtonActionPerformed(evt);
+                _repairPlaylistsButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(_refreshPlaylistPanelButton);
+        jPanel1.add(_repairPlaylistsButton);
 
         _playlistDirectoryPanel.add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
@@ -696,15 +827,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(jSeparator1);
 
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        _appOptionsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
-        _appOptionsMenuItem.setMnemonic('H');
-        _appOptionsMenuItem.setText("Options...");
-        _appOptionsMenuItem.setToolTipText("");
-        _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _appOptionsMenuItemActionPerformed(evt);
-            }
-        });
         _fileMenu.add(_appOptionsMenuItem);
 
         jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
@@ -765,6 +887,41 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+	private void launchBatchPlaylistRepair()
+	{
+		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
+		List<File> files = new ArrayList<File>();
+		for (TreePath path : paths)
+		{
+			File file = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
+			if (file.isFile())
+			{
+				files.add(file);
+			}
+			else
+			{
+				files.addAll(PlaylistScanner.getAllPlaylists(file));
+			}
+		}
+		if (files.isEmpty())
+		{
+			return;
+		}
+		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), files.get(0));
+		br.setDescription("Batch Repair");
+		for (File file : files)
+		{
+			br.add(new BatchRepairItem(file));
+		}
+		BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
+		if (!dlg.getUserCancelled())
+		{
+			dlg.setLocationRelativeTo(this);
+			dlg.setVisible(true);
+			updatePlaylistDirectoryPanel();
+		}
+	}
 
 	private void openTreeSelectedPlaylists()
 	{
@@ -1778,103 +1935,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _appOptionsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__appOptionsMenuItemActionPerformed
 	{//GEN-HEADEREND:event__appOptionsMenuItemActionPerformed
-		String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();
-		AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
-		AppOptions options = optDialog.showDialog();
-		if (optDialog.getResultCode() == AppOptionsDialog.OK)
-		{
-			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			guiDriver.setAppOptions(options);
-			guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
-			if (options.getAlwaysUseUNCPaths())
-			{
-				guiDriver.switchMediaLibraryToUNCPaths();
-				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
-			}
-			else
-			{
-				guiDriver.switchMediaLibraryToMappedDrives();
-				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
-			}
-			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
-			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
-			{
-				_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
-			}
-			updateRecentMenu();
-			this.setLookAndFeel(options.getLookAndFeel());
-			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
+		fireOptionsPopup();
 	}//GEN-LAST:event__appOptionsMenuItemActionPerformed
-
-    private void _playlistDirectoryTreeMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event__playlistDirectoryTreeMouseClicked
-    {//GEN-HEADEREND:event__playlistDirectoryTreeMouseClicked
-		if ((evt.getModifiers() == MouseEvent.BUTTON2_MASK) || (evt.getModifiers() == MouseEvent.BUTTON3_MASK))
-		{
-			if (_playlistDirectoryTree.getSelectionCount() > 0)
-			{
-				_miBatchPlaylistRepair.setEnabled(true);
-				_miOpenSelectedPlaylists.setEnabled(true);
-			}
-			else
-			{
-				_miBatchPlaylistRepair.setEnabled(false);
-				_miOpenSelectedPlaylists.setEnabled(false);
-			}
-			_playlistTreeRightClickMenu.show(_playlistDirectoryTree, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
-		}
-    }//GEN-LAST:event__playlistDirectoryTreeMouseClicked
 
     private void _miBatchPlaylistRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miBatchPlaylistRepairActionPerformed
     {//GEN-HEADEREND:event__miBatchPlaylistRepairActionPerformed
-		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
-		List<File> files = new ArrayList<File>();
-		for (TreePath path : paths)
-		{
-			File file = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
-			if (file.isFile())
-			{
-				files.add(file);
-			}
-			else
-			{
-				files.addAll(PlaylistScanner.getAllPlaylists(file));
-			}
-		}
-		if (files.isEmpty())
-		{
-			return;
-		}
-
-		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), files.get(0));
-		br.setDescription("Batch Repair");
-		for (File file : files)
-		{
-			br.add(new BatchRepairItem(file));
-		}
-
-		BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
-		if (!dlg.getUserCancelled())
-		{
-			dlg.setLocationRelativeTo(this);
-			dlg.setVisible(true);
-
-			updatePlaylistDirectoryPanel();
-		}
+		launchBatchPlaylistRepair();
 	}//GEN-LAST:event__miBatchPlaylistRepairActionPerformed
-
-    private void _playlistDirectoryTreeMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__playlistDirectoryTreeMousePressed
-    {//GEN-HEADEREND:event__playlistDirectoryTreeMousePressed
-		int selRow = _playlistDirectoryTree.getRowForLocation(evt.getX(), evt.getY());
-		TreePath selPath = _playlistDirectoryTree.getPathForLocation(evt.getX(), evt.getY());
-		if (selRow != -1)
-		{
-			if (evt.getClickCount() == 2)
-			{
-				playlistDirectoryTreeNodeDoubleClicked(selPath);
-			}
-		}
-    }//GEN-LAST:event__playlistDirectoryTreeMousePressed
 
 private void _helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__helpMenuItemActionPerformed
         BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");//GEN-LAST:event__helpMenuItemActionPerformed
@@ -2122,6 +2189,16 @@ private void _miOpenSelectedPlaylistsActionPerformed(java.awt.event.ActionEvent 
 	openTreeSelectedPlaylists();
 }//GEN-LAST:event__miOpenSelectedPlaylistsActionPerformed
 
+private void _setPlaylistsDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__setPlaylistsDirectoryButtonActionPerformed
+{//GEN-HEADEREND:event__setPlaylistsDirectoryButtonActionPerformed
+	fireOptionsPopup();
+}//GEN-LAST:event__setPlaylistsDirectoryButtonActionPerformed
+
+private void _repairPlaylistsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__repairPlaylistsButtonActionPerformed
+{//GEN-HEADEREND:event__repairPlaylistsButtonActionPerformed
+	launchBatchPlaylistRepair();
+}//GEN-LAST:event__repairPlaylistsButtonActionPerformed
+
 	private void updateMediaDirButtons()
 	{
 		if (_mediaLibraryList.getModel().getSize() == 0)
@@ -2233,8 +2310,10 @@ private void _miOpenSelectedPlaylistsActionPerformed(java.awt.event.ActionEvent 
     private javax.swing.JButton _refreshMediaDirsButton;
     private javax.swing.JButton _refreshPlaylistPanelButton;
     private javax.swing.JButton _removeMediaDirButton;
+    private javax.swing.JButton _repairPlaylistsButton;
     private javax.swing.JMenuItem _saveAsMenuItem;
     private javax.swing.JMenuItem _saveMenuItem;
+    private javax.swing.JButton _setPlaylistsDirectoryButton;
     private javax.swing.JPanel _spacerPanel;
     private javax.swing.JSplitPane _splitPane;
     private javax.swing.JPanel _statusPanel;

@@ -1516,37 +1516,47 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 			private void showMenu(MouseEvent e)
 			{
-				if (_playlist != null && e.isPopupTrigger())
+				if (_playlist != null)
 				{
 					Point p = e.getPoint();
 					int rowIx = _uiTable.rowAtPoint(p);
-					boolean isOverItem = rowIx >= 0;
-					if (isOverItem && (e.getModifiers() & ActionEvent.CTRL_MASK) > 0)
+					if (e.isPopupTrigger())
 					{
-						_uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
-					}
-					else if ((isOverItem && _uiTable.getSelectedRowCount() == 0)
-						|| (!_uiTable.isRowSelected(rowIx)))
-					{
-						_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
-					}
+						boolean isOverItem = rowIx >= 0;
+						if (isOverItem && (e.getModifiers() & ActionEvent.CTRL_MASK) > 0)
+						{
+							_uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
+						}
+						else if ((isOverItem && _uiTable.getSelectedRowCount() == 0)
+							|| (!_uiTable.isRowSelected(rowIx)))
+						{
+							_uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
+						}
 
-					_miEditFilename.setEnabled(isOverItem);
-					_miFindClosest.setEnabled(isOverItem);
-					_miReplace.setEnabled(isOverItem);
+						_miEditFilename.setEnabled(isOverItem);
+						_miFindClosest.setEnabled(isOverItem);
+						_miReplace.setEnabled(isOverItem);
 
-					if (_uiTable.getSelectedRowCount() > 1)
-					{
-						_miReplace.setText("Replace Selected Entries");
-						_miEditFilename.setText("Edit Filenames");
+						if (_uiTable.getSelectedRowCount() > 1)
+						{
+							_miReplace.setText("Replace Selected Entries");
+							_miEditFilename.setText("Edit Filenames");
+						}
+						else
+						{
+							_miEditFilename.setText("Edit Filename");
+							_miReplace.setText("Replace Selected Entry");
+						}
+
+						_playlistEntryRightClickMenu.show(e.getComponent(), p.x, p.y);
 					}
 					else
 					{
-						_miEditFilename.setText("Edit Filename");
-						_miReplace.setText("Replace Selected Entry");
+						if (rowIx < 0)
+						{
+							_uiTable.clearSelection();
+						}
 					}
-
-					_playlistEntryRightClickMenu.show(e.getComponent(), p.x, p.y);
 				}
 			}
 		});
