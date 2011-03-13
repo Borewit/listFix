@@ -1188,7 +1188,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 				}
 			};
-			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading...", false);
+			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0,70) : file.getName()) + "'...", false);
 			pd.setVisible(true);
 		}
 		else
@@ -1633,6 +1633,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		boolean result = true;
 		while (_uiTabs.getTabCount() > 0 && result)
 		{
+			_uiTabs.setSelectedIndex(0);
 			result = result && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
 		}
 		return result;

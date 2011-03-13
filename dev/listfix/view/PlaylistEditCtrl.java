@@ -1703,7 +1703,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 											}
 										}
 									};
-									ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading...");
+									ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading '" + (tempFile.getName().length() > 70 ? tempFile.getName().substring(0,70) : tempFile.getName()) + "'...");
 									int plistSize = _playlist.size();
 									pd.setVisible(true);
 									insertAt += _playlist.size() - plistSize;
@@ -1787,7 +1787,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 								}
 							}
 						};
-						ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading...");
+						ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading '" + (data.length() > 70 ? data.substring(0,70) : data) + "'...");
 						pd.setVisible(true);
 						return true;
 					}

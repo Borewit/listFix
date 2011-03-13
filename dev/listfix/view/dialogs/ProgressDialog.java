@@ -150,7 +150,7 @@ public class ProgressDialog extends javax.swing.JDialog
         jPanel1.setPreferredSize(new java.awt.Dimension(166, 45));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        _progressTitle.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _progressTitle.setFont(new java.awt.Font("SansSerif", 0, 10));
         _progressTitle.setText("Title");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -168,7 +168,7 @@ public class ProgressDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
         jPanel1.add(_progressBar, gridBagConstraints);
 
-        _progressMessage.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _progressMessage.setFont(new java.awt.Font("SansSerif", 0, 10));
         _progressMessage.setText("Message");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -192,6 +192,11 @@ public class ProgressDialog extends javax.swing.JDialog
                 _cancelButtonActionPerformed(evt);
             }
         });
+        _cancelButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                _cancelButtonKeyPressed(evt);
+            }
+        });
         jPanel2.add(_cancelButton);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
@@ -203,6 +208,14 @@ public class ProgressDialog extends javax.swing.JDialog
 	{//GEN-HEADEREND:event__cancelButtonActionPerformed
 		_worker.cancel(true);
 	}//GEN-LAST:event__cancelButtonActionPerformed
+
+	private void _cancelButtonKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__cancelButtonKeyPressed
+	{//GEN-HEADEREND:event__cancelButtonKeyPressed
+		if (evt.getKeyCode() == evt.VK_ESCAPE)
+		{
+			_worker.cancel(true);
+		}
+	}//GEN-LAST:event__cancelButtonKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
