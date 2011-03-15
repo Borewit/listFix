@@ -101,10 +101,15 @@ public class DualProgressDialog extends javax.swing.JDialog
         _cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         _middlePanel.setLayout(new java.awt.GridBagLayout());
 
-        _taskLabel.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _taskLabel.setFont(new java.awt.Font("SansSerif", 0, 10));
         _taskLabel.setText("Task Progress");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 0;
@@ -120,7 +125,7 @@ public class DualProgressDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
         _middlePanel.add(_taskProgress, gridBagConstraints);
 
-        _overallLabel.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _overallLabel.setFont(new java.awt.Font("SansSerif", 0, 10));
         _overallLabel.setText("Overall Progress");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 2;
@@ -147,6 +152,11 @@ public class DualProgressDialog extends javax.swing.JDialog
                 _cancelButtonActionPerformed(evt);
             }
         });
+        _cancelButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                _cancelButtonKeyPressed(evt);
+            }
+        });
         _bottomPanel.add(_cancelButton);
 
         getContentPane().add(_bottomPanel, java.awt.BorderLayout.SOUTH);
@@ -158,6 +168,19 @@ public class DualProgressDialog extends javax.swing.JDialog
 	{//GEN-HEADEREND:event__cancelButtonActionPerformed
 		_worker.cancel(true);
 	}//GEN-LAST:event__cancelButtonActionPerformed
+
+	private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+	{//GEN-HEADEREND:event_formWindowClosing
+		_worker.cancel(true);
+	}//GEN-LAST:event_formWindowClosing
+
+	private void _cancelButtonKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__cancelButtonKeyPressed
+	{//GEN-HEADEREND:event__cancelButtonKeyPressed
+		if (evt.getKeyCode() == evt.VK_ESCAPE)
+		{
+			_worker.cancel(true);
+		}
+	}//GEN-LAST:event__cancelButtonKeyPressed
 
 	public JLabel getTaskLabel()
 	{

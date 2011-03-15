@@ -68,6 +68,7 @@ import javax.swing.table.TableColumnModel;
 import listfix.controller.GUIDriver;
 
 import listfix.io.AudioFileFilter;
+import listfix.io.FileExtensions;
 import listfix.io.PlaylistEntryFileCopier;
 import listfix.io.PlaylistFileChooserFilter;
 
@@ -465,7 +466,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			FontHelper.recursiveSetFont(chooser.getComponents());
 			chooser.addChoosableFileFilter(new AudioFileFilter());
 			chooser.setDialogTitle("Replacing '" + entry.getFileName() + "'");
-			if (GUIDriver.getInstance().hasAddedMediaDirectory())
+
+			File deepest = FileExtensions.findDeepestPathToExist(new File(entry.getPath()));
+			if (deepest != null)
+			{
+				chooser.setCurrentDirectory(deepest);
+			}
+			else if (GUIDriver.getInstance().hasAddedMediaDirectory())
 			{
 				chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
 			}

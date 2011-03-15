@@ -145,6 +145,11 @@ public class ProgressDialog extends javax.swing.JDialog
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setMinimumSize(new java.awt.Dimension(270, 45));
         jPanel1.setPreferredSize(new java.awt.Dimension(166, 45));
@@ -184,7 +189,7 @@ public class ProgressDialog extends javax.swing.JDialog
         jPanel2.setPreferredSize(new java.awt.Dimension(77, 30));
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 0));
 
-        _cancelButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _cancelButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _cancelButton.setText("Cancel");
         _cancelButton.setAlignmentY(-5.0F);
         _cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -216,6 +221,11 @@ public class ProgressDialog extends javax.swing.JDialog
 			_worker.cancel(true);
 		}
 	}//GEN-LAST:event__cancelButtonKeyPressed
+
+	private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+	{//GEN-HEADEREND:event_formWindowClosing
+		_worker.cancel(true);
+	}//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

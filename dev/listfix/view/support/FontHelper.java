@@ -31,15 +31,20 @@ public class FontHelper
 {
 	public static void recursiveSetFont(Component[] comp)
 	{
+		recursiveSetFont(comp, new Font("SansSerif", 0, 10));
+	}
+
+	public static void recursiveSetFont(Component[] comp, Font font)
+	{
 		for (int x = 0; x < comp.length; x++)
 		{
 			if (comp[x] instanceof Container)
 			{
-				recursiveSetFont(((Container) comp[x]).getComponents());
+				recursiveSetFont(((Container) comp[x]).getComponents(), font);
 			}
 			try
 			{
-				comp[x].setFont(new Font("SansSerif", 0, 10));
+				comp[x].setFont(font);
 			}
 			catch (Exception e)
 			{

@@ -878,7 +878,7 @@ public class Playlist
 						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
-					else if (saveRelative && !entry.isURL())
+					else if (saveRelative && !entry.isURL() && entry.isFound())
 					{
 						// replace existing absolute entry with a new relative one
 						relativePath = FileWriter.getRelativePath(entry.getAbsoluteFile(), _file);
@@ -945,7 +945,7 @@ public class Playlist
 					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength(), _file);
 					_entries.set(i, tempEntry);
 				}
-				else if (saveRelative && !tempEntry.isURL())
+				else if (saveRelative && !tempEntry.isURL() && tempEntry.isFound())
 				{
 					// replace existing absolute entry with a new relative one
 					String relativePath = FileWriter.getRelativePath(tempEntry.getAbsoluteFile(), _file);

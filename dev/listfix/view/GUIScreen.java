@@ -62,7 +62,6 @@ import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.ButtonUI;
@@ -104,6 +103,9 @@ import listfix.view.support.ClosableTabCtrl;
 import listfix.view.support.FontHelper;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
+import net.mariottini.swing.JFontChooser;
+
+// import org.jscience.swing.JFontChooser;
 
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
@@ -416,6 +418,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _addMediaDirButton = new javax.swing.JButton();
         _removeMediaDirButton = new javax.swing.JButton();
         _refreshMediaDirsButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         _mediaLibraryScrollPane = new javax.swing.JScrollPane();
         _mediaLibraryList = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
         _playlistDirectoryPanel = new javax.swing.JPanel();
@@ -560,6 +563,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             }
         });
         _mediaLibraryButtonPanel.add(_refreshMediaDirsButton);
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        _mediaLibraryButtonPanel.add(jButton1);
 
         _mediaLibraryPanel.add(_mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
@@ -719,7 +730,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.setFont(new java.awt.Font("SansSerif", 0, 10));
 
         _newPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        _newPlaylistMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _newPlaylistMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
         _newPlaylistMenuItem.setMnemonic('L');
         _newPlaylistMenuItem.setText("New Playlist");
         _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -751,7 +762,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_closeMenuItem);
 
         _closeAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        _closeAllMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _closeAllMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
         _closeAllMenuItem.setText("Close All");
         _closeAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -772,7 +783,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_saveMenuItem);
 
         _saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        _saveAsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _saveAsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
         _saveAsMenuItem.setMnemonic('V');
         _saveAsMenuItem.setText("Save As");
         _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -838,7 +849,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(jSeparator1);
 
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        _appOptionsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
+        _appOptionsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10));
         _appOptionsMenuItem.setMnemonic('H');
         _appOptionsMenuItem.setText("Options...");
         _appOptionsMenuItem.setToolTipText("");
@@ -1644,14 +1655,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	{
 		if (_uiTabs.getTabCount() > 1)
 		{
-			for (int i = 0; i < tabIx; i++)
+			Component comp = _uiTabs.getComponentAt(tabIx);
+			boolean success = true;
+			while (success && !_uiTabs.getComponentAt(0).equals(comp))
 			{
-				tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
+				_uiTabs.setSelectedIndex(0);
+				success = success && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
 			}
-			int toRemove = _uiTabs.getTabCount() - 1;
-			for (int i = 0; i < toRemove; i++)
+			while (_uiTabs.getTabCount() > 1 && success)
 			{
-				tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(1));
+				_uiTabs.setSelectedIndex(1);
+				success = success && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(1));
 			}
 		}
 	}
@@ -2228,6 +2242,34 @@ private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//G
 	tryCloseAllTabs();
 }//GEN-LAST:event__closeAllMenuItemActionPerformed
 
+private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+{//GEN-HEADEREND:event_jButton1ActionPerformed
+	JFontChooser jfc = new JFontChooser();
+	jfc.showDialog(this);
+	Font result = jfc.getSelectedFont();
+	FontHelper.recursiveSetFont(this.getContentPane().getComponents(), result);
+}//GEN-LAST:event_jButton1ActionPerformed
+
+	public static void setUIFont(javax.swing.plaf.FontUIResource f)
+	{
+		//
+		// sets the default font for all Swing components.
+		// ex.
+		//  setUIFont (new javax.swing.plaf.FontUIResource
+		//   ("Serif",Font.ITALIC,12));
+		//
+		java.util.Enumeration keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements())
+		{
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value instanceof javax.swing.plaf.FontUIResource)
+			{
+				UIManager.put(key, f);
+			}
+		}
+	}
+
 	private void updateMediaDirButtons()
 	{
 		if (_mediaLibraryList.getModel().getSize() == 0)
@@ -2303,6 +2345,18 @@ private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//G
 		{
 			mainWindow.refreshMediaDirs();
 		}
+
+		for (String arg : args)
+		{
+			try
+			{
+				mainWindow.openPlaylist(new File(arg));
+			}
+			catch (Exception e)
+			{
+
+			}
+		}
 	}
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2351,6 +2405,7 @@ private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//G
     private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JPanel _verticalPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

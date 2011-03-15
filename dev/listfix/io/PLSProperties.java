@@ -95,6 +95,12 @@ import java.util.*;
  * @author  Xueming Shen
  * @version 1.96, 08/07/06
  * @since   JDK1.0
+ *
+ * JCaron - 2011.03.13 - This straight-up copy/paste was needed to change the way Java's Properties class
+ * loads and saves characters such as : and #.  The escaping it performs seriously jacks w/ playback of
+ * file paths by media players...
+ *
+ * You can override private methods, but you can't call private methods in the parent class :(
  */
 public class PLSProperties extends Hashtable<Object, Object>
 {

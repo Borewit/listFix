@@ -111,20 +111,20 @@ public class IniFileReader
 
 	public void readIni() throws Exception
 	{
-		List<String> tempVector = new ArrayList<String>();
+		List<String> tempList = new ArrayList<String>();
 		// Read in base media directories
 		// skip first line, contains header
 		String line = B1.readLine();
 		line = B1.readLine();
 		while ((line != null) && (!line.startsWith("[")))
 		{
-			tempVector.add(line);
+			tempList.add(line);
 			line = B1.readLine();
 		}
-		mediaDirs = new String[tempVector.size()];
-		tempVector.toArray(mediaDirs);
+		mediaDirs = new String[tempList.size()];
+		tempList.toArray(mediaDirs);
 
-		tempVector.clear();
+		tempList.clear();
 
 		// Read in app options, but only if the file contains them in this spot...
 		// skip first line, contains header
@@ -177,36 +177,36 @@ public class IniFileReader
 		line = B1.readLine();
 		while ((line != null) && (!line.startsWith("[")))
 		{
-			tempVector.add(line);
+			tempList.add(line);
 			line = B1.readLine();
 		}
-		mediaLibrary = new String[tempVector.size()];
-		tempVector.toArray(mediaLibrary);
-		tempVector.clear();
+		mediaLibrary = new String[tempList.size()];
+		tempList.toArray(mediaLibrary);
+		tempList.clear();
 
 		// Read in media library files
 		// skip first line, contains header
 		line = B1.readLine();
 		while (line != null)
 		{
-			tempVector.add(line);
+			tempList.add(line);
 			line = B1.readLine();
 		}
-		mediaLibraryFiles = new String[tempVector.size()];
-		tempVector.toArray(mediaLibraryFiles);
-		tempVector.clear();
+		mediaLibraryFiles = new String[tempList.size()];
+		tempList.toArray(mediaLibraryFiles);
+		tempList.clear();
 
 		// Read in history...
 		line = B2.readLine();
 		line = B2.readLine();
 		while (line != null)
 		{
-			tempVector.add(line);
+			tempList.add(line);
 			line = B2.readLine();
 		}
-		history = new String[tempVector.size()];
-		tempVector.toArray(history);
-		tempVector.clear();
+		history = new String[tempList.size()];
+		tempList.toArray(history);
+		tempList.clear();
 	}
 
 	public void closeFile() throws IOException
