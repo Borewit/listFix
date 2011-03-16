@@ -101,8 +101,6 @@ import listfix.view.support.ClosableTabCtrl;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
 
-// import org.jscience.swing.JFontChooser;
-
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
 	private static final long serialVersionUID = 7691786927987534889L;
@@ -222,11 +220,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			@Override
 			public void valueChanged(TreeSelectionEvent e)
 			{
-//				if (e.getValueIsAdjusting())
-//				{
-//					return;
-//				}
-
 				boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
 				_openSelectedPlaylistsButton.setEnabled(hasSelected);
 				_repairPlaylistsButton.setEnabled(hasSelected);
@@ -274,6 +267,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 						_miBatchPlaylistRepair.setEnabled(false);
 						_miOpenSelectedPlaylists.setEnabled(false);
 					}
+
+					_miRefreshDirectoryTree.setEnabled(_playlistDirectoryTree.getRowCount() > 0);
 					_playlistTreeRightClickMenu.show(e.getComponent(), p.x, p.y);
 				}
 				else
@@ -296,26 +291,31 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		});
 	}
 
+	@Override
 	public void dragEnter(DropTargetDragEvent dtde)
 	{
 		
 	}
 
+	@Override
 	public void dragExit(DropTargetEvent dte)
 	{
 		
 	}
 
+	@Override
 	public void dragOver(DropTargetDragEvent dtde)
 	{
 		
 	}
 
+	@Override
 	public void dropActionChanged(DropTargetDragEvent dtde)
 	{
 		
 	}
 
+	@Override
 	public void drop(DropTargetDropEvent dtde)
 	{
 		try
@@ -405,6 +405,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
         _miOpenSelectedPlaylists = new javax.swing.JMenuItem();
         _miBatchPlaylistRepair = new javax.swing.JMenuItem();
+        _miRefreshDirectoryTree = new javax.swing.JMenuItem();
         _statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         _splitPane = new javax.swing.JSplitPane();
@@ -470,6 +471,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             }
         });
         _playlistTreeRightClickMenu.add(_miBatchPlaylistRepair);
+
+        _miRefreshDirectoryTree.setText("Refresh");
+        _miRefreshDirectoryTree.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _miRefreshDirectoryTreeActionPerformed(evt);
+            }
+        });
+        _playlistTreeRightClickMenu.add(_miRefreshDirectoryTree);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("listFix( ) - v2.2.0");
@@ -2145,6 +2154,11 @@ private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//G
 	tryCloseAllTabs();
 }//GEN-LAST:event__closeAllMenuItemActionPerformed
 
+private void _miRefreshDirectoryTreeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRefreshDirectoryTreeActionPerformed
+{//GEN-HEADEREND:event__miRefreshDirectoryTreeActionPerformed
+	updatePlaylistDirectoryPanel();
+}//GEN-LAST:event__miRefreshDirectoryTreeActionPerformed
+
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2264,6 +2278,7 @@ private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//G
     private javax.swing.JMenuItem _miBatchPlaylistRepair;
     private javax.swing.JMenuItem _miBatchRepair;
     private javax.swing.JMenuItem _miOpenSelectedPlaylists;
+    private javax.swing.JMenuItem _miRefreshDirectoryTree;
     private javax.swing.JButton _newIconButton;
     private javax.swing.JMenuItem _newPlaylistMenuItem;
     private javax.swing.JButton _openIconButton;
