@@ -21,26 +21,23 @@
 package listfix.controller.tasks;
 
 import java.io.*;
-import listfix.model.*;
 import listfix.util.UnicodeUtils;
-import listfix.view.support.FontExtensions;
 
 public class WriteIniFileTask extends listfix.controller.Task
 {
 	private final static String fs = System.getProperty("file.separator");
 	private final static String br = System.getProperty("line.separator");
 	private final static String homeDir = System.getProperty("user.home");
+	private final String dataDir = homeDir + fs + "listFixData" + fs;
 	private String[] mediaDir;
 	private String[] mediaLibraryDirList;
 	private String[] mediaLibraryFileList;
-	private AppOptions options;
 
-	public WriteIniFileTask(String[] m, String[] mldl, String[] mlfl, AppOptions opts)
+	public WriteIniFileTask(String[] m, String[] mldl, String[] mlfl)
 	{
 		mediaDir = m;
 		mediaLibraryDirList = mldl;
 		mediaLibraryFileList = mlfl;
-		options = opts;
 	}
 
 	/** Run the task. This method is the body of the thread for this task.  */
@@ -56,20 +53,6 @@ public class WriteIniFileTask extends listfix.controller.Task
 				{
 					buffer.append(mediaDir[i]).append(br);
 				}
-			}
-
-			if (options != null)
-			{
-				buffer.append("[Options]").append(br);
-				buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(br);
-				buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(br);
-				buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
-				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
-				buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(br);
-				buffer.append("ALWAYS_USE_UNC_PATHS=").append(options.getAlwaysUseUNCPaths()).append(br);
-				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
-				buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(br);
-				buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(br);
 			}
 
 			if (mediaLibraryDirList != null)
@@ -90,7 +73,7 @@ public class WriteIniFileTask extends listfix.controller.Task
 				}
 			}
 
-			FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
+			FileOutputStream outputStream = new FileOutputStream(dataDir + "dirLists.ini");
 			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 			BufferedWriter output = new BufferedWriter(osw);
 			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());

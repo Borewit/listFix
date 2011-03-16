@@ -76,6 +76,7 @@ import listfix.controller.MediaLibraryOperator;
 import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
 import listfix.io.FileWriter;
+import listfix.io.OptionsWriter;
 import listfix.io.PlaylistFileChooserFilter;
 import listfix.io.PlaylistFileFilter;
 import listfix.io.PlaylistScanner;
@@ -156,7 +157,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		updateRecentMenu();
 		refreshStatusLabel(null);
 
-		(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
+		// (new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
 
 		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
 
@@ -381,7 +382,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				guiDriver.switchMediaLibraryToMappedDrives();
 				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
 			}
-			(new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), options);
+			OptionsWriter.write(options);
 			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
 			{
 				_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));

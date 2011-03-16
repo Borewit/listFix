@@ -58,7 +58,7 @@ public class MediaLibraryOperator
 				guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
 				java.util.Arrays.sort(mediaLibraryFileList);
 				guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-				(new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
 			}
 		}
 		else
@@ -79,7 +79,7 @@ public class MediaLibraryOperator
 				guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
 				java.util.Arrays.sort(mediaLibraryFileList);
 				guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-				(new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class MediaLibraryOperator
 				guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
 				java.util.Arrays.sort(mediaLibraryFileList);
 				guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-				(new FileWriter()).writeIni(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList, guiDriver.getAppOptions());
+				(new FileWriter()).writeMediaLibrary(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList);
 			}
 		}
 	}

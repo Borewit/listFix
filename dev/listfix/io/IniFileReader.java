@@ -54,16 +54,19 @@ public class IniFileReader
 	private String fname2;
 	private String fs = System.getProperty("file.separator");
 	private String homeDir = System.getProperty("user.home");
+	private final String dataDir = homeDir + fs + "listFixData" + fs;
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];
 	private String[] mediaLibraryFiles = new String[0];
-	private AppOptions options = new AppOptions();
+	private AppOptions options;
 
-	public IniFileReader() throws FileNotFoundException, UnsupportedEncodingException
+	public IniFileReader(AppOptions opts) throws FileNotFoundException, UnsupportedEncodingException
 	{
-		fname1 = homeDir + fs + "dirLists.ini";
-		fname2 = homeDir + fs + "listFixHistory.ini";
+		options = opts;
+		fname1 = dataDir + "dirLists.ini";
+		fname2 = dataDir + "history.ini";
+		
 		File in_data1 = new File(fname1);
 		if (!in_data1.exists())
 		{
@@ -74,16 +77,8 @@ public class IniFileReader
 			throw new FileNotFoundException("File found, but was of zero size.");
 		}
 
-		// converting these files to UTF-8, need to handle the old format for the conversion...
-		String encoding = UnicodeUtils.getEncoding(in_data1);
-		if (encoding.equals("UTF-8"))
-		{
-			B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));
-		}
-		else
-		{
-			B1 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data1)));
-		}
+		// converting these files to UTF-8, need to handle the old format for the conversion...		
+		B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));	
 
 		File in_data2 = new File(fname2);
 		if (!in_data2.exists())
@@ -94,21 +89,9 @@ public class IniFileReader
 		{
 			throw new FileNotFoundException("File found, but was of zero size.");
 		}
-
-		encoding = UnicodeUtils.getEncoding(in_data2);
-		if (encoding.equals("UTF-8"))
-		{
-			B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
-		}
-		else
-		{
-			B2 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data2)));
-		}
-	}
-
-	public AppOptions getAppOptions()
-	{
-		return options;
+		
+		B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
+	
 	}
 
 	public void readIni() throws Exception
@@ -127,64 +110,6 @@ public class IniFileReader
 		tempList.toArray(mediaDirs);
 
 		tempList.clear();
-
-		// Read in app options, but only if the file contains them in this spot...
-		// skip first line, contains header
-		if (line != null && line.startsWith("[Options]"))
-		{
-			line = B1.readLine().trim();
-			while ((line != null) && (!line.startsWith("[")))
-			{
-				StringTokenizer tempTizer = new StringTokenizer(line, "=");
-				String optionName = tempTizer.nextToken();
-				String optionValue = tempTizer.nextToken();
-				Integer optionEnum = AppOptions.optionEnumTable.get(optionName);
-				if (optionEnum != null)
-				{
-					if (optionEnum.equals(AppOptionsEnum.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
-					{
-						options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)).booleanValue());
-					}
-					else if (optionEnum.equals(AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE))
-					{
-						options.setMaxPlaylistHistoryEntries((new Integer(optionValue)).intValue());
-					}
-					else if (optionEnum.equals(AppOptionsEnum.SAVE_RELATIVE_REFERENCES))
-					{
-						options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)).booleanValue());
-					}
-					else if (optionEnum.equals(AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
-					{
-						options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)).booleanValue());
-					}
-					else if (optionEnum.equals(AppOptionsEnum.LOOK_AND_FEEL))
-					{
-						options.setLookAndFeel(optionValue);
-					}
-					else if (optionEnum.equals(AppOptionsEnum.ALWAYS_USE_UNC_PATHS))
-					{
-						options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)).booleanValue());
-					}
-					else if (optionEnum.equals(AppOptionsEnum.PLAYLISTS_DIRECTORY))
-					{
-						options.setPlaylistsDirectory(optionValue);
-					}
-					else if (optionEnum.equals(AppOptionsEnum.APP_FONT))
-					{
-						Font temp = FontExtensions.deserialize(optionValue);
-						if (temp != null)
-						{
-							options.setAppFont(temp);
-						}
-					}
-					else if (optionEnum.equals(AppOptionsEnum.MAX_CLOSEST_RESULTS))
-					{
-						options.setMaxClosestResults((new Integer(optionValue)).intValue());
-					}
-				}
-				line = B1.readLine();
-			}
-		}
 
 		// Read in media library directories
 		// skip first line, contains header

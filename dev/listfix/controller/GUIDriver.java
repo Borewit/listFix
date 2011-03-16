@@ -29,7 +29,9 @@ import java.util.List;
 import listfix.exceptions.MediaDirNotFoundException;
 
 import listfix.io.FileWriter;
+import listfix.io.IniFileConverter;
 import listfix.io.IniFileReader;
+import listfix.io.OptionsReader;
 import listfix.io.UNCFile;
 
 import listfix.model.AppOptions;
@@ -60,9 +62,14 @@ public class GUIDriver
 		try
 		{
 			(new FileWriter()).writeDefaultIniFilesIfNeeded();
-			IniFileReader initReader = new IniFileReader();
+			// insert conversion here!
+			if (IniFileConverter.conversionRequired())
+			{
+				(new IniFileConverter()).convert();
+			}
+			options = OptionsReader.read();
+			IniFileReader initReader = new IniFileReader(options);
 			initReader.readIni();
-			options = initReader.getAppOptions();
 			mediaDir = initReader.getMediaDirs();
 			history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
 			history.initHistory(initReader.getHistory());
@@ -182,7 +189,7 @@ public class GUIDriver
 			{
 				mediaLibraryDirectoryList = new String[0];
 				mediaLibraryFileList = new String[0];
-				(new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, options);
+				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
 			}
 			else
 			{
@@ -232,7 +239,7 @@ public class GUIDriver
 				mediaLibraryFileList = mlfVector.toArray(new String[mlfVector.size()]);
 				mlfVector = null;
 
-				(new FileWriter()).writeIni(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList, options);
+				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
 			}
 			else
 			{

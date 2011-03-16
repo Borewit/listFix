@@ -38,13 +38,13 @@ import listfix.controller.tasks.WriteIniFileTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.util.UnicodeUtils;
-import listfix.view.support.FontExtensions;
 
 public class FileWriter
 {
 	private final String br = System.getProperty("line.separator");
 	private static final String fs = System.getProperty("file.separator");
 	private final String homeDir = System.getProperty("user.home");
+	private final String dataDir = homeDir + fs + "listFixData" + fs;
 
 	public static String getRelativePath(File file, File relativeTo)
 	{
@@ -122,27 +122,23 @@ public class FileWriter
 		BufferedWriter output;
 		FileOutputStream outputStream;
 
-		File testFile = new File(homeDir + fs + "dirLists.ini");
+		File testDir = new File(dataDir);
+		if (!testDir.exists())
+		{
+			testDir.mkdir();
+		}
+
+		File testFile = new File(dataDir + "dirLists.ini");
 		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
 		{
 			try
 			{
 				StringBuilder buffer = new StringBuilder();
 				AppOptions options = new AppOptions();
-				outputStream = new FileOutputStream(homeDir + fs + "dirLists.ini");
+				outputStream = new FileOutputStream(dataDir + "dirLists.ini");
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
 				buffer.append("[Media Directories]").append(br);
-				buffer.append("[Options]").append(br);
-				buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(br);
-				buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(br);
-				buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
-				buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
-				buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(br);
-				buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(br);
-				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
-				buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(br);
-				buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(br);
 				buffer.append("[Media Library Directories]").append(br);
 				buffer.append("[Media Library Files]").append(br);
 				output.write(buffer.toString());
@@ -156,12 +152,14 @@ public class FileWriter
 			}
 		}
 
-		testFile = new File(homeDir + fs + "listFixHistory.ini");
+		OptionsWriter.writeDefaults();
+
+		testFile = new File(dataDir + "history.ini");
 		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
 		{
 			try
 			{
-				outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
+				outputStream = new FileOutputStream(dataDir + "history.ini");
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
 				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent Playlists]" + br);
@@ -187,7 +185,7 @@ public class FileWriter
 			{
 				buffer.append(filenames[i]).append(br);
 			}
-			FileOutputStream outputStream = new FileOutputStream(homeDir + fs + "listFixHistory.ini");
+			FileOutputStream outputStream = new FileOutputStream(dataDir + "history.ini");
 			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 			BufferedWriter output = new BufferedWriter(osw);
 			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
@@ -201,11 +199,11 @@ public class FileWriter
 		}
 	}
 
-	public void writeIni(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList, AppOptions options)
+	public void writeMediaLibrary(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList)
 	{
 		try
 		{
-			WriteIniFileTask thisTask = new WriteIniFileTask(mediaDir, mediaLibraryDirList, mediaLibraryFileList, options);
+			WriteIniFileTask thisTask = new WriteIniFileTask(mediaDir, mediaLibraryDirList, mediaLibraryFileList);
 			thisTask.start();
 		}
 		catch (Exception e)
