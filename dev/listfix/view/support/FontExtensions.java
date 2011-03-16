@@ -19,8 +19,6 @@
 
 package listfix.view.support;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
 import java.util.StringTokenizer;
 
@@ -28,32 +26,8 @@ import java.util.StringTokenizer;
  *
  * @author jcaron
  */
-public class FontHelper
+public class FontExtensions
 {
-	public static void recursiveSetFont(Component[] comp)
-	{
-		// recursiveSetFont(comp, new Font("SansSerif", 0, 10));
-	}
-
-	public static void recursiveSetFont(Component[] comp, Font font)
-	{
-		for (int x = 0; x < comp.length; x++)
-		{
-			if (comp[x] instanceof Container)
-			{
-				recursiveSetFont(((Container) comp[x]).getComponents(), font);
-			}
-			try
-			{
-				comp[x].setFont(font);
-			}
-			catch (Exception e)
-			{
-				// keep going...
-			}
-		}
-	}
-
 	public static String getStyle(Font inputFont)
 	{
 		if (inputFont.isPlain())
@@ -105,5 +79,10 @@ public class FontHelper
 		{
 			return null;
 		}
+	}
+
+	public static String formatFont(Font chosenFont)
+	{
+		return chosenFont.getFamily() + ", " + FontExtensions.getStyle(chosenFont) + ", " + chosenFont.getSize();
 	}
 }

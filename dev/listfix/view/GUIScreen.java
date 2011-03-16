@@ -65,11 +65,8 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.UIResource;
-import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.tree.*;
 
@@ -101,10 +98,8 @@ import listfix.view.dialogs.AppOptionsDialog;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
-import listfix.view.support.FontHelper;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
-import net.mariottini.swing.JFontChooser;
 
 // import org.jscience.swing.JFontChooser;
 
@@ -124,25 +119,30 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		splashScreen.setStatusBar("Loading Media Library & Options...");
 		guiDriver = GUIDriver.getInstance();
 		splashScreen.setStatusBar("Initializing UI...");
+
 		initComponents();
+
 		jM3UChooser = new JFileChooser();
 		jMediaDirChooser = new JFileChooser();
 		jSaveFileChooser = new JFileChooser();
+
+		setApplicationFont(guiDriver.getAppOptions().getAppFont());
 		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
+		
 		jM3UChooser.setDialogTitle("Choose Playlists...");
 		jM3UChooser.setAcceptAllFileFilterUsed(false);
 		jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
 		jM3UChooser.setMultiSelectionEnabled(true);
-		FontHelper.recursiveSetFont(jM3UChooser.getComponents(), guiDriver.getAppOptions().getAppFont());
+
 		jMediaDirChooser.setDialogTitle("Specify a media directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FontHelper.recursiveSetFont(jMediaDirChooser.getComponents(), guiDriver.getAppOptions().getAppFont());
+
 		jSaveFileChooser.setDialogTitle("Save File:");
 		jSaveFileChooser.setAcceptAllFileFilterUsed(false);
 		jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
-		FontHelper.recursiveSetFont(jSaveFileChooser.getComponents(), guiDriver.getAppOptions().getAppFont());
+
 		splashScreen.setVisible(false);
 
 		if (guiDriver.getShowMediaDirWindow())
@@ -175,10 +175,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			_batchRepairWinampMenuItem.setVisible(false);
 			_extractPlaylistsMenuItem.setVisible(false);
 		}
-
-		syncJMenuFonts();
-		setApplicationFont(guiDriver.getAppOptions().getAppFont());
-		SwingUtilities.updateComponentTreeUI(this);
 
 		// drag-n-drop support for the playlist directory tree
 		_playlistDirectoryTree.setTransferHandler(new TransferHandler()
@@ -418,7 +414,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _addMediaDirButton = new javax.swing.JButton();
         _removeMediaDirButton = new javax.swing.JButton();
         _refreshMediaDirsButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         _mediaLibraryScrollPane = new javax.swing.JScrollPane();
         _mediaLibraryList = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
         _playlistDirectoryPanel = new javax.swing.JPanel();
@@ -555,14 +550,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             }
         });
         _mediaLibraryButtonPanel.add(_refreshMediaDirsButton);
-
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        _mediaLibraryButtonPanel.add(jButton1);
 
         _mediaLibraryPanel.add(_mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
@@ -1292,60 +1279,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private static Border _normalBorder;
 	private static Border _pressedBorder;
 
-	private void syncJMenuFonts()
-	{
-		JMenuItem item = null;
-		for (int i = 0; i < _fileMenu.getItemCount(); i++)
-		{
-			item = _fileMenu.getItem(i);
-			try
-			{
-				syncJMenuItemFonts(item);
-			}
-			catch (Exception ex)
-			{
-			}
-		}
-
-		for (int i = 0; i < _helpMenu.getItemCount(); i++)
-		{
-			item = _helpMenu.getItem(i);
-			try
-			{
-				syncJMenuItemFonts(item);
-			}
-			catch (Exception ex)
-			{
-			}
-		}
-	}
-
-	private void syncJMenuItemFonts(JMenuItem item) throws SecurityException, IllegalArgumentException, IllegalAccessException
-	{
-//		ButtonUI bui = item.getUI();
-//		if (bui instanceof BasicMenuItemUI)
-//		{
-//			Class<?> uiclass = bui.getClass();
-//			while (uiclass != null)
-//			{
-//				try
-//				{
-//					Field field = uiclass.getDeclaredField("acceleratorFont");
-//					if (field != null)
-//					{
-//						field.setAccessible(true);
-//						field.set(bui, new java.awt.Font("SansSerif", 0, 10));
-//
-//					}
-//				}
-//				catch (NoSuchFieldException ex)
-//				{
-//				}
-//				uiclass = uiclass.getSuperclass();
-//			}
-//		}
-	}
-
 	public void updateCurrentTab(Playlist list)
 	{
 		PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _uiTabs.getSelectedComponent();
@@ -1395,6 +1328,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				recentMenu.add(temp);
 			}
 		}
+	}
+
+	private void updateAllComponentTreeUIs()
+	{
+		SwingUtilities.updateComponentTreeUI(this);
+		SwingUtilities.updateComponentTreeUI(jM3UChooser);
+		SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
+		SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
+		SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
+		SwingUtilities.updateComponentTreeUI(_uiTabs);
 	}
 
 	class TButton extends JButton implements UIResource
@@ -1978,7 +1921,6 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	dlg.addChoosableFileFilter(new PlaylistFileChooserFilter());
 	dlg.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 	dlg.setMultiSelectionEnabled(true);
-	FontHelper.recursiveSetFont(dlg.getComponents());
 	if (dlg.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 	{
 		// build complete list of playlists
@@ -2129,7 +2071,6 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 	dlg.setAcceptAllFileFilterUsed(true);
 	dlg.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	dlg.setMultiSelectionEnabled(false);
-	FontHelper.recursiveSetFont(dlg.getComponents());
 	int response = dlg.showOpenDialog(this);
 
 	if (response == JFileChooser.APPROVE_OPTION)
@@ -2204,11 +2145,6 @@ private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//G
 	tryCloseAllTabs();
 }//GEN-LAST:event__closeAllMenuItemActionPerformed
 
-private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-{//GEN-HEADEREND:event_jButton1ActionPerformed
-	
-}//GEN-LAST:event_jButton1ActionPerformed
-
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2221,7 +2157,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
 				UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
 			}
 		}
-		SwingUtilities.updateComponentTreeUI(this);
+		updateAllComponentTreeUIs();
 	}
 
 	private void updateMediaDirButtons()
@@ -2257,12 +2193,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
 		try
 		{
 			UIManager.setLookAndFeel(className);
-			SwingUtilities.updateComponentTreeUI(this);
-			SwingUtilities.updateComponentTreeUI(jM3UChooser);
-			SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
-			SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
-			SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
-			SwingUtilities.updateComponentTreeUI(_uiTabs);
+			updateAllComponentTreeUIs();
 			try
 			{
 				if (_tabPaneInsets != null)
@@ -2277,10 +2208,6 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
 		}
 		catch (Exception e)
 		{
-		}
-		finally
-		{
-			syncJMenuFonts();
 		}
 	}
 
@@ -2359,7 +2286,6 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:
     private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JPanel _verticalPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

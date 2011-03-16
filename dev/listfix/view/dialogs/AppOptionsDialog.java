@@ -24,7 +24,6 @@ package listfix.view.dialogs;
  *
  * @author  jcaron
  */
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
@@ -39,7 +38,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
-import listfix.view.support.FontHelper;
+import listfix.view.support.FontExtensions;
 import net.mariottini.swing.JFontChooser;
 
 public class AppOptionsDialog extends javax.swing.JDialog
@@ -50,7 +49,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	private int resultCode;
 	private String fileName;
 	private AppOptions options = null;
-	private final JFileChooser jMediaDirChooser = new JFileChooser();
 	private Font chosenFont = null;
 
 	/** Creates new form EditFilenameDialog */
@@ -66,12 +64,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			options = opts;
 		}
 		initComponents();
-		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
-		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chosenFont = opts.getAppFont();
-		FontHelper.recursiveSetFont(jMediaDirChooser.getComponents(), chosenFont);
-		_fontDisplayLabel.setText(formatFont());
+		_fontDisplayLabel.setText(FontExtensions.formatFont(chosenFont));
 	}
 
 	public AppOptionsDialog()
@@ -96,12 +90,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	public int getResultCode()
 	{
 		return resultCode;
-	}
-
-	private String formatFont()
-	{
-		return chosenFont.getFamily() + ", " + FontHelper.getStyle(chosenFont) + ", " + chosenFont.getSize();
-	}
+	}	
 
 	private LookAndFeelInfo[] getInstalledLookAndFeels()
 	{
@@ -472,6 +461,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
     }//GEN-LAST:event_closeDialog
 
 	private void playlistDirectoryBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playlistDirectoryBrowseButtonActionPerformed
+		JFileChooser jMediaDirChooser = new JFileChooser();
+		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
+		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int response = jMediaDirChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
@@ -501,7 +494,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		jfc.setSelectedFont(chosenFont);
 		jfc.showDialog(this);
 		chosenFont = jfc.getSelectedFont();
-		_fontDisplayLabel.setText(formatFont());
+		_fontDisplayLabel.setText(FontExtensions.formatFont(chosenFont));
 	}//GEN-LAST:event__changeFontButtonActionPerformed
 
 	public AppOptions showDialog()

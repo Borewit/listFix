@@ -36,7 +36,7 @@ import java.util.StringTokenizer;
 import listfix.model.AppOptions;
 import listfix.model.enums.AppOptionsEnum;
 import listfix.util.UnicodeUtils;
-import listfix.view.support.FontHelper;
+import listfix.view.support.FontExtensions;
 
 /*
 ============================================================================
@@ -171,7 +171,7 @@ public class IniFileReader
 					}
 					else if (optionEnum.equals(AppOptionsEnum.APP_FONT))
 					{
-						Font temp = FontHelper.deserialize(optionValue);
+						Font temp = FontExtensions.deserialize(optionValue);
 						if (temp != null)
 						{
 							options.setAppFont(temp);

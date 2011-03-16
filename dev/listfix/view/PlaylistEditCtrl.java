@@ -21,7 +21,6 @@ package listfix.view;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -87,7 +86,7 @@ import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
-import listfix.view.support.FontHelper;
+import listfix.view.support.FontExtensions;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
@@ -120,7 +119,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void addItems()
 	{
 		JFileChooser chooser = new JFileChooser();
-		FontHelper.recursiveSetFont(chooser.getComponents());
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		chooser.setMultiSelectionEnabled(true);
 		if (GUIDriver.getInstance().hasAddedMediaDirectory())
@@ -291,11 +289,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				RowSorter.SortKey key = keys.get(0);
 				switch (key.getColumn())
 				{
-//                    case 0:
-//                        // #
-//                        order = Playlist.SortOrder.None;
-//                        break;
-
 					case 1:
 						// status
 						sortIx = Playlist.SortIx.Status;
@@ -463,7 +456,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			PlaylistEntry entry = _playlist.get(rowIx);
 
 			JFileChooser chooser = new JFileChooser();
-			FontHelper.recursiveSetFont(chooser.getComponents());
 			chooser.addChoosableFileFilter(new AudioFileFilter());
 			chooser.setDialogTitle("Replacing '" + entry.getFileName() + "'");
 
@@ -526,7 +518,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		if (_playlist.isNew())
 		{
 			JFileChooser chooser = new JFileChooser();
-			FontHelper.recursiveSetFont(chooser.getComponents());
 			chooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
 			chooser.setSelectedFile(_playlist.getFile());
 			int rc = chooser.showSaveDialog(getParentFrame());
@@ -1023,7 +1014,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		destDirFileChooser.setDialogTitle("Choose a destination directory...");
 		destDirFileChooser.setAcceptAllFileFilterUsed(false);
 		destDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FontHelper.recursiveSetFont(destDirFileChooser.getComponents());
 		int response = destDirFileChooser.showOpenDialog(getParentFrame());
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
@@ -1144,7 +1134,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void openInternal()
 	{
 		JFileChooser jM3UChooser = new JFileChooser();
-		FontHelper.recursiveSetFont(jM3UChooser.getComponents());
 		jM3UChooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
 		if (_playlist != null)
 		{
