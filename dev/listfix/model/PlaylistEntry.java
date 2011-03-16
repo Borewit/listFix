@@ -46,8 +46,6 @@ public class PlaylistEntry implements Cloneable
 	public static List<String> ExistingDirectories = new ArrayList<String>();
 	// The root folder all the entries in a relative playlist are relative to.
 	public String BasePath = "";
-	// The max number of closest matches to find during a search, sorted by score descending.
-	private static int maxClosestResults = 20;
 	// This entry's _path.
 	private String _path = ".";
 	// This entry's extra info.
@@ -532,16 +530,15 @@ public class PlaylistEntry implements Cloneable
 				{
 					// JCaron - Keep only the top 20 rated matches, anything more than that will probably use too much memory
 					// on systems w/ huge media libraries, too little RAM, or excessively large playlists.
-					// TODO: Make this number a user setting!
-					if (matches.size() < maxClosestResults)
+					if (matches.size() < GUIDriver.getInstance().getAppOptions().getMaxClosestResults())
 					{
 						matches.add(new MatchedPlaylistEntry(mediaFile, score, _playlist));
 					}
 					else
 					{
-						if (matches.get(maxClosestResults - 1).getScore() < score)
+						if (matches.get(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1).getScore() < score)
 						{
-							matches.set(maxClosestResults - 1, new MatchedPlaylistEntry(mediaFile, score, _playlist));
+							matches.set(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1, new MatchedPlaylistEntry(mediaFile, score, _playlist));
 						}
 					}
 					Collections.sort(matches, new MatchedPlaylistEntryComparator());

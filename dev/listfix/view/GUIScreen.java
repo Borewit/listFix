@@ -501,6 +501,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         getContentPane().add(_statusPanel, java.awt.BorderLayout.SOUTH);
 
         _splitPane.setDividerSize(7);
+        _splitPane.setContinuousLayout(true);
         _splitPane.setMaximumSize(null);
         _splitPane.setOneTouchExpandable(true);
         _splitPane.setPreferredSize(new java.awt.Dimension(785, 489));
@@ -509,6 +510,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _leftSplitPane.setDividerLocation(280);
         _leftSplitPane.setDividerSize(7);
         _leftSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        _leftSplitPane.setContinuousLayout(true);
         _leftSplitPane.setMaximumSize(null);
         _leftSplitPane.setOneTouchExpandable(true);
         _leftSplitPane.addComponentListener(new java.awt.event.ComponentAdapter() {

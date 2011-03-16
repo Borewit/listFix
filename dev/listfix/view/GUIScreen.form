@@ -353,6 +353,7 @@
     <Container class="javax.swing.JSplitPane" name="_splitPane">
       <Properties>
         <Property name="dividerSize" type="int" value="7"/>
+        <Property name="continuousLayout" type="boolean" value="true"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="null"/>
         </Property>
@@ -379,6 +380,7 @@
             <Property name="dividerLocation" type="int" value="280"/>
             <Property name="dividerSize" type="int" value="7"/>
             <Property name="orientation" type="int" value="0"/>
+            <Property name="continuousLayout" type="boolean" value="true"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="null"/>
             </Property>

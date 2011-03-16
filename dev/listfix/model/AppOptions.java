@@ -41,6 +41,7 @@ public class AppOptions
 	private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
 	private String playlistsDirectory = EMPTY_STRING;
 	private Font appFont = new Font("SansSerif", 0, 11);
+	private int maxClosestResults = 20;
 	
 	public static final HashMap<String, Integer> optionEnumTable = new HashMap<String, Integer>();
 
@@ -54,22 +55,7 @@ public class AppOptions
 		optionEnumTable.put("ALWAYS_USE_UNC_PATHS", AppOptionsEnum.ALWAYS_USE_UNC_PATHS);
 		optionEnumTable.put("PLAYLISTS_DIRECTORY", AppOptionsEnum.PLAYLISTS_DIRECTORY);
 		optionEnumTable.put("APP_FONT", AppOptionsEnum.APP_FONT);
-	}
-
-	public AppOptions()
-	{
-		// creates an AppOptions instance with the default settings.
-	}
-
-	public AppOptions(int maxPlaylistHistoryEntries, boolean autoLocateEntriesOnPlaylistLoad,
-		boolean savePlaylistsWithRelativePaths, boolean autoRefreshMediaLibraryOnStartup, String lookAndFeel, boolean alwaysUseUNCPaths)
-	{
-		this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
-		this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
-		this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
-		this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
-		this.lookAndFeel = lookAndFeel;
-		this.alwaysUseUNCPaths = alwaysUseUNCPaths;
+		optionEnumTable.put("MAX_CLOSEST_RESULTS", AppOptionsEnum.MAX_CLOSEST_RESULTS);
 	}
 
 	public boolean getAutoLocateEntriesOnPlaylistLoad()
@@ -157,5 +143,19 @@ public class AppOptions
 	 */ public void setAppFont(Font appFont)
 	{
 		this.appFont = appFont;
+	}
+
+	/**
+	 * @return the maxClosestResults
+	 */ public int getMaxClosestResults()
+	{
+		return maxClosestResults;
+	}
+
+	/**
+	 * @param maxClosestResults the maxClosestResults to set
+	 */ public void setMaxClosestResults(int maxClosestResults)
+	{
+		this.maxClosestResults = maxClosestResults;
 	}
 }

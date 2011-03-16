@@ -69,6 +69,7 @@ public class WriteIniFileTask extends listfix.controller.Task
 				buffer.append("ALWAYS_USE_UNC_PATHS=").append(options.getAlwaysUseUNCPaths()).append(br);
 				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
 				buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(br);
+				buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(br);
 			}
 
 			if (mediaLibraryDirList != null)

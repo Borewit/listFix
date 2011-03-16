@@ -142,6 +142,7 @@ public class FileWriter
 				buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(br);
 				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
 				buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(br);
+				buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(br);
 				buffer.append("[Media Library Directories]").append(br);
 				buffer.append("[Media Library Files]").append(br);
 				output.write(buffer.toString());

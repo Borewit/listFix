@@ -689,6 +689,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnPlay = new javax.swing.JButton();
         _btnMagicFix = new javax.swing.JButton();
         _btnLocate = new javax.swing.JButton();
+        jSeparator5 = new javax.swing.JToolBar.Separator();
+        _btnNextMissing = new javax.swing.JButton();
+        _btnPrevMissing = new javax.swing.JButton();
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
@@ -915,6 +918,29 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
         });
         _uiToolbar.add(_btnLocate);
+        _uiToolbar.add(jSeparator5);
+
+        _btnNextMissing.setText("next");
+        _btnNextMissing.setFocusable(false);
+        _btnNextMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnNextMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnNextMissing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnNextMissingActionPerformed(evt);
+            }
+        });
+        _uiToolbar.add(_btnNextMissing);
+
+        _btnPrevMissing.setText("prev");
+        _btnPrevMissing.setFocusable(false);
+        _btnPrevMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnPrevMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnPrevMissing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnPrevMissingActionPerformed(evt);
+            }
+        });
+        _uiToolbar.add(_btnPrevMissing);
 
         add(_uiToolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -1197,6 +1223,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}
 
+	public void scrollCellToVisible(JTable table, int row, int column)
+	{
+		table.scrollRectToVisible(table.getCellRect(row, column, true));
+	}
+
 	private void _uiTableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__uiTableKeyPressed
 	{//GEN-HEADEREND:event__uiTableKeyPressed
 		int keyVal = evt.getKeyCode();
@@ -1216,13 +1247,94 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		bulkFindClosestMatches();
 	}//GEN-LAST:event__btnMagicFixonBtnLocateActionPerformed
 
+	private void _btnNextMissingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnNextMissingActionPerformed
+	{//GEN-HEADEREND:event__btnNextMissingActionPerformed
+		if (_playlist.size() > 0)
+		{
+			int row = _uiTable.getSelectedRow();
+			int modelRow = 0;
+			// search from the selected row (or the beginning of the list)
+			// for the next missing entry, if found, jump to it and bail out.
+			for (int i = (row < 0 ? 0 : row + 1); i < _playlist.size(); i++)
+			{
+				modelRow = _uiTable.convertRowIndexToModel(i);
+				if (entryNotFound(modelRow))
+				{
+					scrollEditorRowIntoView(i);
+					return;
+				}
+			}
+			// if we made it this far, and we didn't search from the beginning
+			// of the list, loop back around...
+			if (row >= 0)
+			{
+				for (int i = 0; i <= row; i++)
+				{
+					modelRow = _uiTable.convertRowIndexToModel(i);
+					if (entryNotFound(modelRow))
+					{
+						scrollEditorRowIntoView(i);
+						return;
+					}
+				}
+			}
+		}
+	}//GEN-LAST:event__btnNextMissingActionPerformed
+
+	private void scrollEditorRowIntoView(int i)
+	{
+		_uiTable.setRowSelectionInterval(i, i);
+		scrollCellToVisible(_uiTable, i, 0);
+	}
+	
+	private boolean entryNotFound(int modelRow)
+	{
+		return !_playlist.get(modelRow).isFound() && !_playlist.get(modelRow).isURL();
+	}
+
+	private void _btnPrevMissingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnPrevMissingActionPerformed
+	{//GEN-HEADEREND:event__btnPrevMissingActionPerformed
+		if (_playlist.size() > 0)
+		{
+			int row = _uiTable.getSelectedRow();
+			int modelRow = 0;
+			// search from the selected row (or the beginning of the list)
+			// for the next missing entry, if found, jump to it and bail out.
+			for (int i = (row < 0 ? _playlist.size() - 1 : row - 1); i >= 0; i--)
+			{
+				modelRow = _uiTable.convertRowIndexToModel(i);
+				if (entryNotFound(modelRow))
+				{
+					scrollEditorRowIntoView(i);
+					return;
+				}
+			}
+			// if we made it this far, and we didn't search from the end
+			// of the list, loop back around...
+			if (row >= 0)
+			{
+				for (int i = _playlist.size() - 1; i >= row; i--)
+				{
+					modelRow = _uiTable.convertRowIndexToModel(i);
+					if (entryNotFound(modelRow))
+					{
+						scrollEditorRowIntoView(i);
+						return;
+					}
+				}
+			}
+		}
+	}//GEN-LAST:event__btnPrevMissingActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
     private javax.swing.JButton _btnDown;
     private javax.swing.JButton _btnLocate;
     private javax.swing.JButton _btnMagicFix;
+    private javax.swing.JButton _btnNextMissing;
     private javax.swing.JButton _btnPlay;
+    private javax.swing.JButton _btnPrevMissing;
     private javax.swing.JButton _btnReload;
     private javax.swing.JButton _btnReorder;
     private javax.swing.JButton _btnSave;
@@ -1242,6 +1354,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JToolBar.Separator jSeparator5;
     // End of variables declaration//GEN-END:variables
 	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.png"));
 	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.png"));

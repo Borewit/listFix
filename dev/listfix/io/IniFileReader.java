@@ -177,6 +177,10 @@ public class IniFileReader
 							options.setAppFont(temp);
 						}
 					}
+					else if (optionEnum.equals(AppOptionsEnum.MAX_CLOSEST_RESULTS))
+					{
+						options.setMaxClosestResults((new Integer(optionValue)).intValue());
+					}
 				}
 				line = B1.readLine();
 			}
