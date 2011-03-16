@@ -142,7 +142,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         resultsTable.setModel(tableModel);
         resultsTable.setFillsViewportHeight(true);
-        resultsTable.setFont(new java.awt.Font("SansSerif", 0, 10));
         resultsTable.setRowHeight(20);
         resultsTable.setShowHorizontalLines(false);
         resultsTable.setShowVerticalLines(false);
@@ -155,7 +154,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton1.setText("OK");
         jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -165,7 +163,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
         });
         jPanel2.add(jButton1);
 
-        jButton2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,11 +175,9 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("Choose a replacement from the list below");
         jPanel3.add(jLabel1, new java.awt.GridBagConstraints());
 
-        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel2.setText("and click ok, or click cancel to quit the operation.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

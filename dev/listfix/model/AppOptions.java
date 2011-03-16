@@ -20,9 +20,10 @@
 
 package listfix.model;
 
+import java.awt.Font;
 import listfix.model.enums.AppOptionsEnum;
 import java.io.File;
-import java.util.Hashtable;
+import java.util.HashMap;
 import javax.swing.UIManager;
 
 /**
@@ -39,8 +40,9 @@ public class AppOptions
 	private int maxPlaylistHistoryEntries = 5;
 	private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
 	private String playlistsDirectory = EMPTY_STRING;
+	private Font appFont = new Font("SansSerif", 0, 11);
 	
-	public static final Hashtable<String, Integer> optionEnumTable = new Hashtable<String, Integer>();
+	public static final HashMap<String, Integer> optionEnumTable = new HashMap<String, Integer>();
 
 	static
 	{
@@ -51,6 +53,7 @@ public class AppOptions
 		optionEnumTable.put("LOOK_AND_FEEL", AppOptionsEnum.LOOK_AND_FEEL);
 		optionEnumTable.put("ALWAYS_USE_UNC_PATHS", AppOptionsEnum.ALWAYS_USE_UNC_PATHS);
 		optionEnumTable.put("PLAYLISTS_DIRECTORY", AppOptionsEnum.PLAYLISTS_DIRECTORY);
+		optionEnumTable.put("APP_FONT", AppOptionsEnum.APP_FONT);
 	}
 
 	public AppOptions()
@@ -140,5 +143,19 @@ public class AppOptions
 		{
 			this.playlistsDirectory = playlistsDirectory;
 		}
+	}
+
+	/**
+	 * @return the appFont
+	 */ public Font getAppFont()
+	{
+		return appFont;
+	}
+
+	/**
+	 * @param appFont the appFont to set
+	 */ public void setAppFont(Font appFont)
+	{
+		this.appFont = appFont;
 	}
 }

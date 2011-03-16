@@ -25,6 +25,7 @@ package listfix.view.dialogs;
  * @author  jcaron
  */
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,6 +40,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
 import listfix.view.support.FontHelper;
+import net.mariottini.swing.JFontChooser;
 
 public class AppOptionsDialog extends javax.swing.JDialog
 {
@@ -49,6 +51,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	private String fileName;
 	private AppOptions options = null;
 	private final JFileChooser jMediaDirChooser = new JFileChooser();
+	private Font chosenFont = null;
 
 	/** Creates new form EditFilenameDialog */
 	public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts)
@@ -62,13 +65,13 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		{
 			options = opts;
 		}
-		this.setPreferredSize(new Dimension(390, 292));
-		this.center();
 		initComponents();
 		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
 		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FontHelper.recursiveSetFont(jMediaDirChooser.getComponents());
+		chosenFont = opts.getAppFont();
+		FontHelper.recursiveSetFont(jMediaDirChooser.getComponents(), chosenFont);
+		_fontDisplayLabel.setText(formatFont());
 	}
 
 	public AppOptionsDialog()
@@ -93,6 +96,11 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	public int getResultCode()
 	{
 		return resultCode;
+	}
+
+	private String formatFont()
+	{
+		return chosenFont.getFamily() + ", " + FontHelper.getStyle(chosenFont) + ", " + chosenFont.getSize();
 	}
 
 	private LookAndFeelInfo[] getInstalledLookAndFeels()
@@ -163,6 +171,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         topPanel = new javax.swing.JPanel();
         optionsPanel = new javax.swing.JPanel();
@@ -184,6 +193,11 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jPanel9 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         alwaysUseUNCPathsCheckBox = new javax.swing.JCheckBox();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        _fontDisplayLabel = new javax.swing.JLabel();
+        _changeFontButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         playlistDirectoryTextField = new javax.swing.JTextField();
@@ -192,7 +206,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
-        setMinimumSize(new java.awt.Dimension(430, 320));
+        setMinimumSize(null);
         setModal(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -202,51 +216,63 @@ public class AppOptionsDialog extends javax.swing.JDialog
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        topPanel.setMinimumSize(null);
+        topPanel.setPreferredSize(null);
         topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Config", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 10))); // NOI18N
-        optionsPanel.setMinimumSize(new java.awt.Dimension(1210, 60));
-        optionsPanel.setPreferredSize(new java.awt.Dimension(380, 280));
-        optionsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("General Config"));
+        optionsPanel.setLayout(new java.awt.GridBagLayout());
 
+        jPanel3.setMinimumSize(null);
+        jPanel3.setPreferredSize(null);
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("Recent Playlist Limit: ");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel1.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel3.add(jLabel1);
 
-        recentPlaylistLimitComboBox.setFont(new java.awt.Font("SansSerif", 0, 10));
         recentPlaylistLimitComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" }));
         recentPlaylistLimitComboBox.setSelectedItem("" + options.getMaxPlaylistHistoryEntries());
         recentPlaylistLimitComboBox.setPreferredSize(new java.awt.Dimension(50, 20));
         jPanel3.add(recentPlaylistLimitComboBox);
 
-        optionsPanel.add(jPanel3);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel3, gridBagConstraints);
 
+        jPanel8.setMinimumSize(null);
+        jPanel8.setPreferredSize(null);
         jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel5.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel5.setText("Look and Feel:");
         jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel5.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel5.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel8.add(jLabel5);
 
-        lookAndFeelComboBox.setFont(new java.awt.Font("SansSerif", 0, 10));
         lookAndFeelComboBox.setModel(this.getLookAndFeelMenuItems());
         lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(options.getLookAndFeel()).getName());
         lookAndFeelComboBox.setPreferredSize(new java.awt.Dimension(120, 20));
         jPanel8.add(lookAndFeelComboBox);
 
-        optionsPanel.add(jPanel8);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel8, gridBagConstraints);
 
-        jPanel4.setMinimumSize(new java.awt.Dimension(165, 20));
+        jPanel4.setMinimumSize(null);
+        jPanel4.setPreferredSize(null);
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel2.setText("Auto-locate missing playlist entries on load:");
         jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel2.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -256,12 +282,18 @@ public class AppOptionsDialog extends javax.swing.JDialog
         autoLocateCheckBox.setSelected(options.getAutoLocateEntriesOnPlaylistLoad());
         jPanel4.add(autoLocateCheckBox);
 
-        optionsPanel.add(jPanel4);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel4, gridBagConstraints);
 
         jPanel5.setMinimumSize(new java.awt.Dimension(165, 20));
+        jPanel5.setPreferredSize(null);
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel3.setText("Save playlists with relative file references:");
         jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel3.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -271,12 +303,18 @@ public class AppOptionsDialog extends javax.swing.JDialog
         relativePathsCheckBox.setSelected(options.getSavePlaylistsWithRelativePaths());
         jPanel5.add(relativePathsCheckBox);
 
-        optionsPanel.add(jPanel5);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel5, gridBagConstraints);
 
         jPanel7.setMinimumSize(new java.awt.Dimension(165, 20));
+        jPanel7.setPreferredSize(null);
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel4.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel4.setText("Auto refresh media library at startup:");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel4.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -286,12 +324,18 @@ public class AppOptionsDialog extends javax.swing.JDialog
         autoRefreshOnStartupCheckBox.setSelected(options.getAutoRefreshMediaLibraryOnStartup());
         jPanel7.add(autoRefreshOnStartupCheckBox);
 
-        optionsPanel.add(jPanel7);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel7, gridBagConstraints);
 
         jPanel9.setMinimumSize(new java.awt.Dimension(165, 20));
+        jPanel9.setPreferredSize(null);
         jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel6.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel6.setText("Media library uses UNC paths for directories on mapped drives:");
         jLabel6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel6.setMinimumSize(new java.awt.Dimension(111, 9));
@@ -301,18 +345,57 @@ public class AppOptionsDialog extends javax.swing.JDialog
         alwaysUseUNCPathsCheckBox.setSelected(options.getAlwaysUseUNCPaths());
         jPanel9.add(alwaysUseUNCPathsCheckBox);
 
-        optionsPanel.add(jPanel9);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel9, gridBagConstraints);
+
+        jPanel1.setMinimumSize(null);
+        jPanel1.setPreferredSize(null);
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+
+        jLabel8.setText("Font:");
+        jPanel1.add(jLabel8);
+
+        _fontDisplayLabel.setText("SansSerif, Plain, 10");
+        jPanel1.add(_fontDisplayLabel);
+
+        _changeFontButton.setText("...");
+        _changeFontButton.setAlignmentY(0.0F);
+        _changeFontButton.setMargin(new java.awt.Insets(2, 6, 2, 6));
+        _changeFontButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _changeFontButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_changeFontButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel2, gridBagConstraints);
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
-        jLabel7.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel7.setText("Playlists Directory:");
         jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel7.setMinimumSize(new java.awt.Dimension(111, 9));
         jLabel7.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel6.add(jLabel7);
 
-        playlistDirectoryTextField.setFont(new java.awt.Font("SansSerif", 0, 10));
         playlistDirectoryTextField.setText(options.getPlaylistsDirectory());
         playlistDirectoryTextField.setAlignmentX(0.0F);
         playlistDirectoryTextField.setAlignmentY(0.0F);
@@ -321,7 +404,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
         playlistDirectoryTextField.setRequestFocusEnabled(false);
         jPanel6.add(playlistDirectoryTextField);
 
-        playlistDirectoryBrowseButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         playlistDirectoryBrowseButton.setText("...");
         playlistDirectoryBrowseButton.setAlignmentY(0.0F);
         playlistDirectoryBrowseButton.setMargin(new java.awt.Insets(2, 6, 2, 6));
@@ -332,16 +414,19 @@ public class AppOptionsDialog extends javax.swing.JDialog
         });
         jPanel6.add(playlistDirectoryBrowseButton);
 
-        optionsPanel.add(jPanel6);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(jPanel6, gridBagConstraints);
 
         topPanel.add(optionsPanel);
 
-        buttonPanel.setMaximumSize(new java.awt.Dimension(400, 24));
-        buttonPanel.setMinimumSize(new java.awt.Dimension(131, 24));
-        buttonPanel.setPreferredSize(new java.awt.Dimension(350, 32));
+        buttonPanel.setMaximumSize(null);
         buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton1.setText("OK");
         jButton1.setMinimumSize(new java.awt.Dimension(49, 20));
         jButton1.setPreferredSize(null);
@@ -352,10 +437,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
         });
         buttonPanel.add(jButton1);
 
-        jButton2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton2.setText("Cancel");
         jButton2.setMinimumSize(new java.awt.Dimension(67, 20));
-        jButton2.setPreferredSize(null);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -412,8 +495,18 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		}
 	}//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed
 
+	private void _changeFontButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__changeFontButtonActionPerformed
+	{//GEN-HEADEREND:event__changeFontButtonActionPerformed
+		JFontChooser jfc = new JFontChooser();
+		jfc.setSelectedFont(chosenFont);
+		jfc.showDialog(this);
+		chosenFont = jfc.getSelectedFont();
+		_fontDisplayLabel.setText(formatFont());
+	}//GEN-LAST:event__changeFontButtonActionPerformed
+
 	public AppOptions showDialog()
 	{
+		this.center();
 		this.setVisible(true);
 		if (this.getResultCode() == OK)
 		{
@@ -424,10 +517,13 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
 			options.setAlwaysUseUNCPaths(this.alwaysUseUNCPathsCheckBox.isSelected());
 			options.setPlaylistsDirectory(playlistDirectoryTextField.getText());
+			options.setAppFont(chosenFont);
 		}
 		return options;
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton _changeFontButton;
+    private javax.swing.JLabel _fontDisplayLabel;
     private javax.swing.JCheckBox alwaysUseUNCPathsCheckBox;
     private javax.swing.JCheckBox autoLocateCheckBox;
     private javax.swing.JCheckBox autoRefreshOnStartupCheckBox;
@@ -441,6 +537,9 @@ public class AppOptionsDialog extends javax.swing.JDialog
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;

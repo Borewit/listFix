@@ -23,6 +23,7 @@ package listfix.controller.tasks;
 import java.io.*;
 import listfix.model.*;
 import listfix.util.UnicodeUtils;
+import listfix.view.support.FontHelper;
 
 public class WriteIniFileTask extends listfix.controller.Task
 {
@@ -67,6 +68,7 @@ public class WriteIniFileTask extends listfix.controller.Task
 				buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(br);
 				buffer.append("ALWAYS_USE_UNC_PATHS=").append(options.getAlwaysUseUNCPaths()).append(br);
 				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
+				buffer.append("APP_FONT=").append(FontHelper.serialize(options.getAppFont())).append(br);
 			}
 
 			if (mediaLibraryDirList != null)

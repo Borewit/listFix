@@ -86,7 +86,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         jLabel1 = new javax.swing.JLabel();
         jButton1 = createTabButton();
 
-        closeAllTabsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         closeAllTabsMenuItem.setText("Close All");
         closeAllTabsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -95,7 +94,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         });
         rightClickMenu.add(closeAllTabsMenuItem);
 
-        closeAllOtherTabsMenuItem.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         closeAllOtherTabsMenuItem.setText("Close All Other Tabs");
         closeAllOtherTabsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -119,13 +117,11 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         });
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("playlist");
         jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 5));
         add(jLabel1);
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
-        jButton1.setText("X");
+        jButton1.setText("x");
         add(jButton1);
     }// </editor-fold>//GEN-END:initComponents
 

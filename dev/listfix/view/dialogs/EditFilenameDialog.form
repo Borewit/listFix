@@ -29,9 +29,6 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="If you renamed a file by hand"/>
           </Properties>
           <Constraints>
@@ -42,9 +39,6 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="and know the new filename, "/>
           </Properties>
           <Constraints>
@@ -55,9 +49,6 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="you can enter it below."/>
           </Properties>
           <Constraints>
@@ -79,17 +70,11 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="New Filename:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtFilename">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[150, 20]"/>
             </Property>
@@ -111,9 +96,6 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnOk">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="OK"/>
           </Properties>
           <Events>
@@ -122,9 +104,6 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnCancel">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Cancel"/>
           </Properties>
           <Events>

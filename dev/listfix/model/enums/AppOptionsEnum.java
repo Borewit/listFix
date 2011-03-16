@@ -33,4 +33,5 @@ public class AppOptionsEnum
 	public final static Integer LOOK_AND_FEEL = 4;
 	public final static Integer ALWAYS_USE_UNC_PATHS = 5;
 	public final static Integer PLAYLISTS_DIRECTORY = 6;
+	public final static Integer APP_FONT = 7;
 }

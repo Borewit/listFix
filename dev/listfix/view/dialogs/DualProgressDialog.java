@@ -109,7 +109,6 @@ public class DualProgressDialog extends javax.swing.JDialog
 
         _middlePanel.setLayout(new java.awt.GridBagLayout());
 
-        _taskLabel.setFont(new java.awt.Font("SansSerif", 0, 10));
         _taskLabel.setText("Task Progress");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 0;
@@ -125,7 +124,6 @@ public class DualProgressDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
         _middlePanel.add(_taskProgress, gridBagConstraints);
 
-        _overallLabel.setFont(new java.awt.Font("SansSerif", 0, 10));
         _overallLabel.setText("Overall Progress");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 2;
@@ -145,7 +143,6 @@ public class DualProgressDialog extends javax.swing.JDialog
 
         _bottomPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        _cancelButton.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         _cancelButton.setText("Cancel");
         _cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -20,6 +20,7 @@
 
 package listfix.io;
 
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +36,7 @@ import java.util.StringTokenizer;
 import listfix.model.AppOptions;
 import listfix.model.enums.AppOptionsEnum;
 import listfix.util.UnicodeUtils;
+import listfix.view.support.FontHelper;
 
 /*
 ============================================================================
@@ -166,6 +168,14 @@ public class IniFileReader
 					else if (optionEnum.equals(AppOptionsEnum.PLAYLISTS_DIRECTORY))
 					{
 						options.setPlaylistsDirectory(optionValue);
+					}
+					else if (optionEnum.equals(AppOptionsEnum.APP_FONT))
+					{
+						Font temp = FontHelper.deserialize(optionValue);
+						if (temp != null)
+						{
+							options.setAppFont(temp);
+						}
 					}
 				}
 				line = B1.readLine();

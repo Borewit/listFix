@@ -155,7 +155,6 @@ public class ProgressDialog extends javax.swing.JDialog
         jPanel1.setPreferredSize(new java.awt.Dimension(166, 45));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        _progressTitle.setFont(new java.awt.Font("SansSerif", 0, 10));
         _progressTitle.setText("Title");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -173,7 +172,6 @@ public class ProgressDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
         jPanel1.add(_progressBar, gridBagConstraints);
 
-        _progressMessage.setFont(new java.awt.Font("SansSerif", 0, 10));
         _progressMessage.setText("Message");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -189,7 +187,6 @@ public class ProgressDialog extends javax.swing.JDialog
         jPanel2.setPreferredSize(new java.awt.Dimension(77, 30));
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 0));
 
-        _cancelButton.setFont(new java.awt.Font("SansSerif", 0, 10));
         _cancelButton.setText("Cancel");
         _cancelButton.setAlignmentY(-5.0F);
         _cancelButton.addActionListener(new java.awt.event.ActionListener() {

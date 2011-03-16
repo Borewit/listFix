@@ -38,6 +38,7 @@ import listfix.controller.tasks.WriteIniFileTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.util.UnicodeUtils;
+import listfix.view.support.FontHelper;
 
 public class FileWriter
 {
@@ -140,6 +141,7 @@ public class FileWriter
 				buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(br);
 				buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(br);
 				buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
+				buffer.append("APP_FONT=").append(FontHelper.serialize(options.getAppFont())).append(br);
 				buffer.append("[Media Library Directories]").append(br);
 				buffer.append("[Media Library Files]").append(br);
 				output.write(buffer.toString());

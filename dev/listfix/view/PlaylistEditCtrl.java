@@ -701,9 +701,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
-        _playlistEntryRightClickMenu.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
-
-        _miEditFilename.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miEditFilename.setText("Edit Filename");
         _miEditFilename.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -712,7 +709,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _playlistEntryRightClickMenu.add(_miEditFilename);
 
-        _miReplace.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miReplace.setText("Replace Selected Entry");
         _miReplace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -722,7 +718,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _playlistEntryRightClickMenu.add(_miReplace);
         _playlistEntryRightClickMenu.add(jSeparator3);
 
-        _miFindClosest.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miFindClosest.setText("Find Closest Matches");
         _miFindClosest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -731,7 +726,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _playlistEntryRightClickMenu.add(_miFindClosest);
 
-        _miBatchFindClosest.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miBatchFindClosest.setText("Batch Find Closest Matches");
         _miBatchFindClosest.setToolTipText("Finds best closest match for all missing files in list");
         _miBatchFindClosest.addActionListener(new java.awt.event.ActionListener() {
@@ -742,7 +736,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _playlistEntryRightClickMenu.add(_miBatchFindClosest);
         _playlistEntryRightClickMenu.add(jSeparator4);
 
-        _miRemoveDups.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miRemoveDups.setText("Remove Duplicates");
         _miRemoveDups.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -751,7 +744,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _playlistEntryRightClickMenu.add(_miRemoveDups);
 
-        _miRemoveMissing.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miRemoveMissing.setText("Remove Missing");
         _miRemoveMissing.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -760,7 +752,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
-        _miCopyFiles.setFont(new java.awt.Font("SansSerif", 0, 10));
         _miCopyFiles.setText("Copy Files");
         _miCopyFiles.setToolTipText("");
         _miCopyFiles.addActionListener(new java.awt.event.ActionListener() {
@@ -942,7 +933,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setModel(new PlaylistTableModel());
         _uiTable.setDragEnabled(true);
         _uiTable.setFillsViewportHeight(true);
-        _uiTable.setFont(new java.awt.Font("SansSerif", 0, 10));
         _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
         _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
@@ -1429,7 +1419,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 		_uiTable.setShowHorizontalLines(false);
 		_uiTable.setShowVerticalLines(false);
-		_uiTable.getTableHeader().setFont(new Font("SansSerif", 0, 10));
 
 		// resize columns
 		TableColumnModel cm = _uiTable.getColumnModel();

@@ -22,6 +22,7 @@ package listfix.view.support;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -31,7 +32,7 @@ public class FontHelper
 {
 	public static void recursiveSetFont(Component[] comp)
 	{
-		recursiveSetFont(comp, new Font("SansSerif", 0, 10));
+		// recursiveSetFont(comp, new Font("SansSerif", 0, 10));
 	}
 
 	public static void recursiveSetFont(Component[] comp, Font font)
@@ -50,6 +51,59 @@ public class FontHelper
 			{
 				// keep going...
 			}
+		}
+	}
+
+	public static String getStyle(Font inputFont)
+	{
+		if (inputFont.isPlain())
+		{
+			return "PLAIN";
+		}
+		else if (inputFont.isItalic())
+		{
+			return "ITALIC";
+		}
+		else if (inputFont.isBold())
+		{
+			return "BOLD";
+		}
+		else
+		{
+			return "BOLD+ITALIC";
+		}
+	}
+
+	public static String serialize(Font inputFont)
+	{
+		return inputFont.getFamily() + "," + inputFont.getStyle() + "," + inputFont.getSize();
+	}
+
+	public static Font deserialize(String csvParams)
+	{
+		try
+		{
+			StringTokenizer tizer = new StringTokenizer(csvParams, ",");
+			String tok; int i = 0;
+			String family = null;
+			String style = null;
+			String size = null;
+			while (tizer.hasMoreTokens())
+			{
+				tok = tizer.nextToken();
+				if (i == 0)
+					family = tok;
+				else if (i == 1)
+					style = tok;
+				else if (i == 2)
+					size = tok;
+				i++;
+			}
+			return new Font(family, Integer.parseInt(style), Integer.parseInt(size));
+		}
+		catch (Exception exception)
+		{
+			return null;
 		}
 	}
 }

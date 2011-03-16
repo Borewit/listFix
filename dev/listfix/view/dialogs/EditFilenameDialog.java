@@ -109,7 +109,6 @@ public class EditFilenameDialog extends javax.swing.JDialog
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel2.setText("If you renamed a file by hand");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -117,14 +116,12 @@ public class EditFilenameDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
         jPanel1.add(jLabel2, gridBagConstraints);
 
-        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel3.setText("and know the new filename, ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         jPanel1.add(jLabel3, gridBagConstraints);
 
-        jLabel4.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel4.setText("you can enter it below.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -135,11 +132,9 @@ public class EditFilenameDialog extends javax.swing.JDialog
 
         jPanel2.setMaximumSize(null);
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jLabel1.setText("New Filename:");
         jPanel2.add(jLabel1);
 
-        txtFilename.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         txtFilename.setMinimumSize(new java.awt.Dimension(150, 20));
         txtFilename.setPreferredSize(new java.awt.Dimension(250, 20));
         jPanel2.add(txtFilename);
@@ -148,7 +143,6 @@ public class EditFilenameDialog extends javax.swing.JDialog
 
         jPanel3.setMaximumSize(null);
 
-        btnOk.setFont(new java.awt.Font("SansSerif", 0, 10));
         btnOk.setText("OK");
         btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -157,7 +151,6 @@ public class EditFilenameDialog extends javax.swing.JDialog
         });
         jPanel3.add(btnOk);
 
-        btnCancel.setFont(new java.awt.Font("SansSerif", 0, 10));
         btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

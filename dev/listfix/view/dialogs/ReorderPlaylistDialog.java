@@ -107,12 +107,11 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         setModal(true);
         setResizable(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Select the new playlist order", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 10))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Select the new playlist order"));
         jPanel1.setAlignmentX(1.0F);
         jPanel1.setLayout(new java.awt.GridLayout(6, 1));
 
         buttonGroup1.add(_rbRandom);
-        _rbRandom.setFont(new java.awt.Font("SansSerif", 0, 10));
         _rbRandom.setText("Random");
         _rbRandom.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,7 +121,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbRandom);
 
         buttonGroup1.add(_rbReverse);
-        _rbReverse.setFont(new java.awt.Font("SansSerif", 0, 10));
         _rbReverse.setText("Reverse current order");
         _rbReverse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -132,7 +130,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbReverse);
 
         buttonGroup1.add(_rbFilename);
-        _rbFilename.setFont(new java.awt.Font("SansSerif", 0, 10));
         _rbFilename.setText("Filename");
         _rbFilename.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -142,7 +139,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbFilename);
 
         buttonGroup1.add(_rbPath);
-        _rbPath.setFont(new java.awt.Font("SansSerif", 0, 10));
         _rbPath.setText("Path");
         _rbPath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -152,7 +148,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.add(_rbPath);
 
         buttonGroup1.add(_rbStatus);
-        _rbStatus.setFont(new java.awt.Font("SansSerif", 0, 10));
         _rbStatus.setText("Status");
         _rbStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -161,7 +156,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         });
         jPanel1.add(_rbStatus);
 
-        _chkDescending.setFont(new java.awt.Font("SansSerif", 0, 10));
         _chkDescending.setText("Descending");
         _chkDescending.setEnabled(false);
         jPanel1.add(_chkDescending);
@@ -170,7 +164,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton1.setText("Change Order");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,7 +172,6 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         });
         jPanel2.add(jButton1);
 
-        jButton2.setFont(new java.awt.Font("SansSerif", 0, 10));
         jButton2.setText("Cancel");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

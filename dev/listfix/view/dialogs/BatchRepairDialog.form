@@ -36,10 +36,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="_chkBackup" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="_txtBackup" pref="268" max="32767" attributes="0"/>
+                  <Component id="_txtBackup" pref="274" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="_btnBrowse" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="86" max="32767" attributes="0"/>
+                  <EmptySpace pref="98" max="32767" attributes="0"/>
                   <Component id="_btnSave" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="_btnCancel" min="-2" max="-2" attributes="0"/>
@@ -66,9 +66,6 @@
       <SubComponents>
         <Component class="javax.swing.JCheckBox" name="_chkBackup">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Backup original files to zip file:"/>
           </Properties>
           <Events>
@@ -77,17 +74,11 @@
         </Component>
         <Component class="javax.swing.JTextField" name="_txtBackup">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="_btnCancel">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Cancel"/>
           </Properties>
           <Events>
@@ -96,9 +87,6 @@
         </Component>
         <Component class="javax.swing.JButton" name="_btnSave">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="10" style="0"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Save All Repairs"/>
           </Properties>
           <Events>
@@ -151,9 +139,6 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="SansSerif" size="10" style="0"/>
-                    </Property>
                     <Property name="text" type="java.lang.String" value="Playlist details"/>
                   </Properties>
                 </Component>
@@ -185,11 +170,6 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
           <SubComponents>
             <Container class="javax.swing.JPanel" name="jPanel5">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="SansSerif" size="10" style="0"/>
-                </Property>
-              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                   <BorderConstraints direction="First"/>
@@ -200,9 +180,6 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="SansSerif" size="10" style="0"/>
-                    </Property>
                     <Property name="text" type="java.lang.String" value="Playlists"/>
                   </Properties>
                   <Constraints>
@@ -213,9 +190,6 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="_labListCount">
                   <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="SansSerif" size="10" style="0"/>
-                    </Property>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="a0" green="a0" id="controlShadow" palette="3" red="a0" type="palette"/>
                     </Property>
@@ -253,9 +227,6 @@
                       <Connection code="new PlaylistsTableModel()" type="code"/>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="0"/>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="SansSerif" size="10" style="0"/>
-                    </Property>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                     </Property>
