@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import listfix.controller.tasks.WriteIniFileTask;
+import listfix.controller.tasks.WriteMediaLibraryIniTask;
 
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
@@ -124,7 +124,7 @@ public class IniFileConverter
 		{
 			return;
 		}
-		WriteIniFileTask task = new WriteIniFileTask(getMediaDirs(), getMediaLibrary(), getMediaLibraryFiles());
+		WriteMediaLibraryIniTask task = new WriteMediaLibraryIniTask(getMediaDirs(), getMediaLibrary(), getMediaLibraryFiles());
 		task.run();
 		OptionsWriter.write(options);
 		PlaylistHistory tempHistory = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());

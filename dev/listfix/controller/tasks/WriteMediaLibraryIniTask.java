@@ -23,17 +23,17 @@ package listfix.controller.tasks;
 import java.io.*;
 import listfix.util.UnicodeUtils;
 
-public class WriteIniFileTask extends listfix.controller.Task
+public class WriteMediaLibraryIniTask extends listfix.controller.Task
 {
 	private final static String fs = System.getProperty("file.separator");
-	private final static String br = System.getProperty("line.separator");
 	private final static String homeDir = System.getProperty("user.home");
 	private final String dataDir = homeDir + fs + "listFixData" + fs;
+	private final static String br = System.getProperty("line.separator");
 	private String[] mediaDir;
 	private String[] mediaLibraryDirList;
 	private String[] mediaLibraryFileList;
 
-	public WriteIniFileTask(String[] m, String[] mldl, String[] mlfl)
+	public WriteMediaLibraryIniTask(String[] m, String[] mldl, String[] mlfl)
 	{
 		mediaDir = m;
 		mediaLibraryDirList = mldl;

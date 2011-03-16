@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import listfix.controller.GUIDriver;
 
-import listfix.controller.tasks.WriteIniFileTask;
+import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.util.UnicodeUtils;
@@ -70,7 +70,7 @@ public class FileWriter
 				fileName = fileTokens.remove(fileTokens.size() - 1);
 			}
 
-			// relativeTo is the M3U we'll be writing to, we need to remove the last token regardless...
+			// relativeTo is the playlist we'll be writing to, we need to remove the last token regardless...
 			relativeToTokens.remove(relativeToTokens.size() - 1);
 
 			int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
@@ -203,7 +203,7 @@ public class FileWriter
 	{
 		try
 		{
-			WriteIniFileTask thisTask = new WriteIniFileTask(mediaDir, mediaLibraryDirList, mediaLibraryFileList);
+			WriteMediaLibraryIniTask thisTask = new WriteMediaLibraryIniTask(mediaDir, mediaLibraryDirList, mediaLibraryFileList);
 			thisTask.start();
 		}
 		catch (Exception e)
