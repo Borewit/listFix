@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import listfix.model.AppOptions;
 import listfix.model.enums.AppOptionsEnum;
 import listfix.view.support.FontExtensions;
@@ -113,15 +111,15 @@ public class OptionsReader
 		}
 		catch (FileNotFoundException ex)
 		{
-			Logger.getLogger(OptionsReader.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 		}
 		catch (UnsupportedEncodingException ex)
 		{
-			Logger.getLogger(OptionsReader.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(OptionsReader.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 		}
 		return options;
 	}

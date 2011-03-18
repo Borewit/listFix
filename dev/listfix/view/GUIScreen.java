@@ -56,8 +56,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.JOptionPane;
@@ -101,6 +99,7 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
+import listfix.view.support.WindowSaver;
 
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
@@ -1138,6 +1137,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					editor.setPlaylist(list);
 					String title = list.getFilename();
 					_uiTabs.addTab(title, null, editor, path);
+
 					int ix = _uiTabs.getTabCount() - 1;
 					_uiTabs.setSelectedIndex(ix);
 					_pathToEditorMap.put(path, editor);
@@ -1307,7 +1307,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 		}
 		(new FileWriter()).writeMruPlaylists(history);
 
@@ -1696,12 +1696,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					return;
 				}
 				else
-				{
+				{					
 					break;
 				}
 			}
 		}
 
+		WindowSaver.saveSettings();
 		System.exit(0);
 	}
 
@@ -2029,7 +2030,7 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 		}
 		catch (Exception ex)
 		{
-			Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 		}
 		finally
@@ -2050,6 +2051,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		editor.setPlaylist(_currentPlaylist);
 		String title = _currentPlaylist.getFilename();
 		_uiTabs.addTab(title, null, editor, path);
+		
 		int ix = _uiTabs.getTabCount() - 1;
 		_uiTabs.setSelectedIndex(ix);
 		_pathToEditorMap.put(path, editor);
@@ -2064,7 +2066,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	}
 	catch (IOException ex)
 	{
-		Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+		ex.printStackTrace();
 		JOptionPane.showMessageDialog(this, "Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.");
 	}
 

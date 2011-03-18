@@ -598,7 +598,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 			catch (Exception ex)
 			{
-				Logger.getLogger(GUIScreen.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
 				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 			}
 			finally
@@ -1819,11 +1819,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (UnsupportedFlavorException ex)
 					{
-						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+						ex.printStackTrace();
 					}
 					catch (IOException ex)
 					{
-						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+						ex.printStackTrace();
 					}
 				}
 				return false;
@@ -1891,11 +1891,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (UnsupportedFlavorException ex)
 					{
-						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+						ex.printStackTrace();
 					}
 					catch (IOException ex)
 					{
-						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+						ex.printStackTrace();
 					}
 				}
 				return false;
@@ -1925,7 +1925,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (IOException ex)
 					{
-						Logger.getLogger(PlaylistEditCtrl.class.getName()).log(Level.SEVERE, null, ex);
+						ex.printStackTrace();
 						return null;
 					}
 				}

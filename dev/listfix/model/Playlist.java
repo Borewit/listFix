@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import listfix.io.FileExtensions;
 
 import listfix.io.FileLauncher;
 import listfix.io.FileWriter;
@@ -881,7 +882,7 @@ public class Playlist
 					else if (saveRelative && !entry.isURL() && entry.isFound())
 					{
 						// replace existing absolute entry with a new relative one
-						relativePath = FileWriter.getRelativePath(entry.getAbsoluteFile(), _file);
+						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile(), _file);
 						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -948,7 +949,7 @@ public class Playlist
 				else if (saveRelative && !tempEntry.isURL() && tempEntry.isFound())
 				{
 					// replace existing absolute entry with a new relative one
-					String relativePath = FileWriter.getRelativePath(tempEntry.getAbsoluteFile(), _file);
+					String relativePath = FileExtensions.getRelativePath(tempEntry.getAbsoluteFile(), _file);
 					tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf(), _file);
 					_entries.set(i, tempEntry);
 				}

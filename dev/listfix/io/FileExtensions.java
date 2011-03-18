@@ -21,6 +21,10 @@
 package listfix.io;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import listfix.controller.GUIDriver;
 
 /**
  *
@@ -28,6 +32,8 @@ import java.io.File;
  */
 public class FileExtensions
 {
+	private static String fs = System.getProperty("file.separator");
+
 	public static File findDeepestPathToExist(File file)
 	{
 		if (file == null || file.exists())
@@ -35,5 +41,94 @@ public class FileExtensions
 			return file;
 		}
 		return findDeepestPathToExist(file.getParentFile());
+	}
+
+	public static String getRelativePath(File file, File relativeTo)
+	{
+		try
+		{
+			UNCFile unc1 = new UNCFile(file);
+			UNCFile unc2 = new UNCFile(relativeTo);
+			StringTokenizer fileTizer;
+			StringTokenizer relativeToTizer;
+			if (unc1.onNetworkDrive())
+			{
+				fileTizer = new StringTokenizer(unc1.getUNCPath(), fs);
+			}
+			else
+			{
+				fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
+			}
+			if (unc2.onNetworkDrive())
+			{
+				relativeToTizer = new StringTokenizer(unc2.getUNCPath(), fs);
+			}
+			else
+			{
+				relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), fs);
+			}
+			List<String> fileTokens = new ArrayList<String>();
+			List<String> relativeToTokens = new ArrayList<String>();
+			while (fileTizer.hasMoreTokens())
+			{
+				fileTokens.add(fileTizer.nextToken());
+			}
+			while (relativeToTizer.hasMoreTokens())
+			{
+				relativeToTokens.add(relativeToTizer.nextToken());
+			}
+
+			// throw away last token from each, don't need the file names for path calculation.
+			String fileName = "";
+			if (file.isFile())
+			{
+				fileName = fileTokens.remove(fileTokens.size() - 1);
+			}
+
+			// relativeTo is the playlist we'll be writing to, we need to remove the last token regardless...
+			relativeToTokens.remove(relativeToTokens.size() - 1);
+
+			int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
+			boolean tokenMatch = false;
+			for (int i = 0; i < maxSize; i++)
+			{
+				if (GUIDriver.fileSystemIsCaseSensitive ? fileTokens.get(i).equals(relativeToTokens.get(i)) : fileTokens.get(i).equalsIgnoreCase(relativeToTokens.get(i)))
+				{
+					tokenMatch = true;
+					fileTokens.remove(i);
+					relativeToTokens.remove(i);
+					i--;
+					maxSize--;
+				}
+				else if (tokenMatch == false)
+				{
+					// files can not be made relative to one another.
+					return file.getAbsolutePath();
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			StringBuilder resultBuffer = new StringBuilder();
+			for (int i = 0; i < relativeToTokens.size(); i++)
+			{
+				resultBuffer.append("..").append(fs);
+			}
+
+			for (int i = 0; i < fileTokens.size(); i++)
+			{
+				resultBuffer.append(fileTokens.get(i)).append(fs);
+			}
+
+			resultBuffer.append(fileName);
+
+			return resultBuffer.toString();
+		}
+		catch (Exception e)
+		{
+			return file.getAbsolutePath();
+		}
 	}
 }

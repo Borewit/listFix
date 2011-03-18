@@ -136,7 +136,7 @@ public class IniFileConverter
 		}
 		catch (IOException ex)
 		{
-			Logger.getLogger(IniFileConverter.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 		}
 		(new File(fname1)).delete();
 		(new File(fname2)).delete();

@@ -145,7 +145,7 @@ public class UnicodeUtils
 			}
 			catch (Exception ex)
 			{
-				Logger.getLogger(UnicodeUtils.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
 				return null;
 			}
 		}

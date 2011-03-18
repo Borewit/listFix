@@ -271,11 +271,11 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			}
 			catch (IOException ex)
 			{
-				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
 			}
 			catch (InterruptedException ex)
 			{
-				Logger.getLogger(BatchClosestMatchResultsDialog.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
 			}
 		}
 

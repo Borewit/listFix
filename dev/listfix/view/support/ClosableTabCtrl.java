@@ -105,9 +105,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         setFocusable(false);
         setOpaque(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
             }
@@ -125,18 +122,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         add(jButton1);
     }// </editor-fold>//GEN-END:initComponents
 
-	private void formMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseClicked
-	{//GEN-HEADEREND:event_formMouseClicked
-//		if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
-//		{
-//			rightClickMenu.show(this, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
-//		}
-//		else if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-//		{
-//			_tabPane.setSelectedIndex(getTabIx());
-//		}
-	}//GEN-LAST:event_formMouseClicked
-
 	private void closeAllTabsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeAllTabsMenuItemActionPerformed
 	{//GEN-HEADEREND:event_closeAllTabsMenuItemActionPerformed
 		_tabMgr.tryCloseAllTabs();
@@ -147,21 +132,21 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 		_tabMgr.closeAllOtherTabs(getTabIx());
 	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
 
-	private void formMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseReleased
-	{//GEN-HEADEREND:event_formMouseReleased
-		if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
-		{
-			rightClickMenu.show(this, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
-		}
-	}//GEN-LAST:event_formMouseReleased
-
 	private void formMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMousePressed
 	{//GEN-HEADEREND:event_formMousePressed
 		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
 		{
 			_tabPane.setSelectedIndex(getTabIx());
 		}
-	}//GEN-LAST:event_formMousePressed
+}//GEN-LAST:event_formMousePressed
+
+	private void formMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseReleased
+	{//GEN-HEADEREND:event_formMouseReleased
+		if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
+		{
+			rightClickMenu.show(this, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
+		}
+}//GEN-LAST:event_formMouseReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

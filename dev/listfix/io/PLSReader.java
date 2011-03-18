@@ -121,7 +121,7 @@ public class PLSReader implements IPlaylistReader
 			}
 			catch (URISyntaxException ex)
 			{
-				Logger.getLogger(PLSReader.class.getName()).log(Level.SEVERE, null, ex);
+				ex.printStackTrace();
 			}
 		}
 		else

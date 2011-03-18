@@ -44,78 +44,7 @@ public class FileWriter
 	private final String br = System.getProperty("line.separator");
 	private static final String fs = System.getProperty("file.separator");
 	private final String homeDir = System.getProperty("user.home");
-	private final String dataDir = homeDir + fs + "listFixData" + fs;
-
-	public static String getRelativePath(File file, File relativeTo)
-	{
-		try
-		{
-			StringTokenizer fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
-			StringTokenizer relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), fs);
-			List<String> fileTokens = new ArrayList<String>();
-			List<String> relativeToTokens = new ArrayList<String>();
-			while (fileTizer.hasMoreTokens())
-			{
-				fileTokens.add(fileTizer.nextToken());
-			}
-			while (relativeToTizer.hasMoreTokens())
-			{
-				relativeToTokens.add(relativeToTizer.nextToken());
-			}
-
-			// throw away last token from each, don't need the file names for path calculation.
-			String fileName = "";
-			if (file.isFile())
-			{
-				fileName = fileTokens.remove(fileTokens.size() - 1);
-			}
-
-			// relativeTo is the playlist we'll be writing to, we need to remove the last token regardless...
-			relativeToTokens.remove(relativeToTokens.size() - 1);
-
-			int maxSize = fileTokens.size() >= relativeToTokens.size() ? relativeToTokens.size() : fileTokens.size();
-			boolean tokenMatch = false;
-			for (int i = 0; i < maxSize; i++)
-			{
-				if (GUIDriver.fileSystemIsCaseSensitive ? fileTokens.get(i).equals(relativeToTokens.get(i)) : fileTokens.get(i).equalsIgnoreCase(relativeToTokens.get(i)))
-				{
-					tokenMatch = true;
-					fileTokens.remove(i);
-					relativeToTokens.remove(i);
-					i--;
-					maxSize--;
-				}
-				else if (tokenMatch == false)
-				{
-					// files can not be made relative to one another.
-					return file.getAbsolutePath();
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			StringBuilder resultBuffer = new StringBuilder();
-			for (int i = 0; i < relativeToTokens.size(); i++)
-			{
-				resultBuffer.append("..").append(fs);
-			}
-
-			for (int i = 0; i < fileTokens.size(); i++)
-			{
-				resultBuffer.append(fileTokens.get(i)).append(fs);
-			}
-
-			resultBuffer.append(fileName);
-
-			return resultBuffer.toString();
-		}
-		catch (Exception e)
-		{
-			return file.getAbsolutePath();
-		}
-	}
+	private final String dataDir = homeDir + fs + "listFixData" + fs;	
 
 	public void writeDefaultIniFilesIfNeeded()
 	{
