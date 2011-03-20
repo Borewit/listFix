@@ -32,8 +32,6 @@ import listfix.controller.GUIDriver;
  */
 public class FileExtensions
 {
-	private static String fs = System.getProperty("file.separator");
-
 	public static File findDeepestPathToExist(File file)
 	{
 		if (file == null || file.exists())
@@ -53,19 +51,19 @@ public class FileExtensions
 			StringTokenizer relativeToTizer;
 			if (unc1.onNetworkDrive())
 			{
-				fileTizer = new StringTokenizer(unc1.getUNCPath(), fs);
+				fileTizer = new StringTokenizer(unc1.getUNCPath(), Constants.FS);
 			}
 			else
 			{
-				fileTizer = new StringTokenizer(file.getAbsolutePath(), fs);
+				fileTizer = new StringTokenizer(file.getAbsolutePath(), Constants.FS);
 			}
 			if (unc2.onNetworkDrive())
 			{
-				relativeToTizer = new StringTokenizer(unc2.getUNCPath(), fs);
+				relativeToTizer = new StringTokenizer(unc2.getUNCPath(), Constants.FS);
 			}
 			else
 			{
-				relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), fs);
+				relativeToTizer = new StringTokenizer(relativeTo.getAbsolutePath(), Constants.FS);
 			}
 			List<String> fileTokens = new ArrayList<String>();
 			List<String> relativeToTokens = new ArrayList<String>();
@@ -114,12 +112,12 @@ public class FileExtensions
 			StringBuilder resultBuffer = new StringBuilder();
 			for (int i = 0; i < relativeToTokens.size(); i++)
 			{
-				resultBuffer.append("..").append(fs);
+				resultBuffer.append("..").append(Constants.FS);
 			}
 
 			for (int i = 0; i < fileTokens.size(); i++)
 			{
-				resultBuffer.append(fileTokens.get(i)).append(fs);
+				resultBuffer.append(fileTokens.get(i)).append(Constants.FS);
 			}
 
 			resultBuffer.append(fileName);

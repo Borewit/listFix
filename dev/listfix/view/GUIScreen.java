@@ -20,6 +20,7 @@
 
 package listfix.view;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -29,6 +30,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -289,6 +291,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				}
 			}
 		});
+
+		// Add the window open event handler...
+		Toolkit tk = Toolkit.getDefaultToolkit( );
+        tk.addAWTEventListener(WindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
 	}
 
 	@Override
@@ -1702,7 +1708,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		}
 
-		WindowSaver.saveSettings();
+		WindowSaver.getInstance().saveSettings();
 		System.exit(0);
 	}
 

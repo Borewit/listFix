@@ -23,10 +23,10 @@ package listfix.io;
 import java.io.File;
 import java.io.IOException;
 
-import listfix.model.*;
-import listfix.io.*;
-import listfix.view.support.IProgressObserver;;
+import listfix.model.Playlist;
+import listfix.model.PlaylistEntry;
 
+import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
 public class PlaylistEntryFileCopier
@@ -50,7 +50,6 @@ public class PlaylistEntryFileCopier
 		PlaylistEntry tempEntry = null;
 		File fileToCopy = null;
 		File dest = null;
-		String fs = System.getProperty("file.separator");
 		for (int i = 0; i < _list.size(); i++)
 		{
 			if (!_observer.getCancelled())
@@ -61,7 +60,7 @@ public class PlaylistEntryFileCopier
 					fileToCopy = tempEntry.getAbsoluteFile();
 					if (tempEntry.isFound()) // && fileToCopy.exists())
 					{
-						dest = new File(_destination.getPath() + fs + tempEntry.getFileName());
+						dest = new File(_destination.getPath() + Constants.FS + tempEntry.getFileName());
 						try
 						{
 							FileCopier.copy(fileToCopy, dest);

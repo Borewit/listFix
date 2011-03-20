@@ -24,15 +24,10 @@ package listfix.io;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     FileWriter.java
-= Purpose:  Provides methods for writing a playlist to a file
-=           and writing out the ini files for this program.
+= Purpose:  Provides methods for writing out the ini files for this program.
 ============================================================================
  */
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import listfix.controller.GUIDriver;
 
 import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.model.AppOptions;
@@ -41,35 +36,32 @@ import listfix.util.UnicodeUtils;
 
 public class FileWriter
 {
-	private final String br = System.getProperty("line.separator");
-	private static final String fs = System.getProperty("file.separator");
-	private final String homeDir = System.getProperty("user.home");
-	private final String dataDir = homeDir + fs + "listFixData" + fs;	
+		
 
 	public void writeDefaultIniFilesIfNeeded()
 	{
 		BufferedWriter output;
 		FileOutputStream outputStream;
 
-		File testDir = new File(dataDir);
+		File testDir = new File(Constants.DATA_DIR);
 		if (!testDir.exists())
 		{
 			testDir.mkdir();
 		}
 
-		File testFile = new File(dataDir + "dirLists.ini");
+		File testFile = new File(Constants.DATA_DIR + "dirLists.ini");
 		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
 		{
 			try
 			{
 				StringBuilder buffer = new StringBuilder();
 				AppOptions options = new AppOptions();
-				outputStream = new FileOutputStream(dataDir + "dirLists.ini");
+				outputStream = new FileOutputStream(Constants.DATA_DIR + "dirLists.ini");
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
-				buffer.append("[Media Directories]").append(br);
-				buffer.append("[Media Library Directories]").append(br);
-				buffer.append("[Media Library Files]").append(br);
+				buffer.append("[Media Directories]").append(Constants.BR);
+				buffer.append("[Media Library Directories]").append(Constants.BR);
+				buffer.append("[Media Library Files]").append(Constants.BR);
 				output.write(buffer.toString());
 				output.close();
 				outputStream.close();
@@ -83,15 +75,15 @@ public class FileWriter
 
 		OptionsWriter.writeDefaults();
 
-		testFile = new File(dataDir + "history.ini");
+		testFile = new File(Constants.DATA_DIR + "history.ini");
 		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
 		{
 			try
 			{
-				outputStream = new FileOutputStream(dataDir + "history.ini");
+				outputStream = new FileOutputStream(Constants.DATA_DIR + "history.ini");
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
-				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent Playlists]" + br);
+				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent Playlists]" + Constants.BR);
 				output.close();
 				outputStream.close();
 			}
@@ -108,13 +100,13 @@ public class FileWriter
 		try
 		{
 			StringBuilder buffer = new StringBuilder();
-			buffer.append("[Recent Playlists]").append(br);
+			buffer.append("[Recent Playlists]").append(Constants.BR);
 			String[] filenames = history.getFilenames();
 			for (int i = 0; i < filenames.length; i++)
 			{
-				buffer.append(filenames[i]).append(br);
+				buffer.append(filenames[i]).append(Constants.BR);
 			}
-			FileOutputStream outputStream = new FileOutputStream(dataDir + "history.ini");
+			FileOutputStream outputStream = new FileOutputStream(Constants.DATA_DIR + "history.ini");
 			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 			BufferedWriter output = new BufferedWriter(osw);
 			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());

@@ -150,6 +150,7 @@ public class ProgressDialog extends javax.swing.JDialog
                 formWindowClosing(evt);
             }
         });
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         jPanel1.setMinimumSize(new java.awt.Dimension(270, 45));
         jPanel1.setPreferredSize(new java.awt.Dimension(166, 45));
@@ -175,13 +176,13 @@ public class ProgressDialog extends javax.swing.JDialog
         _progressMessage.setText("Message");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
         jPanel1.add(_progressMessage, gridBagConstraints);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanel1);
 
         jPanel2.setMinimumSize(new java.awt.Dimension(77, 30));
         jPanel2.setPreferredSize(new java.awt.Dimension(77, 30));
@@ -201,7 +202,7 @@ public class ProgressDialog extends javax.swing.JDialog
         });
         jPanel2.add(_cancelButton);
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanel2);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

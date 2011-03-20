@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
+
 import listfix.model.AppOptions;
 import listfix.model.enums.AppOptionsEnum;
 import listfix.view.support.FontExtensions;
@@ -39,17 +40,13 @@ import listfix.view.support.FontExtensions;
  */
 public class OptionsReader
 {
-	private static String fs = System.getProperty("file.separator");
-	private static String homeDir = System.getProperty("user.home");
-	private static String dataDir = homeDir + fs + "listFixData" + fs;
-
 	public static AppOptions read()
 	{
 		BufferedReader B1;
 		AppOptions options = new AppOptions();
 		try
 		{
-			B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(dataDir + "options.ini")), "UTF-8"), "UTF8"));
+			B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(Constants.DATA_DIR + "options.ini")), "UTF-8"), "UTF8"));
 			String line = B1.readLine();
 			// Read in app options, but only if the file contains them in this spot...
 			// skip first line, contains header

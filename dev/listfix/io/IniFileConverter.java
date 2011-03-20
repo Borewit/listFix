@@ -32,10 +32,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import listfix.controller.tasks.WriteMediaLibraryIniTask;
 
+import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.model.enums.AppOptionsEnum;
@@ -54,11 +52,9 @@ public class IniFileConverter
 {
 	private BufferedReader B1;
 	private BufferedReader B2;
-	private static String fs = System.getProperty("file.separator");
-	private static String homeDir = System.getProperty("user.home");
-	private static String fname1 = homeDir + fs + "dirLists.ini";
-	private static String fname2 = homeDir + fs + "listFixHistory.ini";
-	private static String dataDir = homeDir + fs + "listFixData" + fs;
+	private static String fname1 = Constants.HOME_DIR + Constants.FS + "dirLists.ini";
+	private static String fname2 = Constants.HOME_DIR + Constants.FS + "listFixHistory.ini";
+	private static String dataDir = Constants.HOME_DIR + Constants.FS + "listFixData" + Constants.FS;
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];

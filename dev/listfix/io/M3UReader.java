@@ -53,8 +53,6 @@ import listfix.view.support.ProgressAdapter;
  */
 public class M3UReader implements IPlaylistReader
 {
-	private final static String fs = System.getProperty("file.separator");
-	private final static String br = System.getProperty("line.separator");
 	private BufferedReader buffer;
 	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
 	private long fileLength = 0;
@@ -136,7 +134,7 @@ public class M3UReader implements IPlaylistReader
 						// throw away non-standard metadata added by mediamonkey...
 						if (!line2.startsWith("#UTF8"))
 						{
-							line1 = line1 + br + line2;
+							line1 = line1 + Constants.BR + line2;
 						}
 						line2 = readLine();
 					}
@@ -178,7 +176,7 @@ public class M3UReader implements IPlaylistReader
 									// throw away non-standard metadata added by mediamonkey...
 									if (!line2.startsWith("#UTF8"))
 									{
-										line1 = line1 + br + line2;
+										line1 = line1 + Constants.BR + line2;
 									}
 									line2 = readLine();
 								}
@@ -227,7 +225,7 @@ public class M3UReader implements IPlaylistReader
 						// throw away non-standard metadata added by mediamonkey...
 						if (!line2.startsWith("#UTF8"))
 						{
-							line1 = line1 + br + line2;
+							line1 = line1 + Constants.BR + line2;
 						}
 						line2 = readLine();
 					}
@@ -256,7 +254,7 @@ public class M3UReader implements IPlaylistReader
 								// throw away non-standard metadata added by mediamonkey...
 								if (!line2.startsWith("#UTF8"))
 								{
-									line1 = line1 + br + line2;
+									line1 = line1 + Constants.BR + line2;
 								}
 								line2 = readLine();
 							}
@@ -287,7 +285,7 @@ public class M3UReader implements IPlaylistReader
 		{
 			// do nothing, leave tokenizer null
 		}
-		else if (fs.equalsIgnoreCase("/")) // OS Specific Hack
+		else if (Constants.FS.equalsIgnoreCase("/")) // OS Specific Hack
 		{
 			if (!L2.startsWith("\\\\") && !L2.startsWith("."))
 			{
@@ -295,11 +293,11 @@ public class M3UReader implements IPlaylistReader
 			}
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
-		else if (fs.equalsIgnoreCase(":")) // OS Specific Hack
+		else if (Constants.FS.equalsIgnoreCase(":")) // OS Specific Hack
 		{
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
-		else if (fs.equalsIgnoreCase("\\")) // OS Specific Hack
+		else if (Constants.FS.equalsIgnoreCase("\\")) // OS Specific Hack
 		{
 			pathTokenizer = new StringTokenizer(L2, "\\/");
 			if (!L2.startsWith("\\\\") && L2.startsWith("\\"))
@@ -324,7 +322,7 @@ public class M3UReader implements IPlaylistReader
 			while (pathTokenizer.hasMoreTokens())
 			{
 				String word = pathTokenizer.nextToken();
-				String tempPath = path.toString() + word + fs;
+				String tempPath = path.toString() + word + Constants.FS;
 				if (tokenNumber == 0)
 				{
 					firstToken = word;
@@ -333,7 +331,7 @@ public class M3UReader implements IPlaylistReader
 				{
 					secondToken = word;
 				}
-				if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + fs))
+				if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + Constants.FS))
 				{
 					// This token is the closest thing we have to the notion of a 'drive' on any OS...
 					// make a file out of this and see if it has any files.
@@ -344,7 +342,7 @@ public class M3UReader implements IPlaylistReader
 					}
 				}
 				else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1
-					&& !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken + fs)
+					&& !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken + Constants.FS)
 					&& !ArrayFunctions.ContainsStringPrefixingAnotherString(PlaylistEntry.ExistingDirectories, tempPath, true)
 					&& !ArrayFunctions.ContainsStringPrefixingAnotherString(PlaylistEntry.NonExistentDirectories, tempPath, true))
 				{
@@ -366,13 +364,13 @@ public class M3UReader implements IPlaylistReader
 					if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
 					{
 						// don't want to knock out the whole drive, as other folders might be accessible there...
-						PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken + fs + secondToken + fs);
+						PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken + Constants.FS + secondToken + Constants.FS);
 					}
 				}
 				if (pathTokenizer.hasMoreTokens())
 				{
 					path.append(word);
-					path.append(fs);
+					path.append(Constants.FS);
 				}
 				else
 				{

@@ -20,7 +20,6 @@
 
 package listfix.io;
 
-import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,12 +30,8 @@ import java.io.UnsupportedEncodingException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import listfix.model.AppOptions;
-import listfix.model.enums.AppOptionsEnum;
-import listfix.util.UnicodeUtils;
-import listfix.view.support.FontExtensions;
 
 /*
 ============================================================================
@@ -52,9 +47,6 @@ public class IniFileReader
 	private BufferedReader B2;
 	private String fname1;
 	private String fname2;
-	private String fs = System.getProperty("file.separator");
-	private String homeDir = System.getProperty("user.home");
-	private final String dataDir = homeDir + fs + "listFixData" + fs;
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];
@@ -64,8 +56,8 @@ public class IniFileReader
 	public IniFileReader(AppOptions opts) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		options = opts;
-		fname1 = dataDir + "dirLists.ini";
-		fname2 = dataDir + "history.ini";
+		fname1 = Constants.DATA_DIR + "dirLists.ini";
+		fname2 = Constants.DATA_DIR + "history.ini";
 		
 		File in_data1 = new File(fname1);
 		if (!in_data1.exists())

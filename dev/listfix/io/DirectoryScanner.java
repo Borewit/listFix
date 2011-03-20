@@ -39,7 +39,6 @@ public class DirectoryScanner
 {
 	private List<String> thisDirList;
 	private List<String> thisFileList;
-	private final String fs = System.getProperty("file.separator");
 	private int recursiveCount = 0;
 
 	public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
@@ -60,17 +59,17 @@ public class DirectoryScanner
 		input = input.toLowerCase();
 		return (input.endsWith(".mp3") || input.endsWith(".wma")
 			|| input.endsWith(".flac") || input.endsWith(".ogg")
-			|| input.endsWith(".wav") || input.endsWith(".midi")
-			|| input.endsWith(".cda") || input.endsWith(".mpg")
+			|| input.endsWith(".wav")  || input.endsWith(".midi")
+			|| input.endsWith(".cda")  || input.endsWith(".mpg")
 			|| input.endsWith(".mpeg") || input.endsWith(".m2v")
-			|| input.endsWith(".avi") || input.endsWith(".m4v")
-			|| input.endsWith(".flv") || input.endsWith(".mid")
-			|| input.endsWith(".mp2") || input.endsWith(".mp1")
-			|| input.endsWith(".aac") || input.endsWith(".asx")
-			|| input.endsWith(".m4a") || input.endsWith(".mp4")
-			|| input.endsWith(".m4v") || input.endsWith(".nsv")
+			|| input.endsWith(".avi")  || input.endsWith(".m4v")
+			|| input.endsWith(".flv")  || input.endsWith(".mid")
+			|| input.endsWith(".mp2")  || input.endsWith(".mp1")
+			|| input.endsWith(".aac")  || input.endsWith(".asx")
+			|| input.endsWith(".m4a")  || input.endsWith(".mp4")
+			|| input.endsWith(".m4v")  || input.endsWith(".nsv")
 			|| input.endsWith(".aiff") || input.endsWith(".au")
-			|| input.endsWith(".wmv") || input.endsWith(".asf")
+			|| input.endsWith(".wmv")  || input.endsWith(".asf")
 			|| input.endsWith(".mpc"));
 	}
 
@@ -93,9 +92,9 @@ public class DirectoryScanner
 				for (int i = 0; i < entryList.length; i++)
 				{
 					s.append(baseDir);
-					if (!baseDir.endsWith(fs))
+					if (!baseDir.endsWith(Constants.FS))
 					{
-						s.append(fs);
+						s.append(Constants.FS);
 					}
 					s.append(entryList[i]);
 					tempFile = new File(s.toString());

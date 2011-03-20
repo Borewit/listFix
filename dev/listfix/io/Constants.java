@@ -29,4 +29,5 @@ public class Constants
 	public static final String FS = System.getProperty("file.separator");
 	public static final String HOME_DIR = System.getProperty("user.home");
 	public static final String DATA_DIR = HOME_DIR + FS + "listFixData" + FS;
+	public static final String BR = System.getProperty("line.separator");
 }

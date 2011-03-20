@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import listfix.io.Constants;
 
@@ -43,6 +41,7 @@ import listfix.io.Constants;
  */
 public class WindowSaver implements AWTEventListener
 {
+	private static final String PROP_FILE = Constants.DATA_DIR + "configuration.props";
 	private static WindowSaver saver;
 	private Map framemap;
 
@@ -81,13 +80,13 @@ public class WindowSaver implements AWTEventListener
 		}
 	}
 
-	public static void loadSettings(JFrame frame)
+	public void loadSettings(JFrame frame)
 	{
 		Properties settings = new Properties();
 		String name = frame.getName();
 		try
 		{
-			settings.load(new FileInputStream(Constants.DATA_DIR + "configuration.props"));	
+			settings.load(new FileInputStream(PROP_FILE));
 			int x = getInt(settings, name + ".x", 100);
 			int y = getInt(settings, name + ".y", 100);
 			int w = getInt(settings, name + ".w", 500);
@@ -103,7 +102,7 @@ public class WindowSaver implements AWTEventListener
 		frame.validate();
 	}
 
-	public static int getInt(Properties props, String name, int value)
+	public int getInt(Properties props, String name, int value)
 	{
 		String v = props.getProperty(name);
 		if (v == null)
@@ -113,12 +112,12 @@ public class WindowSaver implements AWTEventListener
 		return Integer.parseInt(v);
 	}
 
-	public static void saveSettings()
+	public void saveSettings()
 	{
 		Properties settings = new Properties();
 		try
 		{
-			settings.load(new FileInputStream(Constants.DATA_DIR + "configuration.props"));
+			settings.load(new FileInputStream(PROP_FILE));
 		}
 		catch (IOException ex)
 		{
@@ -137,7 +136,7 @@ public class WindowSaver implements AWTEventListener
 		}
 		try
 		{
-			settings.store(new FileOutputStream(Constants.DATA_DIR + "configuration.props"), null);
+			settings.store(new FileOutputStream(PROP_FILE), null);
 		}
 		catch (IOException ex)
 		{

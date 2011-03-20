@@ -38,10 +38,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import listfix.io.FileExtensions;
 
+import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
-import listfix.io.FileWriter;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
 

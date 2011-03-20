@@ -20,15 +20,17 @@
 
 package listfix.controller.tasks;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+import listfix.io.Constants;
 import listfix.util.UnicodeUtils;
 
 public class WriteMediaLibraryIniTask extends listfix.controller.Task
 {
-	private final static String fs = System.getProperty("file.separator");
-	private final static String homeDir = System.getProperty("user.home");
-	private final String dataDir = homeDir + fs + "listFixData" + fs;
-	private final static String br = System.getProperty("line.separator");
 	private String[] mediaDir;
 	private String[] mediaLibraryDirList;
 	private String[] mediaLibraryFileList;
@@ -48,32 +50,32 @@ public class WriteMediaLibraryIniTask extends listfix.controller.Task
 			StringBuilder buffer = new StringBuilder();
 			if (mediaDir != null)
 			{
-				buffer.append("[Media Directories]").append(br);
+				buffer.append("[Media Directories]").append(Constants.BR);
 				for (int i = 0; i < mediaDir.length; i++)
 				{
-					buffer.append(mediaDir[i]).append(br);
+					buffer.append(mediaDir[i]).append(Constants.BR);
 				}
 			}
 
 			if (mediaLibraryDirList != null)
 			{
-				buffer.append("[Media Library Directories]").append(br);
+				buffer.append("[Media Library Directories]").append(Constants.BR);
 				for (int i = 0; i < mediaLibraryDirList.length; i++)
 				{
-					buffer.append(mediaLibraryDirList[i]).append(br);
+					buffer.append(mediaLibraryDirList[i]).append(Constants.BR);
 				}
 			}
 
 			if (mediaLibraryDirList != null)
 			{
-				buffer.append("[Media Library Files]").append(br);
+				buffer.append("[Media Library Files]").append(Constants.BR);
 				for (int i = 0; i < mediaLibraryFileList.length; i++)
 				{
-					buffer.append(mediaLibraryFileList[i]).append(br);
+					buffer.append(mediaLibraryFileList[i]).append(Constants.BR);
 				}
 			}
 
-			FileOutputStream outputStream = new FileOutputStream(dataDir + "dirLists.ini");
+			FileOutputStream outputStream = new FileOutputStream(Constants.DATA_DIR + "dirLists.ini");
 			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 			BufferedWriter output = new BufferedWriter(osw);
 			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());

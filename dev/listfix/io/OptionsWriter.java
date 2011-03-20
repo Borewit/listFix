@@ -34,28 +34,23 @@ import listfix.view.support.FontExtensions;
  */
 public class OptionsWriter
 {
-	private static final String br = System.getProperty("line.separator");
-	private static String fs = System.getProperty("file.separator");
-	private static String homeDir = System.getProperty("user.home");
-	private static String dataDir = homeDir + fs + "listFixData" + fs;
-
 	public static void appendOptionsText(StringBuilder buffer, AppOptions options)
 	{
-		buffer.append("[Options]").append(br);
-		buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(br);
-		buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(br);
-		buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(br);
-		buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(br);
-		buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(br);
-		buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(br);
-		buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(br);
-		buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(br);
-		buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(br);
+		buffer.append("[Options]").append(Constants.BR);
+		buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(Constants.BR);
+		buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(Constants.BR);
+		buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(Constants.BR);
+		buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(Constants.BR);
+		buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(Constants.BR);
+		buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(Constants.BR);
+		buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(Constants.BR);
+		buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(Constants.BR);
+		buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(Constants.BR);
 	}
 
 	public static void writeDefaults()
 	{
-		File test = new File(dataDir + "options.ini");
+		File test = new File(Constants.DATA_DIR + "options.ini");
 		if (!test.exists() || (test.exists() && test.length() == 0))
 		{
 			write(new AppOptions());
@@ -64,7 +59,7 @@ public class OptionsWriter
 
 	public static void write(AppOptions options)
 	{
-		File test = new File(dataDir + "options.ini");
+		File test = new File(Constants.DATA_DIR + "options.ini");
 		FileOutputStream outputStream;
 		BufferedWriter output;
 		try
