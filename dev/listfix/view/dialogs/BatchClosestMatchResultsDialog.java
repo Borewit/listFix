@@ -21,7 +21,6 @@ package listfix.view.dialogs;
 
 import java.awt.Component;
 import java.awt.DisplayMode;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,8 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
@@ -55,11 +52,15 @@ import javax.swing.table.TableColumnModel;
 
 import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
+import listfix.util.ExStack;
 
 import listfix.view.support.ZebraJTable;
+import org.apache.log4j.Logger;
 
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
+	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
+
 	public BatchClosestMatchResultsDialog(java.awt.Frame parent, List<BatchMatchItem> items)
 	{
 		super(parent, true);
@@ -271,11 +272,11 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			}
 			catch (IOException ex)
 			{
-				ex.printStackTrace();
+				_logger.warn(ExStack.toString(ex));
 			}
 			catch (InterruptedException ex)
 			{
-				ex.printStackTrace();
+				_logger.warn(ExStack.toString(ex));
 			}
 		}
 

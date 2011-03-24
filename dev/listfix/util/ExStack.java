@@ -18,19 +18,24 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.util;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  *
  * @author jcaron
  */
-public class Constants
+public class ExStack
 {
-	public static final String FS = System.getProperty("file.separator");
-	public static final String HOME_DIR = System.getProperty("user.home");
-	public static final String DATA_DIR = HOME_DIR + FS + "listFixData" + FS;
-	public static final String BR = System.getProperty("line.separator");
-	public static final String MEDIA_LIBRARY_INI = DATA_DIR + "dirLists.ini";
-	public static final String HISTORY_INI = DATA_DIR + "history.ini";
-	public static final String OPTIONS_INI = DATA_DIR + "options.ini";
+	public static String toString(Throwable aThrowable)
+	{
+		final Writer result = new StringWriter();
+		final PrintWriter printWriter = new PrintWriter(result);
+		aThrowable.printStackTrace(printWriter);
+		return result.toString();
+	}
+
 }

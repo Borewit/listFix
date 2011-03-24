@@ -56,8 +56,8 @@ public class IniFileReader
 	public IniFileReader(AppOptions opts) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		options = opts;
-		fname1 = Constants.DATA_DIR + "dirLists.ini";
-		fname2 = Constants.DATA_DIR + "history.ini";
+		fname1 = Constants.MEDIA_LIBRARY_INI;
+		fname2 = Constants.HISTORY_INI;
 		
 		File in_data1 = new File(fname1);
 		if (!in_data1.exists())

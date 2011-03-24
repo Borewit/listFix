@@ -19,7 +19,6 @@
 
 package listfix.view.dialogs;
 
-import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,14 +37,16 @@ import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
+import listfix.util.ExStack;
 import listfix.view.support.DualProgressWorker;
-import listfix.view.support.FontExtensions;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
+import org.apache.log4j.Logger;
 
 public class BatchRepairDialog extends javax.swing.JDialog
 {
 	private boolean _userCancelled = false;
+	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
 
 	/** Creates new form BatchRepairDialog */
 	public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
@@ -181,7 +182,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				_logger.warn(ExStack.toString(e));
 			}
 			_uiLists.setRowSelectionInterval(uiIndex, uiIndex);
 		}

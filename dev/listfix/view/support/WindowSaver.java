@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Properties;
 import javax.swing.JFrame;
 import listfix.io.Constants;
+import listfix.util.ExStack;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -44,6 +46,7 @@ public class WindowSaver implements AWTEventListener
 	private static final String PROP_FILE = Constants.DATA_DIR + "configuration.props";
 	private static WindowSaver saver;
 	private Map framemap;
+	private static final Logger _logger = Logger.getLogger(WindowSaver.class);
 
 	private WindowSaver()
 	{
@@ -76,7 +79,7 @@ public class WindowSaver implements AWTEventListener
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			_logger.warn(ExStack.toString(ex));
 		}
 	}
 
@@ -96,7 +99,7 @@ public class WindowSaver implements AWTEventListener
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			_logger.info(ExStack.toString(ex));
 		}
 		saver.framemap.put(name, frame);
 		frame.validate();
@@ -121,7 +124,7 @@ public class WindowSaver implements AWTEventListener
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			_logger.info(ExStack.toString(ex));
 		}
 
 		Iterator it = saver.framemap.keySet().iterator();
@@ -140,7 +143,7 @@ public class WindowSaver implements AWTEventListener
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			_logger.error(ExStack.toString(ex));
 		}
 	}
 

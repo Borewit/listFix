@@ -43,6 +43,7 @@ public class WriteMediaLibraryIniTask extends listfix.controller.Task
 	}
 
 	/** Run the task. This method is the body of the thread for this task.  */
+	@Override
 	public void run()
 	{
 		try
@@ -75,7 +76,7 @@ public class WriteMediaLibraryIniTask extends listfix.controller.Task
 				}
 			}
 
-			FileOutputStream outputStream = new FileOutputStream(Constants.DATA_DIR + "dirLists.ini");
+			FileOutputStream outputStream = new FileOutputStream(Constants.MEDIA_LIBRARY_INI);
 			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 			BufferedWriter output = new BufferedWriter(osw);
 			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());

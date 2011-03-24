@@ -40,14 +40,17 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
+import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
 import net.mariottini.swing.JFontChooser;
+import org.apache.log4j.Logger;
 
 public class AppOptionsDialog extends javax.swing.JDialog
 {
 	private static final long serialVersionUID = 3409894354485158935L;
 	public static final int OK = 0;
 	public static final int CANCEL = 1;
+	private static final Logger _logger = Logger.getLogger(AppOptionsDialog.class);
 
 	private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
 	{
@@ -538,7 +541,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(this, "The directory you selected/entered does not exist.");
-				e.printStackTrace();
+				_logger.info(ExStack.toString(e));
 			}
 		}
 	}//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed

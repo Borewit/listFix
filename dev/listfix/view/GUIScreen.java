@@ -92,6 +92,7 @@ import listfix.model.PlaylistHistory;
 import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
 import listfix.util.OperatingSystem;
+import listfix.util.ExStack;
 
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
@@ -102,6 +103,7 @@ import listfix.view.support.ClosableTabCtrl;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
+import org.apache.log4j.Logger;
 
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
@@ -111,6 +113,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private final JFileChooser jSaveFileChooser;
 	private GUIDriver guiDriver = null;
 	private DropTarget dropTarget = null;
+
+	private static Logger _logger = Logger.getLogger(GUIScreen.class);
 
 	/** Creates new form GUIScreen */
 	public GUIScreen()
@@ -338,7 +342,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 
 					// And add the list of file names to our text area
-					java.util.List list = (java.util.List) tr.getTransferData(flavors[i]);
+					List list = (List) tr.getTransferData(flavors[i]);
 					for (int j = 0; j < list.size(); j++)
 					{
 						if (list.get(j) instanceof File && Playlist.isPlaylist((File)list.get(j)))
@@ -357,7 +361,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			_logger.warn(ExStack.toString(e));
 			dtde.rejectDrop();
 		}
 	}
@@ -1038,7 +1042,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				_logger.error(ExStack.toString(e));
 				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 			}
 			finally
@@ -1313,7 +1317,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			_logger.warn(ExStack.toString(ex));
 		}
 		(new FileWriter()).writeMruPlaylists(history);
 
@@ -1787,7 +1791,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(this, "An error has occured, media directory could not be added.");
-				e.printStackTrace();
+				_logger.error(ExStack.toString(e));
 			}
 		}
 		else
@@ -1817,7 +1821,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
-			e.printStackTrace();
+			_logger.warn(ExStack.toString(e));
 		}
 		updateMediaDirButtons();
 	}//GEN-LAST:event__removeMediaDirButtonActionPerformed
@@ -1835,7 +1839,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
-			e.printStackTrace();
+			_logger.warn(ExStack.toString(e));
 		}
 		updateMediaDirButtons();
 	}
@@ -2036,7 +2040,7 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			_logger.error(ExStack.toString(ex));;
 			JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 		}
 		finally
@@ -2072,7 +2076,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	}
 	catch (IOException ex)
 	{
-		ex.printStackTrace();
+		_logger.error(ExStack.toString(ex));
 		JOptionPane.showMessageDialog(this, "Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.");
 	}
 

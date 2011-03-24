@@ -33,10 +33,11 @@ import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.util.UnicodeUtils;
+import org.apache.log4j.Logger;
 
 public class FileWriter
 {
-		
+	private static final Logger _logger = Logger.getLogger(FileWriter.class);
 
 	public void writeDefaultIniFilesIfNeeded()
 	{
@@ -49,14 +50,14 @@ public class FileWriter
 			testDir.mkdir();
 		}
 
-		File testFile = new File(Constants.DATA_DIR + "dirLists.ini");
+		File testFile = new File(Constants.MEDIA_LIBRARY_INI);
 		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
 		{
 			try
 			{
 				StringBuilder buffer = new StringBuilder();
 				AppOptions options = new AppOptions();
-				outputStream = new FileOutputStream(Constants.DATA_DIR + "dirLists.ini");
+				outputStream = new FileOutputStream(Constants.MEDIA_LIBRARY_INI);
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
 				buffer.append("[Media Directories]").append(Constants.BR);
@@ -75,12 +76,12 @@ public class FileWriter
 
 		OptionsWriter.writeDefaults();
 
-		testFile = new File(Constants.DATA_DIR + "history.ini");
+		testFile = new File(Constants.HISTORY_INI);
 		if (!testFile.exists() || (testFile.exists() && testFile.length() == 0))
 		{
 			try
 			{
-				outputStream = new FileOutputStream(Constants.DATA_DIR + "history.ini");
+				outputStream = new FileOutputStream(Constants.HISTORY_INI);
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				output = new BufferedWriter(osw);
 				output.write(UnicodeUtils.getBOM("UTF-8") + "[Recent Playlists]" + Constants.BR);
@@ -106,7 +107,7 @@ public class FileWriter
 			{
 				buffer.append(filenames[i]).append(Constants.BR);
 			}
-			FileOutputStream outputStream = new FileOutputStream(Constants.DATA_DIR + "history.ini");
+			FileOutputStream outputStream = new FileOutputStream(Constants.HISTORY_INI);
 			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 			BufferedWriter output = new BufferedWriter(osw);
 			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());

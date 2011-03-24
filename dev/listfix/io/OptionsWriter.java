@@ -50,7 +50,7 @@ public class OptionsWriter
 
 	public static void writeDefaults()
 	{
-		File test = new File(Constants.DATA_DIR + "options.ini");
+		File test = new File(Constants.OPTIONS_INI);
 		if (!test.exists() || (test.exists() && test.length() == 0))
 		{
 			write(new AppOptions());
@@ -59,7 +59,7 @@ public class OptionsWriter
 
 	public static void write(AppOptions options)
 	{
-		File test = new File(Constants.DATA_DIR + "options.ini");
+		File test = new File(Constants.OPTIONS_INI);
 		FileOutputStream outputStream;
 		BufferedWriter output;
 		try

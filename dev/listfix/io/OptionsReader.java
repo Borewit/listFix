@@ -46,7 +46,7 @@ public class OptionsReader
 		AppOptions options = new AppOptions();
 		try
 		{
-			B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(Constants.DATA_DIR + "options.ini")), "UTF-8"), "UTF8"));
+			B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(Constants.OPTIONS_INI)), "UTF-8"), "UTF8"));
 			String line = B1.readLine();
 			// Read in app options, but only if the file contains them in this spot...
 			// skip first line, contains header
