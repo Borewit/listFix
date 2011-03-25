@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class WindowSaver implements AWTEventListener
 {
-	private static final String PROP_FILE = Constants.DATA_DIR + "configuration.props";
+	private static final String PROP_FILE = Constants.DATA_DIR + "position.ini";
 	private static WindowSaver saver;
 	private Map framemap;
 	private static final Logger _logger = Logger.getLogger(WindowSaver.class);

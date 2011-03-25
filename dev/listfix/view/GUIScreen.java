@@ -296,9 +296,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		});
 
-		// Add the window open event handler...
-		Toolkit tk = Toolkit.getDefaultToolkit( );
-        tk.addAWTEventListener(WindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
+        WindowSaver.getInstance().loadSettings(this);
 	}
 
 	@Override
@@ -2246,9 +2244,13 @@ private void _miRefreshDirectoryTreeActionPerformed(java.awt.event.ActionEvent e
 	public static void main(String args[])
 	{
 		GUIScreen mainWindow = new GUIScreen();
-		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-		java.awt.Dimension labelSize = mainWindow.getPreferredSize();
-		mainWindow.setLocation(dm.getWidth() / 2 - (labelSize.width / 2), dm.getHeight() / 2 - (labelSize.height / 2));
+
+		if (mainWindow.getLocation().equals(new Point(0, 0)))
+		{
+			DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+			java.awt.Dimension labelSize = mainWindow.getPreferredSize();
+			mainWindow.setLocation(dm.getWidth() / 2 - (labelSize.width / 2), dm.getHeight() / 2 - (labelSize.height / 2));
+		}
 		mainWindow.setVisible(true);
 
 		if (mainWindow.getOptions().getAutoRefreshMediaLibraryOnStartup())

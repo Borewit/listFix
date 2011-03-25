@@ -56,7 +56,6 @@ public class IniFileConverter
 	private BufferedReader B2;
 	private static String fname1 = Constants.HOME_DIR + Constants.FS + "dirLists.ini";
 	private static String fname2 = Constants.HOME_DIR + Constants.FS + "listFixHistory.ini";
-	private static String dataDir = Constants.HOME_DIR + Constants.FS + "listFixData" + Constants.FS;
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];
@@ -111,7 +110,7 @@ public class IniFileConverter
 	
 	public static boolean conversionRequired()
 	{
-		return ((new File(fname1)).exists() || (new File(fname2)).exists());
+		return ((new File(fname1)).exists() && (new File(fname2)).exists());
 	}
 
 	public void convert()
