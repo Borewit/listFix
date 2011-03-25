@@ -43,6 +43,7 @@ import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
+import listfix.util.ExStack;
 
 import listfix.util.FileNameTokenizer;
 import listfix.util.UnicodeUtils;
@@ -50,6 +51,7 @@ import listfix.util.UnicodeUtils;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.log4j.Logger;
 
 public class Playlist
 {
@@ -67,6 +69,7 @@ public class Playlist
 	private int _missingCount;
 	private boolean _isModified;
 	private boolean _isNew;
+	private static final Logger _logger = Logger.getLogger(Playlist.class);
 
 	public List<PlaylistEntry> getEntries()
 	{
@@ -148,7 +151,7 @@ public class Playlist
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 
@@ -358,7 +361,7 @@ public class Playlist
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			_logger.warn(ExStack.toString(e));
 		}
 	}
 

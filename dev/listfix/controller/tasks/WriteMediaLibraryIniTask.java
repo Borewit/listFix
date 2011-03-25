@@ -27,13 +27,17 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import listfix.io.Constants;
+import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
+import org.apache.log4j.Logger;
 
 public class WriteMediaLibraryIniTask extends listfix.controller.Task
 {
 	private String[] mediaDir;
 	private String[] mediaLibraryDirList;
 	private String[] mediaLibraryFileList;
+
+	private static final Logger _logger = Logger.getLogger(WriteMediaLibraryIniTask.class);
 
 	public WriteMediaLibraryIniTask(String[] m, String[] mldl, String[] mlfl)
 	{
@@ -86,7 +90,7 @@ public class WriteMediaLibraryIniTask extends listfix.controller.Task
 		catch (IOException e)
 		{
 			// eat the error and continue
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 }

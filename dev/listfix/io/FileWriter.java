@@ -32,6 +32,7 @@ import java.io.*;
 import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
+import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import org.apache.log4j.Logger;
 
@@ -70,7 +71,7 @@ public class FileWriter
 			catch (Exception e)
 			{
 				// eat the error and continue
-				e.printStackTrace();
+				_logger.error(ExStack.toString(e));
 			}
 		}
 
@@ -91,7 +92,7 @@ public class FileWriter
 			catch (Exception e)
 			{
 				// eat the error and continue
-				e.printStackTrace();
+				_logger.error(ExStack.toString(e));
 			}
 		}
 	}
@@ -117,7 +118,7 @@ public class FileWriter
 		catch (IOException e)
 		{
 			// eat the error and continue
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 
@@ -131,7 +132,7 @@ public class FileWriter
 		catch (Exception e)
 		{
 			// eat the error and continue
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 }

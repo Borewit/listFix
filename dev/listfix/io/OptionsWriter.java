@@ -26,7 +26,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import listfix.model.AppOptions;
+import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -34,6 +36,8 @@ import listfix.view.support.FontExtensions;
  */
 public class OptionsWriter
 {
+	private static final Logger _logger = Logger.getLogger(OptionsWriter.class);
+
 	public static void appendOptionsText(StringBuilder buffer, AppOptions options)
 	{
 		buffer.append("[Options]").append(Constants.BR);
@@ -76,7 +80,7 @@ public class OptionsWriter
 		catch (Exception e)
 		{
 			// eat the error and continue
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 }

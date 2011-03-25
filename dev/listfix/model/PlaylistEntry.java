@@ -31,9 +31,12 @@ import listfix.controller.GUIDriver;
 import listfix.util.*;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.log4j.Logger;
 
 public class PlaylistEntry implements Cloneable
 {
+	// logger
+	private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
 	// file separator
 	private final static String FILE_SEPARATOR = System.getProperty("file.separator");
 	// line separator
@@ -569,7 +572,7 @@ public class PlaylistEntry implements Cloneable
 			catch (Exception e)
 			{
 				//eat the error for now.
-				e.printStackTrace();
+				_logger.warn(ExStack.toString(e));
 			}
 		}
 		return result;

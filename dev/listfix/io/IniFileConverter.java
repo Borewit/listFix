@@ -37,8 +37,10 @@ import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.model.enums.AppOptionsEnum;
+import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.FontExtensions;
+import org.apache.log4j.Logger;
 
 /*
 ============================================================================
@@ -60,6 +62,8 @@ public class IniFileConverter
 	private String[] mediaLibrary = new String[0];
 	private String[] mediaLibraryFiles = new String[0];
 	private AppOptions options = new AppOptions();
+
+	private static final Logger _logger = Logger.getLogger(IniFileConverter.class);
 
 	public IniFileConverter() throws FileNotFoundException, UnsupportedEncodingException
 	{
@@ -132,7 +136,7 @@ public class IniFileConverter
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			_logger.error(ExStack.toString(ex));
 		}
 		(new File(fname1)).delete();
 		(new File(fname2)).delete();

@@ -25,15 +25,18 @@ import java.io.IOException;
 
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
+import listfix.util.ExStack;
 
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.log4j.Logger;
 
 public class PlaylistEntryFileCopier
 {
 	private Playlist _list;
 	private File _destination;
 	private IProgressObserver _observer;
+	private static final Logger _logger = Logger.getLogger(PlaylistEntryFileCopier.class);
 
 	public PlaylistEntryFileCopier(Playlist x, File y, IProgressObserver observer)
 	{
@@ -68,7 +71,7 @@ public class PlaylistEntryFileCopier
 						catch (IOException e)
 						{
 							// eat the error and continue
-							e.printStackTrace();
+							_logger.error(ExStack.toString(e));
 						}
 					}
 				}

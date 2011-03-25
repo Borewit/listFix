@@ -38,10 +38,12 @@ import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 
 import listfix.util.ArrayFunctions;
+import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.log4j.Logger;
 
 /*
 ============================================================================
@@ -59,6 +61,7 @@ public class M3UReader implements IPlaylistReader
 	private String encoding = "";
 	private File _listFile;
 	private static final PlaylistType type = PlaylistType.M3U;
+	private static final Logger _logger = Logger.getLogger(M3UReader.class);
 
 	StringBuilder _cache;
 
@@ -389,7 +392,7 @@ public class M3UReader implements IPlaylistReader
 			catch (Exception e)
 			{
 				// eat the error for now.
-				e.printStackTrace();
+				_logger.warn(ExStack.toString(e));
 			}
 		}
 	}

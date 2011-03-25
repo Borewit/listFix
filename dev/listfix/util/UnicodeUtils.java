@@ -31,13 +31,13 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import listfix.io.UnicodeInputStream;
+import org.apache.log4j.Logger;
 
 public class UnicodeUtils
 {
+	private static final Logger _logger = Logger.getLogger(UnicodeUtils.class);
+
 	public static byte[] convert(byte[] bytes, String encout) throws Exception
 	{
 		// Workaround for bug that will not be fixed by Sun/Oracle
@@ -145,7 +145,7 @@ public class UnicodeUtils
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				_logger.warn(ExStack.toString(ex));
 				return null;
 			}
 		}

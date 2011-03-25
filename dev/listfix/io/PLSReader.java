@@ -28,14 +28,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
+import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.log4j.Logger;
 
 /*
 ============================================================================
@@ -51,6 +51,7 @@ public class PLSReader implements IPlaylistReader
 	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
 	private String encoding = "";
 	private static final PlaylistType type = PlaylistType.PLS;
+	private static final Logger _logger = Logger.getLogger(PLSReader.class);
 
 	public PLSReader(File in) throws FileNotFoundException
 	{
@@ -65,7 +66,7 @@ public class PLSReader implements IPlaylistReader
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 
@@ -121,7 +122,7 @@ public class PLSReader implements IPlaylistReader
 			}
 			catch (URISyntaxException ex)
 			{
-				ex.printStackTrace();
+				_logger.warn(ExStack.toString(ex));
 			}
 		}
 		else

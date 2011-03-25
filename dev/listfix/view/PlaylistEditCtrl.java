@@ -40,8 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
@@ -78,6 +76,7 @@ import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistEntryList;
 import listfix.util.ArrayFunctions;
+import listfix.util.ExStack;
 
 import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
@@ -86,13 +85,14 @@ import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
-import listfix.view.support.FontExtensions;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
+import org.apache.log4j.Logger;
 
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
+	private static final Logger _logger = Logger.getLogger(PlaylistEditCtrl.class);
 	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
 	private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
 	private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
@@ -427,7 +427,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		catch (Exception ex)
 		{
 			System.out.println(ex.getMessage());
-			ex.printStackTrace();
+			_logger.error(ExStack.toString(ex));
 			JOptionPane.showMessageDialog(this.getParentFrame(), ex);
 			return;
 		}
@@ -568,7 +568,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					_logger.error(ExStack.toString(e));
 					JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 				}
 				finally
@@ -598,7 +598,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
+				_logger.error(ExStack.toString(ex));
 				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
 			}
 			finally
@@ -1071,7 +1071,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			catch (Exception e)
 			{
 				JOptionPane.showMessageDialog(getParentFrame(), "An error has occured, 1 or more files were not copied.");
-				e.printStackTrace();
+				_logger.error(ExStack.toString(e));
 			}
 		}
     }//GEN-LAST:event_onMenuCopyFiles
@@ -1817,13 +1817,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						resizeAllColumns();
 						return true;
 					}
-					catch (UnsupportedFlavorException ex)
+					catch (Exception ex)
 					{
-						ex.printStackTrace();
-					}
-					catch (IOException ex)
-					{
-						ex.printStackTrace();
+						_logger.warn(ExStack.toString(ex));
 					}
 				}
 				return false;
@@ -1889,13 +1885,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						pd.setVisible(true);
 						return true;
 					}
-					catch (UnsupportedFlavorException ex)
+					catch (Exception ex)
 					{
-						ex.printStackTrace();
-					}
-					catch (IOException ex)
-					{
-						ex.printStackTrace();
+						_logger.error(ExStack.toString(ex));
 					}
 				}
 				return false;
@@ -1925,7 +1917,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (IOException ex)
 					{
-						ex.printStackTrace();
+						_logger.error(ExStack.toString(ex));
 						return null;
 					}
 				}

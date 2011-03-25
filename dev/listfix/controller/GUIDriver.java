@@ -38,6 +38,8 @@ import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 
 import listfix.util.ArrayFunctions;
+import listfix.util.ExStack;
+import org.apache.log4j.Logger;
 
 public class GUIDriver
 {
@@ -48,6 +50,7 @@ public class GUIDriver
 	private AppOptions options = new AppOptions();
 	private PlaylistHistory history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
 	public static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+	private static final Logger _logger = Logger.getLogger(GUIDriver.class);
 
     public static GUIDriver getInstance()
     {
@@ -62,7 +65,6 @@ public class GUIDriver
 		try
 		{
 			(new FileWriter()).writeDefaultIniFilesIfNeeded();
-			// insert conversion here!
 			if (IniFileConverter.conversionRequired())
 			{
 				(new IniFileConverter()).convert();
@@ -92,7 +94,7 @@ public class GUIDriver
 		catch (Exception e)
 		{
 			showMediaDirWindow = true;
-			e.printStackTrace();
+			_logger.error(ExStack.toString(e));
 		}
 	}
 

@@ -24,15 +24,14 @@ import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 
 import listfix.model.AppOptions;
 import listfix.model.enums.AppOptionsEnum;
+import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -40,6 +39,8 @@ import listfix.view.support.FontExtensions;
  */
 public class OptionsReader
 {
+	private static final Logger _logger = Logger.getLogger(OptionsReader.class);
+
 	public static AppOptions read()
 	{
 		BufferedReader B1;
@@ -106,17 +107,9 @@ public class OptionsReader
 				}
 			}
 		}
-		catch (FileNotFoundException ex)
+		catch (Exception ex)
 		{
-			ex.printStackTrace();
-		}
-		catch (UnsupportedEncodingException ex)
-		{
-			ex.printStackTrace();
-		}
-		catch (IOException ex)
-		{
-			ex.printStackTrace();
+			_logger.error(ExStack.toString(ex));
 		}
 		return options;
 	}

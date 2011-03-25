@@ -33,14 +33,17 @@ import listfix.model.BatchRepairItem;
 
 import listfix.model.winamp.generated.Playlist;
 import listfix.model.winamp.generated.Playlists;
+import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.log4j.Logger;
 
 public class WinampHelper
 {
 	private static final String HOME_PATH = System.getenv("APPDATA");
 	private static final String WINAMP_PATH = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
+	private static final Logger _logger = Logger.getLogger(WinampHelper.class);
 
 	public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
 	{
@@ -57,7 +60,7 @@ public class WinampHelper
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			_logger.error(ExStack.toString(ex));
 			return null;
 		}
 	}
