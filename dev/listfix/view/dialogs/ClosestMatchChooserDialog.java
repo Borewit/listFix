@@ -82,13 +82,6 @@ public class ClosestMatchChooserDialog extends javax.swing.JDialog
 		this.setLocation((int) x + (width - this.getWidth()) / 2, (int) y + (height - this.getHeight()) / 2);
 	}
 
-	@Override
-	public void setVisible(boolean visible)
-	{
-		choice = CANCEL;
-		super.setVisible(visible);
-	}
-
     private String getRowToolTip(MouseEvent e)
     {
         int rowIx = resultsTable.rowAtPoint(e.getPoint());

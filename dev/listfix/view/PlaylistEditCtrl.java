@@ -690,8 +690,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnMagicFix = new javax.swing.JButton();
         _btnLocate = new javax.swing.JButton();
         jSeparator5 = new javax.swing.JToolBar.Separator();
-        _btnNextMissing = new javax.swing.JButton();
         _btnPrevMissing = new javax.swing.JButton();
+        _btnNextMissing = new javax.swing.JButton();
         _uiTableScrollPane = new javax.swing.JScrollPane();
         _uiTable = createTable();
 
@@ -807,7 +807,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiToolbar.add(_btnAdd);
 
-        _btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-delete-2.gif"))); // NOI18N
+        _btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-delete.gif"))); // NOI18N
         _btnDelete.setToolTipText("Delete");
         _btnDelete.setEnabled(false);
         _btnDelete.setFocusable(false);
@@ -920,20 +920,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnLocate);
         _uiToolbar.add(jSeparator5);
 
-        _btnNextMissing.setText("next");
-        _btnNextMissing.setFocusable(false);
-        _btnNextMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnNextMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnNextMissing.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _btnNextMissingActionPerformed(evt);
-            }
-        });
-        _uiToolbar.add(_btnNextMissing);
-
-        _btnPrevMissing.setText("prev");
+        _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev-broken.png"))); // NOI18N
         _btnPrevMissing.setFocusable(false);
         _btnPrevMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnPrevMissing.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnPrevMissing.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnPrevMissing.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnPrevMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         _btnPrevMissing.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -941,6 +933,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
         });
         _uiToolbar.add(_btnPrevMissing);
+
+        _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next-broken.png"))); // NOI18N
+        _btnNextMissing.setFocusable(false);
+        _btnNextMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnNextMissing.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnNextMissing.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnNextMissing.setPreferredSize(new java.awt.Dimension(31, 31));
+        _btnNextMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnNextMissing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnNextMissingActionPerformed(evt);
+            }
+        });
+        _uiToolbar.add(_btnNextMissing);
 
         add(_uiToolbar, java.awt.BorderLayout.PAGE_START);
 
@@ -1086,9 +1092,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		if (SwingUtilities.isLeftMouseButton(evt))
 		{
 			currentlySelectedRow = _uiTable.rowAtPoint(evt.getPoint());
-			if (currentlySelectedRow != -1 && evt.getClickCount() == 2 && (evt.getModifiers() & ActionEvent.CTRL_MASK) <= 0)
+			if (evt.getClickCount() == 2)
 			{
-				playSelectedEntries();
+				if (_uiTable.getSelectedRowCount() == 1 && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isFound())
+				{
+					findClosestMatches();
+				}
+				else if(currentlySelectedRow != -1 && (evt.getModifiers() & ActionEvent.CTRL_MASK) <= 0)
+				{
+					playSelectedEntries();
+				}
 			}
 		}
 	}//GEN-LAST:event__uiTableMousePressed
@@ -1388,6 +1401,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnReorder.setEnabled(hasPlaylist);
 		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
 		_btnPlay.setEnabled(hasPlaylist);
+		_btnNextMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
+		_btnPrevMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
 		_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
 
 		if (_playlist != null && !_playlist.isEmpty())
@@ -1548,6 +1563,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnPlay.setEnabled(_playlist != null && ( _uiTable.getSelectedRow() < 0 || ( _uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry() ) ) );
 				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
 				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+				_btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
+				_btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				if (_isSortedByFileIx)
 				{
 					refreshAddTooltip(hasSelected);
