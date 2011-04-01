@@ -61,7 +61,7 @@ public class ProgressDialog extends javax.swing.JDialog
 		if (textMode)
 		{
 			_progressBar.setVisible(false);
-			_progressMessage.setVisible(true);
+			_pnlMessage.setVisible(true);
 
 			sz.width = 500;
 			sz.height = 120;
@@ -70,7 +70,7 @@ public class ProgressDialog extends javax.swing.JDialog
 		else
 		{
 			_progressBar.setVisible(true);
-			_progressMessage.setVisible(false);
+			_pnlMessage.setVisible(false);
 		}
 
         setLocationRelativeTo(parent);
@@ -139,7 +139,9 @@ public class ProgressDialog extends javax.swing.JDialog
         jPanel1 = new javax.swing.JPanel();
         _progressTitle = new javax.swing.JLabel();
         _progressBar = new javax.swing.JProgressBar();
+        _pnlMessage = new javax.swing.JPanel();
         _progressMessage = new javax.swing.JLabel();
+        _pnlSpacer = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         _cancelButton = new javax.swing.JButton();
 
@@ -162,7 +164,7 @@ public class ProgressDialog extends javax.swing.JDialog
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
+        gridBagConstraints.insets = new java.awt.Insets(15, 10, 4, 10);
         jPanel1.add(_progressTitle, gridBagConstraints);
 
         _progressBar.setMinimumSize(new java.awt.Dimension(250, 14));
@@ -173,14 +175,23 @@ public class ProgressDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
         jPanel1.add(_progressBar, gridBagConstraints);
 
+        _pnlMessage.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 5));
+
         _progressMessage.setText("Message");
+        _pnlMessage.add(_progressMessage);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
-        jPanel1.add(_progressMessage, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
+        jPanel1.add(_pnlMessage, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(_pnlSpacer, gridBagConstraints);
 
         getContentPane().add(jPanel1);
 
@@ -228,6 +239,8 @@ public class ProgressDialog extends javax.swing.JDialog
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _cancelButton;
+    private javax.swing.JPanel _pnlMessage;
+    private javax.swing.JPanel _pnlSpacer;
     private javax.swing.JProgressBar _progressBar;
     private javax.swing.JLabel _progressMessage;
     private javax.swing.JLabel _progressTitle;

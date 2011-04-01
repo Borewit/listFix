@@ -211,6 +211,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlRecentListLimit = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         recentPlaylistLimitComboBox = new javax.swing.JComboBox();
+        _pnlfontChooser = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        _fontDisplayLabel = new javax.swing.JLabel();
+        _changeFontButton = new javax.swing.JButton();
         _pnlLookAndFeel = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         lookAndFeelComboBox = new javax.swing.JComboBox();
@@ -230,10 +234,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel7 = new javax.swing.JLabel();
         playlistDirectoryTextField = new javax.swing.JTextField();
         playlistDirectoryBrowseButton = new javax.swing.JButton();
-        _pnlfontChooser = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
-        _fontDisplayLabel = new javax.swing.JLabel();
-        _changeFontButton = new javax.swing.JButton();
         _pnlNumClosestMatches = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         _cbxMaxClosestMatches = new javax.swing.JComboBox();
@@ -278,6 +278,35 @@ public class AppOptionsDialog extends javax.swing.JDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         optionsPanel.add(_pnlRecentListLimit, gridBagConstraints);
+
+        _pnlfontChooser.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+
+        jLabel8.setText("Font:");
+        _pnlfontChooser.add(jLabel8);
+
+        _fontDisplayLabel.setText("SansSerif, Plain, 10");
+        _pnlfontChooser.add(_fontDisplayLabel);
+
+        _changeFontButton.setText("...");
+        _changeFontButton.setAlignmentY(0.0F);
+        _changeFontButton.setMargin(new java.awt.Insets(2, 6, 2, 6));
+        _changeFontButton.setMaximumSize(null);
+        _changeFontButton.setMinimumSize(null);
+        _changeFontButton.setPreferredSize(null);
+        _changeFontButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _changeFontButtonActionPerformed(evt);
+            }
+        });
+        _pnlfontChooser.add(_changeFontButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(_pnlfontChooser, gridBagConstraints);
 
         _pnlLookAndFeel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
@@ -381,17 +410,18 @@ public class AppOptionsDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         optionsPanel.add(_pnlUseUnc, gridBagConstraints);
 
-        _pnlListsDir.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+        _pnlListsDir.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING, 8, 0));
 
         jLabel7.setText("Playlists Directory:");
         jLabel7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jLabel7.setMinimumSize(new java.awt.Dimension(111, 9));
+        jLabel7.setMaximumSize(null);
+        jLabel7.setMinimumSize(null);
+        jLabel7.setPreferredSize(null);
         jLabel7.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         _pnlListsDir.add(jLabel7);
 
-        playlistDirectoryTextField.setText(options.getPlaylistsDirectory());
-        playlistDirectoryTextField.setAlignmentX(0.0F);
-        playlistDirectoryTextField.setAlignmentY(0.0F);
+        playlistDirectoryTextField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        playlistDirectoryTextField.setText(options.getPlaylistsDirectory() + "     ");
         playlistDirectoryTextField.setMaximumSize(null);
         playlistDirectoryTextField.setMinimumSize(null);
         playlistDirectoryTextField.setPreferredSize(null);
@@ -399,8 +429,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlListsDir.add(playlistDirectoryTextField);
 
         playlistDirectoryBrowseButton.setText("...");
-        playlistDirectoryBrowseButton.setAlignmentY(0.0F);
         playlistDirectoryBrowseButton.setMargin(new java.awt.Insets(2, 6, 2, 6));
+        playlistDirectoryBrowseButton.setMaximumSize(null);
+        playlistDirectoryBrowseButton.setMinimumSize(null);
+        playlistDirectoryBrowseButton.setPreferredSize(null);
         playlistDirectoryBrowseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playlistDirectoryBrowseButtonActionPerformed(evt);
@@ -411,39 +443,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         optionsPanel.add(_pnlListsDir, gridBagConstraints);
-
-        _pnlfontChooser.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
-
-        jLabel8.setText("Font:");
-        _pnlfontChooser.add(jLabel8);
-
-        _fontDisplayLabel.setText("SansSerif, Plain, 10");
-        _pnlfontChooser.add(_fontDisplayLabel);
-
-        _changeFontButton.setText("...");
-        _changeFontButton.setAlignmentY(0.0F);
-        _changeFontButton.setMargin(new java.awt.Insets(2, 6, 2, 6));
-        _changeFontButton.setMaximumSize(null);
-        _changeFontButton.setMinimumSize(null);
-        _changeFontButton.setPreferredSize(null);
-        _changeFontButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _changeFontButtonActionPerformed(evt);
-            }
-        });
-        _pnlfontChooser.add(_changeFontButton);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
-        optionsPanel.add(_pnlfontChooser, gridBagConstraints);
 
         _pnlNumClosestMatches.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
 
@@ -458,6 +461,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         optionsPanel.add(_pnlNumClosestMatches, gridBagConstraints);
@@ -531,7 +535,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 				String path = jMediaDirChooser.getSelectedFile().getPath();
 				if (new File(path).exists())
 				{
-					playlistDirectoryTextField.setText(path);
+					playlistDirectoryTextField.setText(path + "     ");
 				}
 				else
 				{
@@ -567,7 +571,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
 			options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
 			options.setAlwaysUseUNCPaths(this.alwaysUseUNCPathsCheckBox.isSelected());
-			options.setPlaylistsDirectory(playlistDirectoryTextField.getText());
+			options.setPlaylistsDirectory(playlistDirectoryTextField.getText().trim());
 			options.setAppFont(chosenFont);
 			options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())).intValue());
 		}
