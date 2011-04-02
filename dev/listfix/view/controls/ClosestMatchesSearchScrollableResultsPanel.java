@@ -1,23 +1,24 @@
 /*
- * listFix() - Fix Broken Playlists!
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
+ *  listFix() - Fix Broken Playlists!
+ *  Copyright (C) 2001-2010 Jeremy Caron
+ * 
+ *  This file is part of listFix().
+ * 
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view.dialogs;
+package listfix.view.controls;
 
 import java.awt.Component;
 import java.awt.DisplayMode;
@@ -25,12 +26,10 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -39,119 +38,104 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.util.ExStack;
-import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
-
 import listfix.view.support.ZebraJTable;
+
 import org.apache.log4j.Logger;
 
-public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
+/**
+ *
+ * @author jcaron
+ */
+public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPanel
 {
-	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
+	private final List<BatchMatchItem> _items;
 
-	public BatchClosestMatchResultsDialog(java.awt.Frame parent, List<BatchMatchItem> items)
+	private static final Logger _logger = Logger.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
+	private int _width;
+
+	public ClosestMatchesSearchScrollableResultsPanel()
 	{
-		super(parent, true);
+		_items = new ArrayList<BatchMatchItem>();
+		initComponents();
+	}
+    /** Creates new form ClosestMatchesSearchScrollableResultsPanel */
+    public ClosestMatchesSearchScrollableResultsPanel(List<BatchMatchItem> items)
+	{
 		_items = items;
 		initComponents();
 
-		// get screenwidth using workaround for vmware/linux bug
-        int screenWidth;
-        DisplayMode dmode = getGraphicsConfiguration().getDevice().getDisplayMode();
-        if (dmode != null)
-		{
-            screenWidth = dmode.getWidth();
-		}
-        else
-		{
-            screenWidth = getGraphicsConfiguration().getBounds().width;
-		}
-        int newWidth = _pnlResults.getTableWidth() + getWidth() - _pnlResults.getWidth() + 2;
-        setSize(Math.min(newWidth, screenWidth - 50), getHeight());
-	}
+		int cwidth = 0;
+		TableColumnModel cm = _uiTable.getColumnModel();
+		cm.getColumn(4).setMinWidth(0);
 
-	public boolean isAccepted()
+		_uiTable.initFillColumnForScrollPane(_uiScrollPane);
+		cwidth += _uiTable.autoResizeColumn(1);
+		cwidth += cm.getColumn(2).getWidth();
+		cwidth += _uiTable.autoResizeColumn(3);
+		_uiTable.setFillerColumnWidth(_uiScrollPane);
+
+		TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
+		Component comp = renderer.getTableCellRendererComponent(_uiTable, (items.size() + 1) * 10, false, false, 0, 0);
+		int width = comp.getPreferredSize().width + 4;
+		TableColumn col = cm.getColumn(0);
+		col.setMinWidth(width);
+		col.setMaxWidth(width);
+		col.setPreferredWidth(width);
+		cwidth += width + 20;
+		_uiTable.setCellSelectionEnabled(true);
+		_width = cwidth;
+
+		cm.getColumn(2).setCellRenderer(new ButtonRenderer());
+		cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
+		cm.getColumn(3).setCellEditor(new MatchEditor());
+
+		_uiTable.setShowHorizontalLines(false);
+		_uiTable.setShowVerticalLines(false);
+
+		// set sort to #
+		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+		_uiTable.getRowSorter().setSortKeys(keys);
+
+		_uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+
+	public int getSelectedRow()
 	{
-		return _isAccepted;
+		return _uiTable.getSelectedRow();
 	}
-	private boolean _isAccepted;
 
-	public List<BatchMatchItem> getMatches()
+	public int getSelectedColumn()
 	{
-		return _items;
+		return _uiTable.getSelectedColumn();
 	}
-	private List<BatchMatchItem> _items;
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+	public TableCellEditor getCellEditor(int row, int column)
+	{
+		return _uiTable.getCellEditor(row, column);
+	}
 
-        jPanel1 = new javax.swing.JPanel();
-        _btnOk = new javax.swing.JButton();
-        _btnCancel = new javax.swing.JButton();
-        _pnlResults = new ClosestMatchesSearchScrollableResultsPanel(_items);
+	public int getTableWidth()
+	{
+		return _width;
+	}
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Select Closest Matches");
-
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        _btnOk.setText("OK");
-        _btnOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onBtnOkActionPerformed(evt);
-            }
-        });
-        jPanel1.add(_btnOk);
-
-        _btnCancel.setText("Cancel");
-        _btnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onBtnCancelActionPerformed(evt);
-            }
-        });
-        jPanel1.add(_btnCancel);
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
-        getContentPane().add(_pnlResults, java.awt.BorderLayout.CENTER);
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void onBtnOkActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnOkActionPerformed
-    {//GEN-HEADEREND:event_onBtnOkActionPerformed
-		_isAccepted = true;
-		if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3)
-		{
-			TableCellEditor cellEditor = _pnlResults.getCellEditor(_pnlResults.getSelectedRow(), _pnlResults.getSelectedColumn());
-			cellEditor.stopCellEditing();
-		}
-		setVisible(false);
-    }//GEN-LAST:event_onBtnOkActionPerformed
-
-    private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
-    {//GEN-HEADEREND:event_onBtnCancelActionPerformed
-		_isAccepted = false;
-		setVisible(false);
-    }//GEN-LAST:event_onBtnCancelActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton _btnCancel;
-    private javax.swing.JButton _btnOk;
-    private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
-    private javax.swing.JPanel jPanel1;
-    // End of variables declaration//GEN-END:variables
+	public int getWidth()
+	{
+		return _uiScrollPane.getWidth();
+	}
 
 	private ZebraJTable createTable()
 	{
@@ -188,7 +172,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			}
 		};
 	}
-	
+
 	private class ButtonRenderer implements TableCellRenderer
 	{
 		JButton button = new JButton();
@@ -223,7 +207,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			int row = table.getEditingRow();
 			int rowIx = table.getRowSorter().convertRowIndexToModel(row);
 			BatchMatchItem item = _items.get(rowIx);
-			MatchedPlaylistEntry match = item.getSelectedMatch();		
+			MatchedPlaylistEntry match = item.getSelectedMatch();
 
 			try
 			{
@@ -245,7 +229,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			boolean isSelected,
 			int row, int column)
 		{
-			button.setText("PLAY");			
+			button.setText("PLAY");
 			return button;
 		}
 
@@ -414,7 +398,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 						list.setToolTipText(((MatchedPlaylistEntry)((MatchComboBoxModel)list.getModel())._matches.get(index - 1)).getPlaylistFile().getPath());
 					}
 				}
-				
+
 				return comp;
 			}
 		}
@@ -471,4 +455,33 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 			return _selected;
 		}
 	}
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        _uiScrollPane = new javax.swing.JScrollPane();
+        _uiTable = createTable();
+
+        setLayout(new java.awt.BorderLayout());
+
+        _uiTable.setAutoCreateRowSorter(true);
+        _uiTable.setModel(new MatchTableModel());
+        _uiTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        _uiScrollPane.setViewportView(_uiTable);
+
+        add(_uiScrollPane, java.awt.BorderLayout.CENTER);
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane _uiScrollPane;
+    private listfix.view.support.ZebraJTable _uiTable;
+    // End of variables declaration//GEN-END:variables
+
 }

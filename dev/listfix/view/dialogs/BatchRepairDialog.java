@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -32,7 +31,6 @@ import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
@@ -227,7 +225,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        playlistEditCtrl1 = new listfix.view.PlaylistEditCtrl();
+        playlistEditCtrl1 = new listfix.view.controls.PlaylistEditCtrl();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -344,7 +342,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         _uiScrollLists.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         _uiLists.setAutoCreateRowSorter(true);
-        _uiLists.setModel(new PlaylistsTableModel());
+        _uiLists.setModel(new PlaylistsTableModel(_batch));
         _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         _uiLists.getTableHeader().setReorderingAllowed(false);
         _uiScrollLists.setViewportView(_uiLists);
@@ -421,110 +419,29 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			_txtBackup.requestFocusInWindow();
 		}
     }//GEN-LAST:event_onChkBackupItemStateChanged
-	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.png"));
-	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.png"));
-	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.png"));
 
 	/**
 	 * @return the _userCancelled
-	 */ public boolean isUserCancelled()
+	 */
+	public boolean isUserCancelled()
 	{
 		return getUserCancelled();
 	}
 
 	/**
 	 * @param userCancelled the _userCancelled to set
-	 */ public void setUserCancelled(boolean userCancelled)
+	 */
+	public void setUserCancelled(boolean userCancelled)
 	{
 		this._userCancelled = userCancelled;
 	}
 
 	/**
 	 * @return the _userCancelled
-	 */ public boolean getUserCancelled()
+	 */
+	public boolean getUserCancelled()
 	{
 		return _userCancelled;
-	}
-
-	private class PlaylistsTableModel extends AbstractTableModel
-	{
-		public PlaylistsTableModel()
-		{
-			_items = _batch.getItems();
-		}
-
-		@Override
-		public int getRowCount()
-		{
-			return _items.size();
-		}
-
-		@Override
-		public int getColumnCount()
-		{
-			return 4;
-		}
-
-		@Override
-		public String getColumnName(int column)
-		{
-			switch (column)
-			{
-				case 0:
-					return "";
-				case 1:
-					return "Name";
-				case 2:
-					return "Location";
-				default:
-					return null;
-			}
-		}
-
-		@Override
-		public Class<?> getColumnClass(int columnIndex)
-		{
-			if (columnIndex == 0)
-			{
-				return ImageIcon.class;
-			}
-			else
-			{
-				return Object.class;
-			}
-		}
-
-		@Override
-		public Object getValueAt(int rowIndex, int columnIndex)
-		{
-			BatchRepairItem item = _items.get(rowIndex);
-			switch (columnIndex)
-			{
-				case 0:
-					Playlist list = item.getPlaylist();
-					if (list.getMissingCount() > 0)
-					{
-						return _imgMissing; // red
-					}
-					else if (list.getFixedCount() > 0)
-					{
-						return _imgFixed; // light green
-					}
-					else
-					{
-						return _imgFound; // dark green
-					}
-				case 1:
-					return item.getDisplayName();
-
-				case 2:
-					return item.getPath();
-
-				default:
-					return null;
-			}
-		}
-		private List<BatchRepairItem> _items;
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel _backupPanel;
@@ -543,6 +460,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSplitPane jSplitPane1;
-    private listfix.view.PlaylistEditCtrl playlistEditCtrl1;
+    private listfix.view.controls.PlaylistEditCtrl playlistEditCtrl1;
     // End of variables declaration//GEN-END:variables
 }

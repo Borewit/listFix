@@ -54,7 +54,7 @@ public class WinampHelper
 			List<Playlist> winLists = getWinampPlaylists();
 			for (Playlist list : winLists)
 			{
-				br.add(new BatchRepairItem(WINAMP_PATH + list.getFilename(), list.getTitle()));
+				br.add(new BatchRepairItem(new File(WINAMP_PATH + list.getFilename())));
 			}
 			return br;
 		}

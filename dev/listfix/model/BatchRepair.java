@@ -195,4 +195,14 @@ public class BatchRepair
 		return _rootDirectory;
 	}
 	private File _rootDirectory;
+
+	public List<Playlist> getPlaylists()
+	{
+		List<Playlist> result = new ArrayList<Playlist>();
+		for (BatchRepairItem item : _items)
+		{
+			result.add(item.getPlaylist());
+		}
+		return result;
+	}
 }

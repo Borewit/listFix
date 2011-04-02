@@ -17,7 +17,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view;
+package listfix.view.controls;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -25,7 +25,6 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -75,8 +74,11 @@ import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistEntryList;
+
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
+
+import listfix.view.GUIScreen;
 
 import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
@@ -88,6 +90,7 @@ import listfix.view.dialogs.ClosestMatchChooserDialog;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
+
 import org.apache.log4j.Logger;
 
 public class PlaylistEditCtrl extends javax.swing.JPanel

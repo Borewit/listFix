@@ -24,24 +24,21 @@ import listfix.util.FileNameTokenizer;
 
 public class BatchRepairItem
 {
+	private String _path;
+	private String _displayName;
+	private Playlist _playlist;
+	private File _playlistFile;
+
 	public BatchRepairItem(File file)
 	{
 		_path = file.getPath();
 		_displayName = file.getName();
+		_playlistFile = file;
 		if (Playlist.isPlaylist(file))
 		{
 			_displayName = FileNameTokenizer.removeExtensionFromFileName(_displayName);
 		}
 	}
-
-	public BatchRepairItem(String path, String displayName)
-	{
-		_path = path;
-		_displayName = displayName;
-	}
-	private String _path;
-	private String _displayName;
-	private Playlist _playlist;
 
 	public String getPath()
 	{
@@ -71,5 +68,21 @@ public class BatchRepairItem
 	public void setPlaylist(Playlist playlist)
 	{
 		this._playlist = playlist;
+	}
+
+	/**
+	 * @return the _playlistFile
+	 */
+	public File getPlaylistFile()
+	{
+		return _playlistFile;
+	}
+
+	/**
+	 * @param playlistFile the _playlistFile to set
+	 */
+	 public void setPlaylistFile(File playlistFile)
+	{
+		this._playlistFile = playlistFile;
 	}
 }

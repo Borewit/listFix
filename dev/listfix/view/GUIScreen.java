@@ -20,7 +20,6 @@
 
 package listfix.view;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -30,7 +29,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -93,10 +91,12 @@ import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
 import listfix.util.OperatingSystem;
 import listfix.util.ExStack;
+import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
 
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchRepairDialog;
 import listfix.view.dialogs.AppOptionsDialog;
+import listfix.view.controls.PlaylistEditCtrl;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
@@ -2244,6 +2244,7 @@ private void _miRefreshDirectoryTreeActionPerformed(java.awt.event.ActionEvent e
 	public static void main(String args[])
 	{
 		GUIScreen mainWindow = new GUIScreen();
+		// ClosestMatchesSearchScrollableResultsPanel var = new ClosestMatchesSearchScrollableResultsPanel();
 
 		if (mainWindow.getLocation().equals(new Point(0, 0)))
 		{
