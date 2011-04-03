@@ -21,21 +21,18 @@ package listfix.view.dialogs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
-import listfix.util.ExStack;
+import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
@@ -45,6 +42,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 {
 	private boolean _userCancelled = false;
 	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
+	private int _lastSelectedList = -1;
 
 	/** Creates new form BatchRepairDialog */
 	public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
@@ -55,9 +53,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		initComponents();
 		getRootPane().setDefaultButton(_btnSave);
 		_txtBackup.setText(_batch.getDefaultBackupName());
-
-		_uiLists.setShowHorizontalLines(false);
-		_uiLists.setShowVerticalLines(false);
 
 		// load and repair lists
 		final DualProgressDialog pd = new DualProgressDialog(parent, "Please wait...", "Loading Batch Repairs...");
@@ -99,7 +94,21 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
 		if (!dpw.getCancelled())
 		{
-			initPlaylistsList();
+			ListSelectionModel lsm = _pnlList.getSelectionModel();
+			lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			lsm.addListSelectionListener(new ListSelectionListener()
+			{
+				@Override
+				public void valueChanged(ListSelectionEvent e)
+				{
+					if (e.getValueIsAdjusting())
+					{
+						return;
+					}
+					updateSelectedPlaylist();
+				}
+			});
+			_pnlList.initPlaylistsList();
 
 			for (BatchRepairItem item : batch.getItems())
 			{
@@ -115,7 +124,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			{
 				listCountTxt = String.format("%d playlists", batch.getItems().size());
 			}
-			_labListCount.setText(listCountTxt);
+			_pnlList.setText(listCountTxt);
 		}
 		else
 		{
@@ -132,77 +141,24 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		}
 	};
 
-	private void initPlaylistsList()
-	{
-		_uiLists.initFillColumnForScrollPane(_uiScrollLists);
-
-		_uiLists.autoResizeColumn(0);
-		_uiLists.autoResizeColumn(1);
-		_uiLists.autoResizeColumn(2);
-
-		// selections
-		_uiLists.setColumnSelectionAllowed(false);
-		_uiLists.setCellSelectionEnabled(false);
-		_uiLists.setRowSelectionAllowed(true);
-		ListSelectionModel lsm = _uiLists.getSelectionModel();
-		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lsm.addListSelectionListener(new ListSelectionListener()
-		{
-			@Override
-			public void valueChanged(ListSelectionEvent e)
-			{
-				if (e.getValueIsAdjusting())
-				{
-					return;
-				}
-				updateSelectedPlaylist();
-			}
-		});
-
-		// sort playlists by filename
-		RowSorter sorter = _uiLists.getRowSorter();
-		List<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
-		keys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
-		sorter.setSortKeys(keys);
-	}
-
 	private void onPlaylistModified(Playlist list)
 	{
-		int uiIndex = _uiLists.getSelectedRow();
-		int selIx = _uiLists.getSelectedRow();
-		if (selIx >= 0)
-		{
-			selIx = _uiLists.convertRowIndexToModel(selIx);
-			BatchRepairItem item = _batch.getItem(selIx);
-			try
-			{
-				((PlaylistsTableModel) _uiLists.getModel()).fireTableDataChanged();
-			}
-			catch (Exception e)
-			{
-				_logger.warn(ExStack.toString(e));
-			}
-			_uiLists.setRowSelectionInterval(uiIndex, uiIndex);
-		}
+		_pnlList.playlistModified(list);
 	}
 
 	private void updateSelectedPlaylist()
 	{
-		int selIx = _uiLists.getSelectedRow();
+		int selIx = _pnlList.getSelectedModelRow();
 		if (selIx >= 0)
 		{
-			selIx = _uiLists.convertRowIndexToModel(selIx);
 			BatchRepairItem item = _batch.getItem(selIx);
 			playlistEditCtrl1.setPlaylist(item.getPlaylist());
 			
 			// Keep the table anchored left...
-			_uiLists.getSelectionModel().setAnchorSelectionIndex(0);
-		}
-		else
-		{
-			playlistEditCtrl1.setPlaylist(null);
+			_pnlList.anchorLeft();
 		}
 	}
+
 	BatchRepair _batch;
 
 	/** This method is called from within the constructor to
@@ -226,12 +182,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         playlistEditCtrl1 = new listfix.view.controls.PlaylistEditCtrl();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        _labListCount = new javax.swing.JLabel();
-        _uiScrollLists = new javax.swing.JScrollPane();
-        _uiLists = new listfix.view.support.ZebraJTable();
+        _pnlList = new PlaylistsList(_batch);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -314,42 +265,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
         jPanel1.add(playlistEditCtrl1, java.awt.BorderLayout.CENTER);
 
         jSplitPane1.setRightComponent(jPanel1);
-
-        jPanel4.setLayout(new java.awt.BorderLayout());
-
-        jPanel5.setLayout(new java.awt.GridBagLayout());
-
-        jLabel2.setText("Playlists");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
-        jPanel5.add(jLabel2, gridBagConstraints);
-
-        _labListCount.setForeground(javax.swing.UIManager.getDefaults().getColor("controlShadow"));
-        _labListCount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        _labListCount.setText("0 lists");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
-        jPanel5.add(_labListCount, gridBagConstraints);
-
-        jPanel4.add(jPanel5, java.awt.BorderLayout.PAGE_START);
-
-        _uiScrollLists.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-
-        _uiLists.setAutoCreateRowSorter(true);
-        _uiLists.setModel(new PlaylistsTableModel(_batch));
-        _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        _uiLists.getTableHeader().setReorderingAllowed(false);
-        _uiScrollLists.setViewportView(_uiLists);
-
-        jPanel4.add(_uiScrollLists, java.awt.BorderLayout.CENTER);
-
-        jSplitPane1.setLeftComponent(jPanel4);
+        jSplitPane1.setLeftComponent(_pnlList);
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
@@ -449,16 +365,11 @@ public class BatchRepairDialog extends javax.swing.JDialog
     private javax.swing.JButton _btnCancel;
     private javax.swing.JButton _btnSave;
     private javax.swing.JCheckBox _chkBackup;
-    private javax.swing.JLabel _labListCount;
+    private listfix.view.controls.PlaylistsList _pnlList;
     private javax.swing.JTextField _txtBackup;
-    private listfix.view.support.ZebraJTable _uiLists;
-    private javax.swing.JScrollPane _uiScrollLists;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JSplitPane jSplitPane1;
     private listfix.view.controls.PlaylistEditCtrl playlistEditCtrl1;
     // End of variables declaration//GEN-END:variables

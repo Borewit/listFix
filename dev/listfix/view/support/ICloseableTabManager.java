@@ -26,4 +26,6 @@ public interface ICloseableTabManager
 	boolean tryCloseAllTabs();
 
 	void closeAllOtherTabs(int tabIx);
+
+	void repairAllTabs();
 }

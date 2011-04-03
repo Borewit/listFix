@@ -83,6 +83,7 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         rightClickMenu = new javax.swing.JPopupMenu();
         closeAllTabsMenuItem = new javax.swing.JMenuItem();
         closeAllOtherTabsMenuItem = new javax.swing.JMenuItem();
+        _miRepairAllTabs = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = createTabButton();
 
@@ -101,6 +102,14 @@ public class ClosableTabCtrl extends javax.swing.JPanel
             }
         });
         rightClickMenu.add(closeAllOtherTabsMenuItem);
+
+        _miRepairAllTabs.setText("Repair Open Playlists");
+        _miRepairAllTabs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _miRepairAllTabsActionPerformed(evt);
+            }
+        });
+        rightClickMenu.add(_miRepairAllTabs);
 
         setFocusable(false);
         setOpaque(false);
@@ -148,8 +157,14 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 		}
 }//GEN-LAST:event_formMouseReleased
 
+	private void _miRepairAllTabsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRepairAllTabsActionPerformed
+	{//GEN-HEADEREND:event__miRepairAllTabsActionPerformed
+		_tabMgr.repairAllTabs();
+	}//GEN-LAST:event__miRepairAllTabsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem _miRepairAllTabs;
     private javax.swing.JMenuItem closeAllOtherTabsMenuItem;
     private javax.swing.JMenuItem closeAllTabsMenuItem;
     private javax.swing.JButton jButton1;

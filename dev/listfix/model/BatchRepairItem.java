@@ -40,6 +40,14 @@ public class BatchRepairItem
 		}
 	}
 
+	public BatchRepairItem(Playlist list)
+	{
+		_playlist = list;
+		_path = list.getFile().getPath();
+		_displayName = FileNameTokenizer.removeExtensionFromFileName(list.getFile().getName());
+		_playlistFile = list.getFile();
+	}
+
 	public String getPath()
 	{
 		return _path;

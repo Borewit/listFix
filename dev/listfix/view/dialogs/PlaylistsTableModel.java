@@ -18,7 +18,7 @@ public class PlaylistsTableModel extends AbstractTableModel
 	@Override
 	public int getRowCount()
 	{
-		return _items.getItems().size();
+		return _items == null ? 0 : _items.getItems().size();
 	}
 
 	@Override
@@ -58,30 +58,37 @@ public class PlaylistsTableModel extends AbstractTableModel
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex)
-	{		 
-		BatchRepairItem item = _items.getItem(rowIndex);
-		Playlist list = item.getPlaylist();
-		switch (columnIndex)
+	{
+		if (_items == null)
 		{
-			case 0:
-				if (list.getMissingCount() > 0)
-				{
-					return ImageIcons.IMG_MISSING; // red
-				}
-				else if (list.getFixedCount() > 0)
-				{
-					return ImageIcons.ING_FIXED; // light green
-				}
-				else
-				{
-					return ImageIcons.IMG_FOUND; // dark green
-				}
-			case 1:
-				return item.getDisplayName();
-			case 2:
-				return item.getPath();
-			default:
-				return null;
+			return null;
+		}
+		else
+		{
+			BatchRepairItem item = _items.getItem(rowIndex);
+			Playlist list = item.getPlaylist();
+			switch (columnIndex)
+			{
+				case 0:
+					if (list.getMissingCount() > 0)
+					{
+						return ImageIcons.IMG_MISSING; // red
+					}
+					else if (list.getFixedCount() > 0)
+					{
+						return ImageIcons.ING_FIXED; // light green
+					}
+					else
+					{
+						return ImageIcons.IMG_FOUND; // dark green
+					}
+				case 1:
+					return item.getDisplayName();
+				case 2:
+					return item.getPath();
+				default:
+					return null;
+			}
 		}
 	}
 

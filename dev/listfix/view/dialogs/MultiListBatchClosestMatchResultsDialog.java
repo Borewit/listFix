@@ -48,22 +48,14 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
+        _pnlResults = new listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel();
+        _pnlPlaylists = new listfix.view.controls.PlaylistsList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 298, Short.MAX_VALUE)
-        );
-
-        jSplitPane1.setLeftComponent(jPanel1);
+        jSplitPane1.setDividerLocation(150);
+        jSplitPane1.setRightComponent(_pnlResults);
+        jSplitPane1.setLeftComponent(_pnlPlaylists);
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
@@ -88,7 +80,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
+    private listfix.view.controls.PlaylistsList _pnlPlaylists;
+    private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
     private javax.swing.JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 

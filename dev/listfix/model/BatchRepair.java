@@ -70,8 +70,11 @@ public class BatchRepair
 				// load
 				progress.getOverall().stepCompleted();
 				progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
-				File file = new File(item.getPath());
-				item.setPlaylist(new Playlist(file, progress.getTask()));
+				if (item.getPlaylist() == null)
+				{
+					File file = new File(item.getPath());
+					item.setPlaylist(new Playlist(file, progress.getTask()));
+				}
 
 				// repair
 				progress.getOverall().stepCompleted();

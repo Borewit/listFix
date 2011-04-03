@@ -889,7 +889,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	private void launchBatchPlaylistRepair()
+	private void batchRepairSelectedPlaylists()
 	{
 		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
 		List<File> files = new ArrayList<File>();
@@ -1497,7 +1497,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		else
 		{
 			// set status label
-			refreshStatusLabel(_currentPlaylist);
+			onPlaylistModified(_currentPlaylist);
 
 			// add listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
@@ -1573,6 +1573,32 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			result = result && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
 		}
 		return result;
+	}
+
+	public void repairAllTabs()
+	{		
+		List<Playlist> files = new ArrayList<Playlist>();
+		for (Playlist list : _playlistToEditorMap.keySet())
+		{
+			files.add(list);
+		}
+		if (files.isEmpty())
+		{
+			return;
+		}
+		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), files.get(0).getFile());
+		br.setDescription("Batch Repair");
+		for (Playlist file : files)
+		{
+			br.add(new BatchRepairItem(file));
+		}
+		BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
+		if (!dlg.getUserCancelled())
+		{
+			dlg.setLocationRelativeTo(this);
+			dlg.setVisible(true);
+			updatePlaylistDirectoryPanel();
+		}
 	}
 
 	@Override
@@ -1901,7 +1927,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
     private void _miBatchPlaylistRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miBatchPlaylistRepairActionPerformed
     {//GEN-HEADEREND:event__miBatchPlaylistRepairActionPerformed
-		launchBatchPlaylistRepair();
+		batchRepairSelectedPlaylists();
 	}//GEN-LAST:event__miBatchPlaylistRepairActionPerformed
 
 private void _helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__helpMenuItemActionPerformed
@@ -2159,7 +2185,7 @@ private void _setPlaylistsDirectoryButtonActionPerformed(java.awt.event.ActionEv
 
 private void _repairPlaylistsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__repairPlaylistsButtonActionPerformed
 {//GEN-HEADEREND:event__repairPlaylistsButtonActionPerformed
-	launchBatchPlaylistRepair();
+	batchRepairSelectedPlaylists();
 }//GEN-LAST:event__repairPlaylistsButtonActionPerformed
 
 private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__closeAllMenuItemActionPerformed

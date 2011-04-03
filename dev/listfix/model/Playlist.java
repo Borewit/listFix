@@ -575,6 +575,13 @@ public class Playlist
 					isModified = true;
 				}
 			}
+			else if(entry.isFound() && !entry.isURL())
+			{
+				if (entry.updatePathToMediaLibraryIfFoundOutside())
+				{
+					isModified = true;
+				}
+			}
 		}
 
 		if (isModified)
