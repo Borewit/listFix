@@ -116,6 +116,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
 		_btnPlay.setEnabled(_playlist != null);
+		_btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
+		_btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 		getTableModel().fireTableDataChanged();
 	}
 
@@ -924,6 +926,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(jSeparator5);
 
         _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev-broken.png"))); // NOI18N
+        _btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
         _btnPrevMissing.setFocusable(false);
         _btnPrevMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnPrevMissing.setMaximumSize(new java.awt.Dimension(31, 31));
@@ -938,6 +941,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnPrevMissing);
 
         _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next-broken.png"))); // NOI18N
+        _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
         _btnNextMissing.setFocusable(false);
         _btnNextMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnNextMissing.setMaximumSize(new java.awt.Dimension(31, 31));

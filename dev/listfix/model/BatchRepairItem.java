@@ -20,6 +20,7 @@
 package listfix.model;
 
 import java.io.File;
+import java.util.List;
 import listfix.util.FileNameTokenizer;
 
 public class BatchRepairItem
@@ -28,6 +29,7 @@ public class BatchRepairItem
 	private String _displayName;
 	private Playlist _playlist;
 	private File _playlistFile;
+	private List<BatchMatchItem> _closestMatches;
 
 	public BatchRepairItem(File file)
 	{
@@ -92,5 +94,15 @@ public class BatchRepairItem
 	 public void setPlaylistFile(File playlistFile)
 	{
 		this._playlistFile = playlistFile;
+	}
+
+	void setClosestMatches(List<BatchMatchItem> findClosestMatches)
+	{
+		_closestMatches = findClosestMatches;
+	}
+
+	public List<BatchMatchItem> getClosestMatches()
+	{
+		return _closestMatches;
 	}
 }

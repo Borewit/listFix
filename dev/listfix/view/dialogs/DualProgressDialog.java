@@ -31,15 +31,15 @@ import javax.swing.SwingWorker;
 public class DualProgressDialog extends javax.swing.JDialog
 {
 	/** Creates new form DualProgressDialog */
-	public DualProgressDialog(java.awt.Frame parent, boolean modal)
+	public DualProgressDialog(java.awt.Frame parent, String title, boolean modal)
 	{
-		super(parent, modal);
+		super(parent, title, modal);
 		initComponents();
 	}
 
-	public DualProgressDialog(java.awt.Frame parent, String taskMsg, String overallMsg)
+	public DualProgressDialog(java.awt.Frame parent, String title, String taskMsg, String overallMsg)
 	{
-		this(parent, true);
+		this(parent, title, true);
 
 		_taskLabel.setText(taskMsg);
 

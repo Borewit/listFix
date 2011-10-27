@@ -21,7 +21,6 @@
 package listfix.view.controls;
 
 import java.awt.Component;
-import java.awt.DisplayMode;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,7 +59,7 @@ import org.apache.log4j.Logger;
  */
 public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPanel
 {
-	private final List<BatchMatchItem> _items;
+	private List<BatchMatchItem> _items;
 
 	private static final Logger _logger = Logger.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
 	private int _width;
@@ -69,25 +68,28 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 	{
 		_items = new ArrayList<BatchMatchItem>();
 		initComponents();
+		initialize();
 	}
     /** Creates new form ClosestMatchesSearchScrollableResultsPanel */
     public ClosestMatchesSearchScrollableResultsPanel(List<BatchMatchItem> items)
 	{
 		_items = items;
 		initComponents();
+		initialize();
+    }
 
+	private void initialize()
+	{
 		int cwidth = 0;
 		TableColumnModel cm = _uiTable.getColumnModel();
 		cm.getColumn(4).setMinWidth(0);
-
 		_uiTable.initFillColumnForScrollPane(_uiScrollPane);
 		cwidth += _uiTable.autoResizeColumn(1);
 		cwidth += cm.getColumn(2).getWidth();
 		cwidth += _uiTable.autoResizeColumn(3);
 		_uiTable.setFillerColumnWidth(_uiScrollPane);
-
 		TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
-		Component comp = renderer.getTableCellRendererComponent(_uiTable, (items.size() + 1) * 10, false, false, 0, 0);
+		Component comp = renderer.getTableCellRendererComponent(_uiTable, (_items.size() + 1) * 10, false, false, 0, 0);
 		int width = comp.getPreferredSize().width + 4;
 		TableColumn col = cm.getColumn(0);
 		col.setMinWidth(width);
@@ -96,21 +98,18 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		cwidth += width + 20;
 		_uiTable.setCellSelectionEnabled(true);
 		_width = cwidth;
-
 		cm.getColumn(2).setCellRenderer(new ButtonRenderer());
 		cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
 		cm.getColumn(3).setCellEditor(new MatchEditor());
-
 		_uiTable.setShowHorizontalLines(false);
 		_uiTable.setShowVerticalLines(false);
-
+		
 		// set sort to #
 		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
 		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 		_uiTable.getRowSorter().setSortKeys(keys);
-
 		_uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    }
+	}
 
 	public int getSelectedRow()
 	{
@@ -171,6 +170,32 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 				return super.getToolTipText(event);
 			}
 		};
+	}
+
+	public void setResults(List<BatchMatchItem> closestMatches)
+	{
+		_items = closestMatches;
+		initialize();
+		((MatchTableModel) _uiTable.getModel()).fireTableDataChanged();
+		resizeAllColumns();
+	}
+
+	private void resizeAllColumns()
+	{
+		// resize columns to fit
+		int cwidth = 0;
+		cwidth += _uiTable.autoResizeColumn(1, true);
+		cwidth += _uiTable.autoResizeColumn(2);
+		cwidth += _uiTable.autoResizeColumn(3);
+		TableColumnModel cm = _uiTable.getColumnModel();
+		TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
+		Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
+		int width = comp.getPreferredSize().width + 4;
+		TableColumn col = cm.getColumn(0);
+		col.setMinWidth(width);
+		col.setMaxWidth(width);
+		col.setPreferredWidth(width);
+		cwidth += width;
 	}
 
 	private class ButtonRenderer implements TableCellRenderer
@@ -285,31 +310,35 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex)
 		{
-			final BatchMatchItem item = _items.get(rowIndex);
-			switch (columnIndex)
+			if (rowIndex < _items.size())
 			{
-				case 0:
-					return rowIndex + 1;
+				final BatchMatchItem item = _items.get(rowIndex);
+				switch (columnIndex)
+				{
+					case 0:
+						return rowIndex + 1;
 
-				case 1:
-					return item.getEntry().getFileName();
+					case 1:
+						return item.getEntry().getFileName();
 
-				case 2:
-					return "";
-				case 3:
-					MatchedPlaylistEntry match = item.getSelectedMatch();
-					if (match != null)
-					{
-						return match.getPlaylistFile().getFileName();
-					}
-					else
-					{
-						return "< skip >";
-					}
+					case 2:
+						return "";
+					case 3:
+						MatchedPlaylistEntry match = item.getSelectedMatch();
+						if (match != null)
+						{
+							return match.getPlaylistFile().getFileName();
+						}
+						else
+						{
+							return "< skip >";
+						}
 
-				default:
-					return null;
+					default:
+						return null;
+				}
 			}
+			return null;
 		}
 
 		@Override

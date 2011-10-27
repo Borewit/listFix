@@ -42,7 +42,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
 {
 	private boolean _userCancelled = false;
 	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
-	private int _lastSelectedList = -1;
 
 	/** Creates new form BatchRepairDialog */
 	public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
@@ -55,7 +54,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		_txtBackup.setText(_batch.getDefaultBackupName());
 
 		// load and repair lists
-		final DualProgressDialog pd = new DualProgressDialog(parent, "Please wait...", "Loading Batch Repairs...");
+		final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Exact Matches...", "Please wait...", "Overall Progress:");
 		DualProgressWorker dpw = new DualProgressWorker<Void, String>()
 		{
 			@Override
@@ -86,7 +85,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			@Override
 			protected Void doInBackground() throws Exception
 			{
-				_batch.load(this);
+				_batch.performExactMatchRepair(this);
 				return null;
 			}
 		};
@@ -110,19 +109,19 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			});
 			_pnlList.initPlaylistsList();
 
-			for (BatchRepairItem item : batch.getItems())
+			for (BatchRepairItem item : _batch.getItems())
 			{
 				item.getPlaylist().addModifiedListener(listener);
 			}
 
 			String listCountTxt;
-			if (batch.getItems().size() == 1)
+			if (_batch.getItems().size() == 1)
 			{
 				listCountTxt = "1 playlist";
 			}
 			else
 			{
-				listCountTxt = String.format("%d playlists", batch.getItems().size());
+				listCountTxt = String.format("%d playlists", _batch.getItems().size());
 			}
 			_pnlList.setText(listCountTxt);
 		}
@@ -148,14 +147,13 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
 	private void updateSelectedPlaylist()
 	{
+		// Keep the table anchored left...
+		_pnlList.anchorLeft();
 		int selIx = _pnlList.getSelectedModelRow();
 		if (selIx >= 0)
 		{
 			BatchRepairItem item = _batch.getItem(selIx);
 			playlistEditCtrl1.setPlaylist(item.getPlaylist());
-			
-			// Keep the table anchored left...
-			_pnlList.anchorLeft();
 		}
 	}
 
@@ -169,7 +167,6 @@ public class BatchRepairDialog extends javax.swing.JDialog
 	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         _backupPanel = new javax.swing.JPanel();
         _chkBackup = new javax.swing.JCheckBox();
@@ -185,6 +182,11 @@ public class BatchRepairDialog extends javax.swing.JDialog
         _pnlList = new PlaylistsList(_batch);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         _chkBackup.setText("Backup original files to zip file:");
         _chkBackup.addItemListener(new java.awt.event.ItemListener() {
@@ -321,6 +323,7 @@ public class BatchRepairDialog extends javax.swing.JDialog
 
     private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
     {//GEN-HEADEREND:event_onBtnCancelActionPerformed
+		_userCancelled = true;
 		setVisible(false);
     }//GEN-LAST:event_onBtnCancelActionPerformed
 
@@ -335,6 +338,11 @@ public class BatchRepairDialog extends javax.swing.JDialog
 			_txtBackup.requestFocusInWindow();
 		}
     }//GEN-LAST:event_onChkBackupItemStateChanged
+
+	private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+	{//GEN-HEADEREND:event_formWindowClosing
+		_userCancelled = true;
+	}//GEN-LAST:event_formWindowClosing
 
 	/**
 	 * @return the _userCancelled

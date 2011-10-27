@@ -28,7 +28,6 @@ public class SplashScreen extends JFrame
 
 	public SplashScreen(String imageResourcePath)
 	{
-
 		ClassLoader cl = this.getClass().getClassLoader();
 		ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
 
@@ -37,17 +36,12 @@ public class SplashScreen extends JFrame
 
 		statusBar = new JLabel(" ");
 		statusBar.setBorder(BorderFactory.createBevelBorder(1));
-		statusBar.setFont(new Font("SansSerif", 0, 10));
 		getContentPane().add(statusBar, BorderLayout.SOUTH);
 
 		setUndecorated(true);
-
 		pack();
 
-		Toolkit toolKit = getToolkit();
-
 		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-
 		setBounds(dm.getWidth() / 2 - getWidth() / 2, dm.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

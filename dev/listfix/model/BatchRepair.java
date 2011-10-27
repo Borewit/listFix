@@ -37,6 +37,7 @@ import java.util.zip.ZipOutputStream;
 import listfix.util.Log;
 
 import listfix.view.support.DualProgressAdapter;
+import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IDualProgressObserver;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -58,7 +59,7 @@ public class BatchRepair
 		_items.add(item);
 	}
 
-	public void load(IDualProgressObserver<String> observer) throws IOException
+	public void performExactMatchRepair(IDualProgressObserver<String> observer) throws IOException
 	{
 		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
 		progress.getOverall().setTotal(_items.size() * 2);
@@ -207,5 +208,36 @@ public class BatchRepair
 			result.add(item.getPlaylist());
 		}
 		return result;
+	}
+
+	public void performClosestMatchRepair(IDualProgressObserver<String> observer) throws IOException
+	{
+		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
+		progress.getOverall().setTotal(_items.size() * 2);
+
+		for (BatchRepairItem item : _items)
+		{
+			if (!observer.getCancelled())
+			{
+				// load
+				progress.getOverall().stepCompleted();
+				progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
+				if (item.getPlaylist() == null)
+				{
+					File file = new File(item.getPath());
+					item.setPlaylist(new Playlist(file, progress.getTask()));
+				}
+
+				// repair
+				progress.getOverall().stepCompleted();
+				progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
+				Playlist list = item.getPlaylist();
+				item.setClosestMatches(list.findClosestMatches(_mediaFiles, progress.getTask()));
+			}
+			else
+			{
+				return;
+			}
+		}
 	}
 }

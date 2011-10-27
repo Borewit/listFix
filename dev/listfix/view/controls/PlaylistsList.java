@@ -180,7 +180,6 @@ public class PlaylistsList extends javax.swing.JPanel
 
 	public void anchorLeft()
 	{
-		_uiLists.getSelectionModel().setAnchorSelectionIndex(0);
+		_uiScrollLists.getHorizontalScrollBar().setValue(0);
 	}
-
 }
