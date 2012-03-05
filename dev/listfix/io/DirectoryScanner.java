@@ -26,13 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import listfix.view.support.ProgressWorker;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     DirectoryScanner.java
-= Purpose:  To create a list of the files and subdirectories contained in a
-=           list of input directories.
-============================================================================
+/**
+ * Creates a list of the indexed files and subdirectories contained in a list of input directories.
+ * @author jcaron
  */
 
 public class DirectoryScanner

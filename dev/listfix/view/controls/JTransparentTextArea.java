@@ -18,22 +18,19 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.view.controls;
 
-import java.io.File;
+import javax.swing.JTextArea;
 
 /**
  *
  * @author jcaron
  */
-public class Constants
+public class JTransparentTextArea extends JTextArea
 {
-	public static final String FS = System.getProperty("file.separator");
-	public static final String HOME_DIR = System.getProperty("user.home");
-	public static final String DATA_DIR = HOME_DIR + FS + ".listFix()" + FS;
-	public static final String BR = System.getProperty("line.separator");
-	public static final String MEDIA_LIBRARY_INI = DATA_DIR + "dirLists.ini";
-	public static final String HISTORY_INI = DATA_DIR + "history.ini";
-	public static final String OPTIONS_INI = DATA_DIR + "options.ini";
-	public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
+	public JTransparentTextArea(String msg)
+	{
+		super(msg);
+		this.setOpaque(false);
+	}
 }

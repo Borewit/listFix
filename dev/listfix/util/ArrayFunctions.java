@@ -28,6 +28,7 @@ package listfix.util;
 =           several which mimic Vector functionality.
 ============================================================================
  */
+
 import java.util.List;
 
 public class ArrayFunctions

@@ -28,23 +28,30 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
+import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
+
 import org.apache.log4j.Logger;
 
-public class BatchRepairDialog extends javax.swing.JDialog
+/**
+ * This is the dialog we display for an exact matches search on multiple playlists.
+ * @author jcaron
+ */
+public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 {
 	private boolean _userCancelled = false;
-	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
+	private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
 
-	/** Creates new form BatchRepairDialog */
-	public BatchRepairDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
+	/** Creates new form BatchExactMatchesResultsDialog */
+	public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
 	{
 		super(parent, batch.getDescription(), modal);
 		//super(parent, modal);
@@ -313,8 +320,8 @@ public class BatchRepairDialog extends javax.swing.JDialog
 		catch (ExecutionException eex)
 		{
 			Throwable ex = eex.getCause();
-			String msg = "An error occurred while saving:\n" + ex.getMessage();
-			JOptionPane.showMessageDialog(BatchRepairDialog.this, msg, "Save Error", JOptionPane.ERROR_MESSAGE);
+			String msg = "An error occurred while saving: " + ex.getMessage();
+			JOptionPane.showMessageDialog(BatchExactMatchesResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 

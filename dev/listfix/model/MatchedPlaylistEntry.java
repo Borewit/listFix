@@ -22,6 +22,11 @@ package listfix.model;
 
 import java.io.File;
 
+/**
+ * Serves to model a closest match on a single playlist entry.  Should probably be renamed to make this more clear.
+ * @author jcaron
+ */
+
 public class MatchedPlaylistEntry
 {
 	private PlaylistEntry thisEntry = null;

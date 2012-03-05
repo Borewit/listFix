@@ -41,8 +41,11 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
+import listfix.view.controls.JTransparentTextArea;
 import listfix.view.support.FontExtensions;
+
 import net.mariottini.swing.JFontChooser;
+
 import org.apache.log4j.Logger;
 
 public class AppOptionsDialog extends javax.swing.JDialog
@@ -544,7 +547,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			}
 			catch (Exception e)
 			{
-				JOptionPane.showMessageDialog(this, "The directory you selected/entered does not exist.");
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
 				_logger.info(ExStack.toString(e));
 			}
 		}

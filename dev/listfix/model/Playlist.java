@@ -43,14 +43,15 @@ import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
-import listfix.util.ExStack;
 
+import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
 import listfix.util.UnicodeUtils;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+
 import org.apache.log4j.Logger;
 
 public class Playlist

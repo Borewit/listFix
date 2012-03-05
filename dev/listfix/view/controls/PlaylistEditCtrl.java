@@ -84,7 +84,7 @@ import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.BatchClosestMatchResultsDialog;
 import listfix.view.dialogs.ProgressDialog;
-import listfix.view.dialogs.BatchRepairDialog;
+import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
 import listfix.view.support.IPlaylistModifiedListener;
@@ -485,7 +485,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				// make sure the replacement file is not a playlist
 				if (Playlist.isPlaylist(file))
 				{
-					JOptionPane.showMessageDialog(getParentFrame(), "You cannot replace a file with a playlist file. Use Add File instead.", "Replace File Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("You cannot replace a file with a playlist file. Use \"Add File\" instead."), "Replace File Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				PlaylistEntry newEntry = new PlaylistEntry(file, null, _playlist.getFile());
@@ -504,7 +504,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			getTableModel().fireTableDataChanged();
 		}
 		String msg = dupCount == 1 ? "Removed 1 duplicate" : String.format("Removed %d duplicates", dupCount);
-		JOptionPane.showMessageDialog(getParentFrame(), msg, "Duplicates Removed", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea(msg), "Duplicates Removed", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void removeMissing()
@@ -515,7 +515,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			getTableModel().fireTableDataChanged();
 		}
 		String msg = count == 1 ? "Removed 1 missing entry" : String.format("Removed %d missing entries", count);
-		JOptionPane.showMessageDialog(getParentFrame(), msg, "Missing Entries Removed", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea(msg), "Missing Entries Removed", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void savePlaylist()
@@ -574,7 +574,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				catch (Exception e)
 				{
 					_logger.error(ExStack.toString(e));
-					JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+					JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 				}
 				finally
 				{
@@ -604,7 +604,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			catch (Exception ex)
 			{
 				_logger.error(ExStack.toString(ex));
-				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 			}
 			finally
 			{
@@ -658,7 +658,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 		catch (Exception ex)
 		{
-			JOptionPane.showMessageDialog(getParentFrame(), "Could not open these playlist entries, error was: \n\n" + ex.toString());
+			JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Could not open these playlist entries, error was: " + ex.getMessage()));
 		}
 	}
 
@@ -676,7 +676,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _miReplace = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         _miFindClosest = new javax.swing.JMenuItem();
-        _miBatchFindClosest = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         _miRemoveDups = new javax.swing.JMenuItem();
         _miRemoveMissing = new javax.swing.JMenuItem();
@@ -724,15 +723,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
         });
         _playlistEntryRightClickMenu.add(_miFindClosest);
-
-        _miBatchFindClosest.setText("Batch Find Closest Matches");
-        _miBatchFindClosest.setToolTipText("Finds best closest match for all missing files in list");
-        _miBatchFindClosest.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onMenuBatchFindClosestMatchActionPerformed(evt);
-            }
-        });
-        _playlistEntryRightClickMenu.add(_miBatchFindClosest);
         _playlistEntryRightClickMenu.add(jSeparator4);
 
         _miRemoveDups.setText("Remove Duplicates");
@@ -926,6 +916,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(jSeparator5);
 
         _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev-broken.png"))); // NOI18N
+        _btnPrevMissing.setToolTipText("Previous Missing Entry");
         _btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
         _btnPrevMissing.setFocusable(false);
         _btnPrevMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -941,6 +932,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnPrevMissing);
 
         _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next-broken.png"))); // NOI18N
+        _btnNextMissing.setToolTipText("Next Missing Entry");
         _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
         _btnNextMissing.setFocusable(false);
         _btnNextMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1083,16 +1075,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 			catch (Exception e)
 			{
-				JOptionPane.showMessageDialog(getParentFrame(), "An error has occured, 1 or more files were not copied.");
+				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("An error has occured, 1 or more files were not copied."));
 				_logger.error(ExStack.toString(e));
 			}
 		}
     }//GEN-LAST:event_onMenuCopyFiles
-
-    private void onMenuBatchFindClosestMatchActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuBatchFindClosestMatchActionPerformed
-    {//GEN-HEADEREND:event_onMenuBatchFindClosestMatchActionPerformed
-		bulkFindClosestMatches();
-    }//GEN-LAST:event_onMenuBatchFindClosestMatchActionPerformed
 
 	private void _uiTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed
 	{//GEN-HEADEREND:event__uiTableMousePressed
@@ -1121,7 +1108,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			{
 				"Discard Changes and Reload", "Cancel"
 			};
-			int rc = JOptionPane.showOptionDialog(this.getParentFrame(), "The current list is modified, do you really want to discard these changes and reload from source?\n", "Confirm Reload",
+			int rc = JOptionPane.showOptionDialog(this.getParentFrame(), new JTransparentTextArea("The current list is modified, do you really want to discard these changes and reload from source?"), "Confirm Reload",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (rc == JOptionPane.NO_OPTION)
 			{
@@ -1359,7 +1346,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JButton _btnReorder;
     private javax.swing.JButton _btnSave;
     private javax.swing.JButton _btnUp;
-    private javax.swing.JMenuItem _miBatchFindClosest;
     private javax.swing.JMenuItem _miCopyFiles;
     private javax.swing.JMenuItem _miEditFilename;
     private javax.swing.JMenuItem _miFindClosest;
@@ -1376,10 +1362,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     // End of variables declaration//GEN-END:variables
-	private static ImageIcon _imgMissing = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-missing.png"));
-	private static ImageIcon _imgFound = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-found.png"));
-	private static ImageIcon _imgFixed = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-fixed.png"));
-	private static ImageIcon _imgUrl = new ImageIcon(BatchRepairDialog.class.getResource("/images/icon-url.png"));
+	private static ImageIcon _imgMissing = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-missing.png"));
+	private static ImageIcon _imgFound = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-found.png"));
+	private static ImageIcon _imgFixed = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-fixed.png"));
+	private static ImageIcon _imgUrl = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-url.png"));
 
 	public Playlist getPlaylist()
 	{
@@ -1683,7 +1669,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 		});
 
-		// drag-n-drop support
+		// drag-n-drop support for the insertion of playlists or entries
 		_uiTable.setTransferHandler(new TransferHandler()
 		{
 			@Override

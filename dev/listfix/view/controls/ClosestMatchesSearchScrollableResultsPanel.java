@@ -131,6 +131,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		return _width;
 	}
 
+	@Override
 	public int getWidth()
 	{
 		return _uiScrollPane.getWidth();
@@ -184,7 +185,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 	{
 		// resize columns to fit
 		int cwidth = 0;
-		cwidth += _uiTable.autoResizeColumn(1, true);
+		cwidth += _uiTable.autoResizeColumn(1);
 		cwidth += _uiTable.autoResizeColumn(2);
 		cwidth += _uiTable.autoResizeColumn(3);
 		TableColumnModel cm = _uiTable.getColumnModel();
@@ -195,7 +196,8 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		col.setMinWidth(width);
 		col.setMaxWidth(width);
 		col.setPreferredWidth(width);
-		cwidth += width;
+		// _uiTable.initFillColumnForScrollPane(_uiScrollPane);
+		_uiTable.setFillerColumnWidth(_uiScrollPane);
 	}
 
 	private class ButtonRenderer implements TableCellRenderer
@@ -415,6 +417,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 
 		private class MyComboBoxRenderer extends BasicComboBoxRenderer
 		{
+			@Override
 			public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus)
 			{

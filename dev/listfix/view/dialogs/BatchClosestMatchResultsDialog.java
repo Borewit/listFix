@@ -48,10 +48,14 @@ import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.util.ExStack;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
-
 import listfix.view.support.ZebraJTable;
+
 import org.apache.log4j.Logger;
 
+/**
+ * This is the results dialog we display when running a closest matches search on multiple files in a playlist (this operation originally worked only on a single entry)..
+ * @author jcaron
+ */
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
 	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);

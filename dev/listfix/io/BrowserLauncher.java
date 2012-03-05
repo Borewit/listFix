@@ -23,6 +23,7 @@ package listfix.io;
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
 import listfix.util.OperatingSystem;
+import listfix.view.controls.JTransparentTextArea;
 
 public class BrowserLauncher
 {
@@ -80,7 +81,7 @@ public class BrowserLauncher
 		}
 		catch (Exception e)
 		{
-			JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null, new JTransparentTextArea(errMsg + ": " + e.getLocalizedMessage()));
 		}
 	}
 }

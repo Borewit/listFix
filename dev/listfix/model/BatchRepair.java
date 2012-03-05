@@ -1,4 +1,3 @@
-
 /**
  * listFix() - Fix Broken Playlists!
  *
@@ -17,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
+
 package listfix.model;
 
 import java.io.File;
@@ -37,13 +37,29 @@ import java.util.zip.ZipOutputStream;
 import listfix.util.Log;
 
 import listfix.view.support.DualProgressAdapter;
-import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IDualProgressObserver;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
+/**
+ * Serves to model the batch repair operations on multiple playlists, both closest matches and exact matches.
+ * @author jcaron
+ */
+
 public class BatchRepair
-{
+{	
+	// The lowest common directory of all playlists being repaired.
+	private File _rootDirectory;	
+	
+	// The description of this batch repair, currently used in the title of the results dialog for this run.
+	private String _description;
+	
+	// The wrappers around the playlists to be repaired.
+	private List<BatchRepairItem> _items = new ArrayList<BatchRepairItem>();
+	
+	// The list of files in the media library to be considered during the repair.
+	private String[] _mediaFiles;
+	
 	public BatchRepair(String[] mediaFiles, File rootDirectory)
 	{
 		_mediaFiles = mediaFiles;
@@ -54,11 +70,56 @@ public class BatchRepair
 		}
 	}
 
+	public List<BatchRepairItem> getItems()
+	{
+		return _items;
+	}
+
+	public BatchRepairItem getItem(int ix)
+	{
+		return _items.get(ix);
+	}
+
+	public Boolean isEmpty()
+	{
+		return _items.isEmpty();
+	}
+
+	public String getDescription()
+	{
+		return _description;
+	}
+
+	public void setDescription(String description)
+	{
+		_description = description;
+	}
+
+	public File getRootDirectory()
+	{
+		return _rootDirectory;
+	}	
+
+	public List<Playlist> getPlaylists()
+	{
+		List<Playlist> result = new ArrayList<Playlist>();
+		for (BatchRepairItem item : _items)
+		{
+			result.add(item.getPlaylist());
+		}
+		return result;
+	}
+
 	public void add(BatchRepairItem item)
 	{
 		_items.add(item);
 	}
 
+	/**
+	 * Performs an exact matches search on all entries in multiple playlists. 
+	 * @param observer The progress observer for this operation.
+	 * @throws IOException
+	 */
 	public void performExactMatchRepair(IDualProgressObserver<String> observer) throws IOException
 	{
 		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
@@ -89,7 +150,61 @@ public class BatchRepair
 			}
 		}
 	}
+	
+	/**
+	 * Performs a closest matches search on all entries in multiple playlists. 
+	 * @param observer The progress observer for this operation.
+	 * @throws IOException
+	 */
+	public void performClosestMatchRepair(IDualProgressObserver<String> observer) throws IOException
+	{
+		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
+		progress.getOverall().setTotal(_items.size() * 2);
 
+		List<BatchRepairItem> toRemoveFromBatch = new ArrayList<BatchRepairItem>();
+		for (BatchRepairItem item : _items)
+		{
+			if (!observer.getCancelled())
+			{
+				// load
+				progress.getOverall().stepCompleted();
+				progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
+				if (item.getPlaylist() == null)
+				{
+					File file = new File(item.getPath());
+					item.setPlaylist(new Playlist(file, progress.getTask()));
+				}
+
+				// repair
+				if (item.getPlaylist().getMissingCount() > 0)
+				{
+					progress.getOverall().stepCompleted();
+					progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
+					Playlist list = item.getPlaylist();
+					item.setClosestMatches(list.findClosestMatches(_mediaFiles, progress.getTask()));
+				}
+				else
+				{
+					// Don't fix playlists that have nothing to fix... instead remove them from the result set.
+					toRemoveFromBatch.add(item);
+				}
+			}
+			else
+			{
+				return;
+			}
+		}
+
+		for (BatchRepairItem item : toRemoveFromBatch)
+		{
+			_items.remove(item);
+		}
+	}
+
+	/**
+	 * Helper method to get auto-generated zip file name for backing up the playlists in this batch repair.
+	 * @return
+	 */
 	public String getDefaultBackupName()
 	{
 		Date timestamp = new Date();
@@ -98,6 +213,15 @@ public class BatchRepair
 		return file.getAbsolutePath();
 	}
 
+	/**
+	 * Save out all the playlists in this batch repair and backup the originals if told to do so.
+	 * @param saveRelative	Should the playlist be saved relatively or not.
+	 * @param backup		Should we backup the originals to a zip file?
+	 * @param destination	The path to the backup zip file we'll create if told to backup the originals.
+	 * @param observer		The progress observer for this operation.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public void save(boolean saveRelative, boolean backup, String destination, IProgressObserver observer) throws FileNotFoundException, IOException
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
@@ -163,81 +287,6 @@ public class BatchRepair
 		for (BatchRepairItem item : _items)
 		{
 			item.getPlaylist().save(saveRelative, progress);
-		}
-	}
-	private List<BatchRepairItem> _items = new ArrayList<BatchRepairItem>();
-	private String[] _mediaFiles;
-
-	public List<BatchRepairItem> getItems()
-	{
-		return _items;
-	}
-
-	public BatchRepairItem getItem(int ix)
-	{
-		return _items.get(ix);
-	}
-
-	public Boolean isEmpty()
-	{
-		return _items.isEmpty();
-	}
-
-	public String getDescription()
-	{
-		return _description;
-	}
-
-	public void setDescription(String description)
-	{
-		_description = description;
-	}
-	private String _description;
-
-	public File getRootDirectory()
-	{
-		return _rootDirectory;
-	}
-	private File _rootDirectory;
-
-	public List<Playlist> getPlaylists()
-	{
-		List<Playlist> result = new ArrayList<Playlist>();
-		for (BatchRepairItem item : _items)
-		{
-			result.add(item.getPlaylist());
-		}
-		return result;
-	}
-
-	public void performClosestMatchRepair(IDualProgressObserver<String> observer) throws IOException
-	{
-		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
-		progress.getOverall().setTotal(_items.size() * 2);
-
-		for (BatchRepairItem item : _items)
-		{
-			if (!observer.getCancelled())
-			{
-				// load
-				progress.getOverall().stepCompleted();
-				progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
-				if (item.getPlaylist() == null)
-				{
-					File file = new File(item.getPath());
-					item.setPlaylist(new Playlist(file, progress.getTask()));
-				}
-
-				// repair
-				progress.getOverall().stepCompleted();
-				progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
-				Playlist list = item.getPlaylist();
-				item.setClosestMatches(list.findClosestMatches(_mediaFiles, progress.getTask()));
-			}
-			else
-			{
-				return;
-			}
 		}
 	}
 }

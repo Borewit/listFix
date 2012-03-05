@@ -30,6 +30,7 @@ import java.util.List;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
@@ -39,13 +40,15 @@ import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
 
 /**
- *
+ * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
  * @author jcaron
  */
+
 public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
 	private BatchRepair _batch;
 	private boolean _userCancelled = false;
+	private boolean _userAccepted = false;
 
     /** Creates new form MultiListBatchClosestMatchResultsDialog */
     public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal)
@@ -180,6 +183,9 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
         _pnlResults = new ClosestMatchesSearchScrollableResultsPanel();
         _pnlList = new PlaylistsList(_batch);
         jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        _btnSave = new javax.swing.JButton();
+        _btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -197,6 +203,26 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        _btnSave.setText("Save All Repairs");
+        _btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnSaveonBtnSaveActionPerformed(evt);
+            }
+        });
+        jPanel2.add(_btnSave);
+
+        _btnCancel.setText("Cancel");
+        _btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnCancelonBtnCancelActionPerformed(evt);
+            }
+        });
+        jPanel2.add(_btnCancel);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -205,10 +231,30 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 		_userCancelled = true;
 	}//GEN-LAST:event_formWindowClosing
 
+	private void _btnSaveonBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnSaveonBtnSaveActionPerformed
+	{//GEN-HEADEREND:event__btnSaveonBtnSaveActionPerformed
+		_userAccepted = true;
+		if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3)
+		{
+			TableCellEditor cellEditor = _pnlResults.getCellEditor(_pnlResults.getSelectedRow(), _pnlResults.getSelectedColumn());
+			cellEditor.stopCellEditing();
+		}
+		setVisible(false);
+}//GEN-LAST:event__btnSaveonBtnSaveActionPerformed
+
+	private void _btnCancelonBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnCancelonBtnCancelActionPerformed
+	{//GEN-HEADEREND:event__btnCancelonBtnCancelActionPerformed
+		_userCancelled = true;
+		setVisible(false);
+}//GEN-LAST:event__btnCancelonBtnCancelActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton _btnCancel;
+    private javax.swing.JButton _btnSave;
     private listfix.view.controls.PlaylistsList _pnlList;
     private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 
@@ -223,6 +269,20 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 	public boolean getUserCancelled()
 	{
 		return _userCancelled;
+	}
+
+	/**
+	 * @return the _userAccepted
+	 */ public boolean isUserAccepted()
+	{
+		return _userAccepted;
+	}
+
+	/**
+	 * @param userAccepted the _userAccepted to set
+	 */ public void setUserAccepted(boolean userAccepted)
+	{
+		this._userAccepted = userAccepted;
 	}
 
 }

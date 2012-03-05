@@ -21,8 +21,18 @@ package listfix.model;
 
 import java.util.List;
 
+/**
+ * Serves to model the multiple matches that result for a single playlist entry during a closest matches search.  Should probably be renamed to make this more explicit.
+ * @author jcaron
+ */
+
 public class BatchMatchItem
 {
+	private int _entryIx;
+    private int _selectedIx;
+	private PlaylistEntry _entry;
+    private List<MatchedPlaylistEntry> _matches;
+	
     public BatchMatchItem(int ix, PlaylistEntry entry, List<MatchedPlaylistEntry> matches)
     {
         _entryIx = ix;
@@ -34,36 +44,36 @@ public class BatchMatchItem
     {
         return _entryIx;
     }
-    private int _entryIx;
 
     public PlaylistEntry getEntry()
     {
         return _entry;
-    }
-    private PlaylistEntry _entry;
+    }    
 
     public List<MatchedPlaylistEntry> getMatches()
     {
         return _matches;
     }
-    private List<MatchedPlaylistEntry> _matches;
 
     public int getSelectedIx()
     {
         return _selectedIx;
     }
+	
     public void setSelectedIx(int ix)
     {
         _selectedIx = ix;
     }
-    private int _selectedIx;
 
     public MatchedPlaylistEntry getSelectedMatch()
     {
         if (_selectedIx >= 0)
+		{
             return _matches.get(_selectedIx);
+		}
         else
+		{
             return null;
+		}
     }
-
 }

@@ -25,9 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.regex.Pattern;
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.controller.GUIDriver;
 
+import listfix.io.Constants;
 import listfix.util.*;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -37,12 +39,6 @@ public class PlaylistEntry implements Cloneable
 {
 	// logger
 	private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
-	// file separator
-	private final static String FILE_SEPARATOR = System.getProperty("file.separator");
-	// line separator
-	private final static String BR = System.getProperty("line.separator");
-	// is the file system case sensitive?
-	private static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
 	// The list of folders we know don't exist.
 	public static List<String> NonExistentDirectories = new ArrayList<String>();
 	// A list of folders we know DO exist.
@@ -71,6 +67,9 @@ public class PlaylistEntry implements Cloneable
 	private boolean _isFixed;
 	// The file this entry belongs to.
 	private File _playlist;
+
+	private static final Pattern APOS_PATTERN = Pattern.compile("\'");
+	private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(([a-z])([A-Z]))");
 
 	/**
 	 * @return the _status
@@ -131,7 +130,7 @@ public class PlaylistEntry implements Cloneable
 			if (!_thisFile.isAbsolute())
 			{
 				// if the test file was relative, try making it absolute.
-				_absoluteFile = new File(list.getParentFile(), p + FILE_SEPARATOR + f);
+				_absoluteFile = new File(list.getParentFile(), p + Constants.FS + f);
 				if (_absoluteFile.exists())
 				{
 					_status = PlaylistEntryStatus.Found;
@@ -401,13 +400,13 @@ public class PlaylistEntry implements Cloneable
 		if (!(this.getExtInf() == null) && !(this.getExtInf().equals("")))
 		{
 			result.append(this.getExtInf());
-			result.append(BR);
+			result.append(Constants.BR);
 		}
 		if (!this.isURL())
 		{
 			if (!this.isRelative())
 			{
-				if (this.getPath().endsWith(FILE_SEPARATOR))
+				if (this.getPath().endsWith(Constants.FS))
 				{
 					result.append(this.getPath());
 					result.append(this.getFileName());
@@ -415,14 +414,14 @@ public class PlaylistEntry implements Cloneable
 				else
 				{
 					result.append(this.getPath());
-					result.append(FILE_SEPARATOR);
+					result.append(Constants.FS);
 					result.append(this.getFileName());
 				}
 			}
 			else
 			{
 				String tempPath = _thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(FILE_SEPARATOR))
+				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(Constants.FS))
 				{
 					result.append(_fileName);
 				}
@@ -449,7 +448,7 @@ public class PlaylistEntry implements Cloneable
 			result.append("File").append(index).append("=");
 			if (!this.isRelative())
 			{
-				if (this.getPath().endsWith(FILE_SEPARATOR))
+				if (this.getPath().endsWith(Constants.FS))
 				{
 					result.append(this.getPath());
 					result.append(this.getFileName());
@@ -457,14 +456,14 @@ public class PlaylistEntry implements Cloneable
 				else
 				{
 					result.append(this.getPath());
-					result.append(FILE_SEPARATOR);
+					result.append(Constants.FS);
 					result.append(this.getFileName());
 				}
 			}
 			else
 			{
 				String tempPath = _thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(FILE_SEPARATOR))
+				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(Constants.FS))
 				{
 					result.append(_fileName);
 				}
@@ -478,13 +477,13 @@ public class PlaylistEntry implements Cloneable
 		{
 			result.append("File").append(index).append("=").append(_thisURI.toString());
 		}
-		result.append(BR);
+		result.append(Constants.BR);
 
 		// set the _title
-		result.append("Title").append(index).append("=").append(_title).append(BR);
+		result.append("Title").append(index).append("=").append(_title).append(Constants.BR);
 
 		// set the _length
-		result.append("Length").append(index).append("=").append(_length).append(BR);
+		result.append("Length").append(index).append("=").append(_length).append(Constants.BR);
 
 		return result.toString();
 	}
@@ -492,10 +491,10 @@ public class PlaylistEntry implements Cloneable
 	public boolean findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
-		String trimmedFileName = FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();
+		String trimmedFileName = Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();
 		for (int i = 0; i < fileList.length; i++)
 		{
-			if (FILE_SYSTEM_IS_CASE_SENSITIVE ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
+			if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
 			{
 				searchResult = i;
 				break;
@@ -518,7 +517,9 @@ public class PlaylistEntry implements Cloneable
 		progress.setTotal(mediaFiles.length);
 
 		matches.clear();
-		String entryName = getFileName().replaceAll("\'", "").toLowerCase();
+		
+		// Remove apostrophes and add spaces between lowercase and capital letters so we can tokenize by camel case.
+		String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
 		File mediaFile = null;
 		int score = 0;
 		for (String mediaFilePath : mediaFiles)
@@ -528,11 +529,14 @@ public class PlaylistEntry implements Cloneable
 				progress.stepCompleted();
 
 				mediaFile = new File(mediaFilePath);
-				score = FileNameTokenizer.score(entryName, mediaFile.getName().replaceAll("\'", "").toLowerCase());
+				
+				// Remove apostrophes and add spaces between lowercase and capital letters so we can tokenize by camel case.
+				score = FileNameTokenizer.score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
 				if (score > 0)
 				{
-					// JCaron - Keep only the top 20 rated matches, anything more than that will probably use too much memory
-					// on systems w/ huge media libraries, too little RAM, or excessively large playlists.
+					// Only keep the top X highest-rated matches (default is 20), anything more than that will use too much memory
+					// on systems w/ huge media libraries, too little RAM, or excessively large playlists (the things you have to worry
+					// about when people run your software on ancient computers in Africa :-p)
 					if (matches.size() < GUIDriver.getInstance().getAppOptions().getMaxClosestResults())
 					{
 						matches.add(new MatchedPlaylistEntry(mediaFile, score, _playlist));

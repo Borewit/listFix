@@ -34,15 +34,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onMenuFindClosestActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="_miBatchFindClosest">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Batch Find Closest Matches"/>
-            <Property name="toolTipText" type="java.lang.String" value="Finds best closest match for all missing files in list"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onMenuBatchFindClosestMatchActionPerformed"/>
-          </Events>
-        </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="_miRemoveDups">
@@ -353,6 +344,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/images/prev-broken.png"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Previous Missing Entry"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="_playlist != null &amp;&amp; _playlist.getMissingCount() &gt; 0" type="code"/>
             </Property>
@@ -378,6 +370,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/images/next-broken.png"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Next Missing Entry"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="_playlist != null &amp;&amp; _playlist.getMissingCount() &gt; 0" type="code"/>
             </Property>

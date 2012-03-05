@@ -70,7 +70,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         return _tabPane.indexOfTabComponent(this);
     }
 
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -113,14 +112,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 
         setFocusable(false);
         setOpaque(false);
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                formMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                formMouseReleased(evt);
-            }
-        });
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
 
         jLabel1.setText("playlist");
@@ -141,22 +132,11 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 		_tabMgr.closeAllOtherTabs(getTabIx());
 	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
 
-	private void formMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMousePressed
-	{//GEN-HEADEREND:event_formMousePressed
-		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
-		{
-			_tabPane.setSelectedIndex(getTabIx());
-		}
-}//GEN-LAST:event_formMousePressed
-
-	private void formMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMouseReleased
-	{//GEN-HEADEREND:event_formMouseReleased
-		if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
-		{
-			rightClickMenu.show(this, (int) evt.getPoint().getX(), (int) evt.getPoint().getY());
-		}
-}//GEN-LAST:event_formMouseReleased
-
+	public void rightClickReleased(java.awt.Point pt)
+	{	  
+		rightClickMenu.show(this.getParent(), pt.x, pt.y);		
+	}
+	
 	private void _miRepairAllTabsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRepairAllTabsActionPerformed
 	{//GEN-HEADEREND:event__miRepairAllTabsActionPerformed
 		_tabMgr.repairAllTabs();
@@ -171,9 +151,6 @@ public class ClosableTabCtrl extends javax.swing.JPanel
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPopupMenu rightClickMenu;
     // End of variables declaration//GEN-END:variables
-
-
-
 
     // <editor-fold defaultstate="collapsed" desc="TabButton">
     /*

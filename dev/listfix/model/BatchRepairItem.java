@@ -23,6 +23,11 @@ import java.io.File;
 import java.util.List;
 import listfix.util.FileNameTokenizer;
 
+/**
+ * Serves to model a batch repair operation on a single playlist, for both exact and closest matches repairs.
+ * @author jcaron
+ */
+
 public class BatchRepairItem
 {
 	private String _path;

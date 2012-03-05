@@ -30,21 +30,31 @@ import javax.xml.bind.Unmarshaller;
 
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-
 import listfix.model.winamp.generated.Playlist;
 import listfix.model.winamp.generated.Playlists;
 import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+
 import org.apache.log4j.Logger;
 
+/**
+ * Provides convenience methods for interacting w/ the Winamp Media Library and determining if Winamp is installed.
+ * @author jcaron
+ */
 public class WinampHelper
 {
 	private static final String HOME_PATH = System.getenv("APPDATA");
 	private static final String WINAMP_PATH = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
 	private static final Logger _logger = Logger.getLogger(WinampHelper.class);
 
+	/**
+	 * Generates an exact match batch repair for the cryptically named playlists in Winamp.
+	 * @param mediaFiles
+	 * @return A BatchRepair instance
+	 * @see BatchRepair
+	 */
 	public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
 	{
 		try

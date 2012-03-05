@@ -92,29 +92,33 @@ import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
 import listfix.util.OperatingSystem;
 import listfix.util.ExStack;
+import listfix.view.controls.JTransparentTextArea;
 
-import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.ProgressDialog;
-import listfix.view.dialogs.BatchRepairDialog;
+import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.AppOptionsDialog;
+import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.MultiListBatchClosestMatchResultsDialog;
 
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
+import listfix.view.support.DnDTabbedPane;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
+import listfix.view.support.TabTransferHandler;
 import listfix.view.support.WindowSaver;
 
 import org.apache.log4j.Logger;
 
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
-	private static final long serialVersionUID = 7691786927987534889L;
-	private final JFileChooser jM3UChooser;
-	private final JFileChooser jMediaDirChooser;
-	private final JFileChooser jSaveFileChooser;
-	private GUIDriver guiDriver = null;
-	private DropTarget dropTarget = null;
+	private static final long _serialVersionUID = 7691786927987534889L;
+	private final JFileChooser _jM3UChooser;
+	private final JFileChooser _jMediaDirChooser;
+	private final JFileChooser _jSaveFileChooser;
+	private GUIDriver _guiDriver = null;
+	private DropTarget _dropTarget = null;
+	private Playlist _currentPlaylist;
 
 	private static Logger _logger = Logger.getLogger(GUIScreen.class);
 
@@ -123,48 +127,48 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	{
 		listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
 		splashScreen.setStatusBar("Loading Media Library & Options...");
-		guiDriver = GUIDriver.getInstance();
+		_guiDriver = GUIDriver.getInstance();
 		splashScreen.setStatusBar("Initializing UI...");
 
 		initComponents();
 
-		jM3UChooser = new JFileChooser();
-		jMediaDirChooser = new JFileChooser();
-		jSaveFileChooser = new JFileChooser();
+		_jM3UChooser = new JFileChooser();
+		_jMediaDirChooser = new JFileChooser();
+		_jSaveFileChooser = new JFileChooser();
 
-		setApplicationFont(guiDriver.getAppOptions().getAppFont());
-		this.setLookAndFeel(guiDriver.getAppOptions().getLookAndFeel());
+		setApplicationFont(_guiDriver.getAppOptions().getAppFont());
+		this.setLookAndFeel(_guiDriver.getAppOptions().getLookAndFeel());
 		
-		jM3UChooser.setDialogTitle("Choose Playlists...");
-		jM3UChooser.setAcceptAllFileFilterUsed(false);
-		jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
-		jM3UChooser.setMultiSelectionEnabled(true);
+		_jM3UChooser.setDialogTitle("Choose Playlists...");
+		_jM3UChooser.setAcceptAllFileFilterUsed(false);
+		_jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
+		_jM3UChooser.setMultiSelectionEnabled(true);
 
-		jMediaDirChooser.setDialogTitle("Specify a media directory...");
-		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		_jMediaDirChooser.setDialogTitle("Specify a media directory...");
+		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+		_jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		jSaveFileChooser.setDialogTitle("Save File:");
-		jSaveFileChooser.setAcceptAllFileFilterUsed(false);
-		jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
+		_jSaveFileChooser.setDialogTitle("Save File:");
+		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
+		_jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		_jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
 
 		splashScreen.setVisible(false);
 
-		if (guiDriver.getShowMediaDirWindow())
+		if (_guiDriver.getShowMediaDirWindow())
 		{
-			JOptionPane.showMessageDialog(this, "You need to add a media directory before you can find the new locations of your files.  See help for more information.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."), "Reminder", JOptionPane.INFORMATION_MESSAGE);
 		}
 		else
 		{
-			_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+			_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 		}
 
 		updateMediaDirButtons();
 		updateRecentMenu();
 		refreshStatusLabel(null);
 
-		// (new FileWriter()).writeIni(guiDriver.getMediaDirs(), guiDriver.getMediaLibraryDirectoryList(), guiDriver.getMediaLibraryFileList(), guiDriver.getAppOptions());
+		// (new FileWriter()).writeIni(_guiDriver.getMediaDirs(), _guiDriver.getMediaLibraryDirectoryList(), _guiDriver.getMediaLibraryFileList(), _guiDriver.getAppOptions());
 
 		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
 
@@ -220,7 +224,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		});
 
-		dropTarget = new DropTarget(this, this);
+		_dropTarget = new DropTarget(this, this);
 		
 		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
 		{
@@ -300,6 +304,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		});
 
+		_uiTabs.setTransferHandler(new TabTransferHandler());
+
         WindowSaver.getInstance().loadSettings(this);
 	}
 
@@ -370,33 +376,33 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	public AppOptions getOptions()
 	{
-		return guiDriver.getAppOptions();
+		return _guiDriver.getAppOptions();
 	}
 
 	private void fireOptionsPopup()
 	{
-		String oldPlaylistsDirectory = guiDriver.getAppOptions().getPlaylistsDirectory();
-		AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, guiDriver.getAppOptions());
+		String oldPlaylistsDirectory = _guiDriver.getAppOptions().getPlaylistsDirectory();
+		AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, _guiDriver.getAppOptions());
 		AppOptions options = optDialog.showDialog();
 		if (optDialog.getResultCode() == AppOptionsDialog.OK)
 		{
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			guiDriver.setAppOptions(options);
-			guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
+			_guiDriver.setAppOptions(options);
+			_guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
 			if (options.getAlwaysUseUNCPaths())
 			{
-				guiDriver.switchMediaLibraryToUNCPaths();
-				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+				_guiDriver.switchMediaLibraryToUNCPaths();
+				_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 			}
 			else
 			{
-				guiDriver.switchMediaLibraryToMappedDrives();
-				_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+				_guiDriver.switchMediaLibraryToMappedDrives();
+				_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 			}
 			OptionsWriter.write(options);
 			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
 			{
-				_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
+				_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory()))));
 			}
 			updateRecentMenu();
 			setApplicationFont(options.getAppFont());
@@ -432,7 +438,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _mediaLibraryList = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
         _playlistDirectoryPanel = new javax.swing.JPanel();
         _treeScrollPane = new javax.swing.JScrollPane();
-        _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory())));
+        _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
         _playlistsDirectoryButtonPanel = new javax.swing.JPanel();
         _btnSetPlaylistsDir = new javax.swing.JButton();
         _btnRefresh = new javax.swing.JButton();
@@ -445,7 +451,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _openIconButton = new javax.swing.JButton();
         _spacerPanel = new javax.swing.JPanel();
         _newIconButton = new javax.swing.JButton();
-        _uiTabs = new javax.swing.JTabbedPane();
+        _uiTabs = new DnDTabbedPane();
         _mainMenuBar = new javax.swing.JMenuBar();
         _fileMenu = new javax.swing.JMenu();
         _newPlaylistMenuItem = new javax.swing.JMenuItem();
@@ -731,7 +737,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _uiTabs.setFocusable(false);
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                onTabStateChanged(evt);
+                _uiTabsStateChanged(evt);
             }
         });
         _playlistPanel.add(_uiTabs, "_uiTabs");
@@ -938,8 +944,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			return;
 		}
-		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), files.get(0));
-		br.setDescription("Batch Repair");
+		BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), files.get(0));
+		br.setDescription("Closest Matches Search");
 		for (File file : files)
 		{
 			br.add(new BatchRepairItem(file));
@@ -947,11 +953,49 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		MultiListBatchClosestMatchResultsDialog dlg = new MultiListBatchClosestMatchResultsDialog(this, true, br);
 		if (!dlg.getUserCancelled())
 		{
-			dlg.setLocationRelativeTo(this);
-			dlg.setVisible(true);
-			if (!dlg.getUserCancelled())
+			if (br.isEmpty())
 			{
-				updatePlaylistDirectoryPanel();
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) you selected."));
+			}
+			else
+			{
+				dlg.setLocationRelativeTo(this);
+				dlg.setVisible(true);
+				if (dlg.isUserAccepted())
+				{
+					for (final BatchRepairItem item : br.getItems())
+					{
+						try
+						{
+							setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+							ProgressWorker worker = new ProgressWorker<Void, Void>()
+							{
+								@Override
+								protected Void doInBackground() throws IOException
+								{
+									boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+									item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
+									item.getPlaylist().save(saveRelative, this);
+									return null;
+								}
+							};
+							ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+							pd.setVisible(true);
+							worker.get();
+						}
+						catch (Exception ex)
+						{
+							_logger.error(ExStack.toString(ex));
+							JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+						}
+						finally
+						{
+							setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						}
+					}
+					// debating no longer auto-refreshing here, seems to be no good reason to do so
+					// updatePlaylistDirectoryPanel();
+				}
 			}
 		}
 	}
@@ -976,20 +1020,21 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			return;
 		}
-		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), files.get(0));
-		br.setDescription("Batch Repair");
+		BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), files.get(0));
+		br.setDescription("Exact Matches Search");
 		for (File file : files)
 		{
 			br.add(new BatchRepairItem(file));
 		}
-		BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
+		BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
 		if (!dlg.getUserCancelled())
 		{
 			dlg.setLocationRelativeTo(this);
 			dlg.setVisible(true);
 			if (!dlg.getUserCancelled())
 			{
-				updatePlaylistDirectoryPanel();
+				// debating no longer auto-refreshing here, seems to be no good reason to do so
+				// updatePlaylistDirectoryPanel();
 			}
 		}
 	}
@@ -1031,7 +1076,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _clearHistoryMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__clearHistoryMenuItemActionPerformed
 	{//GEN-HEADEREND:event__clearHistoryMenuItemActionPerformed
-		guiDriver.clearM3UHistory();
+		_guiDriver.clearM3UHistory();
 		updateRecentMenu();
 	}//GEN-LAST:event__clearHistoryMenuItemActionPerformed
 
@@ -1042,20 +1087,20 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			return;
 		}
 
-		jSaveFileChooser.setSelectedFile(_currentPlaylist.getFile());
-		int rc = jSaveFileChooser.showSaveDialog(this);
+		_jSaveFileChooser.setSelectedFile(_currentPlaylist.getFile());
+		int rc = _jSaveFileChooser.showSaveDialog(this);
 		if (rc == JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-				File playlist = jSaveFileChooser.getSelectedFile();
+				File playlist = _jSaveFileChooser.getSelectedFile();
 
 				// prompt for confirmation if the file already exists...
 				if (playlist.exists())
 				{
-					int result = JOptionPane.showConfirmDialog(this, "You picked a file that already exists, should I really overwrite it?", "File Exists:", JOptionPane.YES_NO_OPTION);
+					int result = JOptionPane.showConfirmDialog(this, new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists:", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.NO_OPTION)
 					{
 						return;
@@ -1101,8 +1146,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				updatePlaylistDirectoryPanel();
 
 				// update playlist history
-				guiDriver.getHistory().add(newPath);
-				(new FileWriter()).writeMruPlaylists(guiDriver.getHistory());
+				_guiDriver.getHistory().add(newPath);
+				(new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
 				updateRecentMenu();
 			}
 			catch (CancellationException exception)
@@ -1111,7 +1156,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			catch (Exception e)
 			{
 				_logger.error(ExStack.toString(e));
-				JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 			}
 			finally
 			{
@@ -1124,12 +1169,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	{//GEN-HEADEREND:event_openIconButtonActionPerformed
 		if (_currentPlaylist != null)
 		{
-			jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
+			_jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
 		}
-		int response = jM3UChooser.showOpenDialog(this);
+		int response = _jM3UChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
-			File[] playlists = jM3UChooser.getSelectedFiles();
+			File[] playlists = _jM3UChooser.getSelectedFiles();
 			for (File file : playlists)
 				this.openPlaylist(file);
 		}
@@ -1156,7 +1201,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(this, "File Not Found.", "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("File Not Found."), "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -1166,9 +1211,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			return;
 		}
 
-
 		final String[] libraryFiles;
-		if (guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+		if (_guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
 		{
 			libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
 		}
@@ -1225,7 +1269,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 
 					// update playlist history
-					PlaylistHistory history = guiDriver.getHistory();
+					PlaylistHistory history = _guiDriver.getHistory();
 					history.add(path);
 					(new FileWriter()).writeMruPlaylists(history);
 
@@ -1378,7 +1422,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		oldEditor.setPlaylist(list, true);
 
 		// update playlist history
-		PlaylistHistory history = guiDriver.getHistory();
+		PlaylistHistory history = _guiDriver.getHistory();
 		try
 		{
 			history.add(list.getFile().getCanonicalPath());
@@ -1395,7 +1439,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	public void updateRecentMenu()
 	{
 		recentMenu.removeAll();
-		String[] files = guiDriver.getRecentM3Us();
+		String[] files = _guiDriver.getRecentM3Us();
 		if (files.length == 0)
 		{
 			JMenuItem temp = new JMenuItem("Empty");
@@ -1423,9 +1467,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private void updateAllComponentTreeUIs()
 	{
 		SwingUtilities.updateComponentTreeUI(this);
-		SwingUtilities.updateComponentTreeUI(jM3UChooser);
-		SwingUtilities.updateComponentTreeUI(jMediaDirChooser);
-		SwingUtilities.updateComponentTreeUI(jSaveFileChooser);
+		SwingUtilities.updateComponentTreeUI(_jM3UChooser);
+		SwingUtilities.updateComponentTreeUI(_jMediaDirChooser);
+		SwingUtilities.updateComponentTreeUI(_jSaveFileChooser);
 		SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
 		SwingUtilities.updateComponentTreeUI(_uiTabs);
 	}
@@ -1571,10 +1615,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 			// add listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
-
 		}
 	}
-	Playlist _currentPlaylist;
 
 	private Playlist getPlaylistFromTab(int tabIx)
 	{
@@ -1657,13 +1699,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			return;
 		}
-		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), files.get(0).getFile());
-		br.setDescription("Batch Repair");
+		BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), files.get(0).getFile());
+		br.setDescription("Repairing All Open Playlists");
 		for (Playlist file : files)
 		{
 			br.add(new BatchRepairItem(file));
 		}
-		BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
+		BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
 		if (!dlg.getUserCancelled())
 		{
 			dlg.setLocationRelativeTo(this);
@@ -1710,7 +1752,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			{
 				"Save", "Don't Save", "Cancel"
 			};
-			int rc = JOptionPane.showOptionDialog(this, "This playlist has been modified. Do you want to save the changes?", "Confirm Close",
+			int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("This playlist has been modified. Do you want to save the changes?"), "Confirm Close",
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			if (rc == JOptionPane.YES_OPTION)
 			{
@@ -1797,7 +1839,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				{
 					"Discard Changes and Exit", "Cancel"
 				};
-				int rc = JOptionPane.showOptionDialog(this, "You have unsaved changes. Do you really want to discard these changes and exit?\n", "Confirm Close",
+				int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("You have unsaved changes. Do you really want to discard these changes and exit?"), "Confirm Close",
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 				if (rc == JOptionPane.NO_OPTION)
 				{
@@ -1816,13 +1858,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _addMediaDirButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__addMediaDirButtonActionPerformed
 	{//GEN-HEADEREND:event__addMediaDirButtonActionPerformed
-		int response = jMediaDirChooser.showOpenDialog(this);
+		int response = _jMediaDirChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
-				UNCFile mediaDir = new UNCFile(jMediaDirChooser.getSelectedFile());
-				if (guiDriver.getAppOptions().getAlwaysUseUNCPaths())
+				UNCFile mediaDir = new UNCFile(_jMediaDirChooser.getSelectedFile());
+				if (_guiDriver.getAppOptions().getAlwaysUseUNCPaths())
 				{
 					if (mediaDir.onNetworkDrive())
 					{
@@ -1830,18 +1872,19 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					}
 				}
 				final String dir = mediaDir.getPath();
-				if (guiDriver.getMediaDirs() != null && mediaDir != null)
+				if (_guiDriver.getMediaDirs() != null && mediaDir != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-					if (ArrayFunctions.ContainsStringPrefixingAnotherString(guiDriver.getMediaDirs(), dir, !GUIDriver.fileSystemIsCaseSensitive))
+					if (ArrayFunctions.ContainsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.fileSystemIsCaseSensitive))
 					{
-						JOptionPane.showMessageDialog(this, "The directory you attempted to add is a subdirectory of one already in your media library, no change was made.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
+							"Reminder", JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
 					else
 					{
 						// Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.                        
-						String[] dirsToCheck = guiDriver.getMediaDirs();
+						String[] dirsToCheck = _guiDriver.getMediaDirs();
 						for (int i = 0; i < dirsToCheck.length; i++)
 						{
 							int matchCount = 0;
@@ -1849,7 +1892,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							{
 								if (matchCount == 0)
 								{
-									JOptionPane.showMessageDialog(this, "One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically.", "Reminder", JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(this, 
+										new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
+										"Reminder", JOptionPane.INFORMATION_MESSAGE);
 								}
 								removeMediaDirByIndex(evt, i);
 								matchCount++;
@@ -1874,7 +1919,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				try
 				{
 					worker.get();
-					_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+					_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 				}
 				catch (InterruptedException ex)
 				{
@@ -1888,13 +1933,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 			catch (Exception e)
 			{
-				JOptionPane.showMessageDialog(this, "An error has occured, media directory could not be added.");
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, media directory could not be added."));
 				_logger.error(ExStack.toString(e));
 			}
 		}
 		else
 		{
-			jMediaDirChooser.cancelSelection();
+			_jMediaDirChooser.cancelSelection();
 		}
 		updateMediaDirButtons();
 	}//GEN-LAST:event__addMediaDirButtonActionPerformed
@@ -1909,8 +1954,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			{
 				if (!selection.equals("Please Add A Media Directory..."))
 				{
-					guiDriver.removeMediaDir(selection);
-					_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+					_guiDriver.removeMediaDir(selection);
+					_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 				}
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -1918,7 +1963,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		catch (Exception e)
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library."));
 			_logger.warn(ExStack.toString(e));
 		}
 		updateMediaDirButtons();
@@ -1930,13 +1975,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		try
 		{
 
-			_mediaLibraryList.setListData(guiDriver.removeMediaDir((String) _mediaLibraryList.getModel().getElementAt(index)));
+			_mediaLibraryList.setListData(_guiDriver.removeMediaDir((String) _mediaLibraryList.getModel().getElementAt(index)));
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 		catch (Exception e)
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			JOptionPane.showMessageDialog(this, "An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library.");
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library."));
 			_logger.warn(ExStack.toString(e));
 		}
 		updateMediaDirButtons();
@@ -1981,7 +2026,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		try
 		{
 			worker.get();
-			_mediaLibraryList.setListData(guiDriver.getMediaDirs());
+			_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 		}
 		catch (InterruptedException ex)
 		{
@@ -2014,25 +2059,20 @@ private void _updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
 
-	final BatchRepair br = WinampHelper.getWinampBatchRepair(guiDriver.getMediaLibraryFileList());
+	final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibraryFileList());
 	if (br == null || br.isEmpty())
 	{
-		JOptionPane.showMessageDialog(this, "Could not find any WinAmp playlists");
+		JOptionPane.showMessageDialog(this, new JTransparentTextArea("Could not find any WinAmp playlists"));
 		return;
 	}
 
-	BatchRepairDialog dlg = new BatchRepairDialog(this, true, br);
+	BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
 	if (!dlg.getUserCancelled())
 	{
 		dlg.setLocationRelativeTo(this);
 		dlg.setVisible(true);
 	}
 }//GEN-LAST:event__batchRepairWinampMenuItemActionPerformed
-
-private void onTabStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_onTabStateChanged
-{//GEN-HEADEREND:event_onTabStateChanged
-	onSelectedTabChanged();
-}//GEN-LAST:event_onTabStateChanged
 
 private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuBatchRepairActionPerformed
 {//GEN-HEADEREND:event_onMenuBatchRepairActionPerformed
@@ -2063,14 +2103,14 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 		}
 
 		File rootDir = dlg.getCurrentDirectory();
-		BatchRepair br = new BatchRepair(guiDriver.getMediaLibraryFileList(), rootDir);
-		br.setDescription("Batch Repair Selected Playlists");
+		BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), rootDir);
+		br.setDescription("Exact Matches Search");
 		for (File file : files)
 		{
 			br.add(new BatchRepairItem(file));
 		}
 
-		BatchRepairDialog repairDlg = new BatchRepairDialog(this, true, br);
+		BatchExactMatchesResultsDialog repairDlg = new BatchExactMatchesResultsDialog(this, true, br);
 		if (!repairDlg.getUserCancelled())
 		{
 			repairDlg.setLocationRelativeTo(this);
@@ -2085,18 +2125,18 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 {//GEN-HEADEREND:event__openIconButtonActionPerformed1
 	if (_currentPlaylist != null)
 	{
-		jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
+		_jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
 	}
-	int response = jM3UChooser.showOpenDialog(this);
+	int response = _jM3UChooser.showOpenDialog(this);
 	if (response == JFileChooser.APPROVE_OPTION)
 	{
-		File[] playlists = jM3UChooser.getSelectedFiles();
+		File[] playlists = _jM3UChooser.getSelectedFiles();
 		for (File file : playlists)
 			this.openPlaylist(file);
 	}
 	else
 	{
-		jM3UChooser.cancelSelection();
+		_jM3UChooser.cancelSelection();
 	}
 }//GEN-LAST:event__openIconButtonActionPerformed1
 
@@ -2139,7 +2179,7 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 		catch (Exception ex)
 		{
 			_logger.error(ExStack.toString(ex));;
-			JOptionPane.showMessageDialog(this, "Sorry, there was an error saving your playlist.  Please try again, or file a bug report.");
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 		}
 		finally
 		{
@@ -2175,7 +2215,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	catch (IOException ex)
 	{
 		_logger.error(ExStack.toString(ex));
-		JOptionPane.showMessageDialog(this, "Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.");
+		JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report."));
 	}
 
 }//GEN-LAST:event__newIconButtonActionPerformed
@@ -2208,7 +2248,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 				}
 				catch (Exception ex)
 				{
-					JOptionPane.showMessageDialog(GUIScreen.this, "Sorry, there was a problem extracting your playlists.  The error was: " + ex.getMessage(), "Extraction Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea("Sorry, there was a problem extracting your playlists.  The error was: " + ex.getMessage()), "Extraction Error", JOptionPane.ERROR_MESSAGE);
 				}
 				finally
 				{
@@ -2282,6 +2322,11 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 	runClosestMatchesSearchOnSelectedLists();
 }//GEN-LAST:event__miClosestMatchesSearchActionPerformed
 
+private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event__uiTabsStateChanged
+{//GEN-HEADEREND:event__uiTabsStateChanged
+	onSelectedTabChanged();
+}//GEN-LAST:event__uiTabsStateChanged
+
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2334,7 +2379,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 	private void updatePlaylistDirectoryPanel()
 	{
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(guiDriver.getAppOptions().getPlaylistsDirectory()))));
+		_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory()))));
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 

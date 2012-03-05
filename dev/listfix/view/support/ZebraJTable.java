@@ -85,20 +85,20 @@ public class ZebraJTable extends javax.swing.JTable
 		final int h = getHeight() - insets.top - insets.bottom;
 		final int x = insets.left;
 		int y = insets.top;
-		int rowHeight = 16; // A default for empty tables
+		int tempRowHeight = 16; // A default for empty tables
 		final int nItems = getRowCount();
-		for (int i = 0; i < nItems; i++, y += rowHeight)
+		for (int i = 0; i < nItems; i++, y += tempRowHeight)
 		{
-			rowHeight = getRowHeight(i);
+			tempRowHeight = getRowHeight(i);
 			g.setColor(rowColors[i & 1]);
-			g.fillRect(x, y, w, rowHeight);
+			g.fillRect(x, y, w, tempRowHeight);
 		}
 		// Use last row height for remainder of table area
-		final int nRows = nItems + (insets.top + h - y) / rowHeight;
-		for (int i = nItems; i < nRows; i++, y += rowHeight)
+		final int nRows = nItems + (insets.top + h - y) / tempRowHeight;
+		for (int i = nItems; i < nRows; i++, y += tempRowHeight)
 		{
 			g.setColor(rowColors[i & 1]);
-			g.fillRect(x, y, w, rowHeight);
+			g.fillRect(x, y, w, tempRowHeight);
 		}
 		final int remainder = insets.top + h - y;
 		if (remainder > 0)
@@ -204,8 +204,6 @@ public class ZebraJTable extends javax.swing.JTable
             @Override
             public void componentResized(java.awt.event.ComponentEvent evt) 
             {
-//                onScrollerComponentResized(evt);
-//                setFillerColumnWidth((JScrollPane)evt.getComponent());
                 setFillerColumnWidth(scroller);
             }
         });
@@ -219,7 +217,7 @@ public class ZebraJTable extends javax.swing.JTable
         int normWidth = 0;
         for (int ix=0; ix < lastIx; ix++)
         {
-            normWidth += cm.getColumn(ix).getWidth();
+            normWidth += cm.getColumn(ix).getPreferredWidth();
         }
         int viewWidth = scroller.getViewport().getWidth();
         TableColumn fillCol = cm.getColumn(lastIx);
@@ -235,6 +233,8 @@ public class ZebraJTable extends javax.swing.JTable
 
     public static class IntRenderer extends DefaultTableCellRenderer
     {
+		private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
+		
         public IntRenderer()
         {
             super();
@@ -247,9 +247,4 @@ public class ZebraJTable extends javax.swing.JTable
             setText((value == null) ? "" : _intFormatter.format(value));
         }
     }
-
-    private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
-
-
-
 }
