@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2010 Jeremy Caron
+ * Copyright (C) 2001-2012 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -224,6 +224,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		});
 
+		// Despite not being referenced again, this is need to support opening playlists that are dragged in.
 		_dropTarget = new DropTarget(this, this);
 		
 		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
