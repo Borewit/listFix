@@ -35,6 +35,7 @@ import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+
 import org.apache.log4j.Logger;
 
 /*
@@ -73,23 +74,42 @@ public class PLSReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
-		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		// Init a progress adapter if we have a progress observer.
+		ProgressAdapter progress = null;
+		if (observer != null) 
+		{
+			progress = ProgressAdapter.wrap(observer);
+		} 
 
+		// Load the PLS file into memory (it's basically a glorified INI | java properties file.
 		PLSProperties propBag = new PLSProperties();
 		propBag.load(new FileInputStream(plsFile));
-		int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
-		progress.setTotal((int) entries);
+		
+		// Find out how many entries we have to process.
+		int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));		
+		
+		// Set the total if we have an observer.
+		if (progress != null) 
+		{
+			progress.setTotal((int) entries);
+		}
 
+		// Loop over the entries and process each in turn.
 		for (int i = 1; i <= entries; i++)
 		{
-			if (!observer.getCancelled())
+			if (observer != null)
 			{
-				processEntry(propBag, i);
-				progress.setCompleted(i);
+				if (observer.getCancelled())
+				{
+					// Bail out if the user cancelled.
+					return null;			
+				}
 			}
-			else
+			processEntry(propBag, i);
+			if (progress != null) 
 			{
-				return null;
+				// Step forward if we have an observer.
+				progress.setCompleted(i);
 			}
 		}
 		return results;
@@ -98,13 +118,7 @@ public class PLSReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
-		PLSProperties propBag = new PLSProperties();
-		propBag.load(new FileInputStream(plsFile));
-		int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
-		for (int i = 1; i <= entries; i++)
-		{
-			processEntry(propBag, i);
-		}
+		readPlaylist(null);
 		return results;
 	}
 
