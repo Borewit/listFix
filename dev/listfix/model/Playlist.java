@@ -160,48 +160,6 @@ public class Playlist
 			_logger.error(ExStack.toString(e));
 		}
 	}
-
-	private String XMLEncode(String s)
-	{
-		s = s.replaceAll("&", "&amp;");
-		s = s.replaceAll("'", "&apos;");		
-		s = s.replaceAll("<", "&lt;");
-		s = s.replaceAll(">", "&gt;");
-		return s;
-	}
-	
-	public String getWPLHead() throws IOException
-	{
-		String head = "";
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
-		String line = buffer.readLine();
-		while (line != null)
-		{		
-			if (line.trim().startsWith("<media")) break;
-			head += line + BR;
-			line = buffer.readLine();
-		}
-		buffer.close();
-		return head;
-	}
-	
-	public String getWPLFoot() throws IOException
-	{
-		boolean paths = false;
-		String foot = "";
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
-		String line = buffer.readLine();
-		while (line != null)
-		{		
-			if (line.trim().startsWith("<media"))
-				paths = true;
-			else
-				if (paths) foot += line + BR;
-			line = buffer.readLine();
-		}
-		buffer.close();
-		return foot;
-	}
 	
 	public Playlist getSublist(int[] rows) throws IOException
 	{
@@ -1119,6 +1077,51 @@ public class Playlist
 			outputStream.close();
 			setUtfFormat(true);
 		}
+	}
+	
+	// WPL Helper Method
+	private String XMLEncode(String s)
+	{
+		s = s.replaceAll("&", "&amp;");
+		s = s.replaceAll("'", "&apos;");		
+		s = s.replaceAll("<", "&lt;");
+		s = s.replaceAll(">", "&gt;");
+		return s;
+	}
+	
+	// WPL Helper Method
+	private String getWPLHead() throws IOException
+	{
+		String head = "";
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
+		String line = buffer.readLine();
+		while (line != null)
+		{		
+			if (line.trim().startsWith("<media")) break;
+			head += line + BR;
+			line = buffer.readLine();
+		}
+		buffer.close();
+		return head;
+	}
+	
+	// WPL Helper Method
+	private String getWPLFoot() throws IOException
+	{
+		boolean paths = false;
+		String foot = "";
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
+		String line = buffer.readLine();
+		while (line != null)
+		{		
+			if (line.trim().startsWith("<media"))
+				paths = true;
+			else
+				if (paths) foot += line + BR;
+			line = buffer.readLine();
+		}
+		buffer.close();
+		return foot;
 	}
 	
 	public void reload(IProgressObserver observer)
