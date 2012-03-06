@@ -27,22 +27,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URI;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
-
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
-import listfix.util.UnicodeUtils;
-
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+
 import org.apache.log4j.Logger;
 
 /*
