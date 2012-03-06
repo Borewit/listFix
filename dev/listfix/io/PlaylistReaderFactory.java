@@ -35,9 +35,13 @@ public class PlaylistReaderFactory
 		{
 			return new M3UReader(output);
 		}
+		else if (output.getName().toLowerCase().contains(".pls"))
+		{
+			return new M3UReader(output);
+		}
 		else
 		{
-			return new PLSReader(output);
+			return new WPLReader(output);
 		}
 	}
 }

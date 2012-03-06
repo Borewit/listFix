@@ -23,12 +23,16 @@ package listfix.model;
 import listfix.model.enums.PlaylistType;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import java.util.ArrayList;
@@ -43,6 +47,7 @@ import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
+import listfix.io.UnicodeInputStream;
 
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
@@ -156,6 +161,48 @@ public class Playlist
 		}
 	}
 
+	private String XMLEncode(String s)
+	{
+		s = s.replaceAll("&", "&amp;");
+		s = s.replaceAll("'", "&apos;");		
+		s = s.replaceAll("<", "&lt;");
+		s = s.replaceAll(">", "&gt;");
+		return s;
+	}
+	
+	public String getWPLHead() throws IOException
+	{
+		String head = "";
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
+		String line = buffer.readLine();
+		while (line != null)
+		{		
+			if (line.trim().startsWith("<media")) break;
+			head += line + BR;
+			line = buffer.readLine();
+		}
+		buffer.close();
+		return head;
+	}
+	
+	public String getWPLFoot() throws IOException
+	{
+		boolean paths = false;
+		String foot = "";
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
+		String line = buffer.readLine();
+		while (line != null)
+		{		
+			if (line.trim().startsWith("<media"))
+				paths = true;
+			else
+				if (paths) foot += line + BR;
+			line = buffer.readLine();
+		}
+		buffer.close();
+		return foot;
+	}
+	
 	public Playlist getSublist(int[] rows) throws IOException
 	{
 		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
@@ -839,7 +886,11 @@ public class Playlist
 		{
 			savePLS(saveRelative, progress);
 		}
-
+		else if (getType() == PlaylistType.WPL)
+		{
+			saveWPL(saveRelative, progress);
+		}
+		
 		// change original _entries
 		setEntries(_entries);
 
@@ -1004,6 +1055,72 @@ public class Playlist
 		}
 	}
 
+	private void saveWPL(boolean saveRelative, ProgressAdapter progress) throws IOException
+	{
+		boolean track = progress != null;
+
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(getWPLHead());
+		PlaylistEntry entry = null;
+		String relativePath = "";
+		for (int i = 0; i < _entries.size(); i++)
+		{
+			if (!track || !progress.getCancelled())
+			{
+				if (track)
+				{
+					progress.stepCompleted();
+				}
+				entry = _entries.get(i);
+				entry.setPlaylist(_file);
+				if (!entry.isURL())
+				{
+					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
+					{
+						// replace existing relative entry with a new absolute one
+						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf(), _file, entry.getCID(), entry.getTID());
+						_entries.set(i, entry);
+					}
+					else if (saveRelative && !entry.isURL() && entry.isFound())
+					{
+						// replace existing absolute entry with a new relative one
+						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile(), _file);
+						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file, entry.getCID(), entry.getTID());
+						_entries.set(i, entry);
+					}
+				}
+
+				String media = "\t\t\t<media src=\"" + XMLEncode(entry.toM3UString()) + "\"";
+				if (!entry.getCID().isEmpty()) media += " cid=\"" + entry.getCID() + "\"";
+				if (!entry.getTID().isEmpty()) media += " tid=\"" + entry.getTID() + "\"";
+				media += "/>" + BR;				
+				buffer.append(media);
+			}
+			else
+			{
+				return;
+			}
+		}
+		buffer.append(getWPLFoot());
+		
+		if (!track || !progress.getCancelled())
+		{
+			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
+			if (!dirToSaveIn.exists())
+			{
+				dirToSaveIn.mkdirs();
+			}
+
+			FileOutputStream outputStream = new FileOutputStream(_file);
+			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+			BufferedWriter output = new BufferedWriter(osw);
+			output.write(buffer.toString());
+			output.close();
+			outputStream.close();
+			setUtfFormat(true);
+		}
+	}
+	
 	public void reload(IProgressObserver observer)
 	{
 		if (_isNew)
@@ -1041,6 +1158,10 @@ public class Playlist
 			else if (lowerCaseExtension.equals("pls"))
 			{
 				return PlaylistType.PLS;
+			}
+			else if (lowerCaseExtension.equals("wpl"))
+			{
+				return PlaylistType.WPL;
 			}
 		}
 		return PlaylistType.UNKNOWN;

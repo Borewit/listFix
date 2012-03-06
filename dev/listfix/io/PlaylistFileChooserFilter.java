@@ -40,14 +40,14 @@ public class PlaylistFileChooserFilter extends FileExtensionFilterBase
     @Override
     public String getDescription()
     {
-        return "Playlists (*.m3u, *.m3u8, *.pls)";
+        return "Playlists (*.m3u, *.m3u8, *.pls, *.wpl)";
     }
 
     private static final Set<String> _extensions;
 
     static
     {
-        _extensions = createExtensionSet("m3u", "m3u8", "pls");
+        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl");
     }
 
 	@Override

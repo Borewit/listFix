@@ -168,8 +168,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		updateRecentMenu();
 		refreshStatusLabel(null);
 
-		// (new FileWriter()).writeIni(_guiDriver.getMediaDirs(), _guiDriver.getMediaLibraryDirectoryList(), _guiDriver.getMediaLibraryFileList(), _guiDriver.getAppOptions());
-
 		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
 
 		initPlaylistListener();
@@ -306,8 +304,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		});
 
 		_uiTabs.setTransferHandler(new TabTransferHandler());
-
-        WindowSaver.getInstance().loadSettings(this);
+        WindowSaver.getInstance().loadSettings(this);	
+		
+		// Set the position of the divider in the left split pane.
+		_leftSplitPane.setDividerLocation(.60);
 	}
 
 	@Override
@@ -542,11 +542,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _leftSplitPane.setContinuousLayout(true);
         _leftSplitPane.setMaximumSize(null);
         _leftSplitPane.setOneTouchExpandable(true);
-        _leftSplitPane.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                _leftSplitPaneResized(evt);
-            }
-        });
 
         _mediaLibraryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Media Directories", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP));
         _mediaLibraryPanel.setAlignmentX(0.0F);
@@ -616,8 +611,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
-        _playlistsDirectoryButtonPanel.setMinimumSize(new java.awt.Dimension(307, 33));
-        _playlistsDirectoryButtonPanel.setPreferredSize(new java.awt.Dimension(271, 33));
+        _playlistsDirectoryButtonPanel.setMaximumSize(null);
+        _playlistsDirectoryButtonPanel.setMinimumSize(null);
+        _playlistsDirectoryButtonPanel.setPreferredSize(null);
 
         _btnSetPlaylistsDir.setText("Set");
         _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
@@ -1111,7 +1107,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				// make sure file has correct extension
 				String normalizedName = playlist.getName().trim().toLowerCase();
 				if (!Playlist.isPlaylist(playlist)
-					|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls")))
+					|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls") && !normalizedName.endsWith(".wpl")))
 				{
 					if (_currentPlaylist.isUtfFormat())
 					{
@@ -2140,11 +2136,6 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 		_jM3UChooser.cancelSelection();
 	}
 }//GEN-LAST:event__openIconButtonActionPerformed1
-
-private void _leftSplitPaneResized(java.awt.event.ComponentEvent evt)//GEN-FIRST:event__leftSplitPaneResized
-{//GEN-HEADEREND:event__leftSplitPaneResized
-	_leftSplitPane.setDividerLocation(.60);
-}//GEN-LAST:event__leftSplitPaneResized
 
 private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveMenuItemActionPerformed
 {//GEN-HEADEREND:event__saveMenuItemActionPerformed

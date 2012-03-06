@@ -67,7 +67,10 @@ public class PlaylistEntry implements Cloneable
 	private boolean _isFixed;
 	// The file this entry belongs to.
 	private File _playlist;
-
+	// WPL
+	private String _cid = "";
+	private String _tid = "";
+	
 	private static final Pattern APOS_PATTERN = Pattern.compile("\'");
 	private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(([a-z])([A-Z]))");
 
@@ -86,7 +89,12 @@ public class PlaylistEntry implements Cloneable
 		_extInf = extra;
 		parseExtraInfo(extra);
 	}
-
+	public PlaylistEntry(URI uri, String extra, String cid, String tid)
+	{
+		this(uri, extra);
+		_cid = cid;
+		_tid = tid;		
+	}
 	// Construct a URL entry.
 	public PlaylistEntry(URI uri, String t, String l)
 	{
@@ -147,7 +155,12 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 	}
-
+	public PlaylistEntry(String p, String f, String extra, File list, String cid, String tid)
+	{
+		this(p, f, extra, list);
+		_cid = cid;
+		_tid = tid;
+	}
 	// Same as above but with a file object as input
 	public PlaylistEntry(File input, String extra, File list)
 	{
@@ -194,7 +207,12 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 	}
-
+	public PlaylistEntry(File input, String extra, File list, String cid, String tid)
+	{
+		this(input, extra, list);
+		_cid = cid;
+		_tid = tid;
+	}
 	// Same as above but with a file object as input
 	public PlaylistEntry(File input, String t, String l, File list)
 	{
@@ -284,7 +302,17 @@ public class PlaylistEntry implements Cloneable
 	{
 		return _extInf;
 	}
+	
+	public String getCID()
+	{
+		return _cid;
+	}
 
+	public String getTID()
+	{
+		return _tid;
+	}
+	
 	// check the file system for existence if we don't already know the file exists.
 	private boolean exists()
 	{

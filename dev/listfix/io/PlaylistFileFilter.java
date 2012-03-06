@@ -35,6 +35,7 @@ public class PlaylistFileFilter implements java.io.FileFilter
 		return (file.getName().toLowerCase().endsWith(".m3u")
 			|| file.getName().toLowerCase().endsWith(".m3u8")
 			|| file.getName().toLowerCase().endsWith(".pls")
+			|| file.getName().toLowerCase().endsWith(".wpl")
 			|| file.isDirectory());
 	}
 }

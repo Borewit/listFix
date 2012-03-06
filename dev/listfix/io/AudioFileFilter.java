@@ -31,14 +31,14 @@ public class AudioFileFilter extends FileExtensionFilterBase
     @Override
     public String getDescription()
     {
-        return "Audio Files and Playlists (*.m3u, *.m3u8, *.pls, *.mp3, *.flac, *.aac, *.ogg, *.aiff, *.au, *.wma)";
+        return "Audio Files and Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.mp3, *.flac, *.aac, *.ogg, *.aiff, *.au, *.wma)";
     }
     
     private static final Set<String> _extensions;
 
     static
     {
-        _extensions = createExtensionSet("m3u", "m3u8", "pls", "mp3", "flac", "aac", "ogg", "aiff", "au", "wma");
+        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "mp3", "flac", "aac", "ogg", "aiff", "au", "wma");
     }
 
 	@Override

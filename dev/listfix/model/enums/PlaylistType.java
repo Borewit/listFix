@@ -26,5 +26,5 @@ package listfix.model.enums;
  */
 public enum PlaylistType
 {
-	M3U, PLS, UNKNOWN
+	M3U, PLS, WPL, UNKNOWN
 }
