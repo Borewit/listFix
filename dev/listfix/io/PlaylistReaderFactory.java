@@ -37,7 +37,7 @@ public class PlaylistReaderFactory
 		}
 		else if (output.getName().toLowerCase().contains(".pls"))
 		{
-			return new M3UReader(output);
+			return new PLSReader(output);
 		}
 		else
 		{
