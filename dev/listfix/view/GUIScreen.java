@@ -44,7 +44,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -56,7 +55,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
@@ -70,7 +68,6 @@ import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-
 import listfix.io.BrowserLauncher;
 import listfix.io.FileTreeNodeGenerator;
 import listfix.io.FileWriter;
@@ -81,25 +78,21 @@ import listfix.io.PlaylistFileFilter;
 import listfix.io.PlaylistScanner;
 import listfix.io.UNCFile;
 import listfix.io.WinampHelper;
-
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
 import listfix.model.PlaylistHistory;
-
 import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
 import listfix.util.OperatingSystem;
 import listfix.util.ExStack;
 import listfix.view.controls.JTransparentTextArea;
-
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.AppOptionsDialog;
 import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.MultiListBatchClosestMatchResultsDialog;
-
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
 import listfix.view.support.DnDTabbedPane;
@@ -118,7 +111,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private final JFileChooser _jSaveFileChooser;
 	private GUIDriver _guiDriver = null;
 	private DropTarget _dropTarget = null;
-	private Playlist _currentPlaylist;
+	private Playlist _currentPlaylist;	
+	private IPlaylistModifiedListener _playlistListener;
 
 	private static Logger _logger = Logger.getLogger(GUIScreen.class);
 
@@ -131,7 +125,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		splashScreen.setStatusBar("Initializing UI...");
 
 		initComponents();
-
 		_jM3UChooser = new JFileChooser();
 		_jMediaDirChooser = new JFileChooser();
 		_jSaveFileChooser = new JFileChooser();
@@ -139,20 +132,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		setApplicationFont(_guiDriver.getAppOptions().getAppFont());
 		this.setLookAndFeel(_guiDriver.getAppOptions().getLookAndFeel());
 		
-		_jM3UChooser.setDialogTitle("Choose Playlists...");
-		_jM3UChooser.setAcceptAllFileFilterUsed(false);
-		_jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
-		_jM3UChooser.setMultiSelectionEnabled(true);
+		configureFileChoosers();
 
-		_jMediaDirChooser.setDialogTitle("Specify a media directory...");
-		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-		_jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-		_jSaveFileChooser.setDialogTitle("Save File:");
-		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
-		_jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		_jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
-
+		// Stop showing the loading screen
 		splashScreen.setVisible(false);
 
 		if (_guiDriver.getShowMediaDirWindow())
@@ -185,42 +167,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 
 		// drag-n-drop support for the playlist directory tree
-		_playlistDirectoryTree.setTransferHandler(new TransferHandler()
-		{
-			@Override
-			public boolean canImport(TransferHandler.TransferSupport info)
-			{
-				return false;
-			}
-
-			@Override
-			public boolean importData(TransferHandler.TransferSupport info)
-			{
-				return false;
-			}
-
-			@Override
-			public int getSourceActions(JComponent c)
-			{
-				return MOVE;
-			}
-
-			@Override
-			protected Transferable createTransferable(JComponent c)
-			{
-				try
-				{
-					int selRow = _playlistDirectoryTree.getSelectionRows()[0];
-					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
-					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
-				}
-				catch  (Exception exception)
-				{
-					return null;
-				}
-
-			}
-		});
+		_playlistDirectoryTree.setTransferHandler(createPlaylistTreeTransferHandler());
 
 		// Despite not being referenced again, this is need to support opening playlists that are dragged in.
 		_dropTarget = new DropTarget(this, this);
@@ -237,8 +184,19 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		});
 		
-		// add popup menu to list, handle's right click actions.
-		_playlistDirectoryTree.addMouseListener(new MouseAdapter()
+		// add popup menu to playlist tree on right-click
+		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
+
+		_uiTabs.setTransferHandler(new TabTransferHandler());
+        WindowSaver.getInstance().loadSettings(this);	
+		
+		// Set the position of the divider in the left split pane.
+		_leftSplitPane.setDividerLocation(.60);
+	}
+
+	private MouseAdapter createPlaylistTreeMouseListener()
+	{
+		return new MouseAdapter()
 		{
 			@Override
 			public void mousePressed(MouseEvent e)
@@ -253,7 +211,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 
 			private void handleMouseEvent(MouseEvent e)
-			{				
+			{
 				Point p = e.getPoint();
 				if (e.isPopupTrigger())
 				{
@@ -263,9 +221,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					{
 						_playlistDirectoryTree.addSelectionRow(rowIx);
 					}
-					else if (isOverItem && !_playlistDirectoryTree.isRowSelected(rowIx))
+					else
 					{
-						_playlistDirectoryTree.setSelectionRow(rowIx);
+						if (isOverItem && !_playlistDirectoryTree.isRowSelected(rowIx))
+						{
+							_playlistDirectoryTree.setSelectionRow(rowIx);
+						}
 					}
 
 					if (_playlistDirectoryTree.getSelectionCount() > 0)
@@ -301,13 +262,64 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					}
 				}
 			}
-		});
+		};
+	}
 
-		_uiTabs.setTransferHandler(new TabTransferHandler());
-        WindowSaver.getInstance().loadSettings(this);	
-		
-		// Set the position of the divider in the left split pane.
-		_leftSplitPane.setDividerLocation(.60);
+	private TransferHandler createPlaylistTreeTransferHandler() 
+	{
+		return new TransferHandler()
+		{
+			@Override
+			public boolean canImport(TransferHandler.TransferSupport info)
+			{
+				return false;
+			}
+
+			@Override
+			public boolean importData(TransferHandler.TransferSupport info)
+			{
+				return false;
+			}
+
+			@Override
+			public int getSourceActions(JComponent c)
+			{
+				return MOVE;
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c)
+			{
+				try 
+				{
+					int selRow = _playlistDirectoryTree.getSelectionRows()[0];
+					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
+					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+				} 
+				catch (Exception exception) 
+				{
+					return null;
+				}
+
+			}
+		};	
+	}
+
+	private void configureFileChoosers() 
+	{
+		_jM3UChooser.setDialogTitle("Choose Playlists...");
+		_jM3UChooser.setAcceptAllFileFilterUsed(false);
+		_jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
+		_jM3UChooser.setMultiSelectionEnabled(true);
+
+		_jMediaDirChooser.setDialogTitle("Specify a media directory...");
+		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+		_jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		_jSaveFileChooser.setDialogTitle("Save File:");
+		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
+		_jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		_jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
 	}
 
 	@Override
@@ -356,7 +368,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					{
 						if (list.get(j) instanceof File && Playlist.isPlaylist((File)list.get(j)))
 						{
-							openPlaylist((File) list.get(j));
+							openPlaylist((File)list.get(j));
 						}
 					}
 
@@ -1626,6 +1638,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		return comp != null ? ((PlaylistEditCtrl) _uiTabs.getComponentAt(tabIx)).getPlaylist() : null;
 	}
 
+	// Setup the listener for changes to the current playlist.  Essentially turns around and calls onPlaylistModified().
 	private void initPlaylistListener()
 	{
 		_playlistListener = new IPlaylistModifiedListener()
@@ -1637,7 +1650,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		};
 	}
-	IPlaylistModifiedListener _playlistListener;
 
 	private void onPlaylistModified(Playlist list)
 	{
@@ -1987,7 +1999,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		JOptionPane.showMessageDialog(this, "listFix( ) v2.2.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) \n          Kennedy Akala (kennedyakala at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, "listFix( ) v2.2.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) " + 
+				"\n          Kennedy Akala (kennedyakala at users dot sourceforge dot net) \n          John Peterson (johnpeterson at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void _exitMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__exitMenuItemActionPerformed
