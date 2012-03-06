@@ -1248,6 +1248,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					}
 					catch (Exception ex)
 					{
+						_logger.error(ExStack.toString(ex));
 						JOptionPane.showMessageDialog(GUIScreen.this, ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
