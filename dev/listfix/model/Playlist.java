@@ -1048,7 +1048,7 @@ public class Playlist
 					}
 				}
 
-				String media = "\t\t\t<media src=\"" + XMLEncode(entry.toM3UString()) + "\"";
+				String media = "\t\t\t<media src=\"" + XMLEncode(entry.toWPLString()) + "\"";
 				if (!entry.getCID().isEmpty()) media += " cid=\"" + entry.getCID() + "\"";
 				if (!entry.getTID().isEmpty()) media += " tid=\"" + entry.getTID() + "\"";
 				media += "/>" + BR;				
@@ -1093,35 +1093,31 @@ public class Playlist
 	private String getWPLHead() throws IOException
 	{
 		String head = "";
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
-		String line = buffer.readLine();
-		while (line != null)
-		{		
-			if (line.trim().startsWith("<media")) break;
-			head += line + BR;
-			line = buffer.readLine();
+		boolean newHead = false;
+		try {
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
+			String line = buffer.readLine();
+			while (line != null)
+			{		
+				if (line.trim().startsWith("<media")) break;
+				head += line + BR;
+				line = buffer.readLine();
+			}
+			buffer.close();
+			// determine if a head was read
+			if (!head.contains("<?wpl")) newHead = true;
+		} catch  (Exception ex) {			
+		} finally {
+			newHead = true;
 		}
-		buffer.close();
+		if (newHead) head = "<?wpl version=\"1.0\"?>\r\n<smil>\r\n\t<body>\r\n\t\t<sec>\r\n";
 		return head;
 	}
 	
 	// WPL Helper Method
 	private String getWPLFoot() throws IOException
 	{
-		boolean paths = false;
-		String foot = "";
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
-		String line = buffer.readLine();
-		while (line != null)
-		{		
-			if (line.trim().startsWith("<media"))
-				paths = true;
-			else
-				if (paths) foot += line + BR;
-			line = buffer.readLine();
-		}
-		buffer.close();
-		return foot;
+		return "\t\t</sec>\r\n\t</body>\r\n</smil>";
 	}
 	
 	public void reload(IProgressObserver observer)

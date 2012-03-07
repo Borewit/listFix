@@ -155,12 +155,14 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 	}
+	
 	public PlaylistEntry(String p, String f, String extra, File list, String cid, String tid)
 	{
 		this(p, f, extra, list);
 		_cid = cid;
 		_tid = tid;
 	}
+	
 	// Same as above but with a file object as input
 	public PlaylistEntry(File input, String extra, File list)
 	{
@@ -207,12 +209,14 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 	}
+	
 	public PlaylistEntry(File input, String extra, File list, String cid, String tid)
 	{
 		this(input, extra, list);
 		_cid = cid;
 		_tid = tid;
 	}
+	
 	// Same as above but with a file object as input
 	public PlaylistEntry(File input, String t, String l, File list)
 	{
@@ -516,6 +520,45 @@ public class PlaylistEntry implements Cloneable
 		return result.toString();
 	}
 
+	public String toWPLString()
+	{
+		StringBuilder result = new StringBuilder();
+		if (!this.isURL())
+		{
+			if (!this.isRelative())
+			{
+				if (this.getPath().endsWith(Constants.FS))
+				{
+					result.append(this.getPath());
+					result.append(this.getFileName());
+				}
+				else
+				{
+					result.append(this.getPath());
+					result.append(Constants.FS);
+					result.append(this.getFileName());
+				}
+			}
+			else
+			{
+				String tempPath = _thisFile.getPath();
+				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(Constants.FS))
+				{
+					result.append(_fileName);
+				}
+				else
+				{
+					result.append(_thisFile.getPath());
+				}
+			}
+		}
+		else
+		{
+			result.append(_thisURI.toString());
+		}
+		return result.toString();
+	}
+	
 	public boolean findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;

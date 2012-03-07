@@ -41,7 +41,7 @@ import org.apache.log4j.Logger;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     PLSFileReader.java
+= File:     PLSReader.java
 = Purpose:  Read in the playlist file and return a Vector containing
 =           PlaylistEntries that represent the files in the playlist.
 ============================================================================
@@ -74,6 +74,8 @@ public class PLSReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
+		// Definition of the PLS format can be found @ http://gonze.com/playlists/playlist-format-survey.html#PLS
+		
 		// Init a progress adapter if we have a progress observer.
 		ProgressAdapter progress = null;
 		if (observer != null) 

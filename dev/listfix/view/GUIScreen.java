@@ -191,7 +191,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         WindowSaver.getInstance().loadSettings(this);	
 		
 		// Set the position of the divider in the left split pane.
-		_leftSplitPane.setDividerLocation(.60);
+		_leftSplitPane.setDividerLocation(.75);
 	}
 
 	private MouseAdapter createPlaylistTreeMouseListener()
@@ -624,8 +624,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
         _playlistsDirectoryButtonPanel.setMaximumSize(null);
-        _playlistsDirectoryButtonPanel.setMinimumSize(null);
-        _playlistsDirectoryButtonPanel.setPreferredSize(null);
 
         _btnSetPlaylistsDir.setText("Set");
         _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
@@ -663,7 +661,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistsDirectoryButtonPanel.add(_btnOpenSelected);
 
         _btnBatchExactMatches.setText("Exact");
-        _btnBatchExactMatches.setToolTipText("Exact Matches Search");
+        _btnBatchExactMatches.setToolTipText("Exact Matches Repair");
         _btnBatchExactMatches.setEnabled(false);
         _btnBatchExactMatches.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _btnBatchExactMatches.addActionListener(new java.awt.event.ActionListener() {
@@ -674,7 +672,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistsDirectoryButtonPanel.add(_btnBatchExactMatches);
 
         _btnBatchClosestMatches.setText("Closest");
-        _btnBatchClosestMatches.setToolTipText("Closest Matches Search");
+        _btnBatchClosestMatches.setToolTipText("Closest Matches Repair");
         _btnBatchClosestMatches.setEnabled(false);
         _btnBatchClosestMatches.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _btnBatchClosestMatches.addActionListener(new java.awt.event.ActionListener() {
@@ -821,7 +819,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         jSeparator6.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator6);
 
-        _miBatchRepair.setText("Batch Repair...");
+        _miBatchRepair.setText("Exact Matches Repair...");
+        _miBatchRepair.setToolTipText("Runs an Exact Matches Repair");
         _miBatchRepair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onMenuBatchRepairActionPerformed(evt);
