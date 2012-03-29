@@ -752,9 +752,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnDown = new javax.swing.JButton();
         _btnReorder = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
-        _btnPlay = new javax.swing.JButton();
         _btnMagicFix = new javax.swing.JButton();
         _btnLocate = new javax.swing.JButton();
+        _btnPlay = new javax.swing.JButton();
         jSeparator5 = new javax.swing.JToolBar.Separator();
         _btnPrevMissing = new javax.swing.JButton();
         _btnNextMissing = new javax.swing.JButton();
@@ -928,22 +928,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnReorder);
         _uiToolbar.add(jSeparator2);
 
-        _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
-        _btnPlay.setToolTipText("Play Selected");
-        _btnPlay.setEnabled(_playlist != null);
-        _btnPlay.setFocusable(false);
-        _btnPlay.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnPlay.setMaximumSize(new java.awt.Dimension(31, 31));
-        _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
-        _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
-        _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnPlay.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onBtnPlayActionPerformed(evt);
-            }
-        });
-        _uiToolbar.add(_btnPlay);
-
         _btnMagicFix.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magic-fix.png"))); // NOI18N
         _btnMagicFix.setToolTipText("Fix Everything");
         _btnMagicFix.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
@@ -975,6 +959,22 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
         });
         _uiToolbar.add(_btnLocate);
+
+        _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
+        _btnPlay.setToolTipText("Play Selected");
+        _btnPlay.setEnabled(_playlist != null);
+        _btnPlay.setFocusable(false);
+        _btnPlay.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnPlay.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
+        _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onBtnPlayActionPerformed(evt);
+            }
+        });
+        _uiToolbar.add(_btnPlay);
         _uiToolbar.add(jSeparator5);
 
         _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev-broken.png"))); // NOI18N
