@@ -302,7 +302,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 			protected Void doInBackground() throws IOException
 			{
 				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-				_batch.save(saveRelative, _chkBackup.isSelected(), _txtBackup.getText(), this);
+				_batch.save(saveRelative, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
 				return null;
 			}
 		};

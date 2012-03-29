@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import listfix.util.Log;
-
 import listfix.view.support.DualProgressAdapter;
 import listfix.view.support.IDualProgressObserver;
 import listfix.view.support.IProgressObserver;
@@ -215,14 +213,15 @@ public class BatchRepair
 
 	/**
 	 * Save out all the playlists in this batch repair and backup the originals if told to do so.
-	 * @param saveRelative	Should the playlist be saved relatively or not.
-	 * @param backup		Should we backup the originals to a zip file?
-	 * @param destination	The path to the backup zip file we'll create if told to backup the originals.
-	 * @param observer		The progress observer for this operation.
+	 * @param saveRelative			Should the playlist be saved relatively or not.
+	 * @param isClosestMatchesSave Are we saving the results of a closest matches search?
+	 * @param backup				Should we backup the originals to a zip file?
+	 * @param destination			The path to the backup zip file we'll create if told to backup the originals.
+	 * @param observer				The progress observer for this operation.
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void save(boolean saveRelative, boolean backup, String destination, IProgressObserver observer) throws FileNotFoundException, IOException
+	public void save(boolean saveRelative, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver observer) throws FileNotFoundException, IOException
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 
@@ -250,8 +249,6 @@ public class BatchRepair
 
 			byte[] buffer = new byte[4096];
 
-			Log.write("backup root: %s", root);
-			Log.indent();
 			for (BatchRepairItem item : _items)
 			{
 				File listFile = item.getPlaylist().getFile();
@@ -259,7 +256,6 @@ public class BatchRepair
 				// make playlist entry relative to root directory
 				URI listUrl = root.relativize(listFile.toURI());
 				String name = URLDecoder.decode(listUrl.toString(), "UTF-8");
-				Log.write("%s", name);
 
 				ZipEntry entry = new ZipEntry(name);
 				zip.putNextEntry(entry);
@@ -278,14 +274,15 @@ public class BatchRepair
 				reader.close();
 			}
 			zip.close();
-
-			Log.write("done.");
-			Log.unindent();
 		}
 
 		// save
 		for (BatchRepairItem item : _items)
 		{
+			if (isClosestMatchesSave)
+			{
+				item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
+			}
 			item.getPlaylist().save(saveRelative, progress);
 		}
 	}

@@ -969,41 +969,42 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			{
 				dlg.setLocationRelativeTo(this);
 				dlg.setVisible(true);
-				if (dlg.isUserAccepted())
-				{
-					for (final BatchRepairItem item : br.getItems())
-					{
-						try
-						{
-							setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-							ProgressWorker worker = new ProgressWorker<Void, Void>()
-							{
-								@Override
-								protected Void doInBackground() throws IOException
-								{
-									boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-									item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
-									item.getPlaylist().save(saveRelative, this);
-									return null;
-								}
-							};
-							ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
-							pd.setVisible(true);
-							worker.get();
-						}
-						catch (Exception ex)
-						{
-							_logger.error(ExStack.toString(ex));
-							JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
-						}
-						finally
-						{
-							setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-						}
-					}
-					// debating no longer auto-refreshing here, seems to be no good reason to do so
-					// updatePlaylistDirectoryPanel();
-				}
+				
+//				if (dlg.isUserAccepted())
+//				{
+//					for (final BatchRepairItem item : br.getItems())
+//					{
+//						try
+//						{
+//							setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//							ProgressWorker worker = new ProgressWorker<Void, Void>()
+//							{
+//								@Override
+//								protected Void doInBackground() throws IOException
+//								{
+//									boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+//									item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
+//									item.getPlaylist().save(saveRelative, this);
+//									return null;
+//								}
+//							};
+//							ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+//							pd.setVisible(true);
+//							worker.get();
+//						}
+//						catch (Exception ex)
+//						{
+//							_logger.error(ExStack.toString(ex));
+//							JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+//						}
+//						finally
+//						{
+//							setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//						}
+//					}
+//					// debating no longer auto-refreshing here, seems to be no good reason to do so
+//					// updatePlaylistDirectoryPanel();
+//				}
 			}
 		}
 	}
@@ -1765,7 +1766,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			if (rc == JOptionPane.YES_OPTION)
 			{
-				// TODO: not tested
 				ProgressWorker<Boolean, Void> worker = new ProgressWorker<Boolean, Void>()
 				{
 					@Override

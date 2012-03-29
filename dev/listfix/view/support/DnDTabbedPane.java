@@ -76,12 +76,6 @@ public class DnDTabbedPane extends JTabbedPane
 		{
 			return dropable;
 		}
-//         public String toString() {
-//             return getClass().getName()
-//                    + "[dropPoint=" + getDropPoint() + ","
-//                    + "index=" + index + ","
-//                    + "insert=" + isInsert + "]";
-//         }
 	}
 
 	private void clickArrowButton(String actionKey)
@@ -334,6 +328,20 @@ public class DnDTabbedPane extends JTabbedPane
 		tabbedRect.translate(-xx, -yy);
 		//tabbedRect.grow(2, 2);
 		return tabbedRect;
+	}	
+			
+	@Override
+	protected void processMouseEvent(MouseEvent evt)
+	{
+		if (evt.getID() == MouseEvent.MOUSE_PRESSED
+			&& (evt.getButton() == MouseEvent.BUTTON2 || evt.getButton() == MouseEvent.BUTTON3))
+		{
+			// NO-OP: Prevent auto-selection of tab...
+		}
+		else
+		{
+			super.processMouseEvent(evt);
+		}
 	}
 
 	private class Handler implements MouseInputListener, PropertyChangeListener
@@ -360,10 +368,13 @@ public class DnDTabbedPane extends JTabbedPane
 			}
 		}
 		// MouseListener
+		
+		ClosableTabCtrl _rightClickTabControl = null;
 
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
+			// Save info for the drag in the left-click case
 			if (e.getModifiers() == MouseEvent.BUTTON1_MASK)
 			{
 				DnDTabbedPane src = (DnDTabbedPane) e.getSource();
@@ -423,16 +434,31 @@ public class DnDTabbedPane extends JTabbedPane
 
 		@Override
 		public void mouseReleased(MouseEvent e)
-		{
-			if (e.getModifiers() == MouseEvent.BUTTON3_MASK)
-			{			
+		{			
+			// Middle click case
+			if (e.getModifiers() == MouseEvent.BUTTON2_MASK)
+			{
 				Point tabPt = e.getPoint();
 				DnDTabbedPane src = (DnDTabbedPane) e.getSource();
 				int tabIndex = src.indexAtLocation(tabPt.x, tabPt.y);
 				Component tab = getTabComponentAt(tabIndex);
+				
 				if (tab instanceof ClosableTabCtrl)
 				{
-					((ClosableTabCtrl)tab).rightClickReleased(tabPt);
+					((ClosableTabCtrl) tab).closeMe();
+				}
+			}
+			// Right-click case
+			else if (e.getModifiers() == MouseEvent.BUTTON3_MASK)
+			{
+				Point tabPt = e.getPoint();
+				DnDTabbedPane src = (DnDTabbedPane) e.getSource();
+				int tabIndex = src.indexAtLocation(tabPt.x, tabPt.y);
+				Component tab = getTabComponentAt(tabIndex);
+
+				if (tab instanceof ClosableTabCtrl)
+				{
+					((ClosableTabCtrl)tab).showRightClickMenu(tabPt.x, tabPt.y);
 				}
 			}
 		}

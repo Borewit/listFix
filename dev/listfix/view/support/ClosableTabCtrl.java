@@ -131,12 +131,17 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 	{//GEN-HEADEREND:event_closeAllOtherTabsMenuItemActionPerformed
 		_tabMgr.closeAllOtherTabs(getTabIx());
 	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
-
-	public void rightClickReleased(java.awt.Point pt)
+	
+	public void showRightClickMenu(int x, int y)
 	{	  
-		rightClickMenu.show(this.getParent(), pt.x, pt.y);		
+		rightClickMenu.show(this.getParent(), x, y);
 	}
 	
+	public void closeMe()
+	{
+		_tabMgr.tryCloseTab(this);
+	}
+		
 	private void _miRepairAllTabsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRepairAllTabsActionPerformed
 	{//GEN-HEADEREND:event__miRepairAllTabsActionPerformed
 		_tabMgr.repairAllTabs();

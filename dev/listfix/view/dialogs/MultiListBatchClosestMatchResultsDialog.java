@@ -27,19 +27,25 @@
 package listfix.view.dialogs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
+import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
+import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
+import listfix.view.support.ProgressWorker;
 
 /**
  * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
@@ -262,11 +268,42 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 	private void _btnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnSaveActionPerformed
 	{//GEN-HEADEREND:event__btnSaveActionPerformed
 		_userAccepted = true;
+		
 		if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3)
 		{
 			TableCellEditor cellEditor = _pnlResults.getCellEditor(_pnlResults.getSelectedRow(), _pnlResults.getSelectedColumn());
 			cellEditor.stopCellEditing();
 		}
+		
+		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+		{
+			@Override
+			protected Void doInBackground() throws IOException
+			{
+				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+				_batch.save(saveRelative, true, _chkBackup.isSelected(), _txtBackup.getText(), this);
+				return null;
+			}
+		};
+		ProgressDialog pd = new ProgressDialog(null, true, worker, "Saving playlists...");
+		pd.setVisible(true);
+
+		try
+		{
+			worker.get();
+		}
+		catch (InterruptedException ex)
+		{
+			// ignore
+		}
+		catch (ExecutionException eex)
+		{
+			Throwable ex = eex.getCause();
+			String msg = "An error occurred while saving: " + ex.getMessage();
+			JOptionPane.showMessageDialog(MultiListBatchClosestMatchResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		setVisible(false);
 	}//GEN-LAST:event__btnSaveActionPerformed
 
