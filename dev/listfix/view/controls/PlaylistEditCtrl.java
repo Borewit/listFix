@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -357,49 +358,108 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private void findClosestMatches()
 	{
-		final int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
-		final PlaylistEntry entry = _playlist.get(rowIx);
-		final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-		ProgressWorker worker = new ProgressWorker<List<MatchedPlaylistEntry>, Void>()
+		int numRowsSelected = _uiTable.getSelectedRowCount();
+		if (numRowsSelected == 1)
 		{
-			@Override
-			protected List<MatchedPlaylistEntry> doInBackground()
+			final int rowIx = _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow());
+			final PlaylistEntry entry = _playlist.get(rowIx);
+			final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+			ProgressWorker worker = new ProgressWorker<List<MatchedPlaylistEntry>, Void>()
 			{
-				return entry.findClosestMatches(libraryFiles, this);
-			}
-
-			@Override
-			protected void done()
-			{
-				try
+				@Override
+				protected List<MatchedPlaylistEntry> doInBackground()
 				{
-					List<MatchedPlaylistEntry> matches = get();
-					ClosestMatchChooserDialog dlg = new ClosestMatchChooserDialog(getParentFrame(), matches, true);
-					dlg.center();
-					dlg.setVisible(true);
-					if (dlg.getResultCode() == ClosestMatchChooserDialog.OK)
+					return entry.findClosestMatches(libraryFiles, this);
+				}
+
+				@Override
+				protected void done()
+				{
+					try
 					{
-						if (_playlist.get(rowIx).getFile().compareTo(matches.get(dlg.getChoice()).getPlaylistFile().getFile()) != 0)
+						List<MatchedPlaylistEntry> matches = get();
+						ClosestMatchChooserDialog dlg = new ClosestMatchChooserDialog(getParentFrame(), matches, true);
+						dlg.center();
+						dlg.setVisible(true);
+						if (dlg.getResultCode() == ClosestMatchChooserDialog.OK)
 						{
-							_playlist.replace(rowIx, matches.get(dlg.getChoice()).getPlaylistFile());
-							getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+							if (_playlist.get(rowIx).getFile().compareTo(matches.get(dlg.getChoice()).getPlaylistFile().getFile()) != 0)
+							{
+								_playlist.replace(rowIx, matches.get(dlg.getChoice()).getPlaylistFile());
+								getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+							}
 						}
 					}
+					catch (InterruptedException ex)
+					{
+					}
+					catch (CancellationException ex)
+					{
+					}
+					catch (ExecutionException ex)
+					{
+					}
 				}
-				catch (InterruptedException ex)
+			};
+			ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches...");
+			pd.setVisible(true);
+			_uiTable.setRowSelectionInterval(rowIx, rowIx);
+		}
+		else if (numRowsSelected > 1)
+		{
+			final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+			ProgressWorker<List<BatchMatchItem>, Void> worker = new ProgressWorker<List<BatchMatchItem>, Void>()
+			{
+				@Override
+				protected List<BatchMatchItem> doInBackground()
 				{
+					List<Integer> rowList = new ArrayList<Integer>();
+					int[] uiRows = _uiTable.getSelectedRows();
+					for (int x : uiRows)
+					{
+						rowList.add(_uiTable.convertRowIndexToModel(x));
+					}
+					return _playlist.findClosestMatchesForSelectedEntries(rowList ,libraryFiles, this);
 				}
-				catch (CancellationException ex)
+			};
+			ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches for all selected files...");
+			pd.setVisible(true);
+
+			final List<BatchMatchItem> items;
+			try
+			{
+				items = worker.get();
+				if (items.isEmpty())
 				{
-				}
-				catch (ExecutionException ex)
-				{
+					return;
 				}
 			}
-		};
-		ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches...");
-		pd.setVisible(true);
-		_uiTable.setRowSelectionInterval(rowIx, rowIx);
+			catch (CancellationException ex)
+			{
+				// do nothing, the user cancelled
+				return;
+			}
+			catch (Exception ex)
+			{
+				_logger.error(ExStack.toString(ex));
+				JOptionPane.showMessageDialog(this.getParentFrame(), ex);
+				return;
+			}
+
+			BatchClosestMatchResultsDialog dlg = new BatchClosestMatchResultsDialog(getParentFrame(), items);
+			dlg.setLocationRelativeTo(getParentFrame());
+			dlg.setVisible(true);
+			if (dlg.isAccepted())
+			{
+				_uiTable.clearSelection();
+				List<Integer> fixed = _playlist.applyClosestMatchSelections(items);
+				for (Integer fixIx : fixed)
+				{
+					int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
+					_uiTable.addRowSelectionInterval(viewIx, viewIx);
+				}
+			}
+		}
 	}
 
 	private void bulkFindClosestMatches()

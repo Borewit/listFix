@@ -56,6 +56,7 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
+import listfix.view.support.ProgressWorker;
 import org.apache.log4j.Logger;
 
 public class Playlist
@@ -595,7 +596,7 @@ public class Playlist
 		}
 	}
 
-	public List<BatchMatchItem> findClosestMatches(String[] librayFiles, IProgressObserver observer)
+	public List<BatchMatchItem> findClosestMatches(String[] libraryFiles, IProgressObserver observer)
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(_entries.size());
@@ -611,7 +612,39 @@ public class Playlist
 				entry = _entries.get(ix);				
 				if (!entry.isURL() && !entry.isFound())
 				{
-					matches = entry.findClosestMatches(librayFiles, null);
+					matches = entry.findClosestMatches(libraryFiles, null);
+					if (!matches.isEmpty())
+					{
+						fixed.add(new BatchMatchItem(ix, entry, matches));
+					}
+				}
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		return fixed;
+	}	
+
+	public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, String[] libraryFiles, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(_entries.size());
+
+		List<BatchMatchItem> fixed = new ArrayList<BatchMatchItem>();
+		PlaylistEntry entry = null;
+		List<MatchedPlaylistEntry> matches = null;
+		for (Integer ix : rowList)
+		{
+			progress.stepCompleted();
+			if (!observer.getCancelled())
+			{
+				entry = _entries.get(ix);				
+				if (!entry.isURL() && !entry.isFound())
+				{
+					matches = entry.findClosestMatches(libraryFiles, null);
 					if (!matches.isEmpty())
 					{
 						fixed.add(new BatchMatchItem(ix, entry, matches));
