@@ -609,7 +609,7 @@ public class Playlist
 			if (!observer.getCancelled())
 			{
 				entry = _entries.get(ix);				
-				if (!entry.isFound())
+				if (!entry.isURL() && !entry.isFound())
 				{
 					matches = entry.findClosestMatches(librayFiles, null);
 					if (!matches.isEmpty())
