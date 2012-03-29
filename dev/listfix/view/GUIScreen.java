@@ -1215,6 +1215,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 					PlaylistEditCtrl editor = new PlaylistEditCtrl();
 					editor.setPlaylist(list);
+					list.addModifiedListener(new IPlaylistModifiedListener() 
+					{
+						@Override
+						public void playlistModified(Playlist list)
+						{
+							updateTabTitleForPlaylist(list);
+						}
+					});
 					String title = list.getFilename();
 					_uiTabs.addTab(title, null, editor, path);
 
@@ -1321,6 +1329,25 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		SwingUtilities.updateComponentTreeUI(_jSaveFileChooser);
 		SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
 		SwingUtilities.updateComponentTreeUI(_uiTabs);
+	}
+
+	private void updateTabTitleForPlaylist(Playlist list)
+	{
+		int tabIx = getPlaylistTabIx(list);
+		if (tabIx != -1)
+		{
+			String title;
+			if (list.isModified())
+			{
+				title = list.getFilename() + "*";
+			}
+			else
+			{
+				title = list.getFilename();
+			}
+			_uiTabs.setTitleAt(tabIx, title);
+			((ClosableTabCtrl) _uiTabs.getTabComponentAt(tabIx)).setText(title);
+		}
 	}
 
 	class TButton extends JButton implements UIResource
@@ -1493,21 +1520,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private void onPlaylistModified(Playlist list)
 	{
 		refreshStatusLabel(list);
-		int tabIx = getPlaylistTabIx(list);
-		if (tabIx != -1)
-		{
-			String title;
-			if (list.isModified())
-			{
-				title = list.getFilename() + "*";
-			}
-			else
-			{
-				title = list.getFilename();
-			}
-			_uiTabs.setTitleAt(tabIx, title);
-			((ClosableTabCtrl) _uiTabs.getTabComponentAt(tabIx)).setText(title);
-		}
+		updateTabTitleForPlaylist(list);
 	}
 
 	private void refreshStatusLabel(Playlist list)
