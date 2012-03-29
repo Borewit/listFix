@@ -46,6 +46,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
 import listfix.model.BatchMatchItem;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.util.ExStack;
