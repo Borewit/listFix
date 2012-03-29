@@ -759,6 +759,7 @@
             </Container>
             <Container class="javax.swing.JTabbedPane" name="_uiTabs">
               <Properties>
+                <Property name="tabLayoutPolicy" type="int" value="1"/>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
               <Events>

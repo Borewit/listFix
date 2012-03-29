@@ -26,9 +26,7 @@ import java.awt.Cursor;
 import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -39,14 +37,11 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -61,9 +56,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.UIResource;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
@@ -85,7 +78,6 @@ import listfix.model.Playlist;
 import listfix.model.PlaylistHistory;
 import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;
-import listfix.util.OperatingSystem;
 import listfix.util.ExStack;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.dialogs.ProgressDialog;
@@ -154,12 +146,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		initPlaylistListener();
 
-		if (!OperatingSystem.isMac())
-		{
-			// The default L&F on macs doesn't support tab insets...
-			addOpenPlaylistTabButton(_uiTabs);
-		}
-
 		if (!WinampHelper.isWinampInstalled())
 		{
 			_batchRepairWinampMenuItem.setVisible(false);
@@ -191,7 +177,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         WindowSaver.getInstance().loadSettings(this);	
 		
 		// Set the position of the divider in the left split pane.
-		_leftSplitPane.setDividerLocation(.75);
+		_leftSplitPane.setDividerLocation(.7);
 	}
 
 	private MouseAdapter createPlaylistTreeMouseListener()
@@ -741,6 +727,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
+        _uiTabs.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         _uiTabs.setFocusable(false);
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -1305,115 +1292,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	}
 	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<String, PlaylistEditCtrl>();
 	Map<Playlist, PlaylistEditCtrl> _playlistToEditorMap = new HashMap<Playlist, PlaylistEditCtrl>();
-
-	private void addOpenPlaylistTabButton(JTabbedPane tabCtrl)
-	{
-		Insets oldInsets = getTabAreaInsets();
-		if (oldInsets == null)
-		{
-			return;
-		}
-
-		ImageIcon img = new ImageIcon(getClass().getResource("/images/open-small.gif"));
-		int width = img.getIconWidth() + 4;
-		int height = img.getIconHeight() + 4;
-
-		// these settings work for putting the button on the left
-		//_btnOpenTab.setForcedBounds(oldInsets.left, oldInsets.top, width, height);
-		//Insets newInsets = new Insets(oldInsets.top, _btnOpenTab.getWidth() + 4 + oldInsets.left, oldInsets.bottom, oldInsets.right);
-
-		int rightPad = width + 2 + oldInsets.right;
-		final Rectangle bounds = new Rectangle(rightPad, oldInsets.top, width, height);
-
-		// reserve space for open button
-		Insets newInsets = new Insets(oldInsets.top, oldInsets.left, oldInsets.bottom, rightPad);
-		setTabAreaInsets(newInsets);
-		_tabPaneInsets = newInsets;
-
-		// add open button
-		final TButton button = new TButton(img);
-		button.setToolTipText("Open Playlist");
-		button.setForcedBounds(tabCtrl.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
-		tabCtrl.addComponentListener(new ComponentAdapter()
-		{
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				Component comp = e.getComponent();
-				button.setForcedBounds(comp.getWidth() - bounds.x, bounds.y, bounds.width, bounds.height);
-			}
-		});
-		tabCtrl.add(button);
-	}
-	private Insets _tabPaneInsets;
-
-	private void setTabAreaInsets(Insets tabAreaInsets)
-	{
-		TabbedPaneUI ui = _uiTabs.getUI();
-		if (ui instanceof BasicTabbedPaneUI)
-		{
-			try
-			{
-				Class<?> uiClass = ui.getClass();
-				while (uiClass != null)
-				{
-					try
-					{
-						Field field = uiClass.getDeclaredField("tabAreaInsets");
-						if (field != null)
-						{
-							field.setAccessible(true);
-							field.set(ui, tabAreaInsets);
-							_uiTabs.invalidate();
-							return;
-						}
-					}
-					catch (NoSuchFieldException ex)
-					{
-					}
-					uiClass = uiClass.getSuperclass();
-				}
-			}
-			catch (Throwable t)
-			{
-			}
-		}
-
-		throw new UnsupportedOperationException("LAF does not support tab area inserts");
-	}
-
-	private Insets getTabAreaInsets()
-	{
-		TabbedPaneUI ui = _uiTabs.getUI();
-		if (ui instanceof BasicTabbedPaneUI)
-		{
-			try
-			{
-				Class<?> uiClass = ui.getClass();
-				while (uiClass != null)
-				{
-					try
-					{
-						Field field = uiClass.getDeclaredField("tabAreaInsets");
-						if (field != null)
-						{
-							field.setAccessible(true);
-							return (Insets) field.get(ui);
-						}
-					}
-					catch (NoSuchFieldException nsfe)
-					{
-					}
-					uiClass = uiClass.getSuperclass();
-				}
-			}
-			catch (Throwable t)
-			{
-			}
-		}
-		return UIManager.getInsets("TabbedPane.tabAreaInsets");
-	}
-
 	static
 	{
 		Color highlight = UIManager.getColor("TabbedPane.highlight");
@@ -2401,17 +2279,6 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		{
 			UIManager.setLookAndFeel(className);
 			updateAllComponentTreeUIs();
-			try
-			{
-				if (_tabPaneInsets != null)
-				{
-					setTabAreaInsets(_tabPaneInsets);
-				}
-			}
-			catch (Exception e)
-			{
-				// Eat the error and get on with life...
-			}
 		}
 		catch (Exception e)
 		{

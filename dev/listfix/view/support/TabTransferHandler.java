@@ -227,8 +227,6 @@ public class TabTransferHandler extends TransferHandler
 		glassPane = null;
 		source = null;
 	}
-
-
 }
 
 class GhostGlassPane extends JPanel

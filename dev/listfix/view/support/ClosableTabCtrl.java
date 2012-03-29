@@ -134,7 +134,7 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 	
 	public void showRightClickMenu(int x, int y)
 	{	  
-		rightClickMenu.show(this.getParent(), x, y);
+		rightClickMenu.show(this, 5, 2);
 	}
 	
 	public void closeMe()
