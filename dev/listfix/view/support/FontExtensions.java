@@ -21,6 +21,8 @@ package listfix.view.support;
 
 import java.awt.Font;
 import java.util.StringTokenizer;
+import listfix.util.ExStack;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -28,6 +30,8 @@ import java.util.StringTokenizer;
  */
 public class FontExtensions
 {
+	private static final Logger _logger = Logger.getLogger(FontExtensions.class);
+	
 	public static String getStyle(Font inputFont)
 	{
 		if (inputFont.isPlain())
@@ -66,17 +70,24 @@ public class FontExtensions
 			{
 				tok = tizer.nextToken();
 				if (i == 0)
+				{
 					family = tok;
+				}
 				else if (i == 1)
+				{
 					style = tok;
+				}
 				else if (i == 2)
+				{
 					size = tok;
+				}
 				i++;
 			}
 			return new Font(family, Integer.parseInt(style), Integer.parseInt(size));
 		}
-		catch (Exception exception)
+		catch (Exception ex)
 		{
+			_logger.info(ExStack.toString(ex));
 			return null;
 		}
 	}

@@ -26,16 +26,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import listfix.util.ExStack;
+import org.apache.log4j.Logger;
 
 /** Copies a source file to the destination file. */
 public class FileCopier
 {
 	/** The block size to read in one shot. */
 	private static int blockSize = 1024;
+	private static final Logger _logger = Logger.getLogger(FileCopier.class);
 
 	/** Copies from source to destination.
-	 * @param src : The source stream.
-	 * @param dest: The destination.
+	 * @param input : The source stream.
+	 * @param output: The destination.
 	 * @exception IOException
 	 */
 	public static void copy(File input, File output) throws IOException
@@ -80,6 +83,7 @@ public class FileCopier
 			}
 			catch (Exception ex)
 			{
+				_logger.error(ExStack.toString(ex));
 			}
 		}
 	}

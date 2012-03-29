@@ -36,6 +36,8 @@ import javax.activation.DataHandler;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.TransferHandler;
+import listfix.util.ExStack;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -44,6 +46,7 @@ import javax.swing.TransferHandler;
 public class TabTransferHandler extends TransferHandler
 {
 	private final DataFlavor localObjectFlavor;
+	private static final Logger _logger = Logger.getLogger(TabTransferHandler.class);
 
 	public TabTransferHandler()
 	{
@@ -124,21 +127,6 @@ public class TabTransferHandler extends TransferHandler
 			return false;
 		}
 	}
-	
-	/*
-	private static boolean isWebStart()
-	{
-		try
-		{
-			javax.avax.jnlp.ServiceManager.lookup("javax.jnlp.BasicService");
-			return true;
-		}
-		catch (Exception ex)
-		{
-			return false;
-		}
-	}
-	*/
 
 	private BufferedImage makeDragTabImage(DnDTabbedPane tabbedPane)
 	{
@@ -211,11 +199,11 @@ public class TabTransferHandler extends TransferHandler
 		}
 		catch (UnsupportedFlavorException ufe)
 		{
-			ufe.printStackTrace();
+			_logger.error(ExStack.toString(ufe));
 		}
 		catch (java.io.IOException ioe)
 		{
-			ioe.printStackTrace();
+			_logger.error(ExStack.toString(ioe));
 		}
 		return false;
 	}

@@ -282,8 +282,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
 					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
 				} 
-				catch (Exception exception) 
+				catch (Exception ex) 
 				{
+					_logger.warn(ExStack.toString(ex));
 					return null;
 				}
 
@@ -956,42 +957,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			{
 				dlg.setLocationRelativeTo(this);
 				dlg.setVisible(true);
-				
-//				if (dlg.isUserAccepted())
-//				{
-//					for (final BatchRepairItem item : br.getItems())
-//					{
-//						try
-//						{
-//							setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//							ProgressWorker worker = new ProgressWorker<Void, Void>()
-//							{
-//								@Override
-//								protected Void doInBackground() throws IOException
-//								{
-//									boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-//									item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
-//									item.getPlaylist().save(saveRelative, this);
-//									return null;
-//								}
-//							};
-//							ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
-//							pd.setVisible(true);
-//							worker.get();
-//						}
-//						catch (Exception ex)
-//						{
-//							_logger.error(ExStack.toString(ex));
-//							JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
-//						}
-//						finally
-//						{
-//							setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-//						}
-//					}
-//					// debating no longer auto-refreshing here, seems to be no good reason to do so
-//					// updatePlaylistDirectoryPanel();
-//				}
 			}
 		}
 	}
@@ -1027,11 +992,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			dlg.setLocationRelativeTo(this);
 			dlg.setVisible(true);
-			if (!dlg.getUserCancelled())
-			{
-				// debating no longer auto-refreshing here, seems to be no good reason to do so
-				// updatePlaylistDirectoryPanel();
-			}
 		}
 	}
 
@@ -1204,6 +1164,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		catch (Exception ex)
 		{
 			JOptionPane.showMessageDialog(this, ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+			_logger.error(ExStack.toString(ex));
 			return;
 		}
 
@@ -1672,6 +1633,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				catch (ExecutionException ex)
 				{
 					JOptionPane.showMessageDialog(GUIScreen.this, ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
+					_logger.error(ExStack.toString(ex));
 				}
 
 				return false;
@@ -1706,6 +1668,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		catch (Exception ex)
 		{
 			JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
+			_logger.error(ExStack.toString(ex));
 		}
 
 		if (_uiTabs.getTabCount() <= 0)
@@ -1813,6 +1776,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				}
 				catch (ExecutionException ex)
 				{
+					_logger.error(ExStack.toString(ex));
 				}
 				catch (CancellationException ex)
 				{
@@ -1921,6 +1885,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		catch (ExecutionException ex)
 		{
+			_logger.error(ExStack.toString(ex));
 		}
 		catch (CancellationException ex)
 		{
@@ -2132,6 +2097,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 				catch (Exception ex)
 				{
 					JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea("Sorry, there was a problem extracting your playlists.  The error was: " + ex.getMessage()), "Extraction Error", JOptionPane.ERROR_MESSAGE);
+					_logger.warn(ExStack.toString(ex));
 				}
 				finally
 				{
@@ -2280,8 +2246,9 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 			UIManager.setLookAndFeel(className);
 			updateAllComponentTreeUIs();
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
+			_logger.error(ExStack.toString(ex));
 		}
 	}
 
@@ -2313,9 +2280,9 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 			{
 				mainWindow.openPlaylist(new File(arg));
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-
+				_logger.error("Error opening playlists from command line: " + ExStack.toString(ex));
 			}
 		}
 	}

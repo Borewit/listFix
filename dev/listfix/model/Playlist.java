@@ -1125,20 +1125,32 @@ public class Playlist
 	{
 		String head = "";
 		boolean newHead = false;
-		try {
+		try
+		{
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
 			String line = buffer.readLine();
 			while (line != null)
-			{		
-				if (line.trim().startsWith("<media")) break;
+			{
+				if (line.trim().startsWith("<media"))
+				{
+					break;
+				}
 				head += line + BR;
 				line = buffer.readLine();
 			}
 			buffer.close();
 			// determine if a head was read
-			if (!head.contains("<?wpl")) newHead = true;
-		} catch  (Exception ex) {			
-		} finally {
+			if (!head.contains("<?wpl"))
+			{
+				newHead = true;
+			}
+		}
+		catch (Exception ex)
+		{
+			_logger.error(ExStack.toString(ex));
+		}
+		finally
+		{
 			newHead = true;
 		}
 		if (newHead) head = "<?wpl version=\"1.0\"?>\r\n<smil>\r\n\t<body>\r\n\t\t<sec>\r\n";

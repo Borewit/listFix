@@ -33,6 +33,7 @@ import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
+import listfix.util.ExStack;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
@@ -315,13 +316,14 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 		}
 		catch (InterruptedException ex)
 		{
-			// ignore
+			// ignore, these happen when people cancel - should not be logged either.
 		}
 		catch (ExecutionException eex)
 		{
 			Throwable ex = eex.getCause();
 			String msg = "An error occurred while saving: " + ex.getMessage();
 			JOptionPane.showMessageDialog(BatchExactMatchesResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
+			_logger.error(ExStack.toString(eex));
 			return;
 		}
 

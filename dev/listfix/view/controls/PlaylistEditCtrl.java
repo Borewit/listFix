@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -85,7 +84,6 @@ import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.BatchClosestMatchResultsDialog;
 import listfix.view.dialogs.ProgressDialog;
-import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
 import listfix.view.support.IPlaylistModifiedListener;
@@ -180,8 +178,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (ExecutionException ex)
 					{
-						showWaitCursor(false);
+						showWaitCursor(false);						
 						JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Add File Error", JOptionPane.ERROR_MESSAGE);
+						_logger.error(ExStack.toString(ex));
 						return;
 					}
 
@@ -276,6 +275,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 				catch (ExecutionException ex)
 				{
+					_logger.error(ExStack.toString(ex));
 				}
 			}
 		};
@@ -398,6 +398,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (ExecutionException ex)
 					{
+						_logger.error(ExStack.toString(ex));
 					}
 				}
 			};
@@ -719,6 +720,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		catch (Exception ex)
 		{
 			JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Could not open these playlist entries, error was: " + ex.getMessage()));
+			_logger.error(ExStack.toString(ex));
 		}
 	}
 
@@ -1208,6 +1210,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						{
 							showWaitCursor(false);
 							JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
+							_logger.error(ExStack.toString(ex));
 							return;
 						}
 
@@ -1728,6 +1731,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					}
 					catch (Exception e)
 					{
+						// Don't bother logging, could overlog if people try to drag the wrong stuff.
 						return false;
 					}
 				}
@@ -1797,6 +1801,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 											catch (Exception ex)
 											{
 												JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+												_logger.error(ExStack.toString(ex));
 												return;
 											}
 										}
@@ -1877,6 +1882,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 								catch (Exception ex)
 								{
 									JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+									_logger.error(ExStack.toString(ex));
 									return;
 								}
 							}
@@ -1933,6 +1939,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private class PlaylistTableModel extends AbstractTableModel
 	{
+		@Override
 		public int getRowCount()
 		{
 			if (_playlist != null)
@@ -1945,11 +1952,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 		}
 
+		@Override
 		public int getColumnCount()
 		{
 			return 4;
 		}
 
+		@Override
 		public Object getValueAt(int rowIndex, int columnIndex)
 		{
 			PlaylistEntry entry = _playlist.get(rowIndex);

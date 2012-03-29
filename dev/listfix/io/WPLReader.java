@@ -71,6 +71,7 @@ public class WPLReader implements IPlaylistReader
 		catch (UnsupportedEncodingException ex)
 		{
 			// this should never happen (utf-8 must be supported) - rethrow as runtime exception
+			_logger.error("Holy shit, ther'e no UTF-8 support on this machine!! " + ExStack.toString(ex));
 			throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
 		}
 		encoding = "UTF-8";

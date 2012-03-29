@@ -247,7 +247,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 			}
 			catch (InterruptedException ex)
 			{
-				_logger.warn(ExStack.toString(ex));
+				// ignore, these happen when people cancel - should not be logged either.
 			}
 		}
 

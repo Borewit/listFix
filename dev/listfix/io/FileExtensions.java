@@ -126,6 +126,7 @@ public class FileExtensions
 		}
 		catch (Exception e)
 		{
+			// not logging anything here as this seems to be a common fallback...
 			return file.getAbsolutePath();
 		}
 	}

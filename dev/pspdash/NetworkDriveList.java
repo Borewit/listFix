@@ -28,7 +28,9 @@ package pspdash;
 import java.io.*;
 import java.util.*;
 
+import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
+import org.apache.log4j.Logger;
 
 /**
  * On Windows systems, this class compiles a list of shared
@@ -42,6 +44,7 @@ public class NetworkDriveList
 	private volatile boolean successful = false;
 	private Map networkDrives = new TreeMap();
 	private volatile Process subprocess = null;
+	private static final Logger _logger = Logger.getLogger(NetworkDriveList.class);
 
 	/** Get a list of network drives.
 	 * Uses a default maximum delay of 3 seconds.
@@ -77,6 +80,7 @@ public class NetworkDriveList
 			}
 			catch (InterruptedException ie)
 			{
+				_logger.info(ExStack.toString(ie));
 			}
 			if (successful == false)
 			{
@@ -99,6 +103,7 @@ public class NetworkDriveList
 		}
 		catch (Exception e)
 		{
+			_logger.info(ExStack.toString(e));
 		}
 	}
 

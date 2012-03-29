@@ -22,12 +22,17 @@ package listfix.io;
 
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
+
+import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.controls.JTransparentTextArea;
+
+import org.apache.log4j.Logger;
 
 public class BrowserLauncher
 {
 	private static final String errMsg = "Error attempting to launch web browser";
+	private static final Logger _logger = Logger.getLogger(BrowserLauncher.class);
 
 	public static void launch(String url)
 	{
@@ -36,34 +41,26 @@ public class BrowserLauncher
 			if (OperatingSystem.isMac())
 			{
 				Class fileMgr = Class.forName("com.apple.eio.FileManager");
-				Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[]
-					{
-						String.class
-					});
-				openURL.invoke(null, new Object[]
-					{
-						url
-					});
+				Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[] { String.class });
+				openURL.invoke(null, new Object[] { url });
 			}
 			else if (OperatingSystem.isWindows())
 			{
 				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
 			}
 			else
-			{ //assume Unix or Linux
-				String[] browsers =
+			{ 
+				//assume Unix or Linux
+				String[] possibleBrowsers =
 				{
 					"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"
 				};
 				String browser = null;
-				for (int count = 0; count < browsers.length && browser == null; count++)
+				for (int count = 0; count < possibleBrowsers.length && browser == null; count++)
 				{
-					if (Runtime.getRuntime().exec(new String[]
-						{
-							"which", browsers[count]
-						}).waitFor() == 0)
+					if (Runtime.getRuntime().exec(new String[] {"which", possibleBrowsers[count]}).waitFor() == 0)
 					{
-						browser = browsers[count];
+						browser = possibleBrowsers[count];
 					}
 				}
 				if (browser == null)
@@ -72,16 +69,14 @@ public class BrowserLauncher
 				}
 				else
 				{
-					Runtime.getRuntime().exec(new String[]
-						{
-							browser, url
-						});
+					Runtime.getRuntime().exec(new String[] { browser, url });
 				}
 			}
 		}
 		catch (Exception e)
 		{
 			JOptionPane.showMessageDialog(null, new JTransparentTextArea(errMsg + ": " + e.getLocalizedMessage()));
+			_logger.info(ExStack.toString(e));
 		}
 	}
 }

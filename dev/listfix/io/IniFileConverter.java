@@ -121,6 +121,7 @@ public class IniFileConverter
 		}
 		catch (Exception e)
 		{
+			_logger.warn("Error reading ini files in for conversion: " + ExStack.toString(e));
 			return;
 		}
 		WriteMediaLibraryIniTask task = new WriteMediaLibraryIniTask(getMediaDirs(), getMediaLibrary(), getMediaLibraryFiles());

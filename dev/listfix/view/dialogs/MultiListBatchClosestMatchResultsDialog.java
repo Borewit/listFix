@@ -40,12 +40,14 @@ import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
+import listfix.util.ExStack;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
+import org.apache.log4j.Logger;
 
 /**
  * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
@@ -57,6 +59,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 	private BatchRepair _batch;
 	private boolean _userCancelled = false;
 	private boolean _userAccepted = false;
+	private static final Logger _logger = Logger.getLogger(MultiListBatchClosestMatchResultsDialog.class);
 
     /** Creates new form MultiListBatchClosestMatchResultsDialog */
     public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal)
@@ -294,13 +297,14 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 		}
 		catch (InterruptedException ex)
 		{
-			// ignore
+			// ignore, these happen when people cancel - should not be logged either.
 		}
 		catch (ExecutionException eex)
 		{
 			Throwable ex = eex.getCause();
 			String msg = "An error occurred while saving: " + ex.getMessage();
 			JOptionPane.showMessageDialog(MultiListBatchClosestMatchResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
+			_logger.error(ExStack.toString(ex));
 			return;
 		}
 		
