@@ -88,6 +88,7 @@ import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
 
 import listfix.view.support.IPlaylistModifiedListener;
+import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
 
@@ -431,7 +432,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 		catch (Exception ex)
 		{
-			System.out.println(ex.getMessage());
 			_logger.error(ExStack.toString(ex));
 			JOptionPane.showMessageDialog(this.getParentFrame(), ex);
 			return;
@@ -1296,10 +1296,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     // End of variables declaration//GEN-END:variables
-	private static ImageIcon _imgMissing = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-missing.png"));
-	private static ImageIcon _imgFound = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-found.png"));
-	private static ImageIcon _imgFixed = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-fixed.png"));
-	private static ImageIcon _imgUrl = new ImageIcon(BatchExactMatchesResultsDialog.class.getResource("/images/icon-url.png"));
 
 	public Playlist getPlaylist()
 	{
@@ -1904,19 +1900,19 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				case 1:
 					if (entry.isURL())
 					{
-						return _imgUrl;
+						return ImageIcons.IMG_URL;
 					}
 					else if (entry.isFixed())
 					{
-						return _imgFixed;
+						return ImageIcons.IMG_FIXED;
 					}
 					else if (entry.isFound())
 					{
-						return _imgFound;
+						return ImageIcons.IMG_FOUND;
 					}
 					else
 					{
-						return _imgMissing;
+						return ImageIcons.IMG_MISSING;
 					}
 				case 2:
 					return entry.getFileName();

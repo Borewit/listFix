@@ -352,7 +352,6 @@ public class PLSProperties extends Hashtable<Object, Object>
 			valueStart = limit;
 			hasSep = false;
 
-			//System.out.println("line=<" + new String(lineBuf, 0, limit) + ">");
 			precedingBackslash = false;
 			while (keyLen < limit)
 			{

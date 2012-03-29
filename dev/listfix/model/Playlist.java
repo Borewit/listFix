@@ -32,7 +32,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import java.util.ArrayList;
@@ -612,7 +611,6 @@ public class Playlist
 				entry = _entries.get(ix);				
 				if (!entry.isFound())
 				{
-					System.out.println("Checking: " + entry.getFileName());
 					matches = entry.findClosestMatches(librayFiles, null);
 					if (!matches.isEmpty())
 					{

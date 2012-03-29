@@ -76,7 +76,7 @@ public class PlaylistsTableModel extends AbstractTableModel
 					}
 					else if (list.getFixedCount() > 0)
 					{
-						return ImageIcons.ING_FIXED; // light green
+						return ImageIcons.IMG_FIXED; // light green
 					}
 					else
 					{

@@ -206,7 +206,6 @@ public class DnDTabbedPane extends JTabbedPane
 
 	public void exportTab(int dragIndex, JTabbedPane target, int targetIndex)
 	{
-		System.out.println("exportTab");
 		if (targetIndex < 0)
 		{
 			return;
@@ -243,7 +242,6 @@ public class DnDTabbedPane extends JTabbedPane
 
 	public void convertTab(int prev, int next)
 	{
-		System.out.println("convertTab");
 		if (next < 0 || prev == next)
 		{
 			return;
@@ -358,7 +356,6 @@ public class DnDTabbedPane extends JTabbedPane
 			String propertyName = e.getPropertyName();
 			if ("dropLocation".equals(propertyName))
 			{
-				//System.out.println("propertyChange: dropLocation");
 				repaintDropLocation(getDropLocation());
 			}
 		}

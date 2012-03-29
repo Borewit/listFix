@@ -306,7 +306,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 				return null;
 			}
 		};
-		ProgressDialog pd = new ProgressDialog(null, true, worker, "Loading playlists...");
+		ProgressDialog pd = new ProgressDialog(null, true, worker, "Saving playlists...");
 		pd.setVisible(true);
 
 		try

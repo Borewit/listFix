@@ -26,7 +26,9 @@
 
 package listfix.view.dialogs;
 
+import java.io.File;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -63,8 +65,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 		_batch = br;
 		initComponents();
 
-//		getRootPane().setDefaultButton(_btnSave);
-//		_txtBackup.setText(_batch.getDefaultBackupName());
+		getRootPane().setDefaultButton(_btnSave);
+		_txtBackup.setText(_batch.getDefaultBackupName());
 
 		// load and repair lists
 		final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Closest Matches...", "Please wait...", "Overall Progress:");
@@ -182,10 +184,14 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
         jSplitPane1 = new javax.swing.JSplitPane();
         _pnlResults = new ClosestMatchesSearchScrollableResultsPanel();
         _pnlList = new PlaylistsList(_batch);
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        _pnlBackup = new javax.swing.JPanel();
+        _pnlRight = new javax.swing.JPanel();
         _btnSave = new javax.swing.JButton();
         _btnCancel = new javax.swing.JButton();
+        _pnlLeft = new javax.swing.JPanel();
+        _chkBackup = new javax.swing.JCheckBox();
+        _txtBackup = new javax.swing.JTextField();
+        _btnBrowse = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -200,28 +206,50 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
-
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        _pnlBackup.setLayout(new java.awt.BorderLayout());
 
         _btnSave.setText("Save All Repairs");
         _btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _btnSaveonBtnSaveActionPerformed(evt);
+                _btnSaveActionPerformed(evt);
             }
         });
-        jPanel2.add(_btnSave);
+        _pnlRight.add(_btnSave);
 
         _btnCancel.setText("Cancel");
         _btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _btnCancelonBtnCancelActionPerformed(evt);
+                _btnCancelActionPerformed(evt);
             }
         });
-        jPanel2.add(_btnCancel);
+        _pnlRight.add(_btnCancel);
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+        _pnlBackup.add(_pnlRight, java.awt.BorderLayout.EAST);
+
+        _chkBackup.setText("Backup original files to zip file:");
+        _chkBackup.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                _chkBackuponChkBackupItemStateChanged(evt);
+            }
+        });
+        _pnlLeft.add(_chkBackup);
+
+        _txtBackup.setEnabled(false);
+        _txtBackup.setPreferredSize(new java.awt.Dimension(150, 20));
+        _pnlLeft.add(_txtBackup);
+
+        _btnBrowse.setText("...");
+        _btnBrowse.setEnabled(false);
+        _btnBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnBrowseActionPerformed(evt);
+            }
+        });
+        _pnlLeft.add(_btnBrowse);
+
+        _pnlBackup.add(_pnlLeft, java.awt.BorderLayout.WEST);
+
+        getContentPane().add(_pnlBackup, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -231,8 +259,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 		_userCancelled = true;
 	}//GEN-LAST:event_formWindowClosing
 
-	private void _btnSaveonBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnSaveonBtnSaveActionPerformed
-	{//GEN-HEADEREND:event__btnSaveonBtnSaveActionPerformed
+	private void _btnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnSaveActionPerformed
+	{//GEN-HEADEREND:event__btnSaveActionPerformed
 		_userAccepted = true;
 		if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3)
 		{
@@ -240,21 +268,50 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 			cellEditor.stopCellEditing();
 		}
 		setVisible(false);
-}//GEN-LAST:event__btnSaveonBtnSaveActionPerformed
+	}//GEN-LAST:event__btnSaveActionPerformed
 
-	private void _btnCancelonBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnCancelonBtnCancelActionPerformed
-	{//GEN-HEADEREND:event__btnCancelonBtnCancelActionPerformed
+	private void _btnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnCancelActionPerformed
+	{//GEN-HEADEREND:event__btnCancelActionPerformed
 		_userCancelled = true;
 		setVisible(false);
-}//GEN-LAST:event__btnCancelonBtnCancelActionPerformed
+	}//GEN-LAST:event__btnCancelActionPerformed
+
+	private void _chkBackuponChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event__chkBackuponChkBackupItemStateChanged
+	{//GEN-HEADEREND:event__chkBackuponChkBackupItemStateChanged
+		boolean isChecked = _chkBackup.isSelected();
+		_txtBackup.setEnabled(isChecked);
+		_btnBrowse.setEnabled(isChecked);
+		if (isChecked)
+		{
+			_txtBackup.selectAll(); 
+			_txtBackup.requestFocusInWindow();
+		}
+ 	}//GEN-LAST:event__chkBackuponChkBackupItemStateChanged
+
+	private void _btnBrowseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnBrowseActionPerformed
+	{//GEN-HEADEREND:event__btnBrowseActionPerformed
+		JFileChooser dlg = new JFileChooser(); 		
+		if (!_txtBackup.getText().isEmpty()) 		
+		{ 			
+			dlg.setSelectedFile(new File(_txtBackup.getText())); 		
+		} 		
+		if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) 		
+		{ 			
+			_txtBackup.setText(dlg.getSelectedFile().getAbsolutePath()); 		
+		} 	
+	}//GEN-LAST:event__btnBrowseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton _btnBrowse;
     private javax.swing.JButton _btnCancel;
     private javax.swing.JButton _btnSave;
+    private javax.swing.JCheckBox _chkBackup;
+    private javax.swing.JPanel _pnlBackup;
+    private javax.swing.JPanel _pnlLeft;
     private listfix.view.controls.PlaylistsList _pnlList;
     private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel _pnlRight;
+    private javax.swing.JTextField _txtBackup;
     private javax.swing.JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 
@@ -273,7 +330,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
 	/**
 	 * @return the _userAccepted
-	 */ public boolean isUserAccepted()
+	 */ 
+	public boolean isUserAccepted()
 	{
 		return _userAccepted;
 	}

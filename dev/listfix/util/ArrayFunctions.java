@@ -53,7 +53,7 @@ public class ArrayFunctions
 		return temp;
 	}
 
-	public static float[] addTwoArrays(float[] array1, float[] array2)
+	public static float[] addTwoArrays(float[] array1, float[] array2) throws Exception
 	{
 		if (array1.length == array2.length)
 		{
@@ -66,12 +66,11 @@ public class ArrayFunctions
 		}
 		else
 		{
-			System.out.println("You are a monkey... add two arrays that have the same size!!!");
-			return null;
+			throw new Exception("You are a monkey... add two arrays that have the same size!!!");	
 		}
 	}
 
-	public static int[] addTwoArrays(int[] array1, int[] array2)
+	public static int[] addTwoArrays(int[] array1, int[] array2) throws Exception
 	{
 		if (array1.length == array2.length)
 		{
@@ -84,8 +83,7 @@ public class ArrayFunctions
 		}
 		else
 		{
-			System.out.println("You are a monkey... add two arrays that have the same size!!!");
-			return null;
+			throw new Exception("You are a monkey... add two arrays that have the same size!!!");
 		}
 	}
 

@@ -58,12 +58,12 @@ public class FileLauncher
 
 			cmdLine = tempFile.toString();
 
-			Process proc = Runtime.getRuntime().exec(cmdLine);
-			// System.out.println("command was: " + cmdLine);
+			Process proc = Runtime.getRuntime().exec(cmdLine);			
 			synchronized (proc)
 			{
 				proc.wait(100);
 			}
+			
 			InputStream stream = proc.getErrorStream();
 			BufferedReader streamTwo = new BufferedReader(new InputStreamReader(stream));
 			String line = null;
@@ -73,7 +73,6 @@ public class FileLauncher
 			}
 			while (line != null)
 			{
-				System.out.println(line);
 				if (streamTwo.ready())
 				{
 					line = streamTwo.readLine();
