@@ -32,5 +32,6 @@ public class JTransparentTextArea extends JTextArea
 	{
 		super(msg);
 		this.setOpaque(false);
+		this.setEditable(false);
 	}
 }
