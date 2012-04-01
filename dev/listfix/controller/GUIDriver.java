@@ -64,11 +64,11 @@ public class GUIDriver
 	{
 		try
 		{
-			(new FileWriter()).writeDefaultIniFilesIfNeeded();
 			if (IniFileConverter.conversionRequired())
 			{
 				(new IniFileConverter()).convert();
-			}
+			}			
+			(new FileWriter()).writeDefaultIniFilesIfNeeded();
 			options = OptionsReader.read();
 			IniFileReader initReader = new IniFileReader(options);
 			initReader.readIni();

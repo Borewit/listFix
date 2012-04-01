@@ -1497,6 +1497,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						PlaylistEntry entry = _playlist.get(rowIx);
 						return (entry.isURL() ? "URL" : entry.getStatus().toString());
 					}
+					else if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 3))
+					{
+						PlaylistEntry entry = _playlist.get(rowIx);
+						return (entry.isURL() ? entry.getURI().toString() : entry.getPath().toString());
+					}
 				}
 				return super.getToolTipText(event);
 			}

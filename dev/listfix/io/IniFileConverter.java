@@ -108,9 +108,14 @@ public class IniFileConverter
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @return True if both of the old files exist and the new option files don't
+	 */
 	public static boolean conversionRequired()
 	{
-		return ((new File(fname1)).exists() && (new File(fname2)).exists());
+		return (new File(fname1)).exists() && (new File(fname2)).exists() && !(new File(Constants.OPTIONS_INI)).exists() && !(new File(Constants.MEDIA_LIBRARY_INI)).exists();
 	}
 
 	public void convert()
