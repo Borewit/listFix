@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -110,12 +111,10 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         });
         rightClickMenu.add(_miRepairAllTabs);
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 2, 4, 0));
         setFocusable(false);
         setMaximumSize(null);
-        setMinimumSize(null);
         setOpaque(false);
-        setPreferredSize(null);
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
 
         jLabel1.setText("playlist");
@@ -134,14 +133,14 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 		_tabMgr.closeAllOtherTabs(getTabIx());
 	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
 	
-	public void showRightClickMenu(int x, int y)
-	{	  
-		rightClickMenu.show(this, 5, 2);
-	}
-	
 	public void closeMe()
 	{
 		_tabMgr.tryCloseTab(this);
+	}
+	
+	public void showRightClickMenu(int x, int y)
+	{
+		rightClickMenu.show(_tabPane, x, y);
 	}
 		
 	private void _miRepairAllTabsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRepairAllTabsActionPerformed
@@ -149,6 +148,29 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 		_tabMgr.repairAllTabs();
 	}//GEN-LAST:event__miRepairAllTabsActionPerformed
 
+	/*
+	 * Enabling these events kills tooltip processing for some reason...
+	private void formMouseReleased(java.awt.event.MouseEvent evt)                                   
+	{                                       
+		if (evt.getModifiers() == MouseEvent.BUTTON2_MASK)
+		{
+			_tabMgr.tryCloseTab(this);
+		}
+		else if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
+		{
+			rightClickMenu.show(this, evt.getX(), evt.getY());
+		}
+	}                                  
+
+	private void formMousePressed(java.awt.event.MouseEvent evt)                                  
+	{                                      
+		if (evt.getModifiers() == MouseEvent.BUTTON1_MASK)
+		{
+			_tabPane.setSelectedIndex(getTabIx());
+		}
+	}  
+	 * 
+	 */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem _miRepairAllTabs;

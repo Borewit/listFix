@@ -1224,11 +1224,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							updateTabTitleForPlaylist(list);
 						}
 					});
+					
+					// Add the tab to the tabbed pane
 					String title = list.getFilename();
 					_uiTabs.addTab(title, null, editor, path);
 
+					// Set the tab we just added as selected
 					int ix = _uiTabs.getTabCount() - 1;
 					_uiTabs.setSelectedIndex(ix);
+					
+					// Update the editor maps
 					_pathToEditorMap.put(path, editor);
 					_playlistToEditorMap.put(list, editor);
 

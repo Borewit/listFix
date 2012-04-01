@@ -21,6 +21,7 @@
 package listfix.view.support;
 
 import com.jidesoft.swing.JideTabbedPane;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -127,6 +128,7 @@ public class DnDTabbedPane extends com.jidesoft.swing.JideTabbedPane
 		this.setTabShape(JideTabbedPane.SHAPE_ROUNDED_VSNET);
 		this.setColorTheme(JideTabbedPane.COLOR_THEME_VSNET);
 		this.setScrollSelectedTabOnWheel(true);
+		this.setRightClickSelect(false);
 		
 		Handler h = new Handler();
 		addMouseListener(h);
@@ -335,21 +337,7 @@ public class DnDTabbedPane extends com.jidesoft.swing.JideTabbedPane
 		//tabbedRect.grow(2, 2);
 		return tabbedRect;
 	}	
-			
-	@Override
-	protected void processMouseEvent(MouseEvent evt)
-	{
-		if (evt.getID() == MouseEvent.MOUSE_PRESSED
-			&& (evt.getButton() == MouseEvent.BUTTON2 || evt.getButton() == MouseEvent.BUTTON3))
-		{
-			// NO-OP: Prevent auto-selection of tab...
-		}
-		else
-		{
-			super.processMouseEvent(evt);
-		}
-	}
-
+	
 	private class Handler implements MouseInputListener, PropertyChangeListener
 	{ //, BeforeDrag
 		private void repaintDropLocation(DropLocation loc)
@@ -447,7 +435,7 @@ public class DnDTabbedPane extends com.jidesoft.swing.JideTabbedPane
 
 		@Override
 		public void mouseReleased(MouseEvent e)
-		{			
+		{
 			// Middle click case
 			if (e.getModifiers() == MouseEvent.BUTTON2_MASK)
 			{
@@ -473,7 +461,7 @@ public class DnDTabbedPane extends com.jidesoft.swing.JideTabbedPane
 				{
 					((ClosableTabCtrl)tab).showRightClickMenu(tabPt.x, tabPt.y);
 				}
-			}
+			}	
 		}
 	}
 }
