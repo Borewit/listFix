@@ -20,6 +20,7 @@
 
 package listfix.view.support;
 
+import com.jidesoft.swing.JideTabbedPane;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -45,7 +46,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.MouseInputListener;
 
-public class DnDTabbedPane extends JTabbedPane
+public class DnDTabbedPane extends com.jidesoft.swing.JideTabbedPane
 {
 	private static final int LINEWIDTH = 3;
 	private final Rectangle lineRect = new Rectangle();
@@ -122,6 +123,11 @@ public class DnDTabbedPane extends JTabbedPane
 	public DnDTabbedPane()
 	{
 		super();
+		
+		this.setTabShape(JideTabbedPane.SHAPE_ROUNDED_VSNET);
+		this.setColorTheme(JideTabbedPane.COLOR_THEME_VSNET);
+		this.setScrollSelectedTabOnWheel(true);
+		
 		Handler h = new Handler();
 		addMouseListener(h);
 		addMouseMotionListener(h);
@@ -371,9 +377,11 @@ public class DnDTabbedPane extends JTabbedPane
 		
 		ClosableTabCtrl _rightClickTabControl = null;
 
+		
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
+			/*
 			// Save info for the drag in the left-click case
 			if (e.getModifiers() == MouseEvent.BUTTON1_MASK)
 			{
@@ -389,6 +397,8 @@ public class DnDTabbedPane extends JTabbedPane
 				//pointed out by daryl. NullPointerException: i.e. addTab("Tab",null)
 				startPt = (idx < 0 || !src.isEnabledAt(idx) || src.getComponentAt(idx) == null) ? null : tabPt;
 			}
+			 * 
+			 */
 		}
 		
 		private Point startPt;
@@ -398,6 +408,7 @@ public class DnDTabbedPane extends JTabbedPane
 		@Override
 		public void mouseDragged(MouseEvent e)
 		{
+			/*
 			Point tabPt = e.getPoint(); //e.getDragOrigin();
 			if (e.getModifiers() == MouseEvent.BUTTON1_MASK && startPt != null && Math.sqrt(Math.pow(tabPt.x - startPt.x, 2) + Math.pow(tabPt.y - startPt.y, 2)) > gestureMotionThreshold)
 			{
@@ -410,6 +421,8 @@ public class DnDTabbedPane extends JTabbedPane
 				src.setDropLocation(new DropLocation(tabPt, -1), null, true);
 				startPt = null;
 			}
+			 * 
+			 */
 		}
 
 		@Override

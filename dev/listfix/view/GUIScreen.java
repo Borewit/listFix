@@ -20,6 +20,7 @@
 
 package listfix.view;
 
+import com.jidesoft.swing.JideMenu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -453,7 +454,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _newIconButton = new javax.swing.JButton();
         _uiTabs = new DnDTabbedPane();
         _mainMenuBar = new javax.swing.JMenuBar();
-        _fileMenu = new javax.swing.JMenu();
+        _fileMenu = new JideMenu();
         _newPlaylistMenuItem = new javax.swing.JMenuItem();
         _loadMenuItem = new javax.swing.JMenuItem();
         _closeMenuItem = new javax.swing.JMenuItem();
@@ -471,7 +472,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _appOptionsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         _exitMenuItem = new javax.swing.JMenuItem();
-        _helpMenu = new javax.swing.JMenu();
+        _helpMenu = new JideMenu();
         _helpMenuItem = new javax.swing.JMenuItem();
         _updateCheckMenuItem = new javax.swing.JMenuItem();
         _aboutMenuItem = new javax.swing.JMenuItem();
@@ -1331,25 +1332,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		SwingUtilities.updateComponentTreeUI(_uiTabs);
 	}
 
-	private void updateTabTitleForPlaylist(Playlist list)
-	{
-		int tabIx = getPlaylistTabIx(list);
-		if (tabIx != -1)
-		{
-			String title;
-			if (list.isModified())
-			{
-				title = list.getFilename() + "*";
-			}
-			else
-			{
-				title = list.getFilename();
-			}
-			_uiTabs.setTitleAt(tabIx, title);
-			((ClosableTabCtrl) _uiTabs.getTabComponentAt(tabIx)).setText(title);
-		}
-	}
-
 	class TButton extends JButton implements UIResource
 	{
 		public TButton(Icon icon)
@@ -1487,7 +1469,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		else
 		{
 			// set status label
-			onPlaylistModified(_currentPlaylist);
+			refreshStatusLabel(_currentPlaylist);
 
 			// add listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
@@ -1520,7 +1502,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private void onPlaylistModified(Playlist list)
 	{
 		refreshStatusLabel(list);
-		updateTabTitleForPlaylist(list);
+		
+		// The following now seems unnecessary given the other listener we had to hook up.
+		// updateTabTitleForPlaylist(list);
 	}
 
 	private void refreshStatusLabel(Playlist list)
@@ -1534,6 +1518,25 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		else
 		{
 			statusLabel.setText("No list(s) loaded");
+		}
+	}	
+
+	private void updateTabTitleForPlaylist(Playlist list)
+	{
+		int tabIx = getPlaylistTabIx(list);
+		if (tabIx != -1)
+		{
+			String title;
+			if (list.isModified())
+			{
+				title = list.getFilename() + "*";
+			}
+			else
+			{
+				title = list.getFilename();
+			}
+			// ((DnDTabbedPane)_uiTabs).setTitleAt(tabIx, title);
+			((ClosableTabCtrl) _uiTabs.getTabComponentAt(tabIx)).setText(title);
 		}
 	}
 

@@ -110,15 +110,17 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         });
         rightClickMenu.add(_miRepairAllTabs);
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 4, 4, 4));
         setFocusable(false);
+        setMaximumSize(null);
+        setMinimumSize(null);
         setOpaque(false);
+        setPreferredSize(null);
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
 
         jLabel1.setText("playlist");
         jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 5));
         add(jLabel1);
-
-        jButton1.setText("x");
         add(jButton1);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -239,13 +241,13 @@ public class ClosableTabCtrl extends javax.swing.JPanel
             {
                 g2.translate(1, 1);
             }
-            g2.setStroke(new BasicStroke(2));
+            g2.setStroke(new BasicStroke(1.5f));
             g2.setColor(Color.BLACK);
             if (getModel().isRollover())
             {
                 g2.setColor(Color.RED);
             }
-            int delta = 6;
+            int delta = 5;
             g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
             g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
             g2.dispose();
