@@ -244,7 +244,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
         _pnlLeft.add(_chkBackup);
 
         _txtBackup.setEnabled(false);
-        _txtBackup.setPreferredSize(new java.awt.Dimension(150, 20));
+        _txtBackup.setPreferredSize(new java.awt.Dimension(200, 20));
         _pnlLeft.add(_txtBackup);
 
         _btnBrowse.setText("...");

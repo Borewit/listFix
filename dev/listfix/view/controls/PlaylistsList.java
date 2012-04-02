@@ -138,6 +138,7 @@ public class PlaylistsList extends javax.swing.JPanel
         _uiLists.setAutoCreateRowSorter(true);
         _uiLists.setModel(new PlaylistsTableModel(_batch));
         _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        _uiLists.setRowHeight(20);
         _uiLists.getTableHeader().setReorderingAllowed(false);
         _uiScrollLists.setViewportView(_uiLists);
 

@@ -98,7 +98,12 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	private AppOptions options = null;
 	private Font chosenFont = null;
 
-	/** Creates new form EditFilenameDialog */
+	/** Creates new form EditFilenameDialog
+	 * @param parent
+	 * @param title
+	 * @param modal 
+	 * @param opts  
+	 */
 	public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts)
 	{
 		super(parent, title, modal);
