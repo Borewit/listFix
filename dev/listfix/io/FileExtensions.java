@@ -130,4 +130,21 @@ public class FileExtensions
 			return file.getAbsolutePath();
 		}
 	}
+	
+	public static String replaceInvalidWindowsFileSystemCharsWithChar(String input, char replacement)
+	{
+		StringBuilder result = new StringBuilder();
+		for (char x : input.toCharArray())
+		{
+			if (Constants.INVALID_WINDOWS_FILENAME_CHARACTERS.indexOf(x) > -1)
+			{
+				result.append(replacement);
+			}
+			else
+			{
+				result.append(x);
+			}
+		}
+		return result.toString();
+	}
 }

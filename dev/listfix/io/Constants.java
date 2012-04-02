@@ -36,4 +36,5 @@ public class Constants
 	public static final String HISTORY_INI = DATA_DIR + "history.ini";
 	public static final String OPTIONS_INI = DATA_DIR + "options.ini";
 	public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
+	public static final String INVALID_WINDOWS_FILENAME_CHARACTERS = "*|\\/:\"<>?";
 }
