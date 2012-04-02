@@ -42,10 +42,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import listfix.controller.GUIDriver;
 import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
+import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
 
 import listfix.util.ExStack;
@@ -56,7 +58,6 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
-import listfix.view.support.ProgressWorker;
 import org.apache.log4j.Logger;
 
 public class Playlist
@@ -926,13 +927,22 @@ public class Playlist
 					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
 					{
 						// replace existing relative entry with a new absolute one
-						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf(), _file);
+						File absolute = entry.getAbsoluteFile().getCanonicalFile();
+						
+						// Switch to UNC representation if selected in the options
+						if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+						{
+							UNCFile temp = new UNCFile(absolute);
+							absolute = new File(temp.getUNCPath());
+						}
+						
+						entry = new PlaylistEntry(absolute, entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
-					else if (saveRelative && !entry.isURL() && entry.isFound())
+					else if (saveRelative && entry.isFound())
 					{
 						// replace existing absolute entry with a new relative one
-						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile(), _file);
+						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
 						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -979,7 +989,7 @@ public class Playlist
 	{
 		boolean track = progress != null;
 
-		PlaylistEntry tempEntry = null;
+		PlaylistEntry entry = null;
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("[playlist]").append(BR);
 		for (int i = 0; i < _entries.size(); i++)
@@ -990,20 +1000,36 @@ public class Playlist
 				{
 					progress.stepCompleted();
 				}
-				tempEntry = _entries.get(i);
-				if (!saveRelative && tempEntry.getAbsoluteFile() != null)
+				entry = _entries.get(i);
+				if (!entry.isURL())
 				{
-					tempEntry = new PlaylistEntry(tempEntry.getAbsoluteFile().getCanonicalFile(), tempEntry.getTitle(), tempEntry.getLength(), _file);
-					_entries.set(i, tempEntry);
+					if (!saveRelative && entry.getAbsoluteFile() != null)
+					{
+						// replace existing relative entry with a new absolute one
+						File absolute = entry.getAbsoluteFile().getCanonicalFile();
+
+						// Switch to UNC representation if selected in the options
+						if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+						{
+							UNCFile temp = new UNCFile(absolute);
+							absolute = new File(temp.getUNCPath());
+						}
+						
+						entry = new PlaylistEntry(absolute, entry.getTitle(), entry.getLength(), _file);
+						_entries.set(i, entry);
+					}
+					else
+					{
+						if (saveRelative && entry.isFound())
+						{
+							// replace existing absolute entry with a new relative one
+							String relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+							entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
+							_entries.set(i, entry);
+						}
+					}
 				}
-				else if (saveRelative && !tempEntry.isURL() && tempEntry.isFound())
-				{
-					// replace existing absolute entry with a new relative one
-					String relativePath = FileExtensions.getRelativePath(tempEntry.getAbsoluteFile(), _file);
-					tempEntry = new PlaylistEntry(new File(relativePath), tempEntry.getExtInf(), _file);
-					_entries.set(i, tempEntry);
-				}
-				buffer.append(tempEntry.toPLSString(i + 1));
+				buffer.append(entry.toPLSString(i + 1));
 			}
 			else
 			{
@@ -1067,13 +1093,21 @@ public class Playlist
 					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
 					{
 						// replace existing relative entry with a new absolute one
-						entry = new PlaylistEntry(entry.getAbsoluteFile().getCanonicalFile(), entry.getExtInf(), _file, entry.getCID(), entry.getTID());
+						File absolute = entry.getAbsoluteFile().getCanonicalFile();
+						
+						// Switch to UNC representation if selected in the options
+						if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+						{
+							UNCFile temp = new UNCFile(absolute);
+							absolute = new File(temp.getUNCPath());
+						}
+						entry = new PlaylistEntry(absolute, entry.getExtInf(), _file, entry.getCID(), entry.getTID());
 						_entries.set(i, entry);
 					}
-					else if (saveRelative && !entry.isURL() && entry.isFound())
+					else if (saveRelative && entry.isFound())
 					{
 						// replace existing absolute entry with a new relative one
-						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile(), _file);
+						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
 						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file, entry.getCID(), entry.getTID());
 						_entries.set(i, entry);
 					}
