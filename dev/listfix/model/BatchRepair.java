@@ -206,7 +206,7 @@ public class BatchRepair
 	public String getDefaultBackupName()
 	{
 		Date timestamp = new Date();
-		String name = String.format("playlist backup %1$tY-%1$tm-%1$td %1$tH%1$tM.zip", timestamp);
+		String name = String.format("playlist backup %1$tY-%1$tm-%1$td %1$tR.zip", timestamp);
 		File file = new File(_rootDirectory, name);
 		return file.getAbsolutePath();
 	}
