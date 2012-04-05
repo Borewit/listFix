@@ -1150,7 +1150,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			currentlySelectedRow = _uiTable.rowAtPoint(evt.getPoint());
 			if (evt.getClickCount() == 2)
 			{
-				if (_uiTable.getSelectedRowCount() == 1 && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isFound())
+				if (_uiTable.getSelectedRowCount() == 1 && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isFound()
+					&& !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isURL())
 				{
 					findClosestMatches();
 				}
