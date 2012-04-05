@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Set;
 
 import listfix.controller.GUIDriver;
+import listfix.io.Constants;
 import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
@@ -52,6 +53,7 @@ import listfix.io.UnicodeInputStream;
 
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
+import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
 
 import listfix.view.support.IPlaylistModifiedListener;
@@ -941,8 +943,12 @@ public class Playlist
 					}
 					else if (saveRelative && entry.isFound())
 					{
-						// replace existing absolute entry with a new relative one
+						// replace existing entry with a new relative one
 						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
+						{
+							relativePath = "." + Constants.FS + relativePath;
+						}
 						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -969,7 +975,12 @@ public class Playlist
 			{
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
 				BufferedWriter output = new BufferedWriter(osw);
-				output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+				if (OperatingSystem.isWindows())
+				{
+					// For some reason, linux players seem to choke on this header when I add it... perhaps the stream classes do it automatically.
+					output.write(UnicodeUtils.getBOM("UTF-8"));
+				}
+				output.write(buffer.toString());
 				output.close();
 				outputStream.close();
 				setUtfFormat(true);
@@ -1022,8 +1033,12 @@ public class Playlist
 					{
 						if (saveRelative && entry.isFound())
 						{
-							// replace existing absolute entry with a new relative one
+							// replace existing entry with a new relative one
 							String relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+							if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
+							{
+								relativePath = "." + Constants.FS + relativePath;
+							}
 							entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
 							_entries.set(i, entry);
 						}
@@ -1106,8 +1121,12 @@ public class Playlist
 					}
 					else if (saveRelative && entry.isFound())
 					{
-						// replace existing absolute entry with a new relative one
+						// replace existing entry with a new relative one
 						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
+						{
+							relativePath = "." + Constants.FS + relativePath;
+						}
 						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file, entry.getCID(), entry.getTID());
 						_entries.set(i, entry);
 					}

@@ -82,20 +82,23 @@ public class PlaylistEntry implements Cloneable
 		return _status;
 	}
 
-	// Construct a URL entry.
+	// Construct an M3U URL entry.
 	public PlaylistEntry(URI uri, String extra)
 	{
 		_thisURI = uri;
 		_extInf = extra;
 		parseExtraInfo(extra);
 	}
+
+	// Construct a WPL URL entry
 	public PlaylistEntry(URI uri, String extra, String cid, String tid)
 	{
 		this(uri, extra);
 		_cid = cid;
 		_tid = tid;		
 	}
-	// Construct a URL entry.
+
+	// Construct a PLS URL entry.
 	public PlaylistEntry(URI uri, String t, String l)
 	{
 		_thisURI = uri;
@@ -104,7 +107,7 @@ public class PlaylistEntry implements Cloneable
 		_extInf = "#EXTINF:" + l + "," + t;
 	}
 
-	// Construct a file-based entry.
+	// Construct an M3U path & file-name based entry.
 	public PlaylistEntry(String p, String f, String extra, File list)
 	{
 		_path = p;
@@ -155,7 +158,8 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 	}
-	
+
+	// Another WPL constructor
 	public PlaylistEntry(String p, String f, String extra, File list, String cid, String tid)
 	{
 		this(p, f, extra, list);
@@ -163,14 +167,21 @@ public class PlaylistEntry implements Cloneable
 		_tid = tid;
 	}
 	
-	// Same as above but with a file object as input
+	// Construct a M3U file-based entry, used during save among other things
 	public PlaylistEntry(File input, String extra, File list)
 	{
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+		_thisFile = input;
+		// this parsing is insufficient when going from windows to linux... special handling is necessary.
+		if (!OperatingSystem.isWindows() && _path.isEmpty() && input.getName().indexOf(Constants.FS) < 0)
+		{
+			_fileName = input.getName().substring(input.getName().lastIndexOf("\\") + 1);
+			_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+			_thisFile = new File(_path, _fileName);
+		}
 		_extInf = extra;
 		parseExtraInfo(extra);
-		_thisFile = input;
 		_playlist = list;
 		if (skipExistsCheck())
 		{
@@ -209,7 +220,8 @@ public class PlaylistEntry implements Cloneable
 			}
 		}
 	}
-	
+
+	// WPL constructor to hang on to random WPL-specific bits
 	public PlaylistEntry(File input, String extra, File list, String cid, String tid)
 	{
 		this(input, extra, list);
@@ -217,15 +229,22 @@ public class PlaylistEntry implements Cloneable
 		_tid = tid;
 	}
 	
-	// Same as above but with a file object as input
+	// PLS constructor, which has file references, a title, and a length
 	public PlaylistEntry(File input, String t, String l, File list)
 	{
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+		_thisFile = input;
+		// this parsing is insufficient when going from windows to linux... special handling is necessary.
+		if (!OperatingSystem.isWindows() && _path.isEmpty() && input.getName().indexOf(Constants.FS) < 0)
+		{
+			_fileName = input.getName().substring(input.getName().lastIndexOf("\\") + 1);
+			_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+			_thisFile = new File(_path, _fileName);
+		}
 		_extInf = "#EXTINF:" + l + "," + t;
 		_title = t;
 		_length = l;
-		_thisFile = input;
 		_playlist = list;
 		if (skipExistsCheck())
 		{

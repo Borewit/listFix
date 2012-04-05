@@ -181,9 +181,10 @@ public class WPLReader implements IPlaylistReader
 		}
 		else if (Constants.FS.equalsIgnoreCase("/")) // OS Specific Hack
 		{
-			if (!L2.startsWith("\\\\") && !L2.startsWith("."))
+			if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith(Constants.FS))
 			{
-				path.append("/");
+				// Need to append ./ on relative entries to load them properly
+				path.append("./");
 			}
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
@@ -207,8 +208,13 @@ public class WPLReader implements IPlaylistReader
 			if (L2.startsWith("\\\\"))
 			{
 				path.append("\\\\");
+			}			
+			else if (L2.startsWith(Constants.FS))
+			{
+				// We're about to lose this when we parse, so add it back...
+				path.append(Constants.FS);
 			}
-			
+
 			String firstToken = "";
 			String secondToken = "";
 			int tokenNumber = 0;

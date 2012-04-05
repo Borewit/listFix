@@ -112,7 +112,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{
 		boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
 		_btnReload.setEnabled(list == null ? false : list.isModified());
-		_btnSave.setEnabled(list == null ? false : list.isModified());
+		_btnSave.setEnabled(_playlist != null);
 		_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
 		_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
 		_btnPlay.setEnabled(_playlist != null);
@@ -819,7 +819,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
         _btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
         _btnSave.setToolTipText("Save");
-        _btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+        _btnSave.setEnabled(_playlist != null);
         _btnSave.setFocusable(false);
         _btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnSave.setMaximumSize(new java.awt.Dimension(31, 31));
@@ -1389,7 +1389,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnPlay.setEnabled(hasPlaylist);
 		_btnNextMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
 		_btnPrevMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
-		_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+		_btnSave.setEnabled(_playlist != null);
 
 		if (_playlist != null && !_playlist.isEmpty())
 		{
@@ -1553,7 +1553,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
 				_btnPlay.setEnabled(_playlist != null && ( _uiTable.getSelectedRow() < 0 || ( _uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry() ) ) );
 				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
-				_btnSave.setEnabled(_playlist == null ? false : _playlist.isModified());
+				_btnSave.setEnabled(_playlist != null);
 				_btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				_btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				if (_isSortedByFileIx)

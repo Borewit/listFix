@@ -32,6 +32,7 @@ import java.util.List;
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
+import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -143,6 +144,19 @@ public class PLSReader implements IPlaylistReader
 		}
 		else
 		{
+			// We have to perform FS conversion here...
+			if (file.indexOf(Constants.FS) < 0)
+			{
+				// if there are no FS instances in this string, look for the one from the other file system
+				if (OperatingSystem.isLinux() || OperatingSystem.isMac())
+				{
+					file = file.replace("\\", Constants.FS);
+				}
+				else if (OperatingSystem.isWindows())
+				{
+					file = file.replace("/", Constants.FS);
+				}
+			}
 			results.add(new PlaylistEntry(new File(file), title, length, plsFile));
 		}
 	}

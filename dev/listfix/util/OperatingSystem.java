@@ -35,4 +35,9 @@ public class OperatingSystem
 	{
 		return System.getProperty("os.name").toLowerCase().indexOf("mac os") >= 0;
 	}
+
+	public static boolean isLinux()
+	{
+		return !isWindows() && !isMac();
+	}
 }
