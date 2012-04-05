@@ -57,6 +57,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.UIResource;
 import javax.swing.tree.*;
 
@@ -1509,9 +1510,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private void onPlaylistModified(Playlist list)
 	{
 		refreshStatusLabel(list);
-		
-		// The following now seems unnecessary given the other listener we had to hook up.
-		// updateTabTitleForPlaylist(list);
 	}
 
 	private void refreshStatusLabel(Playlist list)
@@ -2098,7 +2096,6 @@ private void _newPlaylistMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
 private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__extractPlaylistsMenuItemActionPerformed
 {//GEN-HEADEREND:event__extractPlaylistsMenuItemActionPerformed
-
 	final JFileChooser dlg = new JFileChooser();
 	dlg.setDialogTitle("Extract to...");
 	dlg.setAcceptAllFileFilterUsed(true);
@@ -2206,7 +2203,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		{
 			Object key = enumer.nextElement();
 			Object value = UIManager.get(key);
-			if (value instanceof Font)
+			if (value instanceof Font || value instanceof FontUIResource)
 			{
 				UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
 			}
@@ -2224,7 +2221,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		{
 			Object key = enumer.nextElement();
 			Object value = UIManager.get(key);
-			if (value instanceof Font)
+			if (value instanceof Font || value instanceof FontUIResource)
 			{
 				UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
 			}
