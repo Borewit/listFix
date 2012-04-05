@@ -1250,7 +1250,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					// update title and status bar if list was modified during loading
 					if (list.isModified())
 					{
-						onPlaylistModified(list);
+						refreshStatusLabel(list);
+						updateTabTitleForPlaylist(list);
 					}
 
 					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
@@ -1475,6 +1476,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			// set status label
 			refreshStatusLabel(_currentPlaylist);
+			updateTabTitleForPlaylist(_currentPlaylist);
 
 			// add listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
