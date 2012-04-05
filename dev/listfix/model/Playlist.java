@@ -512,7 +512,8 @@ public class Playlist
 				return null;
 			}
 
-			progress.stepCompleted();
+			if (progress.getCompleted() != progress.getTotal())
+				progress.stepCompleted();
 		}
 
 		return ents;
