@@ -131,6 +131,11 @@ public class M3UReader implements IPlaylistReader
 			while (line1.contains("#EXTM3U") || line1.startsWith("#EXTINFUTF8"))
 			{
 				line1 = readLine();
+				if (line1 == null)
+				{
+					// needed to handle empty playlists
+					return results;
+				}
 			}
 			
 			// If after skipping that line the line doesn't start w/ a #, then we already have the file reference.  Stuff that into line2.

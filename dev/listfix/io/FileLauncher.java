@@ -21,15 +21,7 @@
 package listfix.io;
 
 import java.awt.Desktop;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import listfix.util.OperatingSystem;
 
 public class FileLauncher
@@ -37,8 +29,6 @@ public class FileLauncher
 	public static void launch(File toLaunch) throws IOException, InterruptedException
 	{
 		// try to figure out the OS so we can issue the correct command
-		// TODO: Lots of debugging on different OSes to make sure this works.
-		String cmdLine = "";
 		if (OperatingSystem.isWindows())
 		{
 			File tempFile = File.createTempFile("abc", ".bat");
@@ -56,7 +46,7 @@ public class FileLauncher
 			osw.close();
 			outputStream.close();
 
-			cmdLine = tempFile.toString();
+			String cmdLine = tempFile.toString();
 
 			Process proc = Runtime.getRuntime().exec(cmdLine);			
 			synchronized (proc)
@@ -85,10 +75,9 @@ public class FileLauncher
 		}
 		else
 		{
-			Desktop desktop = null;
 			if (Desktop.isDesktopSupported())
 			{
-				desktop = Desktop.getDesktop();
+				Desktop desktop = Desktop.getDesktop();
 				if (desktop.isSupported(Desktop.Action.OPEN))
 				{
 					desktop.open(toLaunch);

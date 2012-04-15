@@ -801,7 +801,6 @@ public class Playlist
 			return _isDescending ? -rc : rc;
 		}
 	}
-	// TODO: track progress? [this is O(n), so it might not need it]
 
 	public int removeDuplicates()
 	{
@@ -856,7 +855,9 @@ public class Playlist
 		if (_type == PlaylistType.PLS)
 		{
 			// apparently winamp shits itself if PLS files are saved in UTF-8 (who knew...)
-			_utfFormat = false;
+			// but, since VLC supports UTF-8 formatted PLS files, and winamp can't read the filenames right
+			// when we don't save as UTF-8 anyway, I'm removing this restriction
+			// _utfFormat = false;
 		}
 		save(saveRelative, observer);
 	}
@@ -1201,7 +1202,8 @@ public class Playlist
 		}
 		catch (Exception ex)
 		{
-			_logger.error(ExStack.toString(ex));
+			// Don't bother logging here, it's expected when saving out a new file
+			// _logger.error(ExStack.toString(ex));
 		}
 		finally
 		{

@@ -21,6 +21,7 @@
 package listfix.view;
 
 import com.jidesoft.swing.JideMenu;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -1687,8 +1688,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			_pathToEditorMap.remove(path);
 		}
 		catch (Exception ex)
-		{
-			JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
+		{	
+			// user doesn't need this detail, we clean up after ourselves...
+			// JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
 		}
 

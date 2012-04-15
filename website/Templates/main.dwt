@@ -5,7 +5,7 @@
 <title>listFix() - Fix and Repair Broken Playlists with Missing/Lost/Renamed Files - Playlist Repair Done Right!</title>
 <!-- TemplateEndEditable -->
 <meta name="description" content="listFix() is a java app that can fix a broken playlist by searching a media library for moved and renamed files. Supports absolute & relative references, UTF-8, UNC paths, and URLs. Also removes duplicates, sorts and randomizes lists, and much more!">
-<meta name="keywords" content="playlist repair, playlist fixer, fix playlist, playlist fix, repair playlist, broken playlist, fix, repair, playlist"> 
+<meta name="keywords" content="playlist repair, playlist fixer, fix playlist, playlist fix, repair playlist, broken playlist, fix, repair, playlist, parser, M3U, PLS, WPL"> 
 <meta name="robots" content="noodp, noydir, index, follow, archive" />
 <!-- TemplateBeginEditable name="head" --><!-- TemplateEndEditable --> 
 <style type="text/css">

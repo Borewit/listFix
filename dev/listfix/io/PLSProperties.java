@@ -627,8 +627,13 @@ public class PLSProperties extends Hashtable<Object, Object>
 								value = (value << 4) + 10 + aChar - 'A';
 								break;
 							default:
-								throw new IllegalArgumentException(
-									"Malformed \\uxxxx encoding.");
+								// this was crashing out on folders w/ \\u in the path.
+								// throw new IllegalArgumentException("Malformed \\uxxxx encoding.");
+								out[outLen++] = '\\';
+								out[outLen++] = 'u';
+								value = aChar;
+								i = 4;
+								break;
 						}
 					}
 					out[outLen++] = (char) value;

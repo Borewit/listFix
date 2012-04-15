@@ -95,7 +95,7 @@ public class DnDTabbedPane extends com.jidesoft.swing.JideTabbedPane
 	public static Rectangle rBackward = new Rectangle();
 	public static Rectangle rForward = new Rectangle();
 	private static int rwh = 20;
-	private static int buttonsize = 30; //XXX 30 is magic number of scroll button size
+	private static int buttonsize = 30; // 30 is magic number of scroll button size
 
 	public void autoScrollTest(Point pt)
 	{

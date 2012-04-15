@@ -20,10 +20,7 @@
 
 package listfix.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -84,10 +81,17 @@ public class PLSReader implements IPlaylistReader
 			progress = ProgressAdapter.wrap(observer);
 		} 
 
-		// Load the PLS file into memory (it's basically a glorified INI | java properties file.
+		// Load the PLS file into memory (it's basically a glorified INI | java properties file).
 		PLSProperties propBag = new PLSProperties();
-		propBag.load(new FileInputStream(plsFile));
-		
+		if (encoding.equals("UTF-8"))
+		{
+			propBag.load(new InputStreamReader(new UnicodeInputStream(new FileInputStream(plsFile), "UTF-8"), "UTF8"));
+		}
+		else
+		{
+			propBag.load(new FileInputStream(plsFile));
+		}
+			
 		// Find out how many entries we have to process.
 		int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));		
 		

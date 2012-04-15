@@ -227,7 +227,7 @@ class GhostGlassPane extends JPanel
 		setOpaque(false);
 		
 		// http://bugs.sun.com/view_bug.do?bug_id=6700748
-		// setCursor(null); //XXX
+		// setCursor(null);
 	}
 	private BufferedImage draggingGhost = null;
 
