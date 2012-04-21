@@ -2080,6 +2080,16 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 		refreshStatusLabel(_currentPlaylist);
 		_currentPlaylist.addModifiedListener(_playlistListener);
+		
+		_currentPlaylist.addModifiedListener(new IPlaylistModifiedListener()
+		{
+
+			@Override
+			public void playlistModified(Playlist list)
+			{
+				updateTabTitleForPlaylist(list);
+			}
+		});
 
 		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 	}
@@ -2134,7 +2144,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 
 private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__closeMenuItemActionPerformed
 {//GEN-HEADEREND:event__closeMenuItemActionPerformed
-	if (_uiTabs.getComponents().length > 0)
+	if (_uiTabs.getComponents().length > 0 && _uiTabs.getSelectedIndex() >= 0)
 	{
 		this.tryCloseTab((ClosableTabCtrl) _uiTabs.getTabComponentAt(_uiTabs.getSelectedIndex()));
 	}
