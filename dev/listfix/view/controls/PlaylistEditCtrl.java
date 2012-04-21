@@ -150,15 +150,17 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 					if (insertIx >= 0)
 					{
+						// Adding somewhere in the middle
 						int count = _playlist.add(insertIx, files, this);
 						firstIx = insertIx;
 						lastIx = firstIx + count - 1;
 					}
 					else
 					{
-						firstIx = 0;
-						_playlist.add(files, this);
-						lastIx = files.length - 1;
+						// Adding at the end...
+						firstIx = _playlist.size() > 0 ? _playlist.size() : 0;
+						int numAdded = _playlist.add(files, this);
+						lastIx = firstIx + numAdded - 1;
 					}
 
 					return null;
