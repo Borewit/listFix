@@ -940,6 +940,7 @@ public class Playlist
 							absolute = new File(temp.getUNCPath());
 						}
 						
+						// make the entry and add it
 						entry = new PlaylistEntry(absolute, entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -951,7 +952,22 @@ public class Playlist
 						{
 							relativePath = "." + Constants.FS + relativePath;
 						}
-						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
+						
+						// make a new file out of this relative path, and see if it's really relative...
+						// if it's absolute, we have to perform the UNC check and convert if necessary.
+						File temp = new File(relativePath);
+						if (temp.isAbsolute())
+						{
+							// Switch to UNC representation if selected in the options
+							if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+							{
+								UNCFile uncd = new UNCFile(temp);
+								temp = new File(uncd.getUNCPath());
+							}
+						}
+						
+						// make the entry and add it
+						entry = new PlaylistEntry(temp, entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
 				}
@@ -1031,19 +1047,31 @@ public class Playlist
 						entry = new PlaylistEntry(absolute, entry.getTitle(), entry.getLength(), _file);
 						_entries.set(i, entry);
 					}
-					else
+					else if (saveRelative && entry.isFound())
 					{
-						if (saveRelative && entry.isFound())
+						// replace existing entry with a new relative one
+						String relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
 						{
-							// replace existing entry with a new relative one
-							String relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
-							if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
-							{
-								relativePath = "." + Constants.FS + relativePath;
-							}
-							entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file);
-							_entries.set(i, entry);
+							relativePath = "." + Constants.FS + relativePath;
 						}
+
+						// make a new file out of this relative path, and see if it's really relative...
+						// if it's absolute, we have to perform the UNC check and convert if necessary.
+						File temp = new File(relativePath);
+						if (temp.isAbsolute())
+						{
+							// Switch to UNC representation if selected in the options
+							if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+							{
+								UNCFile uncd = new UNCFile(temp);
+								temp = new File(uncd.getUNCPath());
+							}
+						}
+
+						// make the entry and add it						
+						entry = new PlaylistEntry(temp, entry.getTitle(), entry.getLength(), _file);
+						_entries.set(i, entry);
 					}
 				}
 				buffer.append(entry.toPLSString(i + 1));
@@ -1122,14 +1150,29 @@ public class Playlist
 						_entries.set(i, entry);
 					}
 					else if (saveRelative && entry.isFound())
-					{
+					{						
 						// replace existing entry with a new relative one
 						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
 						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
 						{
 							relativePath = "." + Constants.FS + relativePath;
 						}
-						entry = new PlaylistEntry(new File(relativePath), entry.getExtInf(), _file, entry.getCID(), entry.getTID());
+						
+						// make a new file out of this relative path, and see if it's really relative...
+						// if it's absolute, we have to perform the UNC check and convert if necessary.
+						File temp = new File(relativePath);
+						if (temp.isAbsolute())
+						{
+							// Switch to UNC representation if selected in the options
+							if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+							{
+								UNCFile uncd = new UNCFile(temp);
+								temp = new File(uncd.getUNCPath());
+							}
+						}
+						
+						// make the entry and add it						
+						entry = new PlaylistEntry(temp, entry.getExtInf(), _file, entry.getCID(), entry.getTID());
 						_entries.set(i, entry);
 					}
 				}
