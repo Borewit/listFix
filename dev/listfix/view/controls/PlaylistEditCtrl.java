@@ -40,6 +40,7 @@ import java.text.NumberFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -1933,6 +1934,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                             temp.close();
                             reader.close();
 
+                            Collections.sort(filesToProcess);
                             ProcessFileListDrop(filesToProcess, dl);
 
                             // In the linux case, we need to stop here, because the other flavors are different representations of the data we just processed...
