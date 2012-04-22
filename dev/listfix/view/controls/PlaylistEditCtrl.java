@@ -1767,7 +1767,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					try
 					{
 						final List list = (List)t.getTransferData(flavors[i]);
-
+						ProcessFileListDrop(list, dl);
 						resizeAllColumns();
 						return true;
 					}
