@@ -581,13 +581,37 @@ public class PlaylistEntry implements Cloneable
 	public boolean findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
-		String trimmedFileName = Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();
+		String trimmedFileName = Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();		
+		String candidateFileName = "";
+		int lastFileSeparatorIndex;
 		for (int i = 0; i < fileList.length; i++)
-		{
-			if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? fileList[i].endsWith(trimmedFileName) : fileList[i].toLowerCase().endsWith(trimmedFileName))
+		{			
+			// JCaron - 2012.04.22
+			// Get the filename from the media library entry that we're looking at so we can compare it directly to the filename we're searching for.
+			// Need the last index of the file separator character on the current system to accomplish this.
+			// A direct comparison is not only faster, but prevents considering "01 - test.mp3" an exact match for "1 - test.mp3" like the logic in the else block below did previously.
+			lastFileSeparatorIndex = fileList[i].lastIndexOf(Constants.FS);
+			if (lastFileSeparatorIndex >= 0)
 			{
-				searchResult = i;
-				break;
+				candidateFileName = fileList[i].substring(lastFileSeparatorIndex + 1);
+				if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? candidateFileName.equals(trimmedFileName) : candidateFileName.toLowerCase().equals(trimmedFileName))
+				{
+					searchResult = i;
+					break;
+				}
+			}
+			else
+			{
+				// JCaron - 2012.04.22
+				// In theory, this code should be unreachable.  The list of files passed in should always be absolute, 
+				// which would mean including at least one OS-specific file separator character somewhere in the string.  But, the logic below
+				// has served us well for years, so it's a reasonable fallback should this case somehow arise.
+				candidateFileName = fileList[i];
+				if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? candidateFileName.endsWith(trimmedFileName) : candidateFileName.toLowerCase().endsWith(trimmedFileName))
+				{
+					searchResult = i;
+					break;
+				}
 			}
 		}
 		if (searchResult >= 0)
@@ -624,9 +648,9 @@ public class PlaylistEntry implements Cloneable
 				score = FileNameTokenizer.score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
 				if (score > 0)
 				{
-					// Only keep the top X highest-rated matches (default is 20), anything more than that will use too much memory
-					// on systems w/ huge media libraries, too little RAM, or excessively large playlists (the things you have to worry
-					// about when people run your software on ancient computers in Africa :-p)
+					// Only keep the top X highest-rated matches (default is 20), anything more than that has a good chance of using too much memory
+					// on systems w/ huge media libraries, too little RAM, or when fixing excessively large playlists (the things you have to worry
+					// about when people run your software on ancient PCs in Africa =])
 					if (matches.size() < GUIDriver.getInstance().getAppOptions().getMaxClosestResults())
 					{
 						matches.add(new MatchedPlaylistEntry(mediaFile, score, _playlist));
@@ -655,7 +679,7 @@ public class PlaylistEntry implements Cloneable
 		PlaylistEntry result = null;
 		if (!this.isURL())
 		{
-			result = new PlaylistEntry(this); // new PlaylistEntry(new File(this.getFile().getPath()), this.getTitle(), this.getLength(), _playlist);
+			result = new PlaylistEntry(this);
 		}
 		else
 		{
