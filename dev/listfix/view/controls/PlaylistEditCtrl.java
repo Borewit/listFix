@@ -39,6 +39,7 @@ import java.net.URI;
 import java.text.NumberFormat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -137,7 +138,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 		if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
 		{
-			final File[] files = chooser.getSelectedFiles();
+			File[] tempFileList = chooser.getSelectedFiles();
+			Arrays.sort(tempFileList);
+			final File[] files = tempFileList;
 			if (files.length == 0)
 			{
 				return;
@@ -1790,6 +1793,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                         if (Playlist.isPlaylist(tempFile))
                         {
                             final String[] libraryFiles;
+							final int currentInsertPoint = insertAt;
                             if (GUIDriver.getInstance().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
                             {
                                 libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
@@ -1800,7 +1804,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                             }
                             ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
                             {
-
                                 @Override
                                 protected Playlist doInBackground() throws Exception
                                 {
@@ -1819,7 +1822,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                                     try
                                     {
                                         list = get();
-                                        _playlist.addAll(dl.getRow(), list.getEntries());
+                                        _playlist.addAll(currentInsertPoint, list.getEntries());
                                     }
                                     catch (CancellationException ex)
                                     {

@@ -286,6 +286,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			{
 				try
 				{
+					// TODO: Support communicating multiple selections & directories
 					int selRow = _playlistDirectoryTree.getSelectionRows()[0];
 					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
 					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
