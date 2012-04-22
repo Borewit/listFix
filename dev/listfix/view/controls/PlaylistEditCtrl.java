@@ -1678,7 +1678,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			{
 				if (!info.isDataFlavorSupported(_playlistEntryListFlavor) 
 					&& !info.isDataFlavorSupported(DataFlavor.stringFlavor)
-					&& !info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+					&& !info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+                    && !info.isDataFlavorSupported(DataFlavor.plainTextFlavor))
 				{
 					return false;
 				}
@@ -1699,10 +1700,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					return false;
 				}
 
-				// Check for custom PlaylistEntryList flavor
+				// Check for the flavors we know how to handle
 				if (!info.isDataFlavorSupported(_playlistEntryListFlavor) 
 					&& !info.isDataFlavorSupported(DataFlavor.stringFlavor)
-					&& !info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+					&& !info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+                    && !info.isDataFlavorSupported(DataFlavor.plainTextFlavor))
 				{
 					return false;
 				}
