@@ -197,7 +197,7 @@ public class Playlist
 	 */
 	public void setType(PlaylistType type)
 	{
-		this._type = type;
+		_type = type;
 	}
 
 	public File getFile()
@@ -207,7 +207,7 @@ public class Playlist
 
 	public void setFile(File file)
 	{
-		this._file = file;
+		_file = file;
 	}
 
 	public void addModifiedListener(IPlaylistModifiedListener listener)
