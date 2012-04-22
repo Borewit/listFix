@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2012 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -111,7 +111,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private final JFileChooser _jSaveFileChooser;
 	private GUIDriver _guiDriver = null;
 	private DropTarget _dropTarget = null;
-	private Playlist _currentPlaylist;	
+	private Playlist _currentPlaylist;
 	private IPlaylistModifiedListener _playlistListener;
 
 	private static Logger _logger = Logger.getLogger(GUIScreen.class);
@@ -131,7 +131,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		setApplicationFont(_guiDriver.getAppOptions().getAppFont());
 		this.setLookAndFeel(_guiDriver.getAppOptions().getLookAndFeel());
-		
+
 		configureFileChoosers();
 
 		// Stop showing the loading screen
@@ -165,7 +165,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		// Despite not being referenced again, this is need to support opening playlists that are dragged in.
 		_dropTarget = new DropTarget(this, this);
-		
+
 		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
 		{
 			@Override
@@ -177,13 +177,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				_btnBatchClosestMatches.setEnabled(hasSelected);
 			}
 		});
-		
+
 		// add popup menu to playlist tree on right-click
 		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
 
 		_uiTabs.setTransferHandler(new TabTransferHandler());
-        WindowSaver.getInstance().loadSettings(this);	
-		
+        WindowSaver.getInstance().loadSettings(this);
+
 		// Set the position of the divider in the left split pane.
 		_leftSplitPane.setDividerLocation(.7);
 	}
@@ -259,7 +259,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		};
 	}
 
-	private TransferHandler createPlaylistTreeTransferHandler() 
+	private TransferHandler createPlaylistTreeTransferHandler()
 	{
 		return new TransferHandler()
 		{
@@ -284,23 +284,23 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			@Override
 			protected Transferable createTransferable(JComponent c)
 			{
-				try 
+				try
 				{
 					int selRow = _playlistDirectoryTree.getSelectionRows()[0];
 					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
 					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
-				} 
-				catch (Exception ex) 
+				}
+				catch (Exception ex)
 				{
 					_logger.warn(ExStack.toString(ex));
 					return null;
 				}
 
 			}
-		};	
+		};
 	}
 
-	private void configureFileChoosers() 
+	private void configureFileChoosers()
 	{
 		_jM3UChooser.setDialogTitle("Choose Playlists...");
 		_jM3UChooser.setAcceptAllFileFilterUsed(false);
@@ -320,87 +320,84 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	@Override
 	public void dragEnter(DropTargetDragEvent dtde)
 	{
-		
+
 	}
 
 	@Override
 	public void dragExit(DropTargetEvent dte)
 	{
-		
+
 	}
 
 	@Override
 	public void dragOver(DropTargetDragEvent dtde)
 	{
-		
+
 	}
 
 	@Override
 	public void dropActionChanged(DropTargetDragEvent dtde)
 	{
-		
+
 	}
 
 	@Override
 	public void drop(DropTargetDropEvent dtde)
 	{
-		try
-		{
-			// Ok, get the dropped object and try to figure out what it is
-			Transferable tr = dtde.getTransferable();
-			DataFlavor[] flavors = tr.getTransferDataFlavors();
-			for (int i = 0; i < flavors.length; i++)
-			{
-				// Check for file lists specifically
-				if (flavors[i].isFlavorJavaFileListType())
-				{
-					// Great!  Accept copy drops...
-					dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-
-					// And add the list of file names to our text area
-					List list = (List) tr.getTransferData(flavors[i]);
-					for (int j = 0; j < list.size(); j++)
-					{
-						if (list.get(j) instanceof File && Playlist.isPlaylist((File)list.get(j)))
-						{
-							openPlaylist((File)list.get(j));
-						}
-					}
-
-					// If we made it this far, everything worked.
-					dtde.dropComplete(true);
-					return;
-				}
-                else if (flavors[i].isFlavorTextType())
+        try
+        {
+            // Ok, get the dropped object and try to figure out what it is
+            Transferable tr = dtde.getTransferable();
+            DataFlavor[] flavors = tr.getTransferDataFlavors();
+            for (int i = 0; i < flavors.length; i++)
+            {
+                // Check for file lists specifically
+                if (flavors[i].isFlavorJavaFileListType() || flavors[i].isFlavorTextType())
                 {
-                    // Great!  Accept copy drops...
+                    // Accept the drop...
                     dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+                    Object data = tr.getTransferData(flavors[i]);
 
-                    // And add the list of file names to our text area
-                    InputStreamReader list = (InputStreamReader) tr.getTransferData(flavors[i]);
-                    BufferedReader temp = new BufferedReader(list);
-                    String filePath = temp.readLine();
-                    while(filePath != null && !filePath.isEmpty())
+                    if (data instanceof List)
                     {
-                        openPlaylist(new File(new URI(filePath)));
-                        filePath = temp.readLine();
+                        // Process the drop...
+                        List list = (List) data;
+                        for (int j = 0; j < list.size(); j++)
+                        {
+                            if (list.get(j) instanceof File && Playlist.isPlaylist((File) list.get(j)))
+                            {
+                                openPlaylist((File) list.get(j));
+                            }
+                        }
                     }
-                    temp.close();
-                    list.close();
+                    else if (data instanceof InputStreamReader)
+                    {
+                        // Process the drop...
+                        InputStreamReader list = (InputStreamReader) data;
+                        BufferedReader temp = new BufferedReader(list);
+                        String filePath = temp.readLine();
+                        while (filePath != null && !filePath.isEmpty())
+                        {
+                            openPlaylist(new File(new URI(filePath)));
+                            filePath = temp.readLine();
+                        }
+                        temp.close();
+                        list.close();
+                    }
 
                     // If we made it this far, everything worked.
                     dtde.dropComplete(true);
                     return;
                 }
-			}
-			// Hmm, the user must not have dropped a file list
-			dtde.rejectDrop();
-		}
-		catch (Exception e)
-		{
-			_logger.warn(ExStack.toString(e));
-			dtde.rejectDrop();
-		}
+            }
+            // Hmm, the user must not have dropped a file list
+            dtde.rejectDrop();
+        }
+        catch (Exception e)
+        {
+            _logger.warn(ExStack.toString(e));
+            dtde.rejectDrop();
+        }
 	}
 
 	public AppOptions getOptions()
@@ -950,7 +947,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
     }// </editor-fold>//GEN-END:initComponents
 
 	private void runClosestMatchesSearchOnSelectedLists()
-	{		
+	{
 		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
 		List<File> files = new ArrayList<File>();
 		for (TreePath path : paths)
@@ -1244,7 +1241,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 					PlaylistEditCtrl editor = new PlaylistEditCtrl();
 					editor.setPlaylist(list);
-					list.addModifiedListener(new IPlaylistModifiedListener() 
+					list.addModifiedListener(new IPlaylistModifiedListener()
 					{
 						@Override
 						public void playlistModified(Playlist list)
@@ -1252,7 +1249,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							updateTabTitleForPlaylist(list);
 						}
 					});
-					
+
 					// Add the tab to the tabbed pane
 					String title = list.getFilename();
 					_uiTabs.addTab(title, null, editor, path);
@@ -1260,7 +1257,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					// Set the tab we just added as selected
 					int ix = _uiTabs.getTabCount() - 1;
 					_uiTabs.setSelectedIndex(ix);
-					
+
 					// Update the editor maps
 					_pathToEditorMap.put(path, editor);
 					_playlistToEditorMap.put(list, editor);
@@ -1551,7 +1548,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			statusLabel.setText("No list(s) loaded");
 		}
-	}	
+	}
 
 	private void updateTabTitleForPlaylist(Playlist list)
 	{
@@ -1586,7 +1583,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	@Override
 	public void repairAllTabs()
-	{		
+	{
 		List<Playlist> files = new ArrayList<Playlist>();
 		for (Playlist list : _playlistToEditorMap.keySet())
 		{
@@ -1714,7 +1711,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			_pathToEditorMap.remove(path);
 		}
 		catch (Exception ex)
-		{	
+		{
 			// user doesn't need this detail, we clean up after ourselves...
 			// JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
@@ -1745,7 +1742,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					return;
 				}
 				else
-				{					
+				{
 					break;
 				}
 			}
@@ -1782,7 +1779,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					}
 					else
 					{
-						// Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.                        
+						// Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
 						String[] dirsToCheck = _guiDriver.getMediaDirs();
 						for (int i = 0; i < dirsToCheck.length; i++)
 						{
@@ -1791,7 +1788,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							{
 								if (matchCount == 0)
 								{
-									JOptionPane.showMessageDialog(this, 
+									JOptionPane.showMessageDialog(this,
 										new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
 										"Reminder", JOptionPane.INFORMATION_MESSAGE);
 								}
@@ -1889,7 +1886,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		JOptionPane.showMessageDialog(this, "listFix( ) v2.2.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) " + 
+		JOptionPane.showMessageDialog(this, "listFix( ) v2.2.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) " +
 				"\n          Kennedy Akala (kennedyakala at users dot sourceforge dot net) \n          John Peterson (johnpeterson at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}
 
@@ -2096,7 +2093,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		editor.setPlaylist(_currentPlaylist);
 		String title = _currentPlaylist.getFilename();
 		_uiTabs.addTab(title, null, editor, path);
-		
+
 		int ix = _uiTabs.getTabCount() - 1;
 		_uiTabs.setSelectedIndex(ix);
 		_pathToEditorMap.put(path, editor);
@@ -2106,7 +2103,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 		refreshStatusLabel(_currentPlaylist);
 		_currentPlaylist.addModifiedListener(_playlistListener);
-		
+
 		_currentPlaylist.addModifiedListener(new IPlaylistModifiedListener()
 		{
 
@@ -2246,9 +2243,9 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 				UIManager.put(key, new javax.swing.plaf.FontUIResource(font));
 			}
 		}
-		
-		UIManager.put("OptionPane.messsageFont", font); 
-		UIManager.put("OptionPane.buttonFont", font); 
+
+		UIManager.put("OptionPane.messsageFont", font);
+		UIManager.put("OptionPane.buttonFont", font);
 		updateAllComponentTreeUIs();
 	}
 
