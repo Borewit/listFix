@@ -1,6 +1,6 @@
 a:hover 
 {
-	font-family: Verdana;
+	font-family: Verdana, Sans;
 	color: #FF9F00;
 }
 
@@ -11,7 +11,7 @@ html, body
 
 .boxHeader 
 {
-	font-family: Verdana;
+	font-family: Verdana, Sans;
 	font-size: 8pt;
 	color: #FFFFFF;
 	font-weight: bold;
@@ -19,14 +19,14 @@ html, body
 
 .boxText 
 {
-	font-family: Verdana;
+	font-family: Verdana, Sans;
 	font-size: 8pt;
 	color: #000000;
 }
 
 .callOutLinks 
 {
-	font-family: Verdana;
+	font-family: Verdana, Sans;
 	font-size: 13pt;
 	color: #FFCC33;
 	font-weight: 700;
@@ -35,7 +35,7 @@ html, body
 
 .copyright
 {  
-	font-family: Verdana; 
+	font-family: Verdana, Sans; 
 	font-size: 8pt; 
 	color: #999999; 
 	font-weight: bold;
@@ -48,7 +48,7 @@ html, body
 
 .mainText 
 {
-	font-family: Verdana;
+	font-family: Verdana, Sans;
 	font-size: 10pt;
 }
 
@@ -77,7 +77,7 @@ html, body
 
 .topHeaderLinks 
 {  
-	font-family: Verdana; 
+	font-family: Verdana, Sans; 
 	font-size: 8pt; 
 	color: #FFCC33; 
 	font-weight: bold
