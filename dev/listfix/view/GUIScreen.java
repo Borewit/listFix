@@ -574,7 +574,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _mediaLibraryPanel.setAlignmentY(0.0F);
         _mediaLibraryPanel.setLayout(new java.awt.BorderLayout());
 
-        _mediaLibraryButtonPanel.setMinimumSize(new java.awt.Dimension(223, 31));
+        _mediaLibraryButtonPanel.setMaximumSize(null);
 
         _addMediaDirButton.setText("Add");
         _addMediaDirButton.setToolTipText("Where do you keep your music?");
@@ -614,7 +614,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _mediaLibraryPanel.add(_mediaLibraryButtonPanel, java.awt.BorderLayout.SOUTH);
 
+        _mediaLibraryScrollPane.setMaximumSize(null);
+        _mediaLibraryScrollPane.setMinimumSize(null);
+
         _mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        _mediaLibraryList.setMaximumSize(null);
+        _mediaLibraryList.setMinimumSize(null);
         _mediaLibraryList.setPreferredSize(null);
         _mediaLibraryScrollPane.setViewportView(_mediaLibraryList);
 
@@ -627,7 +632,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryPanel.setAlignmentY(0.0F);
         _playlistDirectoryPanel.setLayout(new java.awt.BorderLayout());
 
+        _treeScrollPane.setMaximumSize(null);
+        _treeScrollPane.setMinimumSize(null);
+
         _playlistDirectoryTree.setDragEnabled(true);
+        _playlistDirectoryTree.setMaximumSize(null);
+        _playlistDirectoryTree.setMinimumSize(null);
+        _playlistDirectoryTree.setPreferredSize(null);
         _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 _playlistDirectoryTreeKeyReleased(evt);
@@ -638,6 +649,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryPanel.add(_treeScrollPane, java.awt.BorderLayout.CENTER);
 
         _playlistsDirectoryButtonPanel.setMaximumSize(null);
+        _playlistsDirectoryButtonPanel.setMinimumSize(new java.awt.Dimension(300, 35));
+        _playlistsDirectoryButtonPanel.setName("");
+        _playlistsDirectoryButtonPanel.setPreferredSize(null);
 
         _btnSetPlaylistsDir.setText("Set");
         _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");

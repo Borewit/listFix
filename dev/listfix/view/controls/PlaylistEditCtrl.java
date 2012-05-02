@@ -30,14 +30,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-
 import java.text.NumberFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +49,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTable.DropLocation;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
@@ -69,30 +65,24 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
-
 import listfix.io.AudioFileFilter;
 import listfix.io.FileExtensions;
 import listfix.io.PlaylistEntryFileCopier;
 import listfix.io.PlaylistFileChooserFilter;
-
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.MatchedPlaylistEntry;
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistEntryList;
-
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
-
 import listfix.view.GUIScreen;
-
 import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.BatchClosestMatchResultsDialog;
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.dialogs.ClosestMatchChooserDialog;
-
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
@@ -106,7 +96,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
 	private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
 	private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
-	int currentlySelectedRow = 0;
+	int currentlySelectedRow = 0;	
+	private Playlist _playlist;
+	
+	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+	{
+		public void playlistModified(Playlist list)
+		{
+			onPlaylistModified(list);
+		}
+	};
 
 	public PlaylistEditCtrl()
 	{
@@ -1413,15 +1412,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			_playlist.addModifiedListener(listener);
 		}
 	}
-	private Playlist _playlist;
-	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
-	{
-		public void playlistModified(Playlist list)
-		{
-			onPlaylistModified(list);
-		}
-	};
-
+	
 	private void showWaitCursor(boolean isWaiting)
 	{
 		if (isWaiting)
