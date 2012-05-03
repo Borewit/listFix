@@ -84,8 +84,8 @@
 			<Application_XML_File_URL>http://listfix.sourceforge.net/pad_file.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://downloads.sourceforge.net/project/listfix/listfix/listFix.2.2.0.jar</Primary_Download_URL>
-			<Secondary_Download_URL>http://downloads.sourceforge.net/project/listfix/listfix/listFix.2.2.0.exe</Secondary_Download_URL>
+			<Primary_Download_URL>http://sourceforge.net/projects/listfix/files/listfix/listFix.2.2.0.jar/download</Primary_Download_URL>
+			<Secondary_Download_URL>http://sourceforge.net/projects/listfix/files/listfix/listFix.2.2.0.exe/download</Secondary_Download_URL>
 			<Additional_Download_URL_1>http://sourceforge.net/projects/listfix/files/listfix/</Additional_Download_URL_1>
 			<Additional_Download_URL_2 />
 		</Download_URLs>
