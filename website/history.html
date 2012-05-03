@@ -99,6 +99,9 @@
                             <br>
                             <a href="http://www.foobar2000.org/" class="boxText">foobar2000</a><br>
                             <br>
+                            <a href="http://www.videolan.org/vlc/" class="boxText"
+>VLC</a><br>
+                            <br>
                             <a href="http://www.apple.com/itunes/" class="boxText">iTunes</a></strong></span><br>
                             <br>
                         </p>                        </td>
@@ -115,12 +118,12 @@
                           <p align="center" class="boxText">
                           <br>
                           <strong>Project News</strong><BR>
-                          <a name="a2a_dd" onmouseover="a2a_show_dropdown(this)" onmouseout="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20News&amp;linkurl=https%3A//sourceforge.net/export/rss2_projnews.php%3Fgroup_id%3D113978%26rss_fulltext%3D1"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
+                          <a name="a2a_dd" onMouseOver="a2a_show_dropdown(this)" onMouseOut="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20News&amp;linkurl=https%3A//sourceforge.net/export/rss2_projnews.php%3Fgroup_id%3D113978%26rss_fulltext%3D1"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
 						  <script type="text/javascript">a2a_linkname="listFix() News";a2a_linkurl="https://sourceforge.net/export/rss2_projnews.php?group_id=113978&rss_fulltext=1";</script><script type="text/javascript" src="http://www.addtoany.com/js.dropdown.js?type=feed"></script>
                           <br>
                           <br>
                           <strong>Project Releases</strong><br>
-                          <a name="a2a_dd" onmouseover="a2a_show_dropdown(this)" onmouseout="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20Releases&amp;linkurl=https%3A//sourceforge.net/export/rss2_projfiles.php%3Fgroup_id%3D113978"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
+                          <a name="a2a_dd" onMouseOver="a2a_show_dropdown(this)" onMouseOut="a2a_onMouseOut_delay()" href="http://www.addtoany.com/subscribe?linkname=listFix%28%29%20Releases&amp;linkurl=https%3A//sourceforge.net/export/rss2_projfiles.php%3Fgroup_id%3D113978"><img src="images/subscribe.gif" width="103" height="16" border="0" alt="Subscribe"/></a>
 						  <script type="text/javascript">a2a_linkname="listFix() Releases";a2a_linkurl="https://sourceforge.net/export/rss2_projfiles.php?group_id=113978";</script><script type="text/javascript" src="http://www.addtoany.com/js.dropdown.js?type=feed"></script><br>
                             <br>
                         </p>                        </td>
@@ -139,6 +142,114 @@
                       </tr>
                       <tr>
                         <td class="tableBorder"><div class="boxText">
+                          <p><strong>Version 2.2.0 Improvements (2012.05.03)</strong></p>
+                          <p><em>Notes: </em></p>
+                          <blockquote>
+                            <p>This version was a long time in coming, but it's chock-full of usability
+                              enhancements that makes it easier to work on multiple files at once, to
+                              manage multiple open playlists, and to interact with listFix() via 
+                              dragging.  Now it takes less time than ever to fix every broken playlist in
+                              your collection! </p>
+                            <p>Version 2.2.0 is dedicated to my late grandfather, Robert &quot;Ruby&quot; Caron. 
+                              We love &amp; miss you Pep.  </p>
+                            <p>Thanks to my wife Sarah, John Peterson for 
+                              building out WPL support, and those generous souls who have donated.</p>
+                            <p>As always, please <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">report any bugs you find</a>.</p>
+                          </blockquote>
+                          <p><em>New Features:</em></p>
+                          <ul>
+                            <li>Support for reading/writing WPL playlists (thanks to John Peterson).</li>
+                            <li>Can now run &quot;Closest Matches Search&quot; on multiple playlists at once.</li>
+                            <li>Drag-n-drop support for dragging files in from the operating system
+                              <ul>
+                                <li> Playlists &amp; Media Files can be dragged into an open playlist</li>
+                                <li>Playlists can be opened by dragging them into the                                  &quot;home screen&quot; or the menu bar.</li>
+                              </ul>
+                            </li>
+                            <li>Window position &amp; size are now saved at exit &amp; restored on startup.</li>
+                            <li> Overhauled the config file structure:
+                              <ul>
+                                <li> Broke out a new file for options.</li>
+                                <li>Added a new error log file for better debugging.</li>
+                                <li>Window size &amp; position stored in its own file.</li>
+                                <li>Relocated all files to  ~/.listFix() along with a new errorLog file, 
+                                  rather than at the root of the user's home directory.</li>
+                                <li>Config files from old versions are imported and removed when first 
+                                  running this new version.</li>
+                                <li>Running an old version again will re-create config files in the old
+                                  location, and this version will leave those alone once new config
+                                  files exist.</li>
+                              </ul>
+                            </li>
+                            <li> Colored status circles in the playlist editor now contain icons so the 
+                              color blind can easily distinguish between them (they've had tooltips
+                              since version 2.0.0).</li>
+                            <li>New red &quot;skip&quot; buttons in the playlist editor for jumping to the 
+                              next/previous missing entry; handy when working on large lists with 
+                              missing entries that have lots of fixed entries between them. </li>
+                            <li> Replaced the wrapping tabs layout with a flat one and introduced a 
+                              new tabbed component that has a dropdown to select from all open tabs.</li>
+                            <li>Middle-clicking a tab now closes it.</li>
+                            <li>New right-click menu on tab titles:
+                              <ul>
+                                <li> Close All Tabs</li>
+                                <li>Close All Other Tabs</li>
+                                <li>Repair Open Tabs (runs a batch exact match 
+                                  search on all the open lists)</li>
+                              </ul>
+                            </li>
+                            <li>A font chooser in the options screen for setting the program-wide font.                              This should help with internationalization issues, as users can choose 
+                              a font that they know can support the characters used in their filenames.</li>
+                            <li>A new option for how many matches to find during find closest search, 
+                              starting at 20.  This is to allow for configurable memory usage, so we
+                              don't use too much memory on systems with huge media libraries, or very
+                              small amounts of RAM.</li>
+                            <li> Open selected playlists in the playlists panel with the &quot;Enter&quot; key.</li>
+                            <li>First command line argument support, for passing a list of playlists 
+                              to open on startup. </li>
+                            <li>The escape key now triggers the cancel button in all cancellable dialogs.</li>
+                            <li>Tooltip on location column for full path so it's easy to see the whole 
+                              location when the file name column is taking up most of the display.</li>
+                            <li>When &quot;save playlists with relative file references&quot; is enabled, there is 
+                              now a check to see if a mapped network drive and a UNC path are really 
+                              aliases for the same location, and if so, now saves with relative paths 
+                              despite the apparent mismatch. (example: \\foo\bar\testDir\testFile.tst 
+                              is the same location as Z:\testDir\testFile.tst if Z is mapped to<br>
+                              \\foo\bar\, so when saving to either Z:\testDir or \\foo\bar\testDir, 
+                              \\foo\bar\testDir\testFile.tst &amp; Z:\testDir\testFile.tst would both be
+                              written out as .\testFile.tst)</li>
+                            <li>Added &quot;Set&quot;, &quot;Exact&quot;, &amp; &quot;Closest&quot; buttons in the playlists panel, and                              &quot;Open&quot; &amp; &quot;Refresh&quot; in that panel's right-click menu.</li>
+                            <li>The &quot;Set&quot; button launches the open screen where the directory to be
+                              shown in the &quot;Playlist Directory&quot; panel.  This will hopefully
+                              help to clarify the usage of this panel.</li>
+                            <li> Now launching &quot;Find Closest Matches&quot; when double-clicking on a 
+                              missing entry. </li>
+                            <li> The closest match search algorithm now breaks CamelCasedWords into 
+                              separate tokens when comparing two filenames and calculating a score.</li>
+                            <li>&quot;Batch Find Closest Matches&quot; on a the right-click menu in the playlist 
+                              editor has been removed.  The &quot;Fix Everything Button&quot; runs this after an
+                              exact match search, and now &quot;Find Closest Matches&quot; will kick off 
+                              batch mode if multiple entries are selected.</li>
+                          </ul>
+                          <p><em>UI Tweaks &amp; Bug Fixes:</em></p>
+                          <ul>
+                            <li>Removed the open icon in the top-right open the playlist editor.</li>
+                            <li>Items in the playlist directory list and the playlist editor are 
+                              now de-selected when you click on nothing.</li>
+                            <li>Fixed a bug where saving a list with relative references would fail if 
+                              the list contained an absolute reference that didn't exist on disk.</li>
+                            <li>Fixed a bug where opening a playlist with relative references and saving 
+                              it as absolute, when &quot;always use UNC&quot; was enabled, would result in 
+                              entries with &quot;mapped drive&quot; paths, even when the media directory was 
+                              using UNC paths.</li>
+                            <li>Fixed a bug where opening a relative playlist and saving it relatively 
+                              in a new location would result in entry paths that first led you to the 
+                              playlist's original location, then back to the song.</li>
+                            <li>Now stripping invalid filename characters from winamp playlist names when
+                              extracting them so we don't fail to write any files during extraction.</li>
+                            <li>Fixed an issue with resolving relative entries in the same directory as 
+                              the playlist itself, as the assumed path was '/' rather than '.'</li>
+                          </ul>
                           <p><strong>Version 2.1.0 Improvements (2011.03.06)</strong></p>
                           <p><em>Notes:</em></p>
                           <blockquote>
