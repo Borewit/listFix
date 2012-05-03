@@ -148,20 +148,27 @@
                           <p class="boxText"><strong>Features: </strong></p>
                           <ul>
                             <li class="boxText">M3U/M3U8/PLS/WPL Support (Winamp, XMMS, Foobar2000, VLC, WMP, etc)</li>
-                            <li class="boxText">Find lost/missing playlist entries</li>
+                            <li class="boxText">Find lost/missing/renamed playlist entries
+                              <ul>
+                                <li>Exact Matches Search</li>
+                                <li>Closest Matches Search</li>
+                              </ul>
+                            </li>
                             <li class="boxText">Insert/Move/Delete/Replace/Append entries</li>
                             <li class="boxText">Insert/Append Playlists</li>
                             <li class="boxText">Sort the playlist by filename, status, and location</li>
                             <li class="boxText">Randomize the list</li>
                             <li class="boxText">Remove duplicates and/or missing tracks from the playlist</li>
                             <li class="boxText">Copy all songs in a list to a specified directory</li>
-                            <li class="boxText">Advanced search for renamed tracks</li>
                             <li class="boxText">Launch an entry or playlist in the system's default media program</li>
                             <li class="boxText">Support for URL &amp; UNC path entries</li>
                             <li class="boxText">Save playlists with absolute or relative references</li>
-                            <li class="boxText">Batch repairing of playlists</li>
-                            <li class="boxText">Batch find closest matches (for renamed files)</li>
-                            <li class="boxText">Batch repair Winamp Media Library playlists</li>
+                            <li class="boxText">Winamp media library support
+                              <ul>
+                                <li>Repair all Winamp media library playlists in place</li>
+                                <li>Extract Winamp media library playlists to a new location, with their actual names!</li>
+                              </ul>
+                            </li>
                           </ul>
                           <p class="boxText"><strong>Requirements:</strong></p>
                           <ul>
@@ -179,16 +186,23 @@
                       <tr>
                         <td class="tableBorder"><div class="boxText"> <strong>Notes:</strong>
                           <blockquote>
+                            <p>Version 2.2.0 is dedicated to my late grandfather, Robert &quot;Ruby&quot; Caron. 
+                              We love &amp; miss you Pep. </p>
                             <p>This version was a long time in coming, but it's chock-full of usability
                               enhancements that makes it easier to work on multiple files at once, to
                               manage multiple open playlists, and to interact with listFix() via 
                               dragging.  Now it takes less time than ever to fix every broken playlist in
-                              your collection! </p>
-                            <p>Version 2.2.0 is dedicated to my late grandfather, Robert &quot;Ruby&quot; Caron. 
-                              We love &amp; miss you Pep.  </p>
+                              your collection!</p>
+                            <p>This release marks the first time we are providing both a JAR file and an
+                              EXE file for download.  The EXE file is basically a wrapper around the JAR
+                              for Windows users who aren't used to running java programs.  It will take
+                              you to Java's download page if you don't have the JRE installed, which
+                              isn't something we could do with a standard JAR.  Some Windows systems fail
+                              to register double-click support for JAR files as well, and the EXE will
+                              run when double-clicked no matter what.</p>
                             <p>Thanks to my wife Sarah, John Peterson for 
                               building out WPL support, and those generous souls who have donated.</p>
-<p>As always, please <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">report any bugs you find</a>.</p>
+                            <p>As always, please <a href="https://sourceforge.net/tracker/?group_id=113978&atid=666794">report any bugs you find</a>.</p>
                           </blockquote>
                           <p><strong>New Features:</strong></p>
                           <ul>
