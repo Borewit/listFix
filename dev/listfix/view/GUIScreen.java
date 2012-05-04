@@ -25,9 +25,11 @@ import com.jidesoft.swing.JideMenu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.DefaultKeyboardFocusManager;
 import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.KeyEventPostProcessor;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -47,8 +49,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.CharBuffer;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -186,6 +186,59 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		// Set the position of the divider in the left split pane.
 		_leftSplitPane.setDividerLocation(.7);
+
+		// JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
+		configureGlobalKeyboardListener();
+	}
+
+	private void configureGlobalKeyboardListener()
+	{
+		KeyEventPostProcessor pp = new KeyEventPostProcessor()
+		{
+			@Override
+			public boolean postProcessKeyEvent(KeyEvent e)
+			{
+				// Advance the selected tab on Ctrl-Tab (make sure Shift isn't pressed)
+				if (ctrlTabWasPressed(e))
+				{
+					if (_uiTabs.getSelectedIndex() == _uiTabs.getTabCount() - 1)
+					{
+						_uiTabs.setSelectedIndex(0);
+					}
+					else
+					{
+						_uiTabs.setSelectedIndex(_uiTabs.getSelectedIndex() + 1);
+					}
+				}
+				
+				// Regress the selected tab on Ctrl-Shift-Tab
+				if (ctrlShiftTabWasPressed(e))
+				{
+					if (_uiTabs.getSelectedIndex() == 0)
+					{
+						_uiTabs.setSelectedIndex(_uiTabs.getTabCount() - 1);
+					}
+					else
+					{
+						_uiTabs.setSelectedIndex(_uiTabs.getSelectedIndex() - 1);
+					}
+				}
+				
+				return true;
+			}
+
+			private boolean ctrlShiftTabWasPressed(KeyEvent e)
+			{
+				return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0) && _uiTabs.getTabCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
+			}
+
+			private boolean ctrlTabWasPressed(KeyEvent e)
+			{
+				return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) == 0) && _uiTabs.getTabCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
+			}
+		};
+
+		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(pp);
 	}
 
 	private MouseAdapter createPlaylistTreeMouseListener()
@@ -536,7 +589,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("listFix( ) - v2.2.0");
+        setTitle("listFix( ) - v2.3.0");
         setMinimumSize(new java.awt.Dimension(600, 149));
         setName("mainFrame"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -550,7 +603,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         statusLabel.setForeground(new java.awt.Color(75, 75, 75));
         statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0");
+        statusLabel.setText("Untitled List     Number of entries in list: 0     Number of lost entries: 0     Number of URLs: 0     Number of open playlists: 0");
         _statusPanel.add(statusLabel, java.awt.BorderLayout.WEST);
 
         getContentPane().add(_statusPanel, java.awt.BorderLayout.SOUTH);
@@ -651,7 +704,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistsDirectoryButtonPanel.setMaximumSize(null);
         _playlistsDirectoryButtonPanel.setMinimumSize(new java.awt.Dimension(300, 35));
         _playlistsDirectoryButtonPanel.setName("");
-        _playlistsDirectoryButtonPanel.setPreferredSize(null);
 
         _btnSetPlaylistsDir.setText("Set");
         _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
@@ -1555,8 +1607,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	{
 		if (list != null)
 		{
-			String fmt = "Currently Open: %s%s     Number of entries in list: %d     Number of lost entries: %d     Number of URLs: %d";
-			String txt = String.format(fmt, list.getFilename(), list.isModified() ? "*" : "", list.size(), list.getMissingCount(), list.getUrlCount());
+			String fmt = "Currently Open: %s%s     Number of entries in list: %d     Number of lost entries: %d     Number of URLs: %d     Number of open playlists: %d";
+			String txt = String.format(fmt, list.getFilename(), list.isModified() ? "*" : "", list.size(), list.getMissingCount(), list.getUrlCount(), _uiTabs.getTabCount());
 			statusLabel.setText(txt);
 		}
 		else
@@ -1901,7 +1953,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void _aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		JOptionPane.showMessageDialog(this, "listFix( ) v2.2.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) " +
+		JOptionPane.showMessageDialog(this, "listFix( ) v2.3.0\n\nBrought To You By: \n          Jeremy Caron (firewyre at users dot sourceforge dot net) " +
 				"\n          Kennedy Akala (kennedyakala at users dot sourceforge dot net) \n          John Peterson (johnpeterson at users dot sourceforge dot net)", "About", JOptionPane.INFORMATION_MESSAGE);
 	}
 
