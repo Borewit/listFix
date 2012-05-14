@@ -804,10 +804,11 @@
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
               <Events>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="_uiTabsMouseReleased"/>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="_uiTabsStateChanged"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new DnDTabbedPane()"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JideTabbedPane();&#xd;&#xa;JideTabbedPane temp = (JideTabbedPane)_uiTabs;&#xd;&#xa;temp.setTabShape(JideTabbedPane.SHAPE_ROUNDED_VSNET);&#xd;&#xa;temp.setColorTheme(JideTabbedPane.COLOR_THEME_VSNET);&#xd;&#xa;temp.setScrollSelectedTabOnWheel(true);&#xd;&#xa;temp.setRightClickSelect(false);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">

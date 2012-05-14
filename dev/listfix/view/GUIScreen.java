@@ -21,6 +21,7 @@
 package listfix.view;
 
 import com.jidesoft.swing.JideMenu;
+import com.jidesoft.swing.JideTabbedPane;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -95,10 +96,8 @@ import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.MultiListBatchClosestMatchResultsDialog;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ClosableTabCtrl;
-import listfix.view.support.DnDTabbedPane;
 import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
-import listfix.view.support.TabTransferHandler;
 import listfix.view.support.WindowSaver;
 
 import org.apache.log4j.Logger;
@@ -181,7 +180,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		// add popup menu to playlist tree on right-click
 		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
 
-		_uiTabs.setTransferHandler(new TabTransferHandler());
         WindowSaver.getInstance().loadSettings(this);
 
 		// Set the position of the divider in the left split pane.
@@ -531,7 +529,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _openIconButton = new javax.swing.JButton();
         _spacerPanel = new javax.swing.JPanel();
         _newIconButton = new javax.swing.JButton();
-        _uiTabs = new DnDTabbedPane();
+        _uiTabs = new JideTabbedPane();
+        JideTabbedPane temp = (JideTabbedPane)_uiTabs;
+        temp.setTabShape(JideTabbedPane.SHAPE_ROUNDED_VSNET);
+        temp.setColorTheme(JideTabbedPane.COLOR_THEME_VSNET);
+        temp.setScrollSelectedTabOnWheel(true);
+        temp.setRightClickSelect(false);
         _mainMenuBar = new javax.swing.JMenuBar();
         _fileMenu = new JideMenu();
         _newPlaylistMenuItem = new javax.swing.JMenuItem();
@@ -823,6 +826,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _uiTabs.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         _uiTabs.setFocusable(false);
+        _uiTabs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                _uiTabsMouseReleased(evt);
+            }
+        });
         _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 _uiTabsStateChanged(evt);
@@ -2297,6 +2305,36 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 {//GEN-HEADEREND:event__uiTabsStateChanged
 	onSelectedTabChanged();
 }//GEN-LAST:event__uiTabsStateChanged
+
+	private void _uiTabsMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTabsMouseReleased
+	{//GEN-HEADEREND:event__uiTabsMouseReleased
+		// Middle click case
+		if (evt.getModifiers() == MouseEvent.BUTTON2_MASK)
+		{
+			Point tabPt = evt.getPoint();
+			JTabbedPane src = (JTabbedPane) evt.getSource();
+			int tabIndex = src.indexAtLocation(tabPt.x, tabPt.y);
+			Component tab = _uiTabs.getTabComponentAt(tabIndex);
+
+			if (tab instanceof ClosableTabCtrl)
+			{
+				((ClosableTabCtrl) tab).closeMe();
+			}
+		}
+		// Right-click case
+		else if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
+		{
+			Point tabPt = evt.getPoint();
+			JTabbedPane src = (JTabbedPane) evt.getSource();
+			int tabIndex = src.indexAtLocation(tabPt.x, tabPt.y);
+			Component tab = _uiTabs.getTabComponentAt(tabIndex);
+
+			if (tab instanceof ClosableTabCtrl)
+			{
+				((ClosableTabCtrl) tab).showRightClickMenu(tabPt.x, tabPt.y);
+			}
+		}
+	}//GEN-LAST:event__uiTabsMouseReleased
 
 	public void setApplicationFont(Font font)
 	{
