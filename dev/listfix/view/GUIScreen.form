@@ -65,10 +65,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
-                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection type="value" value="&apos;L&apos;" valueType="int"/>
-                </Property>
+                <Property name="mnemonic" type="int" value="78"/>
                 <Property name="text" type="java.lang.String" value="New Playlist"/>
+                <Property name="toolTipText" type="java.lang.String" value="Creates a New Playlist"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_newPlaylistMenuItemActionPerformed"/>
@@ -79,10 +78,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
-                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection type="value" value="&apos;L&apos;" valueType="int"/>
-                </Property>
+                <Property name="mnemonic" type="int" value="79"/>
                 <Property name="text" type="java.lang.String" value="Open Playlist"/>
+                <Property name="toolTipText" type="java.lang.String" value="Opens a Playlist"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openIconButtonActionPerformed"/>
@@ -93,7 +91,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+W"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" value="Close"/>
+                <Property name="toolTipText" type="java.lang.String" value="Closes The Current Playlist"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_closeMenuItemActionPerformed"/>
@@ -104,7 +104,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+W"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" value="Close All"/>
+                <Property name="toolTipText" type="java.lang.String" value="Closes All Open Playlists"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_closeAllMenuItemActionPerformed"/>
@@ -138,6 +140,19 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_saveAsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="_miReload">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+R"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="82"/>
+                <Property name="text" type="java.lang.String" value="Reload"/>
+                <Property name="toolTipText" type="java.lang.String" value="Reloads The Currently Open Playlist"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_miReloadActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator6">
               <Properties>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -147,8 +162,12 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="_miBatchRepair">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+M"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="69"/>
                 <Property name="text" type="java.lang.String" value="Exact Matches Repair..."/>
-                <Property name="toolTipText" type="java.lang.String" value="Runs an Exact Matches Repair"/>
+                <Property name="toolTipText" type="java.lang.String" value="Runs an &quot;Exact Matches Repair&quot; on the current list"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onMenuBatchRepairActionPerformed"/>
@@ -156,6 +175,10 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="_batchRepairWinampMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Alt+W"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="66"/>
                 <Property name="text" type="java.lang.String" value="Batch Repair Winamp Playlists..."/>
               </Properties>
               <Events>
@@ -167,6 +190,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+E"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="87"/>
                 <Property name="text" type="java.lang.String" value="Extract Winamp Playlists"/>
                 <Property name="toolTipText" type="java.lang.String" value="Extract Winamp Media Library Playlists"/>
               </Properties>
@@ -196,7 +220,7 @@
                   <Connection type="value" value="&apos;H&apos;" valueType="int"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Clear Playlist History"/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="toolTipText" type="java.lang.String" value="Clears the recently opened playlist history"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_clearHistoryMenuItemActionPerformed"/>
@@ -214,9 +238,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Alt+O"/>
                 </Property>
-                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection type="value" value="&apos;H&apos;" valueType="int"/>
-                </Property>
+                <Property name="mnemonic" type="int" value="112"/>
                 <Property name="text" type="java.lang.String" value="Options..."/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
@@ -263,10 +285,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="F1"/>
                 </Property>
-                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection type="value" value="&apos;e&apos;" valueType="int"/>
-                </Property>
+                <Property name="mnemonic" type="int" value="72"/>
                 <Property name="text" type="java.lang.String" value="Help"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open listFix() documentation"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_helpMenuItemActionPerformed"/>
@@ -277,7 +298,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+U"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="67"/>
                 <Property name="text" type="java.lang.String" value="Check For Updates"/>
+                <Property name="toolTipText" type="java.lang.String" value="Opens the listFix() download site"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_updateCheckMenuItemActionPerformed"/>
@@ -288,10 +311,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Alt+A"/>
                 </Property>
-                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection type="value" value="&apos;A&apos;" valueType="int"/>
-                </Property>
+                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" value="About"/>
+                <Property name="toolTipText" type="java.lang.String" value="Version info and such..."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_aboutMenuItemActionPerformed"/>

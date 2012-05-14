@@ -1175,6 +1175,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 	private void _btnReloadMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event__btnReloadMouseClicked
 	{//GEN-HEADEREND:event__btnReloadMouseClicked
+		reloadPlaylist();
+	}//GEN-LAST:event__btnReloadMouseClicked
+
+	public void scrollCellToVisible(JTable table, int row, int column)
+	{
+		table.scrollRectToVisible(table.getCellRect(row, column, true));
+	}
+	
+	public void reloadPlaylist()
+	{
 		if (_playlist.isModified())
 		{
 			Object[] options =
@@ -1236,11 +1246,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				showWaitCursor(false);
 			}
 		}
-	}//GEN-LAST:event__btnReloadMouseClicked
-
-	public void scrollCellToVisible(JTable table, int row, int column)
-	{
-		table.scrollRectToVisible(table.getCellRect(row, column, true));
 	}
 
 	private void _uiTableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__uiTableKeyPressed

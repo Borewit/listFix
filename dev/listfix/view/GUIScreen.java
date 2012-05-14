@@ -543,6 +543,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _closeAllMenuItem = new javax.swing.JMenuItem();
         _saveMenuItem = new javax.swing.JMenuItem();
         _saveAsMenuItem = new javax.swing.JMenuItem();
+        _miReload = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
         _miBatchRepair = new javax.swing.JMenuItem();
         _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
@@ -848,8 +849,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.setText("File");
 
         _newPlaylistMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        _newPlaylistMenuItem.setMnemonic('L');
+        _newPlaylistMenuItem.setMnemonic('N');
         _newPlaylistMenuItem.setText("New Playlist");
+        _newPlaylistMenuItem.setToolTipText("Creates a New Playlist");
         _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _newPlaylistMenuItemActionPerformed(evt);
@@ -858,8 +860,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_newPlaylistMenuItem);
 
         _loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        _loadMenuItem.setMnemonic('L');
+        _loadMenuItem.setMnemonic('O');
         _loadMenuItem.setText("Open Playlist");
+        _loadMenuItem.setToolTipText("Opens a Playlist");
         _loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openIconButtonActionPerformed(evt);
@@ -868,7 +871,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_loadMenuItem);
 
         _closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        _closeMenuItem.setMnemonic('C');
         _closeMenuItem.setText("Close");
+        _closeMenuItem.setToolTipText("Closes The Current Playlist");
         _closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _closeMenuItemActionPerformed(evt);
@@ -877,7 +882,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_closeMenuItem);
 
         _closeAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _closeAllMenuItem.setMnemonic('A');
         _closeAllMenuItem.setText("Close All");
+        _closeAllMenuItem.setToolTipText("Closes All Open Playlists");
         _closeAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _closeAllMenuItemActionPerformed(evt);
@@ -905,11 +912,24 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         _fileMenu.add(_saveAsMenuItem);
 
+        _miReload.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        _miReload.setMnemonic('R');
+        _miReload.setText("Reload");
+        _miReload.setToolTipText("Reloads The Currently Open Playlist");
+        _miReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _miReloadActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(_miReload);
+
         jSeparator6.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator6);
 
+        _miBatchRepair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
+        _miBatchRepair.setMnemonic('E');
         _miBatchRepair.setText("Exact Matches Repair...");
-        _miBatchRepair.setToolTipText("Runs an Exact Matches Repair");
+        _miBatchRepair.setToolTipText("Runs an \"Exact Matches Repair\" on the current list");
         _miBatchRepair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onMenuBatchRepairActionPerformed(evt);
@@ -917,6 +937,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         _fileMenu.add(_miBatchRepair);
 
+        _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _batchRepairWinampMenuItem.setMnemonic('B');
         _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
         _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -926,6 +948,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_batchRepairWinampMenuItem);
 
         _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        _extractPlaylistsMenuItem.setMnemonic('W');
         _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
         _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
         _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -945,7 +968,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _clearHistoryMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
         _clearHistoryMenuItem.setMnemonic('H');
         _clearHistoryMenuItem.setText("Clear Playlist History");
-        _clearHistoryMenuItem.setToolTipText("");
+        _clearHistoryMenuItem.setToolTipText("Clears the recently opened playlist history");
         _clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _clearHistoryMenuItemActionPerformed(evt);
@@ -957,7 +980,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(jSeparator1);
 
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        _appOptionsMenuItem.setMnemonic('H');
+        _appOptionsMenuItem.setMnemonic('p');
         _appOptionsMenuItem.setText("Options...");
         _appOptionsMenuItem.setToolTipText("");
         _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -986,8 +1009,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _helpMenu.setText("Help");
 
         _helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        _helpMenuItem.setMnemonic('e');
+        _helpMenuItem.setMnemonic('H');
         _helpMenuItem.setText("Help");
+        _helpMenuItem.setToolTipText("Open listFix() documentation");
         _helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _helpMenuItemActionPerformed(evt);
@@ -996,7 +1020,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _helpMenu.add(_helpMenuItem);
 
         _updateCheckMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
+        _updateCheckMenuItem.setMnemonic('C');
         _updateCheckMenuItem.setText("Check For Updates");
+        _updateCheckMenuItem.setToolTipText("Opens the listFix() download site");
         _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _updateCheckMenuItemActionPerformed(evt);
@@ -1007,6 +1033,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
         _aboutMenuItem.setMnemonic('A');
         _aboutMenuItem.setText("About");
+        _aboutMenuItem.setToolTipText("Version info and such...");
         _aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _aboutMenuItemActionPerformed(evt);
@@ -2336,6 +2363,14 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		}
 	}//GEN-LAST:event__uiTabsMouseReleased
 
+	private void _miReloadActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miReloadActionPerformed
+	{//GEN-HEADEREND:event__miReloadActionPerformed
+		if (_uiTabs.getComponents().length > 0 && _uiTabs.getSelectedIndex() >= 0)
+		{
+			((PlaylistEditCtrl) _uiTabs.getComponentAt(_uiTabs.getSelectedIndex())).reloadPlaylist();
+		}
+	}//GEN-LAST:event__miReloadActionPerformed
+
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2478,6 +2513,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
     private javax.swing.JMenuItem _miExactMatchesSearch;
     private javax.swing.JMenuItem _miOpenSelectedPlaylists;
     private javax.swing.JMenuItem _miRefreshDirectoryTree;
+    private javax.swing.JMenuItem _miReload;
     private javax.swing.JButton _newIconButton;
     private javax.swing.JMenuItem _newPlaylistMenuItem;
     private javax.swing.JButton _openIconButton;
