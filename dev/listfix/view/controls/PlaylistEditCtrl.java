@@ -760,6 +760,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         jSeparator1 = new javax.swing.JToolBar.Separator();
         _btnUp = new javax.swing.JButton();
         _btnDown = new javax.swing.JButton();
+        _btnInvert = new javax.swing.JButton();
         _btnReorder = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         _btnMagicFix = new javax.swing.JButton();
@@ -920,6 +921,21 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
         });
         _uiToolbar.add(_btnDown);
+
+        _btnInvert.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/invert.png"))); // NOI18N
+        _btnInvert.setToolTipText("Inverts the current selection");
+        _btnInvert.setFocusable(false);
+        _btnInvert.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        _btnInvert.setLabel("");
+        _btnInvert.setMaximumSize(new java.awt.Dimension(31, 31));
+        _btnInvert.setMinimumSize(new java.awt.Dimension(31, 31));
+        _btnInvert.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        _btnInvert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnInvertActionPerformed(evt);
+            }
+        });
+        _uiToolbar.add(_btnInvert);
 
         _btnReorder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-reorder.gif"))); // NOI18N
         _btnReorder.setToolTipText("Change Playlist Order");
@@ -1346,10 +1362,29 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}//GEN-LAST:event__btnPrevMissingActionPerformed
 
+	private void _btnInvertActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnInvertActionPerformed
+	{//GEN-HEADEREND:event__btnInvertActionPerformed
+		int[] selectedIndexs = _uiTable.getSelectedRows();
+		_uiTable.selectAll();
+
+		for (int i = 0; i < _uiTable.getRowCount(); i++)
+		{
+			for (int selectedIndex : selectedIndexs)
+			{
+				if (selectedIndex == i)
+				{
+					_uiTable.removeRowSelectionInterval(i, i);
+					break;
+				}
+			}
+		}
+	}//GEN-LAST:event__btnInvertActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
     private javax.swing.JButton _btnDown;
+    private javax.swing.JButton _btnInvert;
     private javax.swing.JButton _btnLocate;
     private javax.swing.JButton _btnMagicFix;
     private javax.swing.JButton _btnNextMissing;
