@@ -170,10 +170,15 @@ public class ZebraJTable extends javax.swing.JTable
 
     public int autoResizeColumn(int colIx)
     {
-        return autoResizeColumn(colIx, false);
+        return autoResizeColumn(colIx, false, -1);
+    }
+	
+	public int autoResizeColumn(int colIx, boolean fixedWidth)
+    {
+        return autoResizeColumn(colIx, fixedWidth, -1);
     }
 
-    public int autoResizeColumn(int colIx, boolean fixedWidth)
+    public int autoResizeColumn(int colIx, boolean fixedWidth, int minWidth)
     {
         TableCellRenderer renderer = getCellRenderer(0, colIx);
         int maxWidth = 0;
@@ -187,6 +192,10 @@ public class ZebraJTable extends javax.swing.JTable
         }
         // add 2 for default intercell spacing
         maxWidth += 2;
+		if (maxWidth < minWidth)
+		{
+			maxWidth = minWidth;
+		}
         TableColumn col = getColumnModel().getColumn(colIx);
         col.setPreferredWidth(maxWidth);
         if (fixedWidth)

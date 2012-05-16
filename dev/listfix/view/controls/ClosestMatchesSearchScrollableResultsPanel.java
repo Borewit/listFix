@@ -21,6 +21,7 @@
 package listfix.view.controls;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,14 +81,18 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     }
 
 	private void initialize()
-	{
+	{			
+		TableColumnModel cm = _uiTable.getColumnModel();		
+		cm.getColumn(2).setCellRenderer(new ButtonRenderer());
+		cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
+		cm.getColumn(3).setCellEditor(new MatchEditor());
+		
 		int cwidth = 0;
-		TableColumnModel cm = _uiTable.getColumnModel();
 		cm.getColumn(4).setMinWidth(0);
 		_uiTable.initFillColumnForScrollPane(_uiScrollPane);
 		cwidth += _uiTable.autoResizeColumn(1);
 		cwidth += cm.getColumn(2).getWidth();
-		cwidth += _uiTable.autoResizeColumn(3);
+		cwidth += _uiTable.autoResizeColumn(3, false, 350);
 		_uiTable.setFillerColumnWidth(_uiScrollPane);
 		TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
 		Component comp = renderer.getTableCellRendererComponent(_uiTable, (_items.size() + 1) * 10, false, false, 0, 0);
@@ -99,9 +104,6 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		cwidth += width + 20;
 		_uiTable.setCellSelectionEnabled(true);
 		_width = cwidth;
-		cm.getColumn(2).setCellRenderer(new ButtonRenderer());
-		cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
-		cm.getColumn(3).setCellEditor(new MatchEditor());
 		_uiTable.setShowHorizontalLines(false);
 		_uiTable.setShowVerticalLines(false);
 		
