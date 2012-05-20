@@ -67,7 +67,6 @@ import javax.swing.table.TableColumnModel;
 import listfix.controller.GUIDriver;
 import listfix.io.AudioFileFilter;
 import listfix.io.FileExtensions;
-import listfix.io.PlaylistEntryFileCopier;
 import listfix.io.PlaylistFileChooserFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
@@ -99,6 +98,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	
 	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
 	{
+		@Override
 		public void playlistModified(Playlist list)
 		{
 			onPlaylistModified(list);
@@ -1092,8 +1092,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					@Override
 					protected Void doInBackground()
 					{
-						PlaylistEntryFileCopier copier = new PlaylistEntryFileCopier(_playlist, destDir, this);
-						copier.copy();
+						List<Integer> rowList = new ArrayList<Integer>();
+						int[] uiRows = _uiTable.getSelectedRows();
+						for (int x : uiRows)
+						{
+							rowList.add(_uiTable.convertRowIndexToModel(x));
+						}
+						_playlist.copySelectedEntries(rowList, destDir, this);
 						return null;
 					}
 				};

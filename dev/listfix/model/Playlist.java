@@ -44,6 +44,7 @@ import java.util.Set;
 
 import listfix.controller.GUIDriver;
 import listfix.io.Constants;
+import listfix.io.FileCopier;
 import listfix.io.FileExtensions;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
@@ -59,6 +60,7 @@ import listfix.util.UnicodeUtils;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import listfix.view.support.ProgressWorker;
 
 import org.apache.log4j.Logger;
 
@@ -83,6 +85,44 @@ public class Playlist
 	public List<PlaylistEntry> getEntries()
 	{
 		return _entries;
+	}
+
+	public void copySelectedEntries(List<Integer> entryIndexList, File y, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(entryIndexList.size());
+		PlaylistEntry tempEntry;
+		File fileToCopy;
+		File dest;
+		for (int i = 0; i < entryIndexList.size(); i++)
+		{
+			if (!observer.getCancelled())
+			{
+				tempEntry = this.get(entryIndexList.get(i));
+				if (!tempEntry.isURL())
+				{
+					fileToCopy = tempEntry.getAbsoluteFile();
+					if (tempEntry.isFound()) // && fileToCopy.exists())
+					{
+						dest = new File(y.getPath() + Constants.FS + tempEntry.getFileName());
+						try
+						{
+							FileCopier.copy(fileToCopy, dest);
+						}
+						catch (IOException e)
+						{
+							// eat the error and continue
+							_logger.error(ExStack.toString(e));
+						}
+					}
+				}
+				progress.stepCompleted();
+			}
+			else
+			{
+				return;
+			}
+		}
 	}
 
 	public enum SortIx

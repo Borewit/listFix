@@ -601,6 +601,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
                 exitForm(evt);
             }
         });
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
         _statusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         _statusPanel.setLayout(new java.awt.BorderLayout());
@@ -2370,6 +2375,12 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 			((PlaylistEditCtrl) _uiTabs.getComponentAt(_uiTabs.getSelectedIndex())).reloadPlaylist();
 		}
 	}//GEN-LAST:event__miReloadActionPerformed
+
+	private void formComponentResized(java.awt.event.ComponentEvent evt)//GEN-FIRST:event_formComponentResized
+	{//GEN-HEADEREND:event_formComponentResized
+		// Set the position of the divider in the left split pane.
+		_leftSplitPane.setDividerLocation(.7);
+	}//GEN-LAST:event_formComponentResized
 
 	public void setApplicationFont(Font font)
 	{
