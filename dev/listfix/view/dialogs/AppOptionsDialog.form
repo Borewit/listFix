@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.2" maxVersion="1.2" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
@@ -80,7 +80,7 @@
                       <Connection code="new IntegerRangeComboBoxModel(1, 15)" type="code"/>
                     </Property>
                     <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getMaxPlaylistHistoryEntries()" type="code"/>
+                      <Connection code="_options.getMaxPlaylistHistoryEntries()" type="code"/>
                     </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="null"/>
@@ -170,7 +170,7 @@
                       <Connection code="this.getLookAndFeelMenuItems()" type="code"/>
                     </Property>
                     <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="this.getInstalledLookAndFeelByClassName(options.getLookAndFeel()).getName()" type="code"/>
+                      <Connection code="this.getInstalledLookAndFeelByClassName(_options.getLookAndFeel()).getName()" type="code"/>
                     </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="null"/>
@@ -211,7 +211,7 @@
                 <Component class="javax.swing.JCheckBox" name="autoLocateCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getAutoLocateEntriesOnPlaylistLoad()" type="code"/>
+                      <Connection code="_options.getAutoLocateEntriesOnPlaylistLoad()" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -248,7 +248,7 @@
                 <Component class="javax.swing.JCheckBox" name="relativePathsCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getSavePlaylistsWithRelativePaths()" type="code"/>
+                      <Connection code="_options.getSavePlaylistsWithRelativePaths()" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -285,7 +285,7 @@
                 <Component class="javax.swing.JCheckBox" name="autoRefreshOnStartupCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getAutoRefreshMediaLibraryOnStartup()" type="code"/>
+                      <Connection code="_options.getAutoRefreshMediaLibraryOnStartup()" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -322,7 +322,7 @@
                 <Component class="javax.swing.JCheckBox" name="alwaysUseUNCPathsCheckBox">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getAlwaysUseUNCPaths()" type="code"/>
+                      <Connection code="_options.getAlwaysUseUNCPaths()" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -361,7 +361,7 @@
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="2"/>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getPlaylistsDirectory() + &quot;     &quot;" type="code"/>
+                      <Connection code="_options.getPlaylistsDirectory() + &quot;     &quot;" type="code"/>
                     </Property>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="null"/>
@@ -422,7 +422,7 @@
                       <Connection code="new IntegerRangeComboBoxModel(10, 100)" type="code"/>
                     </Property>
                     <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="options.getMaxClosestResults()" type="code"/>
+                      <Connection code="_options.getMaxClosestResults()" type="code"/>
                     </Property>
                   </Properties>
                 </Component>

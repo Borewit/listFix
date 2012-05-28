@@ -52,13 +52,13 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onMenuRemoveMissingActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="_miCopyFiles">
+        <MenuItem class="javax.swing.JMenuItem" name="_miCopySelectedFiles">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Copy Files"/>
+            <Property name="text" type="java.lang.String" value="Copy Selected Files To..."/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onMenuCopyFiles"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_miCopySelectedFilesActionPerformed"/>
           </Events>
         </MenuItem>
       </SubComponents>

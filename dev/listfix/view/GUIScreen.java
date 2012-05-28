@@ -20,6 +20,7 @@
 
 package listfix.view;
 
+import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
 
@@ -106,7 +107,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 {
 	private static final long _serialVersionUID = 7691786927987534889L;
 	private final JFileChooser _jM3UChooser;
-	private final JFileChooser _jMediaDirChooser;
+	private final FolderChooser _jMediaDirChooser;
 	private final JFileChooser _jSaveFileChooser;
 	private GUIDriver _guiDriver = null;
 	private DropTarget _dropTarget = null;
@@ -125,13 +126,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		initComponents();
 		_jM3UChooser = new JFileChooser();
-		_jMediaDirChooser = new JFileChooser();
+		_jMediaDirChooser = new FolderChooser();
 		_jSaveFileChooser = new JFileChooser();
 
 		setApplicationFont(_guiDriver.getAppOptions().getAppFont());
 		this.setLookAndFeel(_guiDriver.getAppOptions().getLookAndFeel());
 
-		configureFileChoosers();
+		configureFileAndFolderChoosers();
 
 		// Stop showing the loading screen
 		splashScreen.setVisible(false);
@@ -352,7 +353,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		};
 	}
 
-	private void configureFileChoosers()
+	private void configureFileAndFolderChoosers()
 	{
 		_jM3UChooser.setDialogTitle("Choose Playlists...");
 		_jM3UChooser.setAcceptAllFileFilterUsed(false);
@@ -361,7 +362,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		_jMediaDirChooser.setDialogTitle("Specify a media directory...");
 		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-		_jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		_jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
+		_jMediaDirChooser.setRecentListVisible(false);
 
 		_jSaveFileChooser.setDialogTitle("Save File:");
 		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
@@ -1893,6 +1895,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							int matchCount = 0;
 							if (dirsToCheck[i].startsWith(dir))
 							{
+								// Only showing the message the first time we find this condition...
 								if (matchCount == 0)
 								{
 									JOptionPane.showMessageDialog(this,

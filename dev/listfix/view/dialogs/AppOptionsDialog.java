@@ -24,6 +24,7 @@ package listfix.view.dialogs;
  *
  * @author  jcaron
  */
+import com.jidesoft.swing.FolderChooser;
 import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
@@ -38,6 +39,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import listfix.io.Constants;
 
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
@@ -54,6 +56,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	public static final int OK = 0;
 	public static final int CANCEL = 1;
 	private static final Logger _logger = Logger.getLogger(AppOptionsDialog.class);
+	
+	private FolderChooser _jMediaDirChooser = new FolderChooser();
 
 	private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
 	{
@@ -93,10 +97,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		}
 	}
 
-	private int resultCode;
-	private String fileName;
-	private AppOptions options = null;
-	private Font chosenFont = null;
+	private int _resultCode;
+	private String _fileName;
+	private AppOptions _options = null;
+	private Font _chosenFont = null;
 
 	/** Creates new form EditFilenameDialog
 	 * @param parent
@@ -109,15 +113,24 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		super(parent, title, modal);
 		if (opts == null)
 		{
-			options = new AppOptions();
+			_options = new AppOptions();
 		}
 		else
 		{
-			options = opts;
+			_options = opts;
 		}
 		initComponents();
-		chosenFont = opts.getAppFont();
-		_fontDisplayLabel.setText(FontExtensions.formatFont(chosenFont));
+		_chosenFont = opts.getAppFont();
+		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
+		initPlaylistDirectoryFolderChooser();
+	}
+
+	private void initPlaylistDirectoryFolderChooser()
+	{
+		_jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
+		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+		_jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
+		_jMediaDirChooser.setRecentListVisible(false);
 	}
 
 	public AppOptionsDialog()
@@ -126,22 +139,22 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
 	public String getFileName()
 	{
-		return fileName;
+		return _fileName;
 	}
 
 	public void setFileName(String x)
 	{
-		fileName = x;
+		_fileName = x;
 	}
 
 	public void setResultCode(int i)
 	{
-		resultCode = i;
+		_resultCode = i;
 	}
 
 	public int getResultCode()
 	{
-		return resultCode;
+		return _resultCode;
 	}	
 
 	private LookAndFeelInfo[] getInstalledLookAndFeels()
@@ -273,7 +286,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlRecentListLimit.add(jLabel1);
 
         recentPlaylistLimitComboBox.setModel(new IntegerRangeComboBoxModel(1, 15));
-        recentPlaylistLimitComboBox.setSelectedItem(options.getMaxPlaylistHistoryEntries());
+        recentPlaylistLimitComboBox.setSelectedItem(_options.getMaxPlaylistHistoryEntries());
         recentPlaylistLimitComboBox.setMaximumSize(null);
         recentPlaylistLimitComboBox.setMinimumSize(null);
         recentPlaylistLimitComboBox.setPreferredSize(null);
@@ -325,7 +338,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlLookAndFeel.add(jLabel5);
 
         lookAndFeelComboBox.setModel(this.getLookAndFeelMenuItems());
-        lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(options.getLookAndFeel()).getName());
+        lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(_options.getLookAndFeel()).getName());
         lookAndFeelComboBox.setMaximumSize(null);
         lookAndFeelComboBox.setMinimumSize(null);
         lookAndFeelComboBox.setPreferredSize(null);
@@ -347,7 +360,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel2.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         _pnlAutoLocate.add(jLabel2);
 
-        autoLocateCheckBox.setSelected(options.getAutoLocateEntriesOnPlaylistLoad());
+        autoLocateCheckBox.setSelected(_options.getAutoLocateEntriesOnPlaylistLoad());
         _pnlAutoLocate.add(autoLocateCheckBox);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -367,7 +380,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel3.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         _pnlSaveRelative.add(jLabel3);
 
-        relativePathsCheckBox.setSelected(options.getSavePlaylistsWithRelativePaths());
+        relativePathsCheckBox.setSelected(_options.getSavePlaylistsWithRelativePaths());
         _pnlSaveRelative.add(relativePathsCheckBox);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -387,7 +400,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel4.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         _pnRefreshMediaLibraryOnStart.add(jLabel4);
 
-        autoRefreshOnStartupCheckBox.setSelected(options.getAutoRefreshMediaLibraryOnStartup());
+        autoRefreshOnStartupCheckBox.setSelected(_options.getAutoRefreshMediaLibraryOnStartup());
         _pnRefreshMediaLibraryOnStart.add(autoRefreshOnStartupCheckBox);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -407,7 +420,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         jLabel6.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         _pnlUseUnc.add(jLabel6);
 
-        alwaysUseUNCPathsCheckBox.setSelected(options.getAlwaysUseUNCPaths());
+        alwaysUseUNCPathsCheckBox.setSelected(_options.getAlwaysUseUNCPaths());
         _pnlUseUnc.add(alwaysUseUNCPathsCheckBox);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -429,7 +442,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlListsDir.add(jLabel7);
 
         playlistDirectoryTextField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        playlistDirectoryTextField.setText(options.getPlaylistsDirectory() + "     ");
+        playlistDirectoryTextField.setText(_options.getPlaylistsDirectory() + "     ");
         playlistDirectoryTextField.setMaximumSize(null);
         playlistDirectoryTextField.setMinimumSize(null);
         playlistDirectoryTextField.setPreferredSize(null);
@@ -463,7 +476,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlNumClosestMatches.add(jLabel9);
 
         _cbxMaxClosestMatches.setModel(new IntegerRangeComboBoxModel(10, 100));
-        _cbxMaxClosestMatches.setSelectedItem(options.getMaxClosestResults());
+        _cbxMaxClosestMatches.setSelectedItem(_options.getMaxClosestResults());
         _pnlNumClosestMatches.add(_cbxMaxClosestMatches);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -531,16 +544,17 @@ public class AppOptionsDialog extends javax.swing.JDialog
     }//GEN-LAST:event_closeDialog
 
 	private void playlistDirectoryBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playlistDirectoryBrowseButtonActionPerformed
-		JFileChooser jMediaDirChooser = new JFileChooser();
-		jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
-		jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-		jMediaDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int response = jMediaDirChooser.showOpenDialog(this);
+		if (_options.getPlaylistsDirectory() != null && _options.getPlaylistsDirectory().length() > 0)
+		{
+			_jMediaDirChooser.setCurrentDirectory(new File(_options.getPlaylistsDirectory()));
+			_jMediaDirChooser.setSelectedFolder(new File(_options.getPlaylistsDirectory()));
+		}
+		int response = _jMediaDirChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
-				String path = jMediaDirChooser.getSelectedFile().getPath();
+				String path = _jMediaDirChooser.getSelectedFile().getPath();
 				if (new File(path).exists())
 				{
 					playlistDirectoryTextField.setText(path + "     ");
@@ -561,10 +575,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	private void _changeFontButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__changeFontButtonActionPerformed
 	{//GEN-HEADEREND:event__changeFontButtonActionPerformed
 		JFontChooser jfc = new JFontChooser();
-		jfc.setSelectedFont(chosenFont);
+		jfc.setSelectedFont(_chosenFont);
 		jfc.showDialog(this);
-		chosenFont = jfc.getSelectedFont();
-		_fontDisplayLabel.setText(FontExtensions.formatFont(chosenFont));
+		_chosenFont = jfc.getSelectedFont();
+		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
 	}//GEN-LAST:event__changeFontButtonActionPerformed
 
 	public AppOptions showDialog()
@@ -573,17 +587,17 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		this.setVisible(true);
 		if (this.getResultCode() == OK)
 		{
-			options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
-			options.setMaxPlaylistHistoryEntries(((Integer) recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())).intValue());
-			options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
-			options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
-			options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
-			options.setAlwaysUseUNCPaths(this.alwaysUseUNCPathsCheckBox.isSelected());
-			options.setPlaylistsDirectory(playlistDirectoryTextField.getText().trim());
-			options.setAppFont(chosenFont);
-			options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())).intValue());
+			_options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
+			_options.setMaxPlaylistHistoryEntries(((Integer) recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())).intValue());
+			_options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
+			_options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
+			_options.setLookAndFeel(this.getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
+			_options.setAlwaysUseUNCPaths(this.alwaysUseUNCPathsCheckBox.isSelected());
+			_options.setPlaylistsDirectory(playlistDirectoryTextField.getText().trim());
+			_options.setAppFont(_chosenFont);
+			_options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())).intValue());
 		}
-		return options;
+		return _options;
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox _cbxMaxClosestMatches;

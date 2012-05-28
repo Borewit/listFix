@@ -19,6 +19,7 @@
 
 package listfix.view.controls;
 
+import com.jidesoft.swing.FolderChooser;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
@@ -93,6 +94,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
 	private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
 	private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
+	
+	private FolderChooser _destDirFileChooser = new FolderChooser();
+	
 	int currentlySelectedRow = 0;	
 	private Playlist _playlist;
 	
@@ -109,6 +113,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	{
 		initComponents();
 		initPlaylistTable();
+		initFolderChooser();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 
@@ -698,7 +703,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         _miRemoveDups = new javax.swing.JMenuItem();
         _miRemoveMissing = new javax.swing.JMenuItem();
-        _miCopyFiles = new javax.swing.JMenuItem();
+        _miCopySelectedFiles = new javax.swing.JMenuItem();
         _uiToolbar = new javax.swing.JToolBar();
         _btnSave = new javax.swing.JButton();
         _btnReload = new javax.swing.JButton();
@@ -761,14 +766,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
-        _miCopyFiles.setText("Copy Files");
-        _miCopyFiles.setToolTipText("");
-        _miCopyFiles.addActionListener(new java.awt.event.ActionListener() {
+        _miCopySelectedFiles.setText("Copy Selected Files To...");
+        _miCopySelectedFiles.setToolTipText("");
+        _miCopySelectedFiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onMenuCopyFiles(evt);
+                _miCopySelectedFilesActionPerformed(evt);
             }
         });
-        _playlistEntryRightClickMenu.add(_miCopyFiles);
+        _playlistEntryRightClickMenu.add(_miCopySelectedFiles);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -873,7 +878,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnInvert.setToolTipText("Inverts the current selection");
         _btnInvert.setFocusable(false);
         _btnInvert.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        _btnInvert.setLabel("");
         _btnInvert.setMaximumSize(new java.awt.Dimension(31, 31));
         _btnInvert.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnInvert.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -1073,53 +1077,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     {//GEN-HEADEREND:event_onBtnPlayActionPerformed
 		playSelectedEntries();
     }//GEN-LAST:event_onBtnPlayActionPerformed
-
-    private void onMenuCopyFiles(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuCopyFiles
-    {//GEN-HEADEREND:event_onMenuCopyFiles
-		JFileChooser destDirFileChooser = new JFileChooser();
-		destDirFileChooser.setDialogTitle("Choose a destination directory...");
-		destDirFileChooser.setAcceptAllFileFilterUsed(false);
-		destDirFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int response = destDirFileChooser.showOpenDialog(getParentFrame());
-		if (response == JFileChooser.APPROVE_OPTION)
-		{
-			try
-			{
-				final File destDir = destDirFileChooser.getSelectedFile();
-
-				ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
-				{
-					@Override
-					protected Void doInBackground()
-					{
-						List<Integer> rowList = new ArrayList<Integer>();
-						int[] uiRows = _uiTable.getSelectedRows();
-						for (int x : uiRows)
-						{
-							rowList.add(_uiTable.convertRowIndexToModel(x));
-						}
-						_playlist.copySelectedEntries(rowList, destDir, this);
-						return null;
-					}
-				};
-				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Copying Files...");
-				pd.setVisible(true);
-
-				try
-				{
-					worker.get();
-				}
-				catch (CancellationException ex)
-				{
-				}
-			}
-			catch (Exception e)
-			{
-				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("An error has occured, 1 or more files were not copied."));
-				_logger.error(ExStack.toString(e));
-			}
-		}
-    }//GEN-LAST:event_onMenuCopyFiles
 
 	private void _uiTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed
 	{//GEN-HEADEREND:event__uiTableMousePressed
@@ -1332,6 +1289,49 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}//GEN-LAST:event__btnInvertActionPerformed
 
+	private void _miCopySelectedFilesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miCopySelectedFilesActionPerformed
+	{//GEN-HEADEREND:event__miCopySelectedFilesActionPerformed
+		int response = _destDirFileChooser.showOpenDialog(getParentFrame());
+		if (response == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				final File destDir = _destDirFileChooser.getSelectedFile();
+
+				ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+				{
+					@Override
+					protected Void doInBackground()
+					{
+						List<Integer> rowList = new ArrayList<Integer>();
+						int[] uiRows = _uiTable.getSelectedRows();
+						for (int x : uiRows)
+						{
+							rowList.add(_uiTable.convertRowIndexToModel(x));
+						}
+						_playlist.copySelectedEntries(rowList, destDir, this);
+						return null;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Copying Files...");
+				pd.setVisible(true);
+
+				try
+				{					
+					worker.get();
+				}
+				catch (CancellationException ex)
+				{
+				}
+			}
+			catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("An error has occured, 1 or more files were not copied."));
+				_logger.error(ExStack.toString(e));
+			}
+		}
+	}//GEN-LAST:event__miCopySelectedFilesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
@@ -1346,7 +1346,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JButton _btnReorder;
     private javax.swing.JButton _btnSave;
     private javax.swing.JButton _btnUp;
-    private javax.swing.JMenuItem _miCopyFiles;
+    private javax.swing.JMenuItem _miCopySelectedFiles;
     private javax.swing.JMenuItem _miEditFilename;
     private javax.swing.JMenuItem _miFindClosest;
     private javax.swing.JMenuItem _miRemoveDups;
@@ -1968,6 +1968,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		});
 
 		_uiTable.setDropMode(DropMode.INSERT);
+	}
+
+	private void initFolderChooser()
+	{
+		_destDirFileChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
+		_destDirFileChooser.setDialogTitle("Choose a destination directory...");
+		_destDirFileChooser.setAcceptAllFileFilterUsed(false);
+		_destDirFileChooser.setRecentListVisible(false);
 	}
 
 	private class PlaylistTableModel extends AbstractTableModel
