@@ -72,6 +72,7 @@ import javax.swing.tree.*;
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
 import listfix.io.BrowserLauncher;
+import listfix.io.FileExtensions;
 import listfix.io.FileTreeNodeGenerator;
 import listfix.io.FileWriter;
 import listfix.io.OptionsReader;
@@ -106,6 +107,7 @@ import org.apache.log4j.Logger;
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
 	private static final long _serialVersionUID = 7691786927987534889L;
+
 	private final JFileChooser _jM3UChooser;
 	private final FolderChooser _jMediaDirChooser;
 	private final JFileChooser _jSaveFileChooser;
@@ -280,12 +282,19 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 						_miExactMatchesSearch.setEnabled(true);
 						_miClosestMatchesSearch.setEnabled(true);
 						_miOpenSelectedPlaylists.setEnabled(true);
+						_miDeletePlaylist.setEnabled(true);
+						if (_playlistDirectoryTree.getSelectionCount() == 1)
+						{
+							_miRenameSelectedItem.setEnabled(true);
+						}
 					}
 					else
 					{
 						_miExactMatchesSearch.setEnabled(false);
 						_miClosestMatchesSearch.setEnabled(false);
 						_miOpenSelectedPlaylists.setEnabled(false);
+						_miDeletePlaylist.setEnabled(false);
+						_miRenameSelectedItem.setEnabled(false);
 					}
 
 					_miRefreshDirectoryTree.setEnabled(_playlistDirectoryTree.getRowCount() > 0);
@@ -505,6 +514,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _miOpenSelectedPlaylists = new javax.swing.JMenuItem();
         _miExactMatchesSearch = new javax.swing.JMenuItem();
         _miClosestMatchesSearch = new javax.swing.JMenuItem();
+        _miDeletePlaylist = new javax.swing.JMenuItem();
+        _miRenameSelectedItem = new javax.swing.JMenuItem();
         _statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         _splitPane = new javax.swing.JSplitPane();
@@ -593,6 +604,26 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             }
         });
         _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
+
+        _miDeletePlaylist.setMnemonic('D');
+        _miDeletePlaylist.setText("Delete Select Playlists");
+        _miDeletePlaylist.setToolTipText("Delete Select Playlists");
+        _miDeletePlaylist.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _miDeletePlaylistActionPerformed(evt);
+            }
+        });
+        _playlistTreeRightClickMenu.add(_miDeletePlaylist);
+
+        _miRenameSelectedItem.setMnemonic('R');
+        _miRenameSelectedItem.setText("Rename");
+        _miRenameSelectedItem.setToolTipText("Rename selected file or folder");
+        _miRenameSelectedItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _miRenameSelectedItemActionPerformed(evt);
+            }
+        });
+        _playlistTreeRightClickMenu.add(_miRenameSelectedItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("listFix( ) - v2.3.0");
@@ -714,7 +745,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistsDirectoryButtonPanel.setMaximumSize(null);
         _playlistsDirectoryButtonPanel.setMinimumSize(new java.awt.Dimension(300, 35));
-        _playlistsDirectoryButtonPanel.setName("");
+        _playlistsDirectoryButtonPanel.setName(""); // NOI18N
 
         _btnSetPlaylistsDir.setText("Set");
         _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
@@ -1141,7 +1172,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
 				if (toOpen.isDirectory())
 				{
-					// not yet supported, need a method to generate a list of all playlists under a folder...
 					List<File> files = (new FileTypeSearch()).findFiles(toOpen, new PlaylistFileFilter());
 					for (File f : files)
 					{
@@ -1154,6 +1184,48 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				}
 			}
 		}
+	}	
+
+	private void deleteTreeSelectedPlaylists()
+	{
+		int[] selRows = _playlistDirectoryTree.getSelectionRows();
+		if (selRows != null && selRows.length > 0)
+		{
+			if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected files and folders?"), "Delete Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
+			{
+				File toOpen;
+				List<TreePath> selPaths = new ArrayList<TreePath>();
+				for (int i : selRows)
+				{
+					selPaths.add(_playlistDirectoryTree.getPathForRow(i));
+				}
+				for (TreePath selPath : selPaths)
+				{
+					toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+					if (toOpen.isDirectory())
+					{
+						FileExtensions.deleteDirectory(toOpen);
+						DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
+						treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
+					}
+					else
+					{
+						if (toOpen.canWrite())
+						{
+							toOpen.delete();
+							_playlistDirectoryTree.makeVisible(selPath);
+							DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
+							treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
+						}
+					}
+				}
+			}
+		}
+	}	
+
+	private void renameTreeSelectedNode()
+	{
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	private void playlistDirectoryTreeNodeDoubleClicked(TreePath selPath)
@@ -2385,6 +2457,16 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		_leftSplitPane.setDividerLocation(.7);
 	}//GEN-LAST:event_formComponentResized
 
+	private void _miDeletePlaylistActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miDeletePlaylistActionPerformed
+	{//GEN-HEADEREND:event__miDeletePlaylistActionPerformed
+		deleteTreeSelectedPlaylists();
+	}//GEN-LAST:event__miDeletePlaylistActionPerformed
+
+	private void _miRenameSelectedItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRenameSelectedItemActionPerformed
+	{//GEN-HEADEREND:event__miRenameSelectedItemActionPerformed
+		renameTreeSelectedNode();
+	}//GEN-LAST:event__miRenameSelectedItemActionPerformed
+
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2437,8 +2519,39 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 	private void updatePlaylistDirectoryPanel()
 	{
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
 		_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory()))));
+		loadExpansionState(_playlistDirectoryTree, treeStateEnum);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
+	
+	/**	
+	 * Save the expansion state of a tree.	
+	 *	
+	 * @param tree	
+	 * @return expanded tree path as Enumeration	
+	 */
+	private Enumeration saveExpansionState(JTree tree)
+	{
+		return tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
+	}
+
+	/**	
+	 * Restore the expansion state of a JTree.	
+	 *	
+	 * @param tree	
+	 * @param enumeration an Enumeration of expansion state. You can get it using {@link #saveExpansionState(javax.swing.JTree)}.	
+	 */
+	private void loadExpansionState(JTree tree, Enumeration enumeration)
+	{		
+		if (enumeration != null)
+		{
+			while (enumeration.hasMoreElements())
+			{
+				TreePath treePath = (TreePath) enumeration.nextElement();
+				tree.expandPath(treePath);
+			}
+		}
 	}
 
 	private void recentPlaylistActionPerformed(java.awt.event.ActionEvent evt)
@@ -2524,10 +2637,12 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
     private javax.swing.JScrollPane _mediaLibraryScrollPane;
     private javax.swing.JMenuItem _miBatchRepair;
     private javax.swing.JMenuItem _miClosestMatchesSearch;
+    private javax.swing.JMenuItem _miDeletePlaylist;
     private javax.swing.JMenuItem _miExactMatchesSearch;
     private javax.swing.JMenuItem _miOpenSelectedPlaylists;
     private javax.swing.JMenuItem _miRefreshDirectoryTree;
     private javax.swing.JMenuItem _miReload;
+    private javax.swing.JMenuItem _miRenameSelectedItem;
     private javax.swing.JButton _newIconButton;
     private javax.swing.JMenuItem _newPlaylistMenuItem;
     private javax.swing.JButton _openIconButton;

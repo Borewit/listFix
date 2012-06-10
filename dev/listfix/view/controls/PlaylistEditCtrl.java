@@ -1387,7 +1387,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		_btnAdd.setEnabled(hasPlaylist);
 		_btnLocate.setEnabled(hasPlaylist);
 		_btnMagicFix.setEnabled(hasPlaylist);
-		_btnReorder.setEnabled(hasPlaylist);
+		_btnReorder.setEnabled(hasPlaylist && _playlist.size() > 1);
 		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
 		_btnPlay.setEnabled(hasPlaylist);
 		_btnNextMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
@@ -1551,6 +1551,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnSave.setEnabled(_playlist != null);
 				_btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				_btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
+				_btnReorder.setEnabled(_playlist != null && _playlist.size() > 1);
 				if (_isSortedByFileIx)
 				{
 					refreshAddTooltip(hasSelected);

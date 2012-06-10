@@ -147,4 +147,29 @@ public class FileExtensions
 		}
 		return result.toString();
 	}
+	
+	public static void deleteDirectory(File dir)
+	{
+		if (dir.isDirectory())
+		{
+			File[] files = dir.listFiles();
+			for (int i = 0; i < files.length; i++)
+			{
+				if (files[i].isDirectory())
+				{
+					deleteDirectory(files[i]);
+					files[i].delete();
+				}
+				else
+				{
+					files[i].delete();
+				}
+			}
+			dir.delete();
+		}
+		if (dir.exists())
+		{
+			deleteDirectory(dir);
+		}
+	}
 }
