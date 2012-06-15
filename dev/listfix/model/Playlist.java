@@ -273,7 +273,6 @@ public class Playlist
 
 	private void firePlaylistModified()
 	{
-		refreshStatus();
 		for (IPlaylistModifiedListener listener : _listeners)
 		{
 			if (listener != null)
@@ -282,15 +281,26 @@ public class Playlist
 			}
 		}
 	}
+	
+	private void refreshStatusAndFirePlaylistModified()
+	{
+		refreshStatus();
+		firePlaylistModified();
+	}
 	List<IPlaylistModifiedListener> _listeners = new ArrayList<IPlaylistModifiedListener>();
 
 	private void setEntries(List<PlaylistEntry> aEntries)
 	{
-		_entries = aEntries;
-		_originalEntries.clear();
-		for (int i = 0; i < _entries.size(); i++)
+		replaceEntryListContents(aEntries, _originalEntries);
+		replaceEntryListContents(aEntries, _entries);
+	}
+	
+	private void replaceEntryListContents(List<PlaylistEntry> src, List<PlaylistEntry> dest)
+	{
+		dest.clear();
+		for (int i = 0; i < src.size(); i++)
 		{
-			_originalEntries.add((PlaylistEntry) _entries.get(i).clone());
+			dest.add((PlaylistEntry) src.get(i).clone());
 		}
 	}
 
@@ -299,9 +309,11 @@ public class Playlist
 		return _entries.size();
 	}
 
-	private boolean playlistModified()
+	public void updateModifiedStatus()
 	{
 		boolean result = false;
+		
+		// Run a full comparison against the original entry list we created when we were constructed
 		if (_originalEntries.size() != _entries.size())
 		{
 			result = true;
@@ -338,7 +350,22 @@ public class Playlist
 				}
 			}
 		}
-		return result;
+		
+		// if we refer to a file on disk, and aren't a new file, make sure that file still exists...
+		if (_file != null && !isNew())
+		{
+			_isModified = !_file.exists();			
+		}
+		else
+		{
+			_isModified = result;
+		}
+		
+		// notify the listeners if we have changed...
+		if (_isModified)
+		{
+			firePlaylistModified();
+		}
 	}
 
 	private void refreshStatus()
@@ -364,8 +391,8 @@ public class Playlist
 				_fixedCount++;
 			}
 		}
-
-		_isModified = playlistModified();
+		
+		updateModifiedStatus();
 	}
 
 	public int getFixedCount()
@@ -437,7 +464,7 @@ public class Playlist
 			newEntry.markFixedIfFound();
 		}
 		_entries.set(index, newEntry);
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	public void moveUp(int[] indexes)
@@ -457,7 +484,7 @@ public class Playlist
 				ceiling++;
 			}
 		}
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	public void moveTo(int initialPos, int finalPos)
@@ -465,7 +492,7 @@ public class Playlist
 		PlaylistEntry temp = _entries.get(initialPos);
 		_entries.remove(initialPos);
 		_entries.add(finalPos, temp);
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	public void moveDown(int[] indexes)
@@ -485,13 +512,13 @@ public class Playlist
 				floor--;
 			}
 		}
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
-	public int addAll(int i, List<PlaylistEntry> entries)
+	public int addAllAt(int i, List<PlaylistEntry> entries)
 	{
 		_entries.addAll(i, entries);
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 		return entries.size();
 	}
 
@@ -501,7 +528,7 @@ public class Playlist
 		if (newEntries != null)
 		{
 			_entries.addAll(newEntries);
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 			return newEntries.size();
 		}
 		else
@@ -510,13 +537,13 @@ public class Playlist
 		}
 	}
 
-	public int add(int ix, File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+	public int addAt(int ix, File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
 	{
 		List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
 		if (newEntries != null)
 		{
 			_entries.addAll(ix, newEntries);
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 			return newEntries.size();
 		}
 		else
@@ -562,7 +589,7 @@ public class Playlist
 	public void changeEntryFileName(int ix, String newName)
 	{
 		_entries.get(ix).setFileName(newName);
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	// returns positions of repaired rows
@@ -585,7 +612,7 @@ public class Playlist
 					if (entry.isFound())
 					{
 						fixed.add(ix);
-						firePlaylistModified();
+						refreshStatusAndFirePlaylistModified();
 					}
 				}
 				else if(entry.isFound() && !entry.isURL())
@@ -593,7 +620,7 @@ public class Playlist
 					if (entry.updatePathToMediaLibraryIfFoundOutside())
 					{
 						fixed.add(ix);
-						firePlaylistModified();
+						refreshStatusAndFirePlaylistModified();
 					}
 				}
 			}
@@ -636,7 +663,7 @@ public class Playlist
 
 		if (isModified)
 		{
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 		}
 	}
 
@@ -720,7 +747,7 @@ public class Playlist
 
 		if (!fixed.isEmpty())
 		{
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 		}
 		return fixed;
 	}
@@ -738,14 +765,14 @@ public class Playlist
 			int rowIx = indexes[ix];
 			_entries.remove(rowIx);
 		}
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	public int remove(PlaylistEntry entry)
 	{
 		int result = _entries.indexOf(entry);
 		_entries.remove(entry);
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 		return result;
 	}
 
@@ -767,7 +794,7 @@ public class Playlist
 				Collections.reverse(_entries);
 				break;
 		}
-		firePlaylistModified();
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	private static class EntryComparator implements Comparator<PlaylistEntry>
@@ -864,7 +891,7 @@ public class Playlist
 		}
 		if (removed > 0)
 		{
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 		}
 		return removed;
 	}
@@ -883,7 +910,7 @@ public class Playlist
 		}
 		if (removed > 0)
 		{
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 		}
 		return removed;
 	}
@@ -926,7 +953,7 @@ public class Playlist
 		}
 		
 		// change original _entries
-		setEntries(_entries);
+		replaceEntryListContents(_entries, _originalEntries);
 
 		// set entries unfixed if we're being watched...
 		// (otherwise writing out a temp file for playback, at least right now)
@@ -939,7 +966,7 @@ public class Playlist
 
 			_isModified = false;
 			_isNew = false;
-			firePlaylistModified();
+			refreshStatusAndFirePlaylistModified();
 		}
 	}
 
@@ -980,7 +1007,7 @@ public class Playlist
 							absolute = new File(temp.getUNCPath());
 						}
 						
-						// make the entry and add it
+						// make the entry and addAt it
 						entry = new PlaylistEntry(absolute, entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -1006,7 +1033,7 @@ public class Playlist
 							}
 						}
 						
-						// make the entry and add it
+						// make the entry and addAt it
 						entry = new PlaylistEntry(temp, entry.getExtInf(), _file);
 						_entries.set(i, entry);
 					}
@@ -1035,7 +1062,7 @@ public class Playlist
 				BufferedWriter output = new BufferedWriter(osw);
 				if (OperatingSystem.isWindows())
 				{
-					// For some reason, linux players seem to choke on this header when I add it... perhaps the stream classes do it automatically.
+					// For some reason, linux players seem to choke on this header when I addAt it... perhaps the stream classes do it automatically.
 					output.write(UnicodeUtils.getBOM("UTF-8"));
 				}
 				output.write(buffer.toString());
@@ -1109,7 +1136,7 @@ public class Playlist
 							}
 						}
 
-						// make the entry and add it						
+						// make the entry and addAt it						
 						entry = new PlaylistEntry(temp, entry.getTitle(), entry.getLength(), _file);
 						_entries.set(i, entry);
 					}
@@ -1211,7 +1238,7 @@ public class Playlist
 							}
 						}
 						
-						// make the entry and add it						
+						// make the entry and addAt it						
 						entry = new PlaylistEntry(temp, entry.getExtInf(), _file, entry.getCID(), entry.getTID());
 						_entries.set(i, entry);
 					}
@@ -1315,11 +1342,15 @@ public class Playlist
 			_entries.clear();
 			_originalEntries.clear();
 		}
-		else
+		else if (_file.exists())
 		{
 			init(_file, observer);
 		}
-		firePlaylistModified();
+		else
+		{
+			replaceEntryListContents(_originalEntries, _entries);
+		}
+		refreshStatusAndFirePlaylistModified();
 	}
 
 	public static boolean isPlaylist(File input)

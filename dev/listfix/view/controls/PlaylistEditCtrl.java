@@ -162,7 +162,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					if (insertIx >= 0)
 					{
 						// Adding somewhere in the middle
-						int count = _playlist.add(insertIx, files, this);
+						int count = _playlist.addAt(insertIx, files, this);
 						firstIx = insertIx;
 						lastIx = firstIx + count - 1;
 					}
@@ -1531,7 +1531,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		cm.getColumn(3).setPreferredWidth(100);
 		_uiTable.setFillerColumnWidth(_uiTableScrollPane);
 
-		// add selection listener
+		// addAt selection listener
 		_uiTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
@@ -1559,7 +1559,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 		});
 
-		// add sort listener
+		// addAt sort listener
 		RowSorter sorter = _uiTable.getRowSorter();
 		sorter.addRowSorterListener(new RowSorterListener()
 		{
@@ -1601,7 +1601,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 		sorter.setSortKeys(keys);
 
-		// add popup menu to list, handle's right click actions.
+		// addAt popup menu to list, handle's right click actions.
 		_uiTable.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -1724,7 +1724,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                     int i = 0;
                     for (PlaylistEntry entry : entries)
                     {
-                        // remove them all, we'll re-add them in bulk...
+                        // remove them all, we'll re-addAt them in bulk...
                         removedAt = _playlist.remove(entry);
 
                         // Was the thing we just removed above where we're inserting?
@@ -1735,7 +1735,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                         i++;
                     }
 
-                    _playlist.addAll(insertAtUpdated, entries);
+                    _playlist.addAllAt(insertAtUpdated, entries);
 
                     return true;
                 }
@@ -1807,7 +1807,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                                     try
                                     {
                                         list = get();
-                                        _playlist.addAll(currentInsertPoint, list.getEntries());
+                                        _playlist.addAllAt(currentInsertPoint, list.getEntries());
                                     }
                                     catch (CancellationException ex)
                                     {
@@ -1826,10 +1826,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                         }
                         else
                         {
-                            // add it to the playlist!
+                            // addAt it to the playlist!
                             try
                             {
-                                _playlist.add(insertAt, new File[] { tempFile }, null);
+                                _playlist.addAt(insertAt, new File[] { tempFile }, null);
                             }
                             catch (Exception ex)
                             {
@@ -1883,7 +1883,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                                     try
                                     {
                                         list = get();
-                                        _playlist.addAll(dl.getRow(), list.getEntries());
+                                        _playlist.addAllAt(dl.getRow(), list.getEntries());
                                         if (_playlist.size() == list.size())
                                         {
                                             resizeAllColumns();

@@ -63,25 +63,18 @@ import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.UIResource;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-import listfix.io.BrowserLauncher;
-import listfix.io.FileExtensions;
-import listfix.io.FileTreeNodeGenerator;
-import listfix.io.FileWriter;
-import listfix.io.OptionsReader;
-import listfix.io.OptionsWriter;
-import listfix.io.PlaylistFileChooserFilter;
-import listfix.io.PlaylistFileFilter;
-import listfix.io.PlaylistScanner;
-import listfix.io.UNCFile;
-import listfix.io.WinampHelper;
+import listfix.io.*;
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
@@ -180,9 +173,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 		});
 
-		// add popup menu to playlist tree on right-click
+		// addAt popup menu to playlist tree on right-click
 		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
-
+		
+		addPlaylistPanelModelListener();
+		
         WindowSaver.getInstance().loadSettings(this);
 
 		// Set the position of the divider in the left split pane.
@@ -190,6 +185,44 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 		// JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
 		configureGlobalKeyboardListener();
+	}
+
+	private void addPlaylistPanelModelListener()
+	{
+		_playlistDirectoryTree.getModel().addTreeModelListener(new TreeModelListener() 
+		{
+			@Override
+			public void treeNodesChanged(TreeModelEvent e)
+			{
+				recheckStatusOfOpenPlaylists();
+			}
+
+			@Override
+			public void treeNodesInserted(TreeModelEvent e)
+			{
+				recheckStatusOfOpenPlaylists();
+			}
+
+			@Override
+			public void treeNodesRemoved(TreeModelEvent e)
+			{
+				recheckStatusOfOpenPlaylists();
+			}
+
+			@Override
+			public void treeStructureChanged(TreeModelEvent e)
+			{
+				recheckStatusOfOpenPlaylists();
+			}
+		});
+	}
+	
+	private void recheckStatusOfOpenPlaylists()
+	{
+		for (Playlist list : _playlistToEditorMap.keySet())
+		{
+			list.updateModifiedStatus();
+		}
 	}
 
 	private void configureGlobalKeyboardListener()
@@ -735,8 +768,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryTree.setMinimumSize(null);
         _playlistDirectoryTree.setPreferredSize(null);
         _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                _playlistDirectoryTreeKeyReleased(evt);
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                _playlistDirectoryTreeKeyPressed(evt);
             }
         });
         _treeScrollPane.setViewportView(_playlistDirectoryTree);
@@ -1225,7 +1258,35 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	private void renameTreeSelectedNode()
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		int[] selRows = _playlistDirectoryTree.getSelectionRows();
+		DefaultMutableTreeNode curNode;
+		DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
+		if (selRows != null && selRows.length > 0)
+		{
+			if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to rename the selected files and folders?"), "Rename Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
+			{
+				File toOpen;
+				List<TreePath> selPaths = new ArrayList<TreePath>();
+				for (int i : selRows)
+				{
+					selPaths.add(_playlistDirectoryTree.getPathForRow(i));
+				}
+				for (TreePath selPath : selPaths)
+				{
+					curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+					String str = curNode.toString();
+					String reply = JOptionPane.showInputDialog(null, "Rename " + str);
+					if (reply != null && !"".equals(reply))
+					{
+						TreeNodeFile userObject = (TreeNodeFile) curNode.getUserObject();
+						TreeNodeFile destFile = new TreeNodeFile(userObject.getParent() + Constants.FS + reply);
+						userObject.renameTo(destFile);
+						curNode.setUserObject(destFile);
+						treeModel.nodeChanged(curNode);
+					}
+				}
+			}
+		}
 	}
 
 	private void playlistDirectoryTreeNodeDoubleClicked(TreePath selPath)
@@ -1443,7 +1504,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					_pathToEditorMap.put(path, editor);
 					_playlistToEditorMap.put(list, editor);
 
-					// add custom tab controls
+					// addAt custom tab controls
 					_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 
 					// update playlist history
@@ -1684,7 +1745,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			refreshStatusLabel(_currentPlaylist);
 			updateTabTitleForPlaylist(_currentPlaylist);
 
-			// add listeners to current playlist
+			// addAt listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
 		}
 	}
@@ -2281,7 +2342,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		_pathToEditorMap.put(path, editor);
 		_playlistToEditorMap.put(_currentPlaylist, editor);
 
-		// add custom tab controls
+		// addAt custom tab controls
 		_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 		refreshStatusLabel(_currentPlaylist);
 		_currentPlaylist.addModifiedListener(_playlistListener);
@@ -2359,14 +2420,6 @@ private void _btnRefreshActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIR
 {//GEN-HEADEREND:event__btnRefreshActionPerformed
 	updatePlaylistDirectoryPanel();
 }//GEN-LAST:event__btnRefreshActionPerformed
-
-private void _playlistDirectoryTreeKeyReleased(java.awt.event.KeyEvent evt)//GEN-FIRST:event__playlistDirectoryTreeKeyReleased
-{//GEN-HEADEREND:event__playlistDirectoryTreeKeyReleased
-	if (evt.getKeyCode() == KeyEvent.VK_ENTER)
-	{
-		_btnOpenSelectedActionPerformed(null);
-	}
-}//GEN-LAST:event__playlistDirectoryTreeKeyReleased
 
 private void _btnOpenSelectedActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnOpenSelectedActionPerformed
 {//GEN-HEADEREND:event__btnOpenSelectedActionPerformed
@@ -2467,6 +2520,15 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		renameTreeSelectedNode();
 	}//GEN-LAST:event__miRenameSelectedItemActionPerformed
 
+	private void _playlistDirectoryTreeKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__playlistDirectoryTreeKeyPressed
+	{//GEN-HEADEREND:event__playlistDirectoryTreeKeyPressed
+		// TODO addAt your handling code here:
+		if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			_btnOpenSelectedActionPerformed(null);
+		}
+	}//GEN-LAST:event__playlistDirectoryTreeKeyPressed
+
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2521,6 +2583,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
 		_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory()))));
+		addPlaylistPanelModelListener();
 		loadExpansionState(_playlistDirectoryTree, treeStateEnum);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}

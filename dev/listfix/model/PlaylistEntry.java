@@ -632,7 +632,7 @@ public class PlaylistEntry implements Cloneable
 
 		matches.clear();
 		
-		// Remove apostrophes and add spaces between lowercase and capital letters so we can tokenize by camel case.
+		// Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
 		String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
 		File mediaFile = null;
 		int score = 0;
@@ -644,7 +644,7 @@ public class PlaylistEntry implements Cloneable
 
 				mediaFile = new File(mediaFilePath);
 				
-				// Remove apostrophes and add spaces between lowercase and capital letters so we can tokenize by camel case.
+				// Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
 				score = FileNameTokenizer.score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
 				if (score > 0)
 				{

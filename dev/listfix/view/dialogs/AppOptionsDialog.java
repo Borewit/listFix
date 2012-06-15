@@ -25,21 +25,21 @@ package listfix.view.dialogs;
  * @author  jcaron
  */
 import com.jidesoft.swing.FolderChooser;
+
 import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import listfix.io.Constants;
 
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
