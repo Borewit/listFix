@@ -94,7 +94,7 @@ public class WinampHelper
 		for (Playlist list : winLists)
 		{
 			FileCopier.copy(new File(WINAMP_PATH + list.getFilename()),
-				new File(destDir.getPath() + System.getProperty("file.separator") + FileExtensions.replaceInvalidWindowsFileSystemCharsWithChar(list.getTitle(), '_') + ".m3u8"));
+				new File(destDir.getPath() + System.getProperty("file.separator") + FileUtils.replaceInvalidWindowsFileSystemCharsWithChar(list.getTitle(), '_') + ".m3u8"));
 			progress.stepCompleted();
 		}
 	}

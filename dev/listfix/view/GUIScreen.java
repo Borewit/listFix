@@ -1237,7 +1237,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
 					if (toOpen.isDirectory())
 					{
-						FileExtensions.deleteDirectory(toOpen);
+						FileUtils.deleteDirectory(toOpen);
 						DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
 						treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
 					}
@@ -1261,6 +1261,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		int[] selRows = _playlistDirectoryTree.getSelectionRows();
 		DefaultMutableTreeNode curNode;
 		DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
+		TreeNodeFile nodeFile;
 		if (selRows != null && selRows.length > 0)
 		{
 			if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to rename the selected files and folders?"), "Rename Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
@@ -1273,14 +1274,14 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				}
 				for (TreePath selPath : selPaths)
 				{
-					curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+					curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();					
+					nodeFile = (TreeNodeFile) curNode.getUserObject();
 					String str = curNode.toString();
-					String reply = JOptionPane.showInputDialog(null, "Rename " + str);
+					String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), FileUtils.GetExtension(nodeFile));
 					if (reply != null && !"".equals(reply))
 					{
-						TreeNodeFile userObject = (TreeNodeFile) curNode.getUserObject();
-						TreeNodeFile destFile = new TreeNodeFile(userObject.getParent() + Constants.FS + reply);
-						userObject.renameTo(destFile);
+						TreeNodeFile destFile = new TreeNodeFile(nodeFile.getParent() + Constants.FS + reply);
+						nodeFile.renameTo(destFile);
 						curNode.setUserObject(destFile);
 						treeModel.nodeChanged(curNode);
 					}

@@ -30,7 +30,7 @@ import listfix.controller.GUIDriver;
  *
  * @author jcaron
  */
-public class FileExtensions
+public class FileUtils
 {
 	public static File findDeepestPathToExist(File file)
 	{
@@ -171,5 +171,10 @@ public class FileExtensions
 		{
 			deleteDirectory(dir);
 		}
+	}
+
+	public static String GetExtension(TreeNodeFile nodeFile)
+	{
+		return nodeFile.getName().substring(nodeFile.getName().lastIndexOf("."));
 	}
 }

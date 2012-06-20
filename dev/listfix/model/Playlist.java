@@ -45,7 +45,7 @@ import java.util.Set;
 import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileCopier;
-import listfix.io.FileExtensions;
+import listfix.io.FileUtils;
 import listfix.io.FileLauncher;
 import listfix.io.IPlaylistReader;
 import listfix.io.PlaylistReaderFactory;
@@ -1014,7 +1014,7 @@ public class Playlist
 					else if (saveRelative && entry.isFound())
 					{
 						// replace existing entry with a new relative one
-						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+						relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
 						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
 						{
 							relativePath = "." + Constants.FS + relativePath;
@@ -1117,7 +1117,7 @@ public class Playlist
 					else if (saveRelative && entry.isFound())
 					{
 						// replace existing entry with a new relative one
-						String relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+						String relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
 						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
 						{
 							relativePath = "." + Constants.FS + relativePath;
@@ -1219,7 +1219,7 @@ public class Playlist
 					else if (saveRelative && entry.isFound())
 					{						
 						// replace existing entry with a new relative one
-						relativePath = FileExtensions.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
+						relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
 						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
 						{
 							relativePath = "." + Constants.FS + relativePath;
