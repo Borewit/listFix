@@ -1,7 +1,7 @@
 /*
  *  listFix() - Fix Broken Playlists!
  *  Copyright (C) 2001-2012 Jeremy Caron
- * 
+ *  
  *  This file is part of listFix().
  * 
  *  This program is free software; you can redistribute it and/or
