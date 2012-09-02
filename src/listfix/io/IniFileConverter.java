@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.readers;
+package listfix.io;
 
 import java.awt.Font;
 import java.io.BufferedReader;
@@ -33,11 +33,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.controller.tasks.WriteMediaLibraryIniTask;
-import listfix.io.Constants;
-import listfix.io.FileWriter;
-import listfix.io.OptionsWriter;
-import listfix.io.UNCFile;
-import listfix.io.UnicodeInputStream;
+import listfix.io.writers.FileWriter;
+import listfix.io.writers.OptionsWriter;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.model.enums.AppOptionsEnum;
@@ -159,7 +156,7 @@ public class IniFileConverter
 
 	private void readIni() throws Exception
 	{
-		List<String> tempList = new ArrayList<String>();
+		List<String> tempList = new ArrayList<>();
 		// Read in base media directories
 		// skip first line, contains header
 		String line = B1.readLine();

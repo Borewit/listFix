@@ -35,15 +35,28 @@ import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * @author jcaron
+ */
 public class PlaylistEntry implements Cloneable
 {
 	// logger
 	private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
 	// The list of folders we know don't exist.
-	public static List<String> NonExistentDirectories = new ArrayList<String>();
+	/**
+	 * 
+	 */
+	public static List<String> NonExistentDirectories = new ArrayList<>();
 	// A list of folders we know DO exist.
-	public static List<String> ExistingDirectories = new ArrayList<String>();
+	/**
+	 * 
+	 */
+	public static List<String> ExistingDirectories = new ArrayList<>();
 	// The root folder all the entries in a relative playlist are relative to.
+	/**
+	 * 
+	 */
 	public String BasePath = "";
 	// This entry's _path.
 	private String _path = ".";
@@ -83,6 +96,11 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Construct an M3U URL entry.
+	/**
+	 * 
+	 * @param uri
+	 * @param extra
+	 */
 	public PlaylistEntry(URI uri, String extra)
 	{
 		_thisURI = uri;
@@ -91,6 +109,13 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Construct a WPL URL entry
+	/**
+	 * 
+	 * @param uri
+	 * @param extra
+	 * @param cid
+	 * @param tid
+	 */
 	public PlaylistEntry(URI uri, String extra, String cid, String tid)
 	{
 		this(uri, extra);
@@ -99,6 +124,12 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Construct a PLS URL entry.
+	/**
+	 * 
+	 * @param uri
+	 * @param title
+	 * @param length
+	 */
 	public PlaylistEntry(URI uri, String title, String length)
 	{
 		_thisURI = uri;
@@ -108,6 +139,12 @@ public class PlaylistEntry implements Cloneable
 	}
 	
 	// Construct a PLS URL entry.
+	/**
+	 * 
+	 * @param uri
+	 * @param title
+	 * @param length
+	 */
 	public PlaylistEntry(URI uri, String title, int length)
 	{
 		_thisURI = uri;
@@ -117,6 +154,13 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Construct an M3U path & file-name based entry.
+	/**
+	 * 
+	 * @param p
+	 * @param f
+	 * @param extra
+	 * @param list
+	 */
 	public PlaylistEntry(String p, String f, String extra, File list)
 	{
 		_path = p;
@@ -169,6 +213,15 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Another WPL constructor
+	/**
+	 * 
+	 * @param p
+	 * @param f
+	 * @param extra
+	 * @param list
+	 * @param cid
+	 * @param tid
+	 */
 	public PlaylistEntry(String p, String f, String extra, File list, String cid, String tid)
 	{
 		this(p, f, extra, list);
@@ -177,6 +230,12 @@ public class PlaylistEntry implements Cloneable
 	}
 	
 	// Construct a M3U file-based entry, used during save among other things
+	/**
+	 * 
+	 * @param input
+	 * @param extra
+	 * @param list
+	 */
 	public PlaylistEntry(File input, String extra, File list)
 	{
 		_fileName = input.getName();
@@ -231,6 +290,14 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// WPL constructor to hang on to random WPL-specific bits
+	/**
+	 * 
+	 * @param input
+	 * @param extra
+	 * @param list
+	 * @param cid
+	 * @param tid
+	 */
 	public PlaylistEntry(File input, String extra, File list, String cid, String tid)
 	{
 		this(input, extra, list);
@@ -239,6 +306,13 @@ public class PlaylistEntry implements Cloneable
 	}
 	
 	// PLS constructor, which has file references, a title, and a length
+	/**
+	 * 
+	 * @param input
+	 * @param title
+	 * @param length
+	 * @param list
+	 */
 	public PlaylistEntry(File input, String title, String length, File list)
 	{
 		_fileName = input.getName();
@@ -293,6 +367,10 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Copy constructor...
+	/**
+	 * 
+	 * @param entry
+	 */
 	public PlaylistEntry(PlaylistEntry entry)
 	{
 		_fileName = entry._fileName;
@@ -307,6 +385,9 @@ public class PlaylistEntry implements Cloneable
 		_thisURI = entry._thisURI;
 	}
 
+	/**
+	 * 
+	 */
 	public void markFixedIfFound()
 	{
 		if (getStatus() == PlaylistEntryStatus.Found)
@@ -315,31 +396,55 @@ public class PlaylistEntry implements Cloneable
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getPath()
 	{
 		return this.isURL() ? "" : _path;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public File getFile()
 	{
 		return _thisFile;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getFileName()
 	{
 		return this.isURL() ? _thisURI.toString() : _fileName;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getExtInf()
 	{
 		return _extInf;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getCID()
 	{
 		return _cid;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getTID()
 	{
 		return _tid;
@@ -364,16 +469,28 @@ public class PlaylistEntry implements Cloneable
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public URI getURI()
 	{
 		return _thisURI;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public File getAbsoluteFile()
 	{
 		return _absoluteFile;
 	}
 
+	/**
+	 * 
+	 * @param input
+	 */
 	public void setPath(String input)
 	{
 		_path = input;
@@ -382,6 +499,10 @@ public class PlaylistEntry implements Cloneable
 		recheckFoundStatus();
 	}
 
+	/**
+	 * 
+	 * @param input
+	 */
 	public void setFileName(String input)
 	{
 		_fileName = input;
@@ -418,42 +539,71 @@ public class PlaylistEntry implements Cloneable
 		return isFound() || this.isURL() || ArrayFunctions.ContainsStringPrefixingAnotherString(emptyPaths, _path, false);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isFound()
 	{
 		return getStatus() == PlaylistEntryStatus.Found;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isFixed()
 	{
 		return _isFixed;
 	}
 
+	/**
+	 * 
+	 * @param fixed
+	 */
 	public void setFixed(boolean fixed)
 	{
 		_isFixed = fixed;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isURL()
 	{
 		return _thisURI != null && _thisFile == null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isRelative()
 	{
 		return !this.isURL() && _thisFile != null && !_thisFile.isAbsolute();
 	}
 
 	// Try to open the file with the "default" MP3 player (only works on some systems).
+	/**
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public void play() throws IOException, InterruptedException
 	{
 		if (this.isFound() || this.isURL())
 		{
-			List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+			List<PlaylistEntry> tempList = new ArrayList<>();
 			tempList.add(this);
 			(new Playlist(tempList)).play();
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String toM3UString()
 	{
 		StringBuilder result = new StringBuilder();
@@ -498,6 +648,11 @@ public class PlaylistEntry implements Cloneable
 		return result.toString();
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public String toPLSString(int index)
 	{
 		StringBuilder result = new StringBuilder();
@@ -548,6 +703,10 @@ public class PlaylistEntry implements Cloneable
 		return result.toString();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String toWPLString()
 	{
 		StringBuilder result = new StringBuilder();
@@ -587,11 +746,16 @@ public class PlaylistEntry implements Cloneable
 		return result.toString();
 	}
 	
+	/**
+	 * 
+	 * @param fileList
+	 * @return
+	 */
 	public boolean findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
 		String trimmedFileName = Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();		
-		String candidateFileName = "";
+		String candidateFileName;
 		int lastFileSeparatorIndex;
 		for (int i = 0; i < fileList.length; i++)
 		{			
@@ -633,9 +797,15 @@ public class PlaylistEntry implements Cloneable
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param mediaFiles
+	 * @param observer
+	 * @return
+	 */
 	public List<MatchedPlaylistEntry> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
 	{
-		List<MatchedPlaylistEntry> matches = new ArrayList<MatchedPlaylistEntry>();
+		List<MatchedPlaylistEntry> matches = new ArrayList<>();
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(mediaFiles.length);
 
@@ -643,8 +813,8 @@ public class PlaylistEntry implements Cloneable
 		
 		// Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
 		String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
-		File mediaFile = null;
-		int score = 0;
+		File mediaFile;
+		int score;
 		for (String mediaFilePath : mediaFiles)
 		{
 			if (observer == null || !observer.getCancelled())
@@ -747,6 +917,10 @@ public class PlaylistEntry implements Cloneable
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean updatePathToMediaLibraryIfFoundOutside()
 	{
 		if (_status == PlaylistEntryStatus.Found
@@ -757,6 +931,10 @@ public class PlaylistEntry implements Cloneable
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param list
+	 */
 	public void setPlaylist(File list)
 	{
 		_playlist = list;

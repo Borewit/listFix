@@ -28,8 +28,8 @@ import java.util.List;
 
 import listfix.exceptions.MediaDirNotFoundException;
 
-import listfix.io.FileWriter;
-import listfix.io.readers.IniFileConverter;
+import listfix.io.writers.FileWriter;
+import listfix.io.IniFileConverter;
 import listfix.io.readers.IniFileReader;
 import listfix.io.readers.OptionsReader;
 import listfix.io.UNCFile;

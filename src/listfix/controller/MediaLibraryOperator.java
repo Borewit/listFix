@@ -21,6 +21,7 @@
 package listfix.controller;
 
 import listfix.io.*;
+import listfix.io.writers.FileWriter;
 import listfix.util.*;
 import listfix.view.support.ProgressWorker;
 

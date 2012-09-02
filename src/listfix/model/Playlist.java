@@ -20,8 +20,6 @@
 
 package listfix.model;
 
-import listfix.model.enums.PlaylistType;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,13 +41,14 @@ import java.util.Set;
 
 import listfix.controller.GUIDriver;
 import listfix.io.Constants;
-import listfix.io.FileCopier;
+import listfix.io.writers.FileCopier;
 import listfix.io.FileUtils;
 import listfix.io.FileLauncher;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
+import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
 import listfix.util.OperatingSystem;
@@ -71,8 +70,8 @@ public class Playlist
 	private final static String HOME_DIR = System.getProperty("user.home");
 	private static int NEW_LIST_COUNT = -1;
 	private File _file;
-	private List<PlaylistEntry> _entries = new ArrayList<PlaylistEntry>();
-	private List<PlaylistEntry> _originalEntries = new ArrayList<PlaylistEntry>();
+	private List<PlaylistEntry> _entries = new ArrayList<>();
+	private List<PlaylistEntry> _originalEntries = new ArrayList<>();
 	private boolean _utfFormat = false;
 	private PlaylistType _type = PlaylistType.UNKNOWN;
 	private int _fixedCount;
@@ -283,7 +282,7 @@ public class Playlist
 	 */
 	public Playlist getSublist(int[] rows) throws IOException
 	{
-		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+		List<PlaylistEntry> tempList = new ArrayList<>();
 		for (int i : rows)
 		{
 			tempList.add(_entries.get(i));
@@ -299,7 +298,7 @@ public class Playlist
 	 */
 	public List<PlaylistEntry> getSelectedEntries(int[] rows) throws IOException
 	{
-		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
+		List<PlaylistEntry> tempList = new ArrayList<>();
 		for (int i : rows)
 		{
 			tempList.add(_entries.get(i));
@@ -394,7 +393,7 @@ public class Playlist
 	/**
 	 * 
 	 */
-	List<IPlaylistModifiedListener> _listeners = new ArrayList<IPlaylistModifiedListener>();
+	List<IPlaylistModifiedListener> _listeners = new ArrayList<>();
 
 	private void setEntries(List<PlaylistEntry> aEntries)
 	{
@@ -574,7 +573,7 @@ public class Playlist
 		{
 			FileLauncher.launch(_file);
 		}
-		catch (Exception e)
+		catch (IOException | InterruptedException e)
 		{
 			_logger.warn(ExStack.toString(e));
 		}
@@ -749,7 +748,7 @@ public class Playlist
 		ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(files.length);
 
-		List<PlaylistEntry> ents = new ArrayList<PlaylistEntry>();
+		List<PlaylistEntry> ents = new ArrayList<>();
 		for (File file : files)
 		{
 			if (observer == null || !observer.getCancelled())
@@ -801,7 +800,7 @@ public class Playlist
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(_entries.size());
 
-		List<Integer> fixed = new ArrayList<Integer>();
+		List<Integer> fixed = new ArrayList<>();
 		for (int ix = 0; ix < _entries.size(); ix++)
 		{
 			if (!observer.getCancelled())
@@ -886,9 +885,9 @@ public class Playlist
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(_entries.size());
 
-		List<BatchMatchItem> fixed = new ArrayList<BatchMatchItem>();
-		PlaylistEntry entry = null;
-		List<MatchedPlaylistEntry> matches = null;
+		List<BatchMatchItem> fixed = new ArrayList<>();
+		PlaylistEntry entry;
+		List<MatchedPlaylistEntry> matches;
 		for (int ix = 0; ix < _entries.size(); ix++)
 		{
 			progress.stepCompleted();
@@ -925,9 +924,9 @@ public class Playlist
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(_entries.size());
 
-		List<BatchMatchItem> fixed = new ArrayList<BatchMatchItem>();
-		PlaylistEntry entry = null;
-		List<MatchedPlaylistEntry> matches = null;
+		List<BatchMatchItem> fixed = new ArrayList<>();
+		PlaylistEntry entry;
+		List<MatchedPlaylistEntry> matches;
 		for (Integer ix : rowList)
 		{
 			progress.stepCompleted();
@@ -959,7 +958,7 @@ public class Playlist
 	 */
 	public List<Integer> applyClosestMatchSelections(List<BatchMatchItem> items)
 	{
-		List<Integer> fixed = new ArrayList<Integer>();
+		List<Integer> fixed = new ArrayList<>();
 		for (BatchMatchItem item : items)
 		{
 			if (item.getSelectedIx() >= 0)
@@ -1052,6 +1051,7 @@ public class Playlist
 		final SortIx _sortIx;
 		final boolean _isDescending;
 
+		@Override
 		public int compare(PlaylistEntry lhs, PlaylistEntry rhs)
 		{
 			int rc = 0;
@@ -1121,7 +1121,7 @@ public class Playlist
 	public int removeDuplicates()
 	{
 		int removed = 0;
-		Set<String> found = new HashSet<String>();
+		Set<String> found = new HashSet<>();
 		for (int ix = 0; ix < _entries.size();)
 		{
 			PlaylistEntry entry = _entries.get(ix);
@@ -1247,8 +1247,8 @@ public class Playlist
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#EXTM3U").append(BR);
-		PlaylistEntry entry = null;
-		String relativePath = "";
+		PlaylistEntry entry;
+		String relativePath;
 		for (int i = 0; i < _entries.size(); i++)
 		{
 			if (!track || !progress.getCancelled())
@@ -1325,22 +1325,24 @@ public class Playlist
 			if (isUtfFormat() || _file.getName().toLowerCase().endsWith("m3u8"))
 			{
 				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-				BufferedWriter output = new BufferedWriter(osw);
-				if (OperatingSystem.isWindows())
+				try (BufferedWriter output = new BufferedWriter(osw))
 				{
-					// For some reason, linux players seem to choke on this header when I addAt it... perhaps the stream classes do it automatically.
-					output.write(UnicodeUtils.getBOM("UTF-8"));
+					if (OperatingSystem.isWindows())
+					{
+						// For some reason, linux players seem to choke on this header when I addAt it... perhaps the stream classes do it automatically.
+						output.write(UnicodeUtils.getBOM("UTF-8"));
+					}
+					output.write(buffer.toString());
 				}
-				output.write(buffer.toString());
-				output.close();
 				outputStream.close();
 				setUtfFormat(true);
 			}
 			else
 			{
-				BufferedOutputStream output = new BufferedOutputStream(outputStream);
-				output.write(buffer.toString().getBytes());
-				output.close();
+				try (BufferedOutputStream output = new BufferedOutputStream(outputStream))
+				{
+					output.write(buffer.toString().getBytes());
+				}
 				outputStream.close();
 				setUtfFormat(false);
 			}
@@ -1351,7 +1353,7 @@ public class Playlist
 	{
 		boolean track = progress != null;
 
-		PlaylistEntry entry = null;
+		PlaylistEntry entry;
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("[playlist]").append(BR);
 		for (int i = 0; i < _entries.size(); i++)
@@ -1428,21 +1430,22 @@ public class Playlist
 
 			if (isUtfFormat())
 			{
-				FileOutputStream outputStream = new FileOutputStream(_file);
-				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-				BufferedWriter output = new BufferedWriter(osw);
-				output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-				output.close();
-				outputStream.close();
+				try (FileOutputStream outputStream = new FileOutputStream(_file))
+				{
+					Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+					try (BufferedWriter output = new BufferedWriter(osw))
+					{
+						output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+					}
+				}
 				setUtfFormat(true);
 			}
 			else
 			{
-				FileOutputStream outputStream = new FileOutputStream(_file);
-				BufferedOutputStream output = new BufferedOutputStream(outputStream);
-				output.write(buffer.toString().getBytes());
-				output.close();
-				outputStream.close();
+				try (FileOutputStream outputStream = new FileOutputStream(_file); BufferedOutputStream output = new BufferedOutputStream(outputStream))
+				{
+					output.write(buffer.toString().getBytes());
+				}
 				setUtfFormat(false);
 			}
 		}
@@ -1454,8 +1457,8 @@ public class Playlist
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(getWPLHead());
-		PlaylistEntry entry = null;
-		String relativePath = "";
+		PlaylistEntry entry;
+		String relativePath;
 		for (int i = 0; i < _entries.size(); i++)
 		{
 			if (!track || !progress.getCancelled())
@@ -1530,13 +1533,14 @@ public class Playlist
 			{
 				dirToSaveIn.mkdirs();
 			}
-
-			FileOutputStream outputStream = new FileOutputStream(_file);
-			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-			BufferedWriter output = new BufferedWriter(osw);
-			output.write(buffer.toString());
-			output.close();
-			outputStream.close();
+			try (FileOutputStream outputStream = new FileOutputStream(_file))
+			{
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				try (BufferedWriter output = new BufferedWriter(osw))
+				{
+					output.write(buffer.toString());
+				}
+			}
 			setUtfFormat(true);
 		}
 	}
@@ -1558,18 +1562,19 @@ public class Playlist
 		boolean newHead = false;
 		try
 		{
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8"));
-			String line = buffer.readLine();
-			while (line != null)
+			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8")))
 			{
-				if (line.trim().startsWith("<media"))
+				String line = buffer.readLine();
+				while (line != null)
 				{
-					break;
+					if (line.trim().startsWith("<media"))
+					{
+						break;
+					}
+					head += line + BR;
+					line = buffer.readLine();
 				}
-				head += line + BR;
-				line = buffer.readLine();
 			}
-			buffer.close();
 			// determine if a head was read
 			if (!head.contains("<?wpl"))
 			{
@@ -1580,9 +1585,6 @@ public class Playlist
 		{
 			// Don't bother logging here, it's expected when saving out a new file
 			// _logger.error(ExStack.toString(ex));
-		}
-		finally
-		{
 			newHead = true;
 		}
 		if (newHead) head = "<?wpl version=\"1.0\"?>\r\n<smil>\r\n\t<body>\r\n\t\t<sec>\r\n";
@@ -1638,17 +1640,15 @@ public class Playlist
 		if (input != null)
 		{
 			String lowerCaseExtension = FileNameTokenizer.getExtensionFromFileName(input.getName()).toLowerCase();
-			if (lowerCaseExtension.equals("m3u") || lowerCaseExtension.equals("m3u8"))
+			switch (lowerCaseExtension)
 			{
-				return PlaylistType.M3U;
-			}
-			else if (lowerCaseExtension.equals("pls"))
-			{
-				return PlaylistType.PLS;
-			}
-			else if (lowerCaseExtension.equals("wpl"))
-			{
-				return PlaylistType.WPL;
+				case "m3u":
+				case "m3u8":
+					return PlaylistType.M3U;
+				case "pls":
+					return PlaylistType.PLS;
+				case "wpl":
+					return PlaylistType.WPL;
 			}
 		}
 		return PlaylistType.UNKNOWN;

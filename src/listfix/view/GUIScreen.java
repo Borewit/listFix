@@ -24,18 +24,11 @@ import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.DefaultKeyboardFocusManager;
-import java.awt.DisplayMode;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.KeyEventPostProcessor;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
@@ -51,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -70,11 +64,14 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.UIResource;
 import javax.swing.tree.*;
+import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
 import listfix.io.*;
 import listfix.io.readers.OptionsReader;
+import listfix.io.writers.FileWriter;
+import listfix.io.writers.OptionsWriter;
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
@@ -468,17 +465,15 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
                     }
                     else if (data instanceof InputStreamReader)
                     {
-                        // Process the drop...
-                        InputStreamReader list = (InputStreamReader) data;
-                        BufferedReader temp = new BufferedReader(list);
-                        String filePath = temp.readLine();
-                        while (filePath != null && !filePath.isEmpty())
-                        {
-                            openPlaylist(new File(new URI(filePath)));
-                            filePath = temp.readLine();
-                        }
-                        temp.close();
-                        list.close();
+						try (InputStreamReader list = (InputStreamReader) data; BufferedReader temp = new BufferedReader(list))
+						{
+							String filePath = temp.readLine();
+							while (filePath != null && !filePath.isEmpty())
+							{
+								openPlaylist(new File(new URI(filePath)));
+								filePath = temp.readLine();
+							}
+						}
                     }
 
                     // If we made it this far, everything worked.
@@ -489,7 +484,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             // Hmm, the user must not have dropped a file list
             dtde.rejectDrop();
         }
-        catch (Exception e)
+        catch (UnsupportedFlavorException | IOException | URISyntaxException e)
         {
             _logger.warn(ExStack.toString(e));
             dtde.rejectDrop();
@@ -1122,7 +1117,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private void runClosestMatchesSearchOnSelectedLists()
 	{
 		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		for (TreePath path : paths)
 		{
 			File file = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
@@ -1163,7 +1158,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private void runExactMatchesSearchOnSelectedPlaylists()
 	{
 		TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		for (TreePath path : paths)
 		{
 			File file = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
@@ -1227,7 +1222,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected files and folders?"), "Delete Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
 			{
 				File toOpen;
-				List<TreePath> selPaths = new ArrayList<TreePath>();
+				List<TreePath> selPaths = new ArrayList<>();
 				for (int i : selRows)
 				{
 					selPaths.add(_playlistDirectoryTree.getPathForRow(i));
@@ -1267,7 +1262,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to rename the selected files and folders?"), "Rename Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
 			{
 				File toOpen;
-				List<TreePath> selPaths = new ArrayList<TreePath>();
+				List<TreePath> selPaths = new ArrayList<>();
 				for (int i : selRows)
 				{
 					selPaths.add(_playlistDirectoryTree.getPathForRow(i));
@@ -1430,7 +1425,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				return;
 			}
 		}
-		catch (Exception ex)
+		catch (IOException | HeadlessException ex)
 		{
 			JOptionPane.showMessageDialog(this, ex, "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
@@ -1534,8 +1529,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 
 	}
-	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<String, PlaylistEditCtrl>();
-	Map<Playlist, PlaylistEditCtrl> _playlistToEditorMap = new HashMap<Playlist, PlaylistEditCtrl>();
+	
+	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<>();
+	Map<Playlist, PlaylistEditCtrl> _playlistToEditorMap = new HashMap<>();
 	static
 	{
 		Color highlight = UIManager.getColor("TabbedPane.highlight");
@@ -1668,6 +1664,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			addActionListener(new java.awt.event.ActionListener()
 			{
+				@Override
 				public void actionPerformed(java.awt.event.ActionEvent evt)
 				{
 					openIconButtonActionPerformed(evt);
@@ -1827,7 +1824,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	@Override
 	public void repairAllTabs()
 	{
-		List<Playlist> files = new ArrayList<Playlist>();
+		List<Playlist> files = new ArrayList<>();
 		for (Playlist list : _playlistToEditorMap.keySet())
 		{
 			files.add(list);
@@ -2061,15 +2058,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					worker.get();
 					_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 				}
-				catch (InterruptedException ex)
+				catch (InterruptedException | CancellationException ex)
 				{
 				}
 				catch (ExecutionException ex)
 				{
 					_logger.error(ExStack.toString(ex));
-				}
-				catch (CancellationException ex)
-				{
 				}
 			}
 			catch (Exception e)
@@ -2170,15 +2164,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			worker.get();
 			_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
 		}
-		catch (InterruptedException ex)
+		catch (InterruptedException | CancellationException ex)
 		{
 		}
 		catch (ExecutionException ex)
 		{
 			_logger.error(ExStack.toString(ex));
-		}
-		catch (CancellationException ex)
-		{
 		}
 	}
 
@@ -2228,7 +2219,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	if (dlg.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 	{
 		// build complete list of playlists
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		for (File file : dlg.getSelectedFiles())
 		{
 			if (file.isFile())
@@ -2314,9 +2305,9 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 			pd.setVisible(true);
 			worker.get();
 		}
-		catch (Exception ex)
+		catch (InterruptedException | ExecutionException ex)
 		{
-			_logger.error(ExStack.toString(ex));;
+			_logger.error(ExStack.toString(ex));
 			JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 		}
 		finally
@@ -2393,7 +2384,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 				{
 					WinampHelper.extractPlaylists(dlg.getSelectedFile(), this);
 				}
-				catch (Exception ex)
+				catch (JAXBException | IOException ex)
 				{
 					JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea("Sorry, there was a problem extracting your playlists.  The error was: " + ex.getMessage()), "Extraction Error", JOptionPane.ERROR_MESSAGE);
 					_logger.warn(ExStack.toString(ex));
@@ -2631,7 +2622,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 			UIManager.setLookAndFeel(className);
 			updateAllComponentTreeUIs();
 		}
-		catch (Exception ex)
+		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
 		{
 			_logger.error(ExStack.toString(ex));
 		}

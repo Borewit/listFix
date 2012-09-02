@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.writers;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.writers;
 
 /*
 ============================================================================
@@ -30,6 +30,7 @@ package listfix.io;
 import java.io.*;
 
 import listfix.controller.tasks.WriteMediaLibraryIniTask;
+import listfix.io.Constants;
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.util.ExStack;

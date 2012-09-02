@@ -18,13 +18,14 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.writers;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import listfix.io.Constants;
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
