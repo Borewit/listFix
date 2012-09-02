@@ -18,25 +18,34 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.readers.playlists;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PlaylistFileFilter.java
-= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
-============================================================================
+import java.io.File;
+import java.io.FileNotFoundException;
+
+/**
+ *
+ * @author jcaron
  */
-public class PlaylistFileFilter implements java.io.FileFilter
+public class PlaylistReaderFactory
 {
-	@Override
-	public boolean accept(java.io.File file)
+	public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
 	{
-		return (file.getName().toLowerCase().endsWith(".m3u")
-			|| file.getName().toLowerCase().endsWith(".m3u8")
-			|| file.getName().toLowerCase().endsWith(".pls")
-			|| file.getName().toLowerCase().endsWith(".wpl")
-			|| file.getName().toLowerCase().endsWith(".xspf")
-			|| file.isDirectory());
+		if (inputFile.getName().toLowerCase().contains(".m3u"))
+		{
+			return new M3UReader(inputFile);
+		}
+		else if (inputFile.getName().toLowerCase().contains(".pls"))
+		{
+			return new PLSReader(inputFile);
+		}
+		else if (inputFile.getName().toLowerCase().contains(".xspf"))
+		{
+			return new XSPFReader(inputFile);
+		}
+		else
+		{
+			return new WPLReader(inputFile);
+		}
 	}
 }

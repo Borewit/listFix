@@ -23,7 +23,8 @@ package listfix.model;
 import java.io.File;
 
 /**
- * Serves to model a closest match on a single playlist entry.  Should probably be renamed to make this more clear.
+ * Serves to model a closest match on a single playlist entry.  
+ * TODO: Should be renamed to make this more clear - PotentialPlaylistEntryMatch
  * @author jcaron
  */
 

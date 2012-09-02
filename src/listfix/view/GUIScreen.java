@@ -69,12 +69,12 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.UIResource;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.tree.*;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
 import listfix.io.*;
+import listfix.io.readers.OptionsReader;
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
@@ -2523,7 +2523,6 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 
 	private void _playlistDirectoryTreeKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__playlistDirectoryTreeKeyPressed
 	{//GEN-HEADEREND:event__playlistDirectoryTreeKeyPressed
-		// TODO addAt your handling code here:
 		if (evt.getKeyCode() == KeyEvent.VK_ENTER)
 		{
 			_btnOpenSelectedActionPerformed(null);

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,29 +46,30 @@ import listfix.io.Constants;
 import listfix.io.FileCopier;
 import listfix.io.FileUtils;
 import listfix.io.FileLauncher;
-import listfix.io.IPlaylistReader;
-import listfix.io.PlaylistReaderFactory;
+import listfix.io.readers.playlists.IPlaylistReader;
+import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
-
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
 import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
-
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
-import listfix.view.support.ProgressWorker;
 
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * @author jcaron
+ */
 public class Playlist
 {
 	private final static String FS = System.getProperty("file.separator");
 	private final static String BR = System.getProperty("line.separator");
 	private final static String HOME_DIR = System.getProperty("user.home");
-	private static int _newListCount = -1;
+	private static int NEW_LIST_COUNT = -1;
 	private File _file;
 	private List<PlaylistEntry> _entries = new ArrayList<PlaylistEntry>();
 	private List<PlaylistEntry> _originalEntries = new ArrayList<PlaylistEntry>();
@@ -80,62 +80,14 @@ public class Playlist
 	private int _missingCount;
 	private boolean _isModified;
 	private boolean _isNew;
-	private static final Logger _logger = Logger.getLogger(Playlist.class);
+	private static final Logger _logger = Logger.getLogger(Playlist.class);		
 
-	public List<PlaylistEntry> getEntries()
-	{
-		return _entries;
-	}
-
-	public void copySelectedEntries(List<Integer> entryIndexList, File y, IProgressObserver observer)
-	{
-		ProgressAdapter progress = ProgressAdapter.wrap(observer);
-		progress.setTotal(entryIndexList.size());
-		PlaylistEntry tempEntry;
-		File fileToCopy;
-		File dest;
-		for (int i = 0; i < entryIndexList.size(); i++)
-		{
-			if (!observer.getCancelled())
-			{
-				tempEntry = this.get(entryIndexList.get(i));
-				if (!tempEntry.isURL())
-				{
-					fileToCopy = tempEntry.getAbsoluteFile();
-					if (tempEntry.isFound()) // && fileToCopy.exists())
-					{
-						dest = new File(y.getPath() + Constants.FS + tempEntry.getFileName());
-						try
-						{
-							FileCopier.copy(fileToCopy, dest);
-						}
-						catch (IOException e)
-						{
-							// eat the error and continue
-							_logger.error(ExStack.toString(e));
-						}
-					}
-				}
-				progress.stepCompleted();
-			}
-			else
-			{
-				return;
-			}
-		}
-	}
-
-	public enum SortIx
-	{
-		None,
-		Filename,
-		Path,
-		Status,
-		Random,
-		Reverse
-	}
-
-	// This constructor creates a temp-file backed playlist from a list of entries, currently used for playback.
+	/**
+	 * This constructor creates a temp-file backed playlist from a list of entries, only intended to be used for playback.
+	 * 
+	 * @param sublist
+	 * @throws IOException
+	 */
 	public Playlist(List<PlaylistEntry> sublist) throws IOException
 	{
 		_utfFormat = true;
@@ -148,16 +100,51 @@ public class Playlist
 		refreshStatus();
 		quickSave();
 	}
+	
+	/**
+	 * Initializes a playlist with an externally created set of entries.  
+	 * Currently used when reading playlists with external code.
+	 * 
+	 * @param listFile
+	 * @param type
+	 * @param entries
+	 * @throws IOException
+	 */
+	public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries) throws IOException
+	{
+		_utfFormat = true;
+		setEntries(entries);
+		_file = listFile;
+		_type = type;
+		_isModified = false;
+		refreshStatus();
+		quickSave();
+	}
 
+	/**
+	 * Initializes a playlist using internal listFix() I/O model.
+	 * TODO: Refactor read/write architecture.
+	 * 
+	 * @param playlist
+	 * @param observer
+	 * @throws IOException
+	 */
 	public Playlist(File playlist, IProgressObserver observer) throws IOException
 	{
 		init(playlist, observer);
 	}
 
+	/**
+	 * Creates an empty, untitled playlist.  The name of the list is auto-generated,
+	 * Untitled-#.m3u8 by default, where # is the number of lists you have created with this
+	 * method in the current session.
+	 * 
+	 * @throws IOException
+	 */
 	public Playlist() throws IOException
 	{
-		_newListCount++;
-		_file = new File(HOME_DIR + FS + "Untitled-" + _newListCount + ".m3u8");
+		NEW_LIST_COUNT++;
+		_file = new File(HOME_DIR + FS + "Untitled-" + NEW_LIST_COUNT + ".m3u8");
 		_file.deleteOnExit();
 		_utfFormat = true;
 		_type = PlaylistType.M3U;
@@ -203,7 +190,97 @@ public class Playlist
 			_logger.error(ExStack.toString(e));
 		}
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public List<PlaylistEntry> getEntries()
+	{
+		return _entries;
+	}
+
+	/**
+	 * 
+	 * @param entryIndexList
+	 * @param destinationDirectory
+	 * @param observer
+	 */
+	public void copySelectedEntries(List<Integer> entryIndexList, File destinationDirectory, IProgressObserver observer)
+	{
+		ProgressAdapter progress = ProgressAdapter.wrap(observer);
+		progress.setTotal(entryIndexList.size());
+		PlaylistEntry tempEntry;
+		File fileToCopy;
+		File dest;
+		for (int i = 0; i < entryIndexList.size(); i++)
+		{
+			if (!observer.getCancelled())
+			{
+				tempEntry = this.get(entryIndexList.get(i));
+				if (!tempEntry.isURL())
+				{
+					fileToCopy = tempEntry.getAbsoluteFile();
+					if (tempEntry.isFound()) // && fileToCopy.exists())
+					{
+						dest = new File(destinationDirectory.getPath() + Constants.FS + tempEntry.getFileName());
+						try
+						{
+							FileCopier.copy(fileToCopy, dest);
+						}
+						catch (IOException e)
+						{
+							// eat the error and continue
+							_logger.error(ExStack.toString(e));
+						}
+					}
+				}
+				progress.stepCompleted();
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public enum SortIx
+	{
+		/**
+		 * 
+		 */
+		None,
+		/**
+		 * 
+		 */
+		Filename,
+		/**
+		 * 
+		 */
+		Path,
+		/**
+		 * 
+		 */
+		Status,
+		/**
+		 * 
+		 */
+		Random,
+		/**
+		 * 
+		 */
+		Reverse
+	}
 	
+	/**
+	 * 
+	 * @param rows
+	 * @return
+	 * @throws IOException
+	 */
 	public Playlist getSublist(int[] rows) throws IOException
 	{
 		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
@@ -214,6 +291,12 @@ public class Playlist
 		return new Playlist(tempList);
 	}
 
+	/**
+	 * 
+	 * @param rows
+	 * @return
+	 * @throws IOException
+	 */
 	public List<PlaylistEntry> getSelectedEntries(int[] rows) throws IOException
 	{
 		List<PlaylistEntry> tempList = new ArrayList<PlaylistEntry>();
@@ -233,23 +316,35 @@ public class Playlist
 	}
 
 	/**
-	 * @param _type the _type to set
+	 * @param type 
 	 */
 	public void setType(PlaylistType type)
 	{
 		_type = type;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public File getFile()
 	{
 		return _file;
 	}
 
+	/**
+	 * 
+	 * @param file
+	 */
 	public void setFile(File file)
 	{
 		_file = file;
 	}
 
+	/**
+	 * 
+	 * @param listener
+	 */
 	public void addModifiedListener(IPlaylistModifiedListener listener)
 	{
 		if (listener != null)
@@ -261,11 +356,19 @@ public class Playlist
 		}
 	}
 
+	/**
+	 * 
+	 * @param listener
+	 */
 	public void removeModifiedListener(IPlaylistModifiedListener listener)
 	{
 		_listeners.remove(listener);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public List<IPlaylistModifiedListener> getModifiedListeners()
 	{
 		return _listeners;
@@ -287,6 +390,10 @@ public class Playlist
 		refreshStatus();
 		firePlaylistModified();
 	}
+	
+	/**
+	 * 
+	 */
 	List<IPlaylistModifiedListener> _listeners = new ArrayList<IPlaylistModifiedListener>();
 
 	private void setEntries(List<PlaylistEntry> aEntries)
@@ -304,11 +411,18 @@ public class Playlist
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int size()
 	{
 		return _entries.size();
 	}
 
+	/**
+	 * 
+	 */
 	public void updateModifiedStatus()
 	{
 		boolean result = false;
@@ -351,14 +465,12 @@ public class Playlist
 			}
 		}
 		
-		// if we refer to a file on disk, and aren't a new file, make sure that file still exists...
+		_isModified = result;
+		
+		// if this playlist refers to a file on disk, and aren't a new file, make sure that file still exists...
 		if (_file != null && !isNew())
 		{
-			_isModified = !_file.exists();			
-		}
-		else
-		{
-			_isModified = result;
+			_isModified = _isModified || !_file.exists();			
 		}
 		
 		// notify the listeners if we have changed...
@@ -395,26 +507,46 @@ public class Playlist
 		updateModifiedStatus();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getFixedCount()
 	{
 		return _fixedCount;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getUrlCount()
 	{
 		return _urlCount;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getMissingCount()
 	{
 		return _missingCount;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isModified()
 	{
 		return _isModified;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getFilename()
 	{
 		if (_file == null)
@@ -424,11 +556,18 @@ public class Playlist
 		return _file.getName();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isEmpty()
 	{
 		return _entries.isEmpty();
 	}
 
+	/**
+	 * 
+	 */
 	public void play()
 	{
 		try
@@ -441,21 +580,38 @@ public class Playlist
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isUtfFormat()
 	{
 		return _utfFormat;
 	}
 
+	/**
+	 * 
+	 * @param utfFormat
+	 */
 	public void setUtfFormat(boolean utfFormat)
 	{
 		this._utfFormat = utfFormat;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isNew()
 	{
 		return _isNew;
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @param newEntry
+	 */
 	public void replace(int index, PlaylistEntry newEntry)
 	{
 
@@ -467,6 +623,10 @@ public class Playlist
 		refreshStatusAndFirePlaylistModified();
 	}
 
+	/**
+	 * 
+	 * @param indexes
+	 */
 	public void moveUp(int[] indexes)
 	{
 		Arrays.sort(indexes);
@@ -487,6 +647,11 @@ public class Playlist
 		refreshStatusAndFirePlaylistModified();
 	}
 
+	/**
+	 * 
+	 * @param initialPos
+	 * @param finalPos
+	 */
 	public void moveTo(int initialPos, int finalPos)
 	{
 		PlaylistEntry temp = _entries.get(initialPos);
@@ -495,6 +660,10 @@ public class Playlist
 		refreshStatusAndFirePlaylistModified();
 	}
 
+	/**
+	 * 
+	 * @param indexes
+	 */
 	public void moveDown(int[] indexes)
 	{
 		Arrays.sort(indexes);
@@ -515,6 +684,12 @@ public class Playlist
 		refreshStatusAndFirePlaylistModified();
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @param entries
+	 * @return
+	 */
 	public int addAllAt(int i, List<PlaylistEntry> entries)
 	{
 		_entries.addAll(i, entries);
@@ -522,6 +697,14 @@ public class Playlist
 		return entries.size();
 	}
 
+	/**
+	 * 
+	 * @param files
+	 * @param observer
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public int add(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
 	{
 		List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
@@ -537,6 +720,15 @@ public class Playlist
 		}
 	}
 
+	/**
+	 * 
+	 * @param ix
+	 * @param files
+	 * @param observer
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public int addAt(int ix, File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
 	{
 		List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
@@ -586,6 +778,11 @@ public class Playlist
 		return ents;
 	}
 
+	/**
+	 * 
+	 * @param ix
+	 * @param newName
+	 */
 	public void changeEntryFileName(int ix, String newName)
 	{
 		_entries.get(ix).setFileName(newName);
@@ -593,6 +790,12 @@ public class Playlist
 	}
 
 	// returns positions of repaired rows
+	/**
+	 * 
+	 * @param librayFiles
+	 * @param observer
+	 * @return
+	 */
 	public List<Integer> repair(String[] librayFiles, IProgressObserver observer)
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
@@ -634,6 +837,11 @@ public class Playlist
 	}
 
 	// similar to repair, but doesn't return repaired row information
+	/**
+	 * 
+	 * @param fileList
+	 * @param observer
+	 */
 	public void batchRepair(String[] fileList, IProgressObserver observer)
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
@@ -667,6 +875,12 @@ public class Playlist
 		}
 	}
 
+	/**
+	 * 
+	 * @param libraryFiles
+	 * @param observer
+	 * @return
+	 */
 	public List<BatchMatchItem> findClosestMatches(String[] libraryFiles, IProgressObserver observer)
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
@@ -699,6 +913,13 @@ public class Playlist
 		return fixed;
 	}	
 
+	/**
+	 * 
+	 * @param rowList
+	 * @param libraryFiles
+	 * @param observer
+	 * @return
+	 */
 	public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, String[] libraryFiles, IProgressObserver observer)
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
@@ -731,6 +952,11 @@ public class Playlist
 		return fixed;
 	}
 
+	/**
+	 * 
+	 * @param items
+	 * @return
+	 */
 	public List<Integer> applyClosestMatchSelections(List<BatchMatchItem> items)
 	{
 		List<Integer> fixed = new ArrayList<Integer>();
@@ -752,11 +978,20 @@ public class Playlist
 		return fixed;
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public PlaylistEntry get(int index)
 	{
 		return _entries.get(index);
 	}
 
+	/**
+	 * 
+	 * @param indexes
+	 */
 	public void remove(int[] indexes)
 	{
 		Arrays.sort(indexes);
@@ -768,6 +1003,11 @@ public class Playlist
 		refreshStatusAndFirePlaylistModified();
 	}
 
+	/**
+	 * 
+	 * @param entry
+	 * @return
+	 */
 	public int remove(PlaylistEntry entry)
 	{
 		int result = _entries.indexOf(entry);
@@ -776,6 +1016,11 @@ public class Playlist
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param sortIx
+	 * @param isDescending
+	 */
 	public void reorder(SortIx sortIx, boolean isDescending)
 	{
 		switch (sortIx)
@@ -869,6 +1114,10 @@ public class Playlist
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int removeDuplicates()
 	{
 		int removed = 0;
@@ -896,6 +1145,10 @@ public class Playlist
 		return removed;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int removeMissing()
 	{
 		int removed = 0;
@@ -915,6 +1168,13 @@ public class Playlist
 		return removed;
 	}
 
+	/**
+	 * 
+	 * @param destination
+	 * @param saveRelative
+	 * @param observer
+	 * @throws IOException
+	 */
 	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws IOException
 	{
 		_file = destination;
@@ -929,6 +1189,12 @@ public class Playlist
 		save(saveRelative, observer);
 	}
 
+	/**
+	 * 
+	 * @param saveRelative
+	 * @param observer
+	 * @throws IOException
+	 */
 	public final void save(boolean saveRelative, IProgressObserver observer) throws IOException
 	{
 		// avoid resetting total if part of batch operation
@@ -1329,11 +1595,15 @@ public class Playlist
 		return "\t\t</sec>\r\n\t</body>\r\n</smil>";
 	}
 	
+	/**
+	 * 
+	 * @param observer
+	 */
 	public void reload(IProgressObserver observer)
 	{
 		if (_isNew)
 		{
-			_file = new File(HOME_DIR + FS + "Untitled-" + _newListCount + ".m3u8");
+			_file = new File(HOME_DIR + FS + "Untitled-" + NEW_LIST_COUNT + ".m3u8");
 			_file.deleteOnExit();
 			_utfFormat = true;
 			_type = PlaylistType.M3U;
@@ -1353,6 +1623,11 @@ public class Playlist
 		refreshStatusAndFirePlaylistModified();
 	}
 
+	/**
+	 * 
+	 * @param input
+	 * @return
+	 */
 	public static boolean isPlaylist(File input)
 	{
 		return determinePlaylistType(input) != PlaylistType.UNKNOWN;

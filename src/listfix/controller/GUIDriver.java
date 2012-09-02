@@ -29,9 +29,9 @@ import java.util.List;
 import listfix.exceptions.MediaDirNotFoundException;
 
 import listfix.io.FileWriter;
-import listfix.io.IniFileConverter;
-import listfix.io.IniFileReader;
-import listfix.io.OptionsReader;
+import listfix.io.readers.IniFileConverter;
+import listfix.io.readers.IniFileReader;
+import listfix.io.readers.OptionsReader;
 import listfix.io.UNCFile;
 
 import listfix.model.AppOptions;
@@ -67,8 +67,9 @@ public class GUIDriver
 			if (IniFileConverter.conversionRequired())
 			{
 				(new IniFileConverter()).convert();
-			}			
+			}
 			(new FileWriter()).writeDefaultIniFilesIfNeeded();
+			
 			options = OptionsReader.read();
 			IniFileReader initReader = new IniFileReader(options);
 			initReader.readIni();
@@ -226,7 +227,8 @@ public class GUIDriver
 				}
 				mldVector.removeAll(toRemove);
 				mediaLibraryDirectoryList = mldVector.toArray(new String[mldVector.size()]);
-				mldVector = null;
+				
+				// Clear this out for the next run.
 				toRemove.clear();
 
 				List<String> mlfVector = new ArrayList<String>(Arrays.asList(mediaLibraryFileList));
@@ -239,8 +241,6 @@ public class GUIDriver
 				}
 				mlfVector.removeAll(toRemove);
 				mediaLibraryFileList = mlfVector.toArray(new String[mlfVector.size()]);
-				mlfVector = null;
-
 				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
 			}
 			else

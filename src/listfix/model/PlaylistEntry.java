@@ -99,12 +99,21 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	// Construct a PLS URL entry.
-	public PlaylistEntry(URI uri, String t, String l)
+	public PlaylistEntry(URI uri, String title, String length)
 	{
 		_thisURI = uri;
-		_title = t;
-		_length = l;
-		_extInf = "#EXTINF:" + l + "," + t;
+		_title = title;
+		_length = length;
+		_extInf = "#EXTINF:" + length + "," + title;
+	}
+	
+	// Construct a PLS URL entry.
+	public PlaylistEntry(URI uri, String title, int length)
+	{
+		_thisURI = uri;
+		_title = title;
+		_length = length + "";
+		_extInf = "#EXTINF:" + length + "," + title;
 	}
 
 	// Construct an M3U path & file-name based entry.
@@ -230,7 +239,7 @@ public class PlaylistEntry implements Cloneable
 	}
 	
 	// PLS constructor, which has file references, a title, and a length
-	public PlaylistEntry(File input, String t, String l, File list)
+	public PlaylistEntry(File input, String title, String length, File list)
 	{
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
@@ -242,9 +251,9 @@ public class PlaylistEntry implements Cloneable
 			_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 			_thisFile = new File(_path, _fileName);
 		}
-		_extInf = "#EXTINF:" + l + "," + t;
-		_title = t;
-		_length = l;
+		_extInf = "#EXTINF:" + length + "," + title;
+		_title = title;
+		_length = length;
 		_playlist = list;
 		if (skipExistsCheck())
 		{

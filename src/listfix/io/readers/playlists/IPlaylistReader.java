@@ -18,25 +18,25 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.readers.playlists;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PlaylistFileFilter.java
-= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
-============================================================================
+import java.io.IOException;
+import java.util.List;
+import listfix.model.PlaylistEntry;
+import listfix.model.enums.PlaylistType;
+import listfix.view.support.IProgressObserver;
+
+/**
+ *
+ * @author jcaron
  */
-public class PlaylistFileFilter implements java.io.FileFilter
+public interface IPlaylistReader
 {
-	@Override
-	public boolean accept(java.io.File file)
-	{
-		return (file.getName().toLowerCase().endsWith(".m3u")
-			|| file.getName().toLowerCase().endsWith(".m3u8")
-			|| file.getName().toLowerCase().endsWith(".pls")
-			|| file.getName().toLowerCase().endsWith(".wpl")
-			|| file.getName().toLowerCase().endsWith(".xspf")
-			|| file.isDirectory());
-	}
+	public String getEncoding();
+	public void setEncoding(String encoding);
+
+	public PlaylistType getPlaylistType();
+
+	List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
+	List<PlaylistEntry> readPlaylist() throws IOException;
 }
