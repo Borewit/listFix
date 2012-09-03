@@ -67,6 +67,7 @@ import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
 import listfix.io.AudioFileFilter;
+import listfix.io.FileLauncher;
 import listfix.io.FileUtils;
 import listfix.io.PlaylistFileChooserFilter;
 import listfix.model.BatchMatchItem;
@@ -1075,7 +1076,27 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     private void onBtnPlayActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnPlayActionPerformed
     {//GEN-HEADEREND:event_onBtnPlayActionPerformed
-		playSelectedEntries();
+		if (_uiTable.getSelectedRowCount() > 0)
+		{
+			playSelectedEntries();
+		}
+		else
+		{
+			if (_playlist.isModified())
+			{
+				Object[] options =
+				{
+					"Yes, save.", "No, launch from disk."
+				};
+				int rc = JOptionPane.showOptionDialog(this.getParentFrame(), new JTransparentTextArea("Save the list before launching playback?"), "Save list first?",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				if (rc == JOptionPane.YES_OPTION)
+				{
+					savePlaylist();
+				}
+			}
+			_playlist.play();
+		}
     }//GEN-LAST:event_onBtnPlayActionPerformed
 
 	private void _uiTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed

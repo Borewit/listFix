@@ -72,7 +72,10 @@ class XSPFWriter implements IPlaylistWriter
 			{
 				SpecificPlaylist specificPlaylist = spp.toSpecificPlaylist(lizzyList);
 				addXspfMetadata(specificPlaylist, list);
-				specificPlaylist.writeTo(new FileOutputStream(list.getFile()), "UTF8");
+				try (FileOutputStream stream = new FileOutputStream(list.getFile()))
+				{
+					specificPlaylist.writeTo(stream, "UTF8");
+				}
 			}
 			catch (Exception ex)
 			{
