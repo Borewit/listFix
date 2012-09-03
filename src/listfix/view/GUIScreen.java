@@ -1330,7 +1330,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				// make sure file has correct extension
 				String normalizedName = playlist.getName().trim().toLowerCase();
 				if (!Playlist.isPlaylist(playlist)
-					|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls") && !normalizedName.endsWith(".wpl")))
+					|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls") && !normalizedName.endsWith(".wpl") && !normalizedName.endsWith(".xspf")))
 				{
 					if (_currentPlaylist.isUtfFormat())
 					{

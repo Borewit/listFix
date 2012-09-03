@@ -123,7 +123,7 @@ public class XSPFReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
-		List<PlaylistEntry> entriesList = new ArrayList<PlaylistEntry>();
+		List<PlaylistEntry> entriesList = new ArrayList<>();
 		URI uri; 
 		File trackFile;
 		SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(_listFile);

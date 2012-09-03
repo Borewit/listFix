@@ -20,17 +20,9 @@
 
 package listfix.model;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,20 +31,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import listfix.controller.GUIDriver;
 import listfix.io.Constants;
-import listfix.io.writers.FileCopier;
-import listfix.io.FileUtils;
 import listfix.io.FileLauncher;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
-import listfix.io.UNCFile;
-import listfix.io.UnicodeInputStream;
+import listfix.io.writers.FileCopier;
+import listfix.io.writers.playlists.IPlaylistWriter;
+import listfix.io.writers.playlists.PlaylistWriterFactory;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
-import listfix.util.OperatingSystem;
-import listfix.util.UnicodeUtils;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -117,7 +105,6 @@ public class Playlist
 		_type = type;
 		_isModified = false;
 		refreshStatus();
-		quickSave();
 	}
 
 	/**
@@ -240,6 +227,25 @@ public class Playlist
 			{
 				return;
 			}
+		}
+	}
+
+	protected void resetInternalStateAfterSave(IProgressObserver observer)
+	{
+		// change original _entries
+		replaceEntryListContents(_entries, _originalEntries);
+		_isModified = false;
+		_isNew = false;
+
+		// set entries unfixed if we're being watched...
+		// (otherwise writing out a temp file for playback, at least right now)
+		if (observer != null)
+		{
+			for (PlaylistEntry entry : _entries)
+			{
+				entry.setFixed(false);
+			}
+			refreshStatusAndFirePlaylistModified();
 		}
 	}
 
@@ -1205,397 +1211,17 @@ public class Playlist
 			progress.setTotal(_entries.size());
 		}
 
-		if (getType() == PlaylistType.M3U)
-		{
-			saveM3U(saveRelative, progress);
-		}
-		else if (getType() == PlaylistType.PLS)
-		{
-			savePLS(saveRelative, progress);
-		}
-		else if (getType() == PlaylistType.WPL)
-		{
-			saveWPL(saveRelative, progress);
-		}
+		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistwriter(_file);
+		writer.save(this, saveRelative, progress);
 		
-		// change original _entries
-		replaceEntryListContents(_entries, _originalEntries);
-
-		// set entries unfixed if we're being watched...
-		// (otherwise writing out a temp file for playback, at least right now)
-		if (observer != null)
-		{
-			for (PlaylistEntry entry : _entries)
-			{
-				entry.setFixed(false);
-			}
-
-			_isModified = false;
-			_isNew = false;
-			refreshStatusAndFirePlaylistModified();
-		}
+		resetInternalStateAfterSave(observer);
 	}
 
 	private void quickSave() throws IOException
 	{
-		saveM3U(false, null);
-	}
-
-	private void saveM3U(boolean saveRelative, ProgressAdapter progress) throws IOException
-	{
-		boolean track = progress != null;
-
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("#EXTM3U").append(BR);
-		PlaylistEntry entry;
-		String relativePath;
-		for (int i = 0; i < _entries.size(); i++)
-		{
-			if (!track || !progress.getCancelled())
-			{
-				if (track)
-				{
-					progress.stepCompleted();
-				}
-				entry = _entries.get(i);
-				entry.setPlaylist(_file);
-				if (!entry.isURL())
-				{
-					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
-					{
-						// replace existing relative entry with a new absolute one
-						File absolute = entry.getAbsoluteFile().getCanonicalFile();
-						
-						// Switch to UNC representation if selected in the options
-						if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-						{
-							UNCFile temp = new UNCFile(absolute);
-							absolute = new File(temp.getUNCPath());
-						}
-						
-						// make the entry and addAt it
-						entry = new PlaylistEntry(absolute, entry.getExtInf(), _file);
-						_entries.set(i, entry);
-					}
-					else if (saveRelative && entry.isFound())
-					{
-						// replace existing entry with a new relative one
-						relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
-						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
-						{
-							relativePath = "." + Constants.FS + relativePath;
-						}
-						
-						// make a new file out of this relative path, and see if it's really relative...
-						// if it's absolute, we have to perform the UNC check and convert if necessary.
-						File temp = new File(relativePath);
-						if (temp.isAbsolute())
-						{
-							// Switch to UNC representation if selected in the options
-							if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-							{
-								UNCFile uncd = new UNCFile(temp);
-								temp = new File(uncd.getUNCPath());
-							}
-						}
-						
-						// make the entry and addAt it
-						entry = new PlaylistEntry(temp, entry.getExtInf(), _file);
-						_entries.set(i, entry);
-					}
-				}
-
-				buffer.append(entry.toM3UString()).append(BR);
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		if (!track || !progress.getCancelled())
-		{
-			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
-			if (!dirToSaveIn.exists())
-			{
-				dirToSaveIn.mkdirs();
-			}
-
-			FileOutputStream outputStream = new FileOutputStream(_file);
-			if (isUtfFormat() || _file.getName().toLowerCase().endsWith("m3u8"))
-			{
-				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-				try (BufferedWriter output = new BufferedWriter(osw))
-				{
-					if (OperatingSystem.isWindows())
-					{
-						// For some reason, linux players seem to choke on this header when I addAt it... perhaps the stream classes do it automatically.
-						output.write(UnicodeUtils.getBOM("UTF-8"));
-					}
-					output.write(buffer.toString());
-				}
-				outputStream.close();
-				setUtfFormat(true);
-			}
-			else
-			{
-				try (BufferedOutputStream output = new BufferedOutputStream(outputStream))
-				{
-					output.write(buffer.toString().getBytes());
-				}
-				outputStream.close();
-				setUtfFormat(false);
-			}
-		}
-	}
-
-	private void savePLS(boolean saveRelative, ProgressAdapter progress) throws IOException
-	{
-		boolean track = progress != null;
-
-		PlaylistEntry entry;
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("[playlist]").append(BR);
-		for (int i = 0; i < _entries.size(); i++)
-		{
-			if (!track || !progress.getCancelled())
-			{
-				if (track)
-				{
-					progress.stepCompleted();
-				}
-				entry = _entries.get(i);
-				if (!entry.isURL())
-				{
-					if (!saveRelative && entry.getAbsoluteFile() != null)
-					{
-						// replace existing relative entry with a new absolute one
-						File absolute = entry.getAbsoluteFile().getCanonicalFile();
-
-						// Switch to UNC representation if selected in the options
-						if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-						{
-							UNCFile temp = new UNCFile(absolute);
-							absolute = new File(temp.getUNCPath());
-						}
-						
-						entry = new PlaylistEntry(absolute, entry.getTitle(), entry.getLength(), _file);
-						_entries.set(i, entry);
-					}
-					else if (saveRelative && entry.isFound())
-					{
-						// replace existing entry with a new relative one
-						String relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
-						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
-						{
-							relativePath = "." + Constants.FS + relativePath;
-						}
-
-						// make a new file out of this relative path, and see if it's really relative...
-						// if it's absolute, we have to perform the UNC check and convert if necessary.
-						File temp = new File(relativePath);
-						if (temp.isAbsolute())
-						{
-							// Switch to UNC representation if selected in the options
-							if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-							{
-								UNCFile uncd = new UNCFile(temp);
-								temp = new File(uncd.getUNCPath());
-							}
-						}
-
-						// make the entry and addAt it						
-						entry = new PlaylistEntry(temp, entry.getTitle(), entry.getLength(), _file);
-						_entries.set(i, entry);
-					}
-				}
-				buffer.append(entry.toPLSString(i + 1));
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		buffer.append("NumberOfEntries=").append(_entries.size()).append(BR);
-		buffer.append("Version=2");
-
-		if (!track || !progress.getCancelled())
-		{
-			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
-			if (!dirToSaveIn.exists())
-			{
-				dirToSaveIn.mkdirs();
-			}
-
-			if (isUtfFormat())
-			{
-				try (FileOutputStream outputStream = new FileOutputStream(_file))
-				{
-					Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-					try (BufferedWriter output = new BufferedWriter(osw))
-					{
-						output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-					}
-				}
-				setUtfFormat(true);
-			}
-			else
-			{
-				try (FileOutputStream outputStream = new FileOutputStream(_file); BufferedOutputStream output = new BufferedOutputStream(outputStream))
-				{
-					output.write(buffer.toString().getBytes());
-				}
-				setUtfFormat(false);
-			}
-		}
-	}
-
-	private void saveWPL(boolean saveRelative, ProgressAdapter progress) throws IOException
-	{
-		boolean track = progress != null;
-
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(getWPLHead());
-		PlaylistEntry entry;
-		String relativePath;
-		for (int i = 0; i < _entries.size(); i++)
-		{
-			if (!track || !progress.getCancelled())
-			{
-				if (track)
-				{
-					progress.stepCompleted();
-				}
-				entry = _entries.get(i);
-				entry.setPlaylist(_file);
-				if (!entry.isURL())
-				{
-					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
-					{
-						// replace existing relative entry with a new absolute one
-						File absolute = entry.getAbsoluteFile().getCanonicalFile();
-						
-						// Switch to UNC representation if selected in the options
-						if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-						{
-							UNCFile temp = new UNCFile(absolute);
-							absolute = new File(temp.getUNCPath());
-						}
-						entry = new PlaylistEntry(absolute, entry.getExtInf(), _file, entry.getCID(), entry.getTID());
-						_entries.set(i, entry);
-					}
-					else if (saveRelative && entry.isFound())
-					{						
-						// replace existing entry with a new relative one
-						relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _file);
-						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
-						{
-							relativePath = "." + Constants.FS + relativePath;
-						}
-						
-						// make a new file out of this relative path, and see if it's really relative...
-						// if it's absolute, we have to perform the UNC check and convert if necessary.
-						File temp = new File(relativePath);
-						if (temp.isAbsolute())
-						{
-							// Switch to UNC representation if selected in the options
-							if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-							{
-								UNCFile uncd = new UNCFile(temp);
-								temp = new File(uncd.getUNCPath());
-							}
-						}
-						
-						// make the entry and addAt it						
-						entry = new PlaylistEntry(temp, entry.getExtInf(), _file, entry.getCID(), entry.getTID());
-						_entries.set(i, entry);
-					}
-				}
-
-				String media = "\t\t\t<media src=\"" + XMLEncode(entry.toWPLString()) + "\"";
-				if (!entry.getCID().isEmpty()) media += " cid=\"" + entry.getCID() + "\"";
-				if (!entry.getTID().isEmpty()) media += " tid=\"" + entry.getTID() + "\"";
-				media += "/>" + BR;				
-				buffer.append(media);
-			}
-			else
-			{
-				return;
-			}
-		}
-		buffer.append(getWPLFoot());
-		
-		if (!track || !progress.getCancelled())
-		{
-			File dirToSaveIn = _file.getParentFile().getAbsoluteFile();
-			if (!dirToSaveIn.exists())
-			{
-				dirToSaveIn.mkdirs();
-			}
-			try (FileOutputStream outputStream = new FileOutputStream(_file))
-			{
-				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-				try (BufferedWriter output = new BufferedWriter(osw))
-				{
-					output.write(buffer.toString());
-				}
-			}
-			setUtfFormat(true);
-		}
-	}
-	
-	// WPL Helper Method
-	private String XMLEncode(String s)
-	{
-		s = s.replaceAll("&", "&amp;");
-		s = s.replaceAll("'", "&apos;");		
-		s = s.replaceAll("<", "&lt;");
-		s = s.replaceAll(">", "&gt;");
-		return s;
-	}
-	
-	// WPL Helper Method
-	private String getWPLHead() throws IOException
-	{
-		String head = "";
-		boolean newHead = false;
-		try
-		{
-			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(_file), "UTF-8"), "UTF8")))
-			{
-				String line = buffer.readLine();
-				while (line != null)
-				{
-					if (line.trim().startsWith("<media"))
-					{
-						break;
-					}
-					head += line + BR;
-					line = buffer.readLine();
-				}
-			}
-			// determine if a head was read
-			if (!head.contains("<?wpl"))
-			{
-				newHead = true;
-			}
-		}
-		catch (Exception ex)
-		{
-			// Don't bother logging here, it's expected when saving out a new file
-			// _logger.error(ExStack.toString(ex));
-			newHead = true;
-		}
-		if (newHead) head = "<?wpl version=\"1.0\"?>\r\n<smil>\r\n\t<body>\r\n\t\t<sec>\r\n";
-		return head;
-	}
-	
-	// WPL Helper Method
-	private String getWPLFoot() throws IOException
-	{
-		return "\t\t</sec>\r\n\t</body>\r\n</smil>";
-	}
+		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistwriter(_file);
+		writer.save(this, false, null);
+	}	
 	
 	/**
 	 * 
@@ -1635,7 +1261,7 @@ public class Playlist
 		return determinePlaylistType(input) != PlaylistType.UNKNOWN;
 	}
 
-	private static PlaylistType determinePlaylistType(File input)
+	public static PlaylistType determinePlaylistType(File input)
 	{
 		if (input != null)
 		{
@@ -1649,6 +1275,8 @@ public class Playlist
 					return PlaylistType.PLS;
 				case "wpl":
 					return PlaylistType.WPL;
+				case "xspf":
+					return PlaylistType.XSPF;
 			}
 		}
 		return PlaylistType.UNKNOWN;
