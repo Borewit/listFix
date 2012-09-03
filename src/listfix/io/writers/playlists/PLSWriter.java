@@ -107,7 +107,7 @@ class PLSWriter implements IPlaylistWriter
 						entries.set(i, entry);
 					}
 				}
-				buffer.append(entry.toPLSString(i + 1));
+				buffer.append(serializeEntry(entry, i + 1));
 			}
 			else
 			{
@@ -149,4 +149,54 @@ class PLSWriter implements IPlaylistWriter
 		}
 	}
 	
+	private String serializeEntry(PlaylistEntry entry, int index)
+	{
+		StringBuilder result = new StringBuilder();
+
+		// set the file
+		if (!entry.isURL())
+		{
+			result.append("File").append(index).append("=");
+			if (!entry.isRelative())
+			{
+				if (entry.getPath().endsWith(Constants.FS))
+				{
+					result.append(entry.getPath());
+					result.append(entry.getFileName());
+				}
+				else
+				{
+					result.append(entry.getPath());
+					result.append(Constants.FS);
+					result.append(entry.getFileName());
+				}
+			}
+			else
+			{
+				String tempPath = entry.getFile().getPath();
+				if (tempPath.substring(0, tempPath.indexOf(entry.getFileName())).equals(Constants.FS))
+				{
+					result.append(entry.getFileName());
+				}
+				else
+				{
+					result.append(entry.getFile().getPath());
+				}
+			}
+		}
+		else
+		{
+			result.append("File").append(index).append("=").append(entry.getURI().toString());
+		}
+		result.append(Constants.BR);
+
+		// set the _title
+		result.append("Title").append(index).append("=").append(entry.getTitle()).append(Constants.BR);
+
+		// set the _length
+		long lengthToSeconds = entry.getLength() == -1 ? entry.getLength() : entry.getLength() / 1000L;
+		result.append("Length").append(index).append("=").append(lengthToSeconds).append(Constants.BR);
+
+		return result.toString();
+	}
 }

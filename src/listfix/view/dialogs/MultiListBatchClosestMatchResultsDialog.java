@@ -281,7 +281,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
 		{
 			@Override
-			protected Void doInBackground() throws IOException
+			protected Void doInBackground() throws Exception
 			{
 				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 				_batch.save(saveRelative, true, _chkBackup.isSelected(), _txtBackup.getText(), this);

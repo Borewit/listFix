@@ -111,7 +111,7 @@ class M3UWriter implements IPlaylistWriter
 					}
 				}
 
-				buffer.append(entry.toM3UString()).append(Constants.BR);
+				buffer.append(serializeEntry(entry)).append(Constants.BR);
 			}
 			else
 			{
@@ -154,4 +154,48 @@ class M3UWriter implements IPlaylistWriter
 			}
 		}
 	}	
+	
+	private String serializeEntry(PlaylistEntry entry)
+	{
+		StringBuilder result = new StringBuilder();
+		if (!(entry.getExtInf() == null) && !(entry.getExtInf().equals("")))
+		{
+			result.append(entry.getExtInf());
+			result.append(Constants.BR);
+		}
+		if (!entry.isURL())
+		{
+			if (!entry.isRelative())
+			{
+				if (entry.getPath().endsWith(Constants.FS))
+				{
+					result.append(entry.getPath());
+					result.append(entry.getFileName());
+				}
+				else
+				{
+					result.append(entry.getPath());
+					result.append(Constants.FS);
+					result.append(entry.getFileName());
+				}
+			}
+			else
+			{
+				String tempPath = entry.getFile().getPath();
+				if (tempPath.substring(0, tempPath.indexOf(entry.getFileName())).equals(Constants.FS))
+				{
+					result.append(entry.getFileName());
+				}
+				else
+				{
+					result.append(entry.getFile().getPath());
+				}
+			}
+		}
+		else
+		{
+			result.append(entry.getURI().toString());
+		}
+		return result.toString();
+	}
 }

@@ -114,7 +114,7 @@ class WPLWriter implements IPlaylistWriter
 					}
 				}
 
-				String media = "\t\t\t<media src=\"" + XMLEncode(entry.toWPLString()) + "\"";
+				String media = "\t\t\t<media src=\"" + XMLEncode(serializeEntry(entry)) + "\"";
 				if (!entry.getCID().isEmpty())
 				{
 					media += " cid=\"" + entry.getCID() + "\"";
@@ -205,5 +205,44 @@ class WPLWriter implements IPlaylistWriter
 	private String getWPLFoot() throws IOException
 	{
 		return "\t\t</sec>\r\n\t</body>\r\n</smil>";
+	}
+	
+	private String serializeEntry(PlaylistEntry entry)
+	{
+		StringBuilder result = new StringBuilder();
+		if (!entry.isURL())
+		{
+			if (!entry.isRelative())
+			{
+				if (entry.getPath().endsWith(Constants.FS))
+				{
+					result.append(entry.getPath());
+					result.append(entry.getFileName());
+				}
+				else
+				{
+					result.append(entry.getPath());
+					result.append(Constants.FS);
+					result.append(entry.getFileName());
+				}
+			}
+			else
+			{
+				String tempPath = entry.getFile().getPath();
+				if (tempPath.substring(0, tempPath.indexOf(entry.getFileName())).equals(Constants.FS))
+				{
+					result.append(entry.getFileName());
+				}
+				else
+				{
+					result.append(entry.getFile().getPath());
+				}
+			}
+		}
+		else
+		{
+			result.append(entry.getURI().toString());
+		}
+		return result.toString();
 	}
 }

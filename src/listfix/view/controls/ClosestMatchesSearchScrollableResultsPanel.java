@@ -21,12 +21,10 @@
 package listfix.view.controls;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -243,13 +241,13 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 			{
 				match.getPlaylistFile().play();
 			}
-			catch (IOException ex)
-			{
-				_logger.warn(ExStack.toString(ex));
-			}
 			catch (InterruptedException ex)
 			{
 				// ignore, these happen when people cancel - should not be logged either.
+			}			
+			catch (Exception ex)
+			{
+				_logger.warn(ExStack.toString(ex));
 			}
 		}
 

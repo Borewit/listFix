@@ -23,13 +23,18 @@ package listfix.model;
 import listfix.model.enums.PlaylistEntryStatus;
 import java.io.File;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.controller.GUIDriver;
 
 import listfix.io.Constants;
-import listfix.util.*;
+import listfix.util.ArrayFunctions;
+import listfix.util.ExStack;
+import listfix.util.FileNameTokenizer;
+import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 import org.apache.log4j.Logger;
@@ -581,153 +586,6 @@ public class PlaylistEntry implements Cloneable
 			tempList.add(this);
 			(new Playlist(tempList)).play();
 		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String toM3UString()
-	{
-		StringBuilder result = new StringBuilder();
-		if (!(this.getExtInf() == null) && !(this.getExtInf().equals("")))
-		{
-			result.append(this.getExtInf());
-			result.append(Constants.BR);
-		}
-		if (!this.isURL())
-		{
-			if (!this.isRelative())
-			{
-				if (this.getPath().endsWith(Constants.FS))
-				{
-					result.append(this.getPath());
-					result.append(this.getFileName());
-				}
-				else
-				{
-					result.append(this.getPath());
-					result.append(Constants.FS);
-					result.append(this.getFileName());
-				}
-			}
-			else
-			{
-				String tempPath = _thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(Constants.FS))
-				{
-					result.append(_fileName);
-				}
-				else
-				{
-					result.append(_thisFile.getPath());
-				}
-			}
-		}
-		else
-		{
-			result.append(_thisURI.toString());
-		}
-		return result.toString();
-	}
-
-	/**
-	 * 
-	 * @param index
-	 * @return
-	 */
-	public String toPLSString(int index)
-	{
-		StringBuilder result = new StringBuilder();
-
-		// set the file
-		if (!this.isURL())
-		{
-			result.append("File").append(index).append("=");
-			if (!this.isRelative())
-			{
-				if (this.getPath().endsWith(Constants.FS))
-				{
-					result.append(this.getPath());
-					result.append(this.getFileName());
-				}
-				else
-				{
-					result.append(this.getPath());
-					result.append(Constants.FS);
-					result.append(this.getFileName());
-				}
-			}
-			else
-			{
-				String tempPath = _thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(Constants.FS))
-				{
-					result.append(_fileName);
-				}
-				else
-				{
-					result.append(_thisFile.getPath());
-				}
-			}
-		}
-		else
-		{
-			result.append("File").append(index).append("=").append(_thisURI.toString());
-		}
-		result.append(Constants.BR);
-
-		// set the _title
-		result.append("Title").append(index).append("=").append(_title).append(Constants.BR);
-
-		// set the _length
-		long lengthToSeconds = _length == -1 ? _length : _length / 1000L;
-		result.append("Length").append(index).append("=").append(lengthToSeconds).append(Constants.BR);
-
-		return result.toString();
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String toWPLString()
-	{
-		StringBuilder result = new StringBuilder();
-		if (!this.isURL())
-		{
-			if (!this.isRelative())
-			{
-				if (this.getPath().endsWith(Constants.FS))
-				{
-					result.append(this.getPath());
-					result.append(this.getFileName());
-				}
-				else
-				{
-					result.append(this.getPath());
-					result.append(Constants.FS);
-					result.append(this.getFileName());
-				}
-			}
-			else
-			{
-				String tempPath = _thisFile.getPath();
-				if (tempPath.substring(0, tempPath.indexOf(_fileName)).equals(Constants.FS))
-				{
-					result.append(_fileName);
-				}
-				else
-				{
-					result.append(_thisFile.getPath());
-				}
-			}
-		}
-		else
-		{
-			result.append(_thisURI.toString());
-		}
-		return result.toString();
 	}
 	
 	/**
