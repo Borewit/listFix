@@ -31,7 +31,6 @@ import christophedelory.playlist.xspf.Track;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
@@ -51,24 +50,35 @@ class XSPFWriter implements IPlaylistWriter
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception
 	{
+		boolean track = adapter != null;
+		
 		// First, construct a generic lizzy playlist
-		List<PlaylistEntry> entries = list.getEntries();
 		christophedelory.playlist.Playlist lizzyList = new christophedelory.playlist.Playlist();
 		for(PlaylistEntry entry : list.getEntries())
 		{
-			lizzyList.getRootSequence().addComponent(getMedia(entry));
+			if (!track || !adapter.getCancelled())
+			{
+				lizzyList.getRootSequence().addComponent(getMedia(entry));
+				if (track)
+				{
+					adapter.stepCompleted();
+				}
+			}
 		}
-		SpecificPlaylistProvider spp = SpecificPlaylistFactory.getInstance().findProviderByExtension(list.getFilename());
-		try
+		if (!track || !adapter.getCancelled())
 		{
-			SpecificPlaylist specificPlaylist = spp.toSpecificPlaylist(lizzyList);
-			addXspfMetadata(specificPlaylist, list);
-			specificPlaylist.writeTo(new FileOutputStream(list.getFile()), "UTF8");
-		}
-		catch (Exception ex)
-		{
-			_logger.error(ExStack.toString(ex), ex);
-			throw ex;
+			SpecificPlaylistProvider spp = SpecificPlaylistFactory.getInstance().findProviderByExtension(list.getFilename());
+			try
+			{
+				SpecificPlaylist specificPlaylist = spp.toSpecificPlaylist(lizzyList);
+				addXspfMetadata(specificPlaylist, list);
+				specificPlaylist.writeTo(new FileOutputStream(list.getFile()), "UTF8");
+			}
+			catch (Exception ex)
+			{
+				_logger.error(ExStack.toString(ex), ex);
+				throw ex;
+			}
 		}
 	}	
 
@@ -97,6 +107,17 @@ class XSPFWriter implements IPlaylistWriter
 			{
 				// Handle missing files.
 				mediaURI = entry.getFile().toURI();
+			}
+		}
+		if (!mediaURI.toString().startsWith("file://") && mediaURI.toString().startsWith("file:/"))
+		{
+			try
+			{
+				mediaURI = new URI(mediaURI.toString().replace("file:/", "file:///"));
+			}
+			catch (URISyntaxException ex)
+			{
+				_logger.error(ExStack.toString(ex), ex);
 			}
 		}
 		if (mediaURI.toString().contains("////"))
