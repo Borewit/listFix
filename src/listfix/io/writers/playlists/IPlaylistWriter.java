@@ -20,7 +20,6 @@
 
 package listfix.io.writers.playlists;
 
-import java.io.IOException;
 import listfix.model.Playlist;
 import listfix.view.support.ProgressAdapter;
 
@@ -30,5 +29,5 @@ import listfix.view.support.ProgressAdapter;
  */
 public interface IPlaylistWriter
 {
-	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException;
+	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception;
 }

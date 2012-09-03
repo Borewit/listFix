@@ -1347,7 +1347,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
 					@Override
-					protected Void doInBackground() throws IOException
+					protected Void doInBackground() throws Exception
 					{
 						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 						_currentPlaylist.saveAs(finalPlaylistFile, saveRelative, this);
@@ -1893,7 +1893,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				ProgressWorker<Boolean, Void> worker = new ProgressWorker<Boolean, Void>()
 				{
 					@Override
-					protected Boolean doInBackground() throws IOException
+					protected Boolean doInBackground() throws Exception
 					{
 						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 						list.save(saveRelative, this);
@@ -2294,7 +2294,7 @@ private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-F
 			ProgressWorker worker = new ProgressWorker<Void, Void>()
 			{
 				@Override
-				protected Void doInBackground() throws IOException
+				protected Void doInBackground() throws Exception
 				{
 					boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 					_currentPlaylist.save(saveRelative, this);

@@ -27,13 +27,15 @@ import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.SpecificPlaylistProvider;
 import christophedelory.playlist.xspf.Track;
+
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
 import listfix.model.Playlist;
 import listfix.model.PlaylistEntry;
+import listfix.util.ExStack;
 import listfix.view.support.ProgressAdapter;
 
 import org.apache.log4j.Logger;
@@ -47,7 +49,7 @@ class XSPFWriter implements IPlaylistWriter
 	private static final Logger _logger = Logger.getLogger(XSPFWriter.class);
 	
 	@Override
-	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException
+	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception
 	{
 		// First, construct a generic lizzy playlist
 		List<PlaylistEntry> entries = list.getEntries();
@@ -65,32 +67,37 @@ class XSPFWriter implements IPlaylistWriter
 		}
 		catch (Exception ex)
 		{
-			_logger.error(ex);
+			_logger.error(ExStack.toString(ex), ex);
+			throw ex;
 		}
 	}	
 
-	private AbstractPlaylistComponent getMedia(PlaylistEntry entry)
+	private AbstractPlaylistComponent getMedia(PlaylistEntry entry) throws Exception
 	{
-		Media trackToAdd = new Media();
-		long duration = Long.parseLong(entry.getLength()) * 1000L;
-		if (duration > 0)
-		{
-			trackToAdd.setDuration(duration);
-		}
+		Media trackToAdd = new Media();		
 		trackToAdd.setSource(getContent(entry));
 		return trackToAdd;
 	}
 
-	private Content getContent(PlaylistEntry entry)
+	private Content getContent(PlaylistEntry entry) throws Exception
 	{		
-		URI mediaURI = null;
+		URI mediaURI;
 		if (entry.isURL())
 		{
 			mediaURI = entry.getURI();
 		}
 		else
 		{
-			mediaURI = entry.getAbsoluteFile().toURI();
+			if (entry.getAbsoluteFile() != null)
+			{
+				// Handle found files.
+				mediaURI = entry.getAbsoluteFile().toURI();
+			}
+			else
+			{
+				// Handle missing files.
+				mediaURI = entry.getFile().toURI();
+			}
 		}
 		if (mediaURI.toString().contains("////"))
 		{
@@ -100,7 +107,8 @@ class XSPFWriter implements IPlaylistWriter
 			}
 			catch (URISyntaxException ex)
 			{
-				_logger.error(ex);
+				_logger.error(ExStack.toString(ex), ex);
+				throw ex;
 			}
 		}
 		return new Content(mediaURI);
@@ -116,6 +124,11 @@ class XSPFWriter implements IPlaylistWriter
 			{
 				track = castedList.getTracks().get(i);
 				track.setTitle(list.getEntries().get(i).getTitle());
+				long duration = list.getEntries().get(i).getLength();
+				if (duration > 0)
+				{
+					track.setDuration((int)duration);
+				}
 			}
 		}
 	}

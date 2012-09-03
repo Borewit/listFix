@@ -1,6 +1,6 @@
 /*
  *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2010 Jeremy Caron
+ *  Copyright (C) 2001-2012 Jeremy Caron
  * 
  *  This file is part of listFix().
  * 
@@ -35,16 +35,13 @@ import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
 
 import org.apache.log4j.Logger;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     XSPFReader.java
-= Purpose:  Read in the playlist file and return a List containing
-=           PlaylistEntries that represent the files in the playlist.
-============================================================================
+/**
+ * Reads in a XSPF file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * @author jcaron
  */
 public class XSPFReader implements IPlaylistReader
 {
@@ -54,33 +51,62 @@ public class XSPFReader implements IPlaylistReader
 	private static final PlaylistType type = PlaylistType.XSPF;
 	private static final Logger _logger = Logger.getLogger(XSPFReader.class);
 	
+	/**
+	 * 
+	 * @param inputFile
+	 */
 	public XSPFReader(File inputFile)
 	{
 		_listFile = inputFile;		
 		_encoding = UnicodeUtils.getEncoding(_listFile);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public String getEncoding()
 	{
 		return _encoding;
 	}
 
+	/**
+	 * 
+	 * @param encoding
+	 */
 	@Override
 	public void setEncoding(String encoding)
 	{
 		_encoding = encoding;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public PlaylistType getPlaylistType()
 	{
 		return type;
 	}
 
+	/**
+	 * 
+	 * @param observer 
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
-	public List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException
+	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
+		// Init a progress adapter if we have a progress observer.
+		ProgressAdapter progress = null;
+		if (observer != null) 
+		{
+			progress = ProgressAdapter.wrap(observer);
+		} 
+		
 		List<PlaylistEntry> entriesList = new ArrayList<>();
 		URI uri; 
 		File trackFile;
@@ -88,8 +114,25 @@ public class XSPFReader implements IPlaylistReader
 		if (loadedList.getProvider().getId().equals("xspf"))
 		{
 			christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(_listFile);
+			
+			// Set the total if we have an observer.
+			if (progress != null)
+			{
+				progress.setTotal(xspfList.getTracks().size());
+			}
+			
+			int trackCount = 0;
 			for (Track track : xspfList.getTracks())
 			{
+				if (observer != null)
+				{
+					if (observer.getCancelled())
+					{
+						// Bail out if the user cancelled.
+						return null;
+					}
+				}
+				
 				try
 				{
 					uri = new URI(track.getStringContainers().get(0).getText());
@@ -98,18 +141,24 @@ public class XSPFReader implements IPlaylistReader
 						trackFile = new File(uri.getSchemeSpecificPart());
 						if (trackFile != null)
 						{
-							entriesList.add(new PlaylistEntry(trackFile, track.getCreator() + " - " + track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() / 1000 + "" : "0", _listFile));
+							entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
 						}
 					}
 					catch (Exception e)
 					{
 						// if that didn't work, then we're probably dealing w/ a URL
-						entriesList.add(new PlaylistEntry(uri, track.getTitle(), ""));
+						entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
 					}
 				}
 				catch (Exception ex)
 				{
 					_logger.error("[XSPFReader] - Could not convert lizzy entry to PlaylistEntry - " + ExStack.toString(ex), ex);
+				}
+				
+				if (progress != null)
+				{
+					// Step forward if we have an observer.
+					progress.setCompleted(trackCount++);
 				}
 			}
 			return entriesList;
@@ -120,6 +169,11 @@ public class XSPFReader implements IPlaylistReader
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
@@ -140,13 +194,13 @@ public class XSPFReader implements IPlaylistReader
 						trackFile = new File(uri.getSchemeSpecificPart());
 						if (trackFile != null)
 						{
-							entriesList.add(new PlaylistEntry(trackFile, track.getCreator() + " - " + track.getTitle(), track.getDuration().longValue() / 1000 + "", _listFile));
+							entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue()  : -1, _listFile));
 						}
 					}
 					catch (Exception e)
 					{
 						// if that didn't work, then we're probably dealing w/ a URL
-						entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration().longValue() / 1000 + ""));
+						entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue()  : -1));
 					}
 				}
 				catch (Exception ex)
@@ -160,5 +214,22 @@ public class XSPFReader implements IPlaylistReader
 		{
 			throw new IOException("XSPF file was not in XSPF format!!");
 		}
-	}	
+	}
+
+	private String getTitle(Track track)
+	{
+		if (track.getCreator() != null && track.getTitle() != null)
+		{
+			return track.getCreator() + " - " + track.getTitle();
+		}
+		else if (track.getCreator() == null && track.getTitle() != null)
+		{
+			return track.getTitle();
+		}
+		else if (track.getCreator() != null && track.getTitle() == null)
+		{
+			return track.getCreator();
+		}
+		return "";
+	}
 }

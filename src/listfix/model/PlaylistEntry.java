@@ -22,7 +22,6 @@ package listfix.model;
 
 import listfix.model.enums.PlaylistEntryStatus;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -73,7 +72,7 @@ public class PlaylistEntry implements Cloneable
 	// The _title of the entry
 	private String _title = "";
 	// The _length of the track
-	private String _length = "-1";
+	private long _length = -1;
 	// Status of this item.
 	private PlaylistEntryStatus _status = PlaylistEntryStatus.Unknown;
 	// Has this item been fixed?
@@ -123,34 +122,19 @@ public class PlaylistEntry implements Cloneable
 		_tid = tid;		
 	}
 
-	// Construct a PLS URL entry.
+	// Construct a PLS/XSPF URL entry.
 	/**
 	 * 
 	 * @param uri
 	 * @param title
 	 * @param length
 	 */
-	public PlaylistEntry(URI uri, String title, String length)
+	public PlaylistEntry(URI uri, String title, long length)
 	{
 		_thisURI = uri;
 		_title = title;
 		_length = length;
-		_extInf = "#EXTINF:" + length + "," + title;
-	}
-	
-	// Construct a PLS URL entry.
-	/**
-	 * 
-	 * @param uri
-	 * @param title
-	 * @param length
-	 */
-	public PlaylistEntry(URI uri, String title, int length)
-	{
-		_thisURI = uri;
-		_title = title;
-		_length = length + "";
-		_extInf = "#EXTINF:" + length + "," + title;
+		_extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
 	}
 
 	// Construct an M3U path & file-name based entry.
@@ -313,19 +297,19 @@ public class PlaylistEntry implements Cloneable
 	 * @param length
 	 * @param list
 	 */
-	public PlaylistEntry(File input, String title, String length, File list)
+	public PlaylistEntry(File input, String title, long length, File list)
 	{
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 		_thisFile = input;
-		// this parsing is insufficient when going from windows to linux... special handling is necessary.
+		// the parsing above is insufficient when going from windows to linux... special handling is necessary.
 		if (!OperatingSystem.isWindows() && _path.isEmpty() && input.getName().indexOf(Constants.FS) < 0)
 		{
 			_fileName = input.getName().substring(input.getName().lastIndexOf("\\") + 1);
 			_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 			_thisFile = new File(_path, _fileName);
 		}
-		_extInf = "#EXTINF:" + length + "," + title;
+		_extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
 		_title = title;
 		_length = length;
 		_playlist = list;
@@ -587,10 +571,9 @@ public class PlaylistEntry implements Cloneable
 	// Try to open the file with the "default" MP3 player (only works on some systems).
 	/**
 	 * 
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @throws Exception 
 	 */
-	public void play() throws IOException, InterruptedException
+	public void play() throws Exception
 	{
 		if (this.isFound() || this.isURL())
 		{
@@ -698,7 +681,8 @@ public class PlaylistEntry implements Cloneable
 		result.append("Title").append(index).append("=").append(_title).append(Constants.BR);
 
 		// set the _length
-		result.append("Length").append(index).append("=").append(_length).append(Constants.BR);
+		long lengthToSeconds = _length == -1 ? _length : _length / 1000L;
+		result.append("Length").append(index).append("=").append(lengthToSeconds).append(Constants.BR);
 
 		return result.toString();
 	}
@@ -884,9 +868,9 @@ public class PlaylistEntry implements Cloneable
 	}
 
 	/**
-	 * @return the _length
+	 * @return the _length, in milliseconds
 	 */
-	public String getLength()
+	public long getLength()
 	{
 		return _length;
 	}
@@ -901,7 +885,16 @@ public class PlaylistEntry implements Cloneable
 				String[] split = extra.split(",");
 				if (split != null && split.length > 1)
 				{
-					_length = split[0];
+					try
+					{
+						// extra info comes from M3Us, so this comes in a seconds
+						// and needs conversion to milliseconds.
+						_length = Long.parseLong(split[0]) * 1000L;
+					}
+					catch (Exception e)
+					{
+						// ignore and move on...
+					}
 					_title = split[1];
 				}
 				else if (split != null && split.length == 1)
@@ -938,5 +931,17 @@ public class PlaylistEntry implements Cloneable
 	public void setPlaylist(File list)
 	{
 		_playlist = list;
+	}
+
+	private int convertDurationToSeconds(long length)
+	{
+		if (length <= 0)
+		{
+			return (int)length;
+		}
+		else
+		{
+			return (int)(length / 1000L);
+		}
 	}
 }

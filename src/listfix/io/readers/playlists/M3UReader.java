@@ -27,46 +27,47 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URI;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import listfix.io.Constants;
 import listfix.io.UnicodeInputStream;
-
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
-
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
-
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+
 import org.apache.log4j.Logger;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     M3UReader.java
-= Purpose:  Read in the playlist file and return a Vector containing
-=           PlaylistEntries that represent the files in the playlist.
-============================================================================
+/**
+ * Reads in a M3U/M3U8 file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * @author jcaron
  */
 public class M3UReader implements IPlaylistReader
 {
 	private BufferedReader buffer;
-	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
+	private List<PlaylistEntry> results = new ArrayList<>();
 	private long fileLength = 0;
 	private String _encoding = "";
 	private File _listFile;
 	private static final PlaylistType type = PlaylistType.M3U;
 	private static final Logger _logger = Logger.getLogger(M3UReader.class);
 
+	/**
+	 * 
+	 */
 	StringBuilder _cache;
 
+	/**
+	 * 
+	 * @param in
+	 * @throws FileNotFoundException
+	 */
 	public M3UReader(File in) throws FileNotFoundException
 	{
 		_listFile = in;
@@ -92,24 +93,42 @@ public class M3UReader implements IPlaylistReader
 		fileLength = in.length();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public String getEncoding()
 	{
 		return _encoding;
 	}
 
+	/**
+	 * 
+	 * @param encoding
+	 */
 	@Override
 	public void setEncoding(String encoding)
 	{
 		this._encoding = encoding;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public PlaylistType getPlaylistType()
 	{
 		return type;
 	}
 
+	/**
+	 * 
+	 * @param observer
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
@@ -126,7 +145,7 @@ public class M3UReader implements IPlaylistReader
 		
 		_cache = new StringBuilder();
 		String line1 = readLine();
-		String line2 = "";
+		String line2;
 		if (line1 != null)
 		{
 			// Ignore the standard M3U header and random mediamonkey crap.
@@ -158,7 +177,7 @@ public class M3UReader implements IPlaylistReader
 			}
 			
 			// Declare this variable outside the loop so we don't do it over and over.
-			int cacheSize = 0;
+			int cacheSize;
 			
 			while (line1 != null)
 			{
@@ -237,6 +256,11 @@ public class M3UReader implements IPlaylistReader
 		return results;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{

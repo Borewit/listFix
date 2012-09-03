@@ -406,27 +406,64 @@ public class PLSProperties extends Hashtable<Object, Object>
 	 * Method returns the char length of the "logical line" and stores
 	 * the line in "lineBuf".
 	 */
+	/**
+	 * 
+	 */
 	class LineReader
 	{
+		/**
+		 * 
+		 * @param inStream
+		 */
 		public LineReader(InputStream inStream)
 		{
 			this.inStream = inStream;
 			inByteBuf = new byte[8192];
 		}
 
+		/**
+		 * 
+		 * @param reader
+		 */
 		public LineReader(Reader reader)
 		{
 			this.reader = reader;
 			inCharBuf = new char[8192];
 		}
+		/**
+		 * 
+		 */
 		byte[] inByteBuf;
+		/**
+		 * 
+		 */
 		char[] inCharBuf;
+		/**
+		 * 
+		 */
 		char[] lineBuf = new char[1024];
+		/**
+		 * 
+		 */
 		int inLimit = 0;
+		/**
+		 * 
+		 */
 		int inOff = 0;
+		/**
+		 * 
+		 */
 		InputStream inStream;
+		/**
+		 * 
+		 */
 		Reader reader;
 
+		/**
+		 * 
+		 * @return
+		 * @throws IOException
+		 */
 		int readLine() throws IOException
 		{
 			int len = 0;

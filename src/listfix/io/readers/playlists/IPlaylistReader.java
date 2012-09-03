@@ -22,21 +22,48 @@ package listfix.io.readers.playlists;
 
 import java.io.IOException;
 import java.util.List;
+
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.view.support.IProgressObserver;
 
 /**
- *
+ * Represents an entity capable of reading in a playlist file and returning
+ * a List containing PlaylistEntries that represent the files & URIs in that playlist.
  * @author jcaron
  */
 public interface IPlaylistReader
 {
+	/**
+	 * 
+	 * @return
+	 */
 	public String getEncoding();
+	
+	/**
+	 * 
+	 * @param encoding
+	 */
 	public void setEncoding(String encoding);
 
+	/**
+	 * 
+	 * @return
+	 */
 	public PlaylistType getPlaylistType();
 
+	/**
+	 * 
+	 * @param input
+	 * @return
+	 * @throws IOException
+	 */
 	List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
+	
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	List<PlaylistEntry> readPlaylist() throws IOException;
 }

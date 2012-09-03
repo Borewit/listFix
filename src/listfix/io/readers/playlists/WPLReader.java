@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2010 Jeremy Caron, 2012 John Peterson
+ * Copyright (C) 2001-2012 Jeremy Caron, 2012 John Peterson
  * 
  * This file is part of listFix().
  *
@@ -43,27 +43,30 @@ import listfix.view.support.ProgressAdapter;
 
 import org.apache.log4j.Logger;
 
-/*
-============================================================================
-= Author:   Jeremy Caron, John Peterson
-= File:     WPLReader.java
-= Purpose:  Read in the playlist file and return a List containing
-=           PlaylistEntries that represent the files in the playlist.
-============================================================================
+/**
+ * Reads in a WPL file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * @author jcaron, jpeterson
  */
-
 public class WPLReader implements IPlaylistReader
 {
 	private BufferedReader _buffer;
-	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
+	private List<PlaylistEntry> results = new ArrayList<>();
 	private long fileLength = 0;
 	private String encoding = "";
 	private File _listFile;
 	private static final PlaylistType type = PlaylistType.WPL;
 	private static final Logger _logger = Logger.getLogger(WPLReader.class);
 
+	/**
+	 * 
+	 */
 	StringBuilder _cache;
 
+	/**
+	 * 
+	 * @param in
+	 * @throws FileNotFoundException
+	 */
 	public WPLReader(File in) throws FileNotFoundException
 	{
 		_listFile = in;
@@ -90,73 +93,132 @@ public class WPLReader implements IPlaylistReader
 		return s;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public String getEncoding()
 	{
 		return encoding;
 	}
 
+	/**
+	 * 
+	 * @param encoding
+	 */
 	@Override
 	public void setEncoding(String encoding)
 	{
 		this.encoding = encoding;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public PlaylistType getPlaylistType()
 	{
 		return type;
 	}
 
+	/**
+	 * 
+	 * @param observer
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
-		ProgressAdapter progress;
-		if (observer != null) progress = ProgressAdapter.wrap(observer); else progress = null;
-		if (progress != null) progress.setTotal((int) fileLength);
-		
+		ProgressAdapter progress = null;
+		if (observer != null)
+		{
+			progress = ProgressAdapter.wrap(observer);
+		}
+		if (progress != null)
+		{
+			progress.setTotal((int) fileLength);
+		}
+
 		_cache = new StringBuilder();
 		String line = readLine();
 		String path = "";
 		String cid = "";
 		String tid = "";
-		
+
 		int cacheSize = _cache.toString().getBytes().length;
 		if (cacheSize < fileLength)
 		{
-			if (progress != null) progress.setCompleted(cacheSize);
+			if (progress != null)
+			{
+				progress.setCompleted(cacheSize);
+			}
 		}
-		
+
 		while (line != null)
 		{
-			if (observer != null) if (observer.getCancelled()) return null;
-			cacheSize = _cache.toString().getBytes().length;
-			if (cacheSize < fileLength)
+			if (observer != null)
 			{
-				if (progress != null) progress.setCompleted(cacheSize);
-			}				
-			line = readLine();
-			if (line == null) break;
-			line = XMLDecode(line);
-			
-			if (line.trim().startsWith("<media")) {
-				path = line.substring(line.indexOf("\"")+1, line.indexOf("\"", line.indexOf("\"")+1));
-				if (line.contains("cid=\"")) cid = line.substring(line.indexOf("cid=\"")+5, line.indexOf("\"", line.indexOf("cid=\"")+5));
-				if (line.contains("tid=\"")) tid = line.substring(line.indexOf("tid=\"")+5, line.indexOf("\"", line.indexOf("tid=\"")+5));
+				if (observer.getCancelled())
+				{
+					return null;
+				}
 			}
-			if (!path.isEmpty()) processEntry(path, cid, tid);
-			path = ""; cid = ""; tid = "";
-			
 			cacheSize = _cache.toString().getBytes().length;
 			if (cacheSize < fileLength)
 			{
-				if (progress != null) progress.setCompleted(cacheSize);
+				if (progress != null)
+				{
+					progress.setCompleted(cacheSize);
+				}
+			}
+			line = readLine();
+			if (line == null)
+			{
+				break;
+			}
+			line = XMLDecode(line);
+
+			if (line.trim().startsWith("<media"))
+			{
+				path = line.substring(line.indexOf("\"") + 1, line.indexOf("\"", line.indexOf("\"") + 1));
+				if (line.contains("cid=\""))
+				{
+					cid = line.substring(line.indexOf("cid=\"") + 5, line.indexOf("\"", line.indexOf("cid=\"") + 5));
+				}
+				if (line.contains("tid=\""))
+				{
+					tid = line.substring(line.indexOf("tid=\"") + 5, line.indexOf("\"", line.indexOf("tid=\"") + 5));
+				}
+			}
+			if (!path.isEmpty())
+			{
+				processEntry(path, cid, tid);
+			}
+			path = "";
+			cid = "";
+			tid = "";
+
+			cacheSize = _cache.toString().getBytes().length;
+			if (cacheSize < fileLength)
+			{
+				if (progress != null)
+				{
+					progress.setCompleted(cacheSize);
+				}
 			}
 		}
 		_buffer.close();
 		return results;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{

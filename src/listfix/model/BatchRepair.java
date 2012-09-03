@@ -21,13 +21,10 @@ package listfix.model;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.net.URI;
 import java.net.URLDecoder;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +50,7 @@ public class BatchRepair
 	private String _description;
 	
 	// The wrappers around the playlists to be repaired.
-	private List<BatchRepairItem> _items = new ArrayList<BatchRepairItem>();
+	private List<BatchRepairItem> _items = new ArrayList<>();
 	
 	// The list of files in the media library to be considered during the repair.
 	private String[] _mediaFiles;
@@ -100,7 +97,7 @@ public class BatchRepair
 
 	public List<Playlist> getPlaylists()
 	{
-		List<Playlist> result = new ArrayList<Playlist>();
+		List<Playlist> result = new ArrayList<>();
 		for (BatchRepairItem item : _items)
 		{
 			result.add(item.getPlaylist());
@@ -159,7 +156,7 @@ public class BatchRepair
 		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
 		progress.getOverall().setTotal(_items.size() * 2);
 
-		List<BatchRepairItem> toRemoveFromBatch = new ArrayList<BatchRepairItem>();
+		List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
 		for (BatchRepairItem item : _items)
 		{
 			if (!observer.getCancelled())
@@ -218,10 +215,9 @@ public class BatchRepair
 	 * @param backup				Should we backup the originals to a zip file?
 	 * @param destination			The path to the backup zip file we'll create if told to backup the originals.
 	 * @param observer				The progress observer for this operation.
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public void save(boolean saveRelative, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver observer) throws FileNotFoundException, IOException
+	public void save(boolean saveRelative, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver observer) throws Exception
 	{
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 
@@ -245,35 +241,35 @@ public class BatchRepair
 			URI root = _rootDirectory.toURI();
 
 			FileOutputStream file = new FileOutputStream(destination);
-			ZipOutputStream zip = new ZipOutputStream(file);
-
-			byte[] buffer = new byte[4096];
-
-			for (BatchRepairItem item : _items)
+			try (ZipOutputStream zip = new ZipOutputStream(file))
 			{
-				File listFile = item.getPlaylist().getFile();
+				byte[] buffer = new byte[4096];
 
-				// make playlist entry relative to root directory
-				URI listUrl = root.relativize(listFile.toURI());
-				String name = URLDecoder.decode(listUrl.toString(), "UTF-8");
-
-				ZipEntry entry = new ZipEntry(name);
-				zip.putNextEntry(entry);
-
-				FileInputStream reader = new FileInputStream(listFile);
-				while (true)
+				for (BatchRepairItem item : _items)
 				{
-					int count = reader.read(buffer);
-					if (count == -1)
+					File listFile = item.getPlaylist().getFile();
+
+					// make playlist entry relative to root directory
+					URI listUrl = root.relativize(listFile.toURI());
+					String name = URLDecoder.decode(listUrl.toString(), "UTF-8");
+
+					ZipEntry entry = new ZipEntry(name);
+					zip.putNextEntry(entry);
+					try (FileInputStream reader = new FileInputStream(listFile))
 					{
-						break;
+						while (true)
+						{
+							int count = reader.read(buffer);
+							if (count == -1)
+							{
+								break;
+							}
+							zip.write(buffer, 0, count);
+							progress.stepCompleted(count);
+						}
 					}
-					zip.write(buffer, 0, count);
-					progress.stepCompleted(count);
 				}
-				reader.close();
 			}
-			zip.close();
 		}
 
 		// save

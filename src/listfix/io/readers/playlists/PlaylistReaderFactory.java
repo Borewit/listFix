@@ -23,29 +23,43 @@ package listfix.io.readers.playlists;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import listfix.model.Playlist;
+import listfix.model.enums.PlaylistType;
+
 /**
  *
  * @author jcaron
  */
 public class PlaylistReaderFactory
 {
+	/**
+	 * 
+	 * @param inputFile
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
 	{
-		if (inputFile.getName().toLowerCase().contains(".m3u"))
+		PlaylistType type = Playlist.determinePlaylistType(inputFile);
+		if (type == PlaylistType.M3U)
 		{
 			return new M3UReader(inputFile);
 		}
-		else if (inputFile.getName().toLowerCase().contains(".pls"))
+		else if (type == PlaylistType.PLS)
 		{
 			return new PLSReader(inputFile);
 		}
-		else if (inputFile.getName().toLowerCase().contains(".xspf"))
+		else if (type == PlaylistType.XSPF)
 		{
 			return new XSPFReader(inputFile);
 		}
-		else
+		else if (type == PlaylistType.WPL)
 		{
 			return new WPLReader(inputFile);
+		}
+		else
+		{
+			return null;
 		}
 	}
 }

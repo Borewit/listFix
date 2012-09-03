@@ -73,9 +73,9 @@ public class Playlist
 	 * This constructor creates a temp-file backed playlist from a list of entries, only intended to be used for playback.
 	 * 
 	 * @param sublist
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public Playlist(List<PlaylistEntry> sublist) throws IOException
+	public Playlist(List<PlaylistEntry> sublist) throws Exception
 	{
 		_utfFormat = true;
 		setEntries(sublist);
@@ -109,7 +109,6 @@ public class Playlist
 
 	/**
 	 * Initializes a playlist using internal listFix() I/O model.
-	 * TODO: Refactor read/write architecture.
 	 * 
 	 * @param playlist
 	 * @param observer
@@ -284,9 +283,9 @@ public class Playlist
 	 * 
 	 * @param rows
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public Playlist getSublist(int[] rows) throws IOException
+	public Playlist getSublist(int[] rows) throws Exception
 	{
 		List<PlaylistEntry> tempList = new ArrayList<>();
 		for (int i : rows)
@@ -1179,9 +1178,9 @@ public class Playlist
 	 * @param destination
 	 * @param saveRelative
 	 * @param observer
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws IOException
+	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws Exception
 	{
 		_file = destination;
 		_type = determinePlaylistType(destination);
@@ -1199,9 +1198,9 @@ public class Playlist
 	 * 
 	 * @param saveRelative
 	 * @param observer
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public final void save(boolean saveRelative, IProgressObserver observer) throws IOException
+	public final void save(boolean saveRelative, IProgressObserver observer) throws Exception
 	{
 		// avoid resetting total if part of batch operation
 		boolean hasTotal = observer instanceof ProgressAdapter;
@@ -1217,7 +1216,7 @@ public class Playlist
 		resetInternalStateAfterSave(observer);
 	}
 
-	private void quickSave() throws IOException
+	private void quickSave() throws Exception
 	{
 		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistwriter(_file);
 		writer.save(this, false, null);

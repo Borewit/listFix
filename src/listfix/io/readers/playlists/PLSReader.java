@@ -25,9 +25,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import listfix.io.Constants;
 import listfix.io.UnicodeInputStream;
-
 import listfix.model.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
@@ -38,22 +38,23 @@ import listfix.view.support.ProgressAdapter;
 
 import org.apache.log4j.Logger;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PLSReader.java
-= Purpose:  Read in the playlist file and return a Vector containing
-=           PlaylistEntries that represent the files in the playlist.
-============================================================================
+/**
+ * Reads in a PLS file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * @author jcaron
  */
 public class PLSReader implements IPlaylistReader
 {
 	private File plsFile = null;
-	private List<PlaylistEntry> results = new ArrayList<PlaylistEntry>();
+	private List<PlaylistEntry> results = new ArrayList<>();
 	private String encoding = "";
 	private static final PlaylistType type = PlaylistType.PLS;
 	private static final Logger _logger = Logger.getLogger(PLSReader.class);
 
+	/**
+	 * 
+	 * @param in
+	 * @throws FileNotFoundException
+	 */
 	public PLSReader(File in) throws FileNotFoundException
 	{
 		try
@@ -71,6 +72,12 @@ public class PLSReader implements IPlaylistReader
 		}
 	}
 
+	/**
+	 * 
+	 * @param observer
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
 	{
@@ -124,6 +131,11 @@ public class PLSReader implements IPlaylistReader
 		return results;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
@@ -136,12 +148,21 @@ public class PLSReader implements IPlaylistReader
 		String file = propBag.getProperty("File" + index, "");
 		String title = propBag.getProperty("Title" + index, "");
 		String length = propBag.getProperty("Length" + index, "");
+		long duration = -1;
+		try
+		{
+			// convert to millis for internal representation.
+			duration = Long.parseLong(length) * 1000L;
+		}
+		catch (Exception e)
+		{
+		}
 
 		if (file.contains("://"))
 		{
 			try
 			{
-				results.add(new PlaylistEntry(new URI(file), title, length));
+				results.add(new PlaylistEntry(new URI(file), title, duration));
 			}
 			catch (URISyntaxException ex)
 			{
@@ -163,22 +184,35 @@ public class PLSReader implements IPlaylistReader
 					file = file.replace("/", Constants.FS);
 				}
 			}
-			results.add(new PlaylistEntry(new File(file), title, length, plsFile));
+			results.add(new PlaylistEntry(new File(file), title, duration, plsFile));
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public String getEncoding()
 	{
 		return encoding;
 	}
 
+	/**
+	 * 
+	 * @param encoding
+	 */
 	@Override
 	public void setEncoding(String encoding)
 	{
 		this.encoding = encoding;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	@Override
 	public PlaylistType getPlaylistType()
 	{
 		return type;

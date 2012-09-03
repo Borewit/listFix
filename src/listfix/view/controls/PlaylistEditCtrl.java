@@ -577,7 +577,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					ProgressWorker worker = new ProgressWorker<Void, Void>()
 					{
 						@Override
-						protected Void doInBackground() throws IOException
+						protected Void doInBackground() throws Exception
 						{
 							boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 							_playlist.saveAs(finalPlaylistFile, saveRelative, this);
@@ -594,7 +594,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						((GUIScreen) getParentFrame()).updateCurrentTab(_playlist);
 					}
 				}
-				catch (Exception e)
+				catch (IOException | InterruptedException | ExecutionException e)
 				{
 					_logger.error(ExStack.toString(e));
 					JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
@@ -613,7 +613,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
 					@Override
-					protected Void doInBackground() throws IOException
+					protected Void doInBackground() throws Exception
 					{
 						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
 						_playlist.save(saveRelative, this);
@@ -624,7 +624,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				pd.setVisible(true);
 				worker.get();
 			}
-			catch (Exception ex)
+			catch (InterruptedException | ExecutionException ex)
 			{
 				_logger.error(ExStack.toString(ex));
 				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
@@ -660,7 +660,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 
 			// Get a list of the selected rows that aren't missing, effectively stripping those entries from the selection
-			List<Integer> rowList = new ArrayList<Integer>();
+			List<Integer> rowList = new ArrayList<>();
 			for (int i : rows)
 			{
 				if (_playlist.get(i).isFound() || _playlist.get(i).isURL())
@@ -1303,7 +1303,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					@Override
 					protected Void doInBackground()
 					{
-						List<Integer> rowList = new ArrayList<Integer>();
+						List<Integer> rowList = new ArrayList<>();
 						int[] uiRows = _uiTable.getSelectedRows();
 						for (int x : uiRows)
 						{
