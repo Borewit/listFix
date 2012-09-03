@@ -26,6 +26,7 @@ import christophedelory.playlist.Media;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.SpecificPlaylistProvider;
+import christophedelory.playlist.xspf.Track;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -58,8 +59,9 @@ class XSPFWriter implements IPlaylistWriter
 		SpecificPlaylistProvider spp = SpecificPlaylistFactory.getInstance().findProviderByExtension(list.getFilename());
 		try
 		{
-			SpecificPlaylist toSpecificPlaylist = spp.toSpecificPlaylist(lizzyList);
-			toSpecificPlaylist.writeTo(new FileOutputStream(list.getFile()), "UTF8");
+			SpecificPlaylist specificPlaylist = spp.toSpecificPlaylist(lizzyList);
+			addXspfMetadata(specificPlaylist, list);
+			specificPlaylist.writeTo(new FileOutputStream(list.getFile()), "UTF8");
 		}
 		catch (Exception ex)
 		{
@@ -102,5 +104,19 @@ class XSPFWriter implements IPlaylistWriter
 			}
 		}
 		return new Content(mediaURI);
+	}
+
+	private void addXspfMetadata(SpecificPlaylist specificPlaylist, Playlist list)
+	{
+		if (specificPlaylist.toPlaylist().getRootSequence().getComponentsNumber() == list.size())
+		{
+			christophedelory.playlist.xspf.Playlist castedList = (christophedelory.playlist.xspf.Playlist) specificPlaylist;
+			Track track;
+			for(int i = 0; i < castedList.getTracks().size(); i++)
+			{
+				track = castedList.getTracks().get(i);
+				track.setTitle(list.getEntries().get(i).getTitle());
+			}
+		}
 	}
 }

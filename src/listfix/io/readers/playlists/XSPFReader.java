@@ -81,7 +81,7 @@ public class XSPFReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException
 	{
-		List<PlaylistEntry> entriesList = new ArrayList<PlaylistEntry>();
+		List<PlaylistEntry> entriesList = new ArrayList<>();
 		URI uri; 
 		File trackFile;
 		SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
@@ -98,7 +98,7 @@ public class XSPFReader implements IPlaylistReader
 						trackFile = new File(uri.getSchemeSpecificPart());
 						if (trackFile != null)
 						{
-							entriesList.add(new PlaylistEntry(trackFile, track.getCreator() + " - " + track.getTitle(), track.getDuration().longValue() / 1000 + "", _listFile));
+							entriesList.add(new PlaylistEntry(trackFile, track.getCreator() + " - " + track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() / 1000 + "" : "0", _listFile));
 						}
 					}
 					catch (Exception e)
