@@ -43,6 +43,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
+import listfix.util.OperatingSystem;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.support.FontExtensions;
 
@@ -122,6 +123,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		initComponents();
 		_chosenFont = opts.getAppFont();
 		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
+		if (!OperatingSystem.isWindows())
+		{
+			_pnlUseUnc.setVisible(false);
+		}
 		initPlaylistDirectoryFolderChooser();
 	}
 
