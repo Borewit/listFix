@@ -24,16 +24,16 @@ import listfix.model.Playlist;
 import listfix.view.support.ProgressAdapter;
 
 /**
- *
+ * Generic contract for a class that can save a playlist to disk.
  * @author jcaron
  */
 public interface IPlaylistWriter
 {
 	/**
-	 *
-	 * @param list
-	 * @param saveRelative
-	 * @param adapter
+	 * The primary method a playlist writer needs, save.
+	 * @param list The list to persist to disk.
+	 * @param saveRelative Specifies if the playlist should be written out relatively or not.
+	 * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
 	 * @throws Exception
 	 */
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception;

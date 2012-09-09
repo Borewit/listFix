@@ -24,16 +24,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import listfix.io.Constants;
 import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
-
 import listfix.model.AppOptions;
 
 /**
@@ -42,8 +40,6 @@ import listfix.model.AppOptions;
  */
 public class IniFileReader
 {
-	private BufferedReader B1;
-	private BufferedReader B2;
 	private String fname1;
 	private String fname2;
 	private String[] mediaDirs = new String[0];
@@ -53,8 +49,8 @@ public class IniFileReader
 	private AppOptions options;
 
 	/**
-	 *
-	 * @param opts
+	 * Constructs the file reader.
+	 * @param opts An AppOptions configuration, needed to decide if the library should use UNC paths or not.
 	 * @throws FileNotFoundException
 	 * @throws UnsupportedEncodingException
 	 */
@@ -74,9 +70,6 @@ public class IniFileReader
 			throw new FileNotFoundException("File found, but was of zero size.");
 		}
 
-		// converting these files to UTF-8, need to handle the old format for the conversion...		
-		B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));	
-
 		File in_data2 = new File(fname2);
 		if (!in_data2.exists())
 		{
@@ -86,78 +79,58 @@ public class IniFileReader
 		{
 			throw new FileNotFoundException("File found, but was of zero size.");
 		}
-		
-		B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
-	
 	}
 
 	/**
-	 *
+	 * Read the media directory and history files into memory.
 	 * @throws Exception
 	 */
 	public void readIni() throws Exception
 	{
-		List<String> tempList = new ArrayList<>();
-		
-		// Read in base media directories
-		// skip first line, contains header
-		String line = B1.readLine();
-		line = B1.readLine();
-		while ((line != null) && (!line.startsWith("[")))
+		try (BufferedReader B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(fname1)), "UTF-8"), "UTF8")); 
+			 BufferedReader B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(fname2)), "UTF-8"), "UTF8")))
 		{
-			tempList.add(line);
+			List<String> tempList = new ArrayList<>();
+			String line;
+			B1.readLine();
 			line = B1.readLine();
-		}
-		mediaDirs = new String[tempList.size()];
-		tempList.toArray(mediaDirs);
-
-		tempList.clear();
-
-		// Read in media library directories
-		// skip first line, contains header
-		line = B1.readLine();
-		while ((line != null) && (!line.startsWith("[")))
-		{
-			tempList.add(line);
+			while ((line != null) && (!line.startsWith("[")))
+			{
+				tempList.add(line);
+				line = B1.readLine();
+			}
+			mediaDirs = new String[tempList.size()];
+			tempList.toArray(mediaDirs);
+			tempList.clear();
 			line = B1.readLine();
-		}
-		mediaLibrary = new String[tempList.size()];
-		tempList.toArray(mediaLibrary);
-		tempList.clear();
-
-		// Read in media library files
-		// skip first line, contains header
-		line = B1.readLine();
-		while (line != null)
-		{
-			tempList.add(line);
+			while ((line != null) && (!line.startsWith("[")))
+			{
+				tempList.add(line);
+				line = B1.readLine();
+			}
+			mediaLibrary = new String[tempList.size()];
+			tempList.toArray(mediaLibrary);
+			tempList.clear();
 			line = B1.readLine();
-		}
-		mediaLibraryFiles = new String[tempList.size()];
-		tempList.toArray(mediaLibraryFiles);
-		tempList.clear();
-
-		// Read in history...
-		line = B2.readLine();
-		line = B2.readLine();
-		while (line != null)
-		{
-			tempList.add(line);
+			while (line != null)
+			{
+				tempList.add(line);
+				line = B1.readLine();
+			}
+			mediaLibraryFiles = new String[tempList.size()];
+			tempList.toArray(mediaLibraryFiles);
+			tempList.clear();
+			B2.readLine();
 			line = B2.readLine();
+			while (line != null)
+			{
+				tempList.add(line);
+				line = B2.readLine();
+			}
+			history = new String[tempList.size()];
+			tempList.toArray(history);
+			tempList.clear();
 		}
-		history = new String[tempList.size()];
-		tempList.toArray(history);
-		tempList.clear();
-	}
-
-	/**
-	 *
-	 * @throws IOException
-	 */
-	public void closeFile() throws IOException
-	{
-		B1.close();
-		B2.close();
 	}
 
 	/**

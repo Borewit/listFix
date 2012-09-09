@@ -25,10 +25,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+
 import listfix.io.Constants;
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -40,26 +42,7 @@ public class OptionsWriter
 	private static final Logger _logger = Logger.getLogger(OptionsWriter.class);
 
 	/**
-	 *
-	 * @param buffer
-	 * @param options
-	 */
-	public static void appendOptionsText(StringBuilder buffer, AppOptions options)
-	{
-		buffer.append("[Options]").append(Constants.BR);
-		buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(Constants.BR);
-		buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(Constants.BR);
-		buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(Constants.BR);
-		buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(Constants.BR);
-		buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(Constants.BR);
-		buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(Constants.BR);
-		buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(Constants.BR);
-		buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(Constants.BR);
-		buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(Constants.BR);
-	}
-
-	/**
-	 *
+	 * Write out the default options file if the OPTIONS_INI file is missing or empty.
 	 */
 	public static void writeDefaults()
 	{
@@ -71,7 +54,7 @@ public class OptionsWriter
 	}
 
 	/**
-	 *
+	 * Write out the given AppOptions to disk.
 	 * @param options
 	 */
 	public static void write(AppOptions options)
@@ -95,5 +78,19 @@ public class OptionsWriter
 			// eat the error and continue
 			_logger.error(ExStack.toString(e));
 		}
+	}
+	
+	private static void appendOptionsText(StringBuilder buffer, AppOptions options)
+	{
+		buffer.append("[Options]").append(Constants.BR);
+		buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(Constants.BR);
+		buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(Constants.BR);
+		buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(Constants.BR);
+		buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(Constants.BR);
+		buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(Constants.BR);
+		buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(Constants.BR);
+		buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(Constants.BR);
+		buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(Constants.BR);
+		buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(Constants.BR);
 	}
 }

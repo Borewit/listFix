@@ -40,17 +40,17 @@ import listfix.util.UnicodeUtils;
 import listfix.view.support.ProgressAdapter;
 
 /**
- *
+ * A playlist writer capable of saving to PLS format.
  * @author jcaron
  */
 public class PLSWriter implements IPlaylistWriter
 {
 	/**
-	 *
-	 * @param list
-	 * @param saveRelative
-	 * @param adapter
-	 * @throws IOException
+	 * Saves the list to disk.
+	 * @param list The list to persist to disk.
+	 * @param saveRelative Specifies if the playlist should be written out relatively or not.
+	 * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
+	 * @throws Exception
 	 */
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException

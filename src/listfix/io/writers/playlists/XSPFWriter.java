@@ -40,7 +40,7 @@ import listfix.view.support.ProgressAdapter;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * A playlist writer capable of saving to XSPF ("spiff") format.
  * @author jcaron
  */
 public class XSPFWriter implements IPlaylistWriter
@@ -48,10 +48,10 @@ public class XSPFWriter implements IPlaylistWriter
 	private static final Logger _logger = Logger.getLogger(XSPFWriter.class);
 	
 	/**
-	 * Saves the given list to disk in XSPF format.
-	 * @param list The playlist to save to disk.
+	 * Saves the list to disk.  Always writes in UTF-8.
+	 * @param list The list to persist to disk.
 	 * @param saveRelative Currently ignored due to lack of player support on Windows.
-	 * @param adapter A progress observer, may be null.
+	 * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
 	 * @throws Exception
 	 */
 	@Override

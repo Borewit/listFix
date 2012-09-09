@@ -42,17 +42,17 @@ import listfix.util.OperatingSystem;
 import listfix.view.support.ProgressAdapter;
 
 /**
- *
- * @author jcaron
+ * A playlist writer capable of saving to WPL format.
+ * @author jcaron & jpeterson
  */
 public class WPLWriter implements IPlaylistWriter
 {
 	/**
-	 *
-	 * @param list
-	 * @param saveRelative
-	 * @param adapter
-	 * @throws IOException
+	 * Saves the list to disk.  Always writes in UTF-8.
+	 * @param list The list to persist to disk.
+	 * @param saveRelative Specifies if the playlist should be written out relatively or not.
+	 * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
+	 * @throws Exception
 	 */
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException

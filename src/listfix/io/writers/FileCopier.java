@@ -39,8 +39,8 @@ public class FileCopier
 	private static final Logger _logger = Logger.getLogger(FileCopier.class);
 
 	/** Copies from source to destination.
-	 * @param input : The source stream.
-	 * @param output 
+	 * @param input The source file.
+	 * @param output The destination file.
 	 * @exception IOException
 	 */
 	public static void copy(File input, File output) throws IOException

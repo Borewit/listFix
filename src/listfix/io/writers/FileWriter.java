@@ -20,14 +20,12 @@
 
 package listfix.io.writers;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     FileWriter.java
-= Purpose:  Provides methods for writing out the ini files for this program.
-============================================================================
- */
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.io.Constants;
@@ -35,10 +33,11 @@ import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
+
 import org.apache.log4j.Logger;
 
 /**
- *
+ * Provides methods for writing out the ini files for this program.
  * @author jcaron
  */
 public class FileWriter
@@ -46,7 +45,7 @@ public class FileWriter
 	private static final Logger _logger = Logger.getLogger(FileWriter.class);
 
 	/**
-	 *
+	 * If the application's being started for the first time, this method will write out the default ini files.
 	 */
 	public void writeDefaultIniFilesIfNeeded()
 	{
@@ -106,7 +105,7 @@ public class FileWriter
 	}
 
 	/**
-	 *
+	 * Writes out the MRU playlists.
 	 * @param history
 	 */
 	public void writeMruPlaylists(PlaylistHistory history)
@@ -120,12 +119,14 @@ public class FileWriter
 			{
 				buffer.append(filenames[i]).append(Constants.BR);
 			}
-			FileOutputStream outputStream = new FileOutputStream(Constants.HISTORY_INI);
-			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-			BufferedWriter output = new BufferedWriter(osw);
-			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-			output.close();
-			outputStream.close();
+			try (FileOutputStream outputStream = new FileOutputStream(Constants.HISTORY_INI))
+			{
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				try (BufferedWriter output = new BufferedWriter(osw))
+				{
+					output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+				}
+			}
 		}
 		catch (IOException e)
 		{
@@ -135,7 +136,7 @@ public class FileWriter
 	}
 
 	/**
-	 *
+	 * Spawns a background task to write the media library to disk.
 	 * @param mediaDir
 	 * @param mediaLibraryDirList
 	 * @param mediaLibraryFileList
