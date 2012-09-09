@@ -29,11 +29,19 @@ import listfix.view.controls.JTransparentTextArea;
 
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class BrowserLauncher
 {
 	private static final String errMsg = "Error attempting to launch web browser";
 	private static final Logger _logger = Logger.getLogger(BrowserLauncher.class);
 
+	/**
+	 *
+	 * @param url
+	 */
 	public static void launch(String url)
 	{
 		try

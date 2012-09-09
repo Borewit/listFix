@@ -29,5 +29,12 @@ import listfix.view.support.ProgressAdapter;
  */
 public interface IPlaylistWriter
 {
+	/**
+	 *
+	 * @param list
+	 * @param saveRelative
+	 * @param adapter
+	 * @throws Exception
+	 */
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception;
 }

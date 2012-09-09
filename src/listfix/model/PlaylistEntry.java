@@ -645,9 +645,9 @@ public class PlaylistEntry implements Cloneable
 	 * @param observer
 	 * @return
 	 */
-	public List<MatchedPlaylistEntry> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
+	public List<PotentialPlaylistEntryMatch> findClosestMatches(String[] mediaFiles, IProgressObserver observer)
 	{
-		List<MatchedPlaylistEntry> matches = new ArrayList<>();
+		List<PotentialPlaylistEntryMatch> matches = new ArrayList<>();
 		ProgressAdapter progress = ProgressAdapter.wrap(observer);
 		progress.setTotal(mediaFiles.length);
 
@@ -674,13 +674,13 @@ public class PlaylistEntry implements Cloneable
 					// about when people run your software on ancient PCs in Africa =])
 					if (matches.size() < GUIDriver.getInstance().getAppOptions().getMaxClosestResults())
 					{
-						matches.add(new MatchedPlaylistEntry(mediaFile, score, _playlist));
+						matches.add(new PotentialPlaylistEntryMatch(mediaFile, score, _playlist));
 					}
 					else
 					{
 						if (matches.get(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1).getScore() < score)
 						{
-							matches.set(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1, new MatchedPlaylistEntry(mediaFile, score, _playlist));
+							matches.set(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1, new PotentialPlaylistEntryMatch(mediaFile, score, _playlist));
 						}
 					}
 					Collections.sort(matches, new MatchedPlaylistEntryComparator());

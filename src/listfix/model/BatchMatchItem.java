@@ -31,9 +31,9 @@ public class BatchMatchItem
 	private int _entryIx;
     private int _selectedIx;
 	private PlaylistEntry _entry;
-    private List<MatchedPlaylistEntry> _matches;
+    private List<PotentialPlaylistEntryMatch> _matches;
 	
-    public BatchMatchItem(int ix, PlaylistEntry entry, List<MatchedPlaylistEntry> matches)
+    public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
     {
         _entryIx = ix;
         _entry = entry;
@@ -50,7 +50,7 @@ public class BatchMatchItem
         return _entry;
     }    
 
-    public List<MatchedPlaylistEntry> getMatches()
+    public List<PotentialPlaylistEntryMatch> getMatches()
     {
         return _matches;
     }
@@ -65,7 +65,7 @@ public class BatchMatchItem
         _selectedIx = ix;
     }
 
-    public MatchedPlaylistEntry getSelectedMatch()
+    public PotentialPlaylistEntryMatch getSelectedMatch()
     {
         if (_selectedIx >= 0)
 		{

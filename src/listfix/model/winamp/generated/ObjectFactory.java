@@ -39,7 +39,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link Playlist }
      * 
-     */
+	 * @return 
+	 */
     public Playlist createPlaylist() {
         return new Playlist();
     }
@@ -47,7 +48,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link Playlists }
      * 
-     */
+	 * @return 
+	 */
     public Playlists createPlaylists() {
         return new Playlists();
     }

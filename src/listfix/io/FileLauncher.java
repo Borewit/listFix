@@ -24,8 +24,18 @@ import java.awt.Desktop;
 import java.io.*;
 import listfix.util.OperatingSystem;
 
+/**
+ *
+ * @author jcaron
+ */
 public class FileLauncher
 {
+	/**
+	 *
+	 * @param toLaunch
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public static void launch(File toLaunch) throws IOException, InterruptedException
 	{
 		// try to figure out the OS so we can issue the correct command

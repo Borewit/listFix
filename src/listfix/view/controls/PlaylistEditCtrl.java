@@ -20,12 +20,14 @@
 package listfix.view.controls;
 
 import com.jidesoft.swing.FolderChooser;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,10 +69,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
-import listfix.io.AudioFileFilter;
-import listfix.io.FileLauncher;
 import listfix.io.FileUtils;
-import listfix.io.PlaylistFileChooserFilter;
+import listfix.io.filters.AudioFileFilter;
+import listfix.io.filters.PlaylistFileFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.Playlist;
@@ -281,10 +283,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						_uiTable.addRowSelectionInterval(viewIx, viewIx);
 					}
 				}
-				catch (CancellationException ex)
-				{
-				}
-				catch (InterruptedException ex)
+				catch (CancellationException | InterruptedException ex)
 				{
 				}
 				catch (ExecutionException ex)
@@ -547,7 +546,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		if (_playlist.isNew())
 		{
 			JFileChooser chooser = new JFileChooser();
-			chooser.addChoosableFileFilter(new PlaylistFileChooserFilter());
+			chooser.addChoosableFileFilter(new PlaylistFileFilter());
 			chooser.setSelectedFile(_playlist.getFile());
 			int rc = chooser.showSaveDialog(getParentFrame());
 			if (rc == JFileChooser.APPROVE_OPTION)
@@ -1165,11 +1164,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						{
 							get();
 						}
-						catch (CancellationException ex)
-						{
-							return;
-						}
-						catch (InterruptedException ex)
+						catch (CancellationException | InterruptedException ex)
 						{
 							return;
 						}
@@ -1618,7 +1613,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		});
 
 		// set sort to #
-		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+		ArrayList<RowSorter.SortKey> keys = new ArrayList<>();
 		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 		sorter.setSortKeys(keys);
 
@@ -1706,6 +1701,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 return false;
 			}
 
+			@Override
 			public boolean importData(TransferHandler.TransferSupport info)
 			{
 				if (!info.isDrop())
@@ -1740,7 +1736,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 {
                     PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
                     List<PlaylistEntry> entries = data.getList();
-                    int removedAt = 0;
+                    int removedAt;
                     int insertAtUpdated = dl.getRow();
                     int i = 0;
                     for (PlaylistEntry entry : entries)
@@ -1760,7 +1756,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
                     return true;
                 }
-                catch (Exception e)
+                catch (UnsupportedFlavorException | IOException e)
                 {
                     // Don't bother logging, could overlog if people try to drag the wrong stuff.
                     return false;
@@ -1780,7 +1776,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						resizeAllColumns();
 						return true;
 					}
-					catch (Exception ex)
+					catch (UnsupportedFlavorException | IOException ex)
 					{
 						_logger.warn(ExStack.toString(ex));
 					}
@@ -1927,17 +1923,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                         }
                         else if (t.getTransferData(flavors[i]) instanceof InputStreamReader)
                         {
-                            List<File> filesToProcess = new ArrayList<File>();
-                            InputStreamReader reader = (InputStreamReader)t.getTransferData(flavors[i]);
-                            BufferedReader temp = new BufferedReader(reader);
-                            String filePath = temp.readLine();
-                            while (filePath != null && !filePath.isEmpty())
-                            {
-                                filesToProcess.add(new File(new URI(filePath)));
-                                filePath = temp.readLine();
-                            }
-                            temp.close();
-                            reader.close();
+                            List<File> filesToProcess = new ArrayList<>();
+							try (InputStreamReader reader = (InputStreamReader)t.getTransferData(flavors[i]); BufferedReader temp = new BufferedReader(reader))
+							{
+								String filePath = temp.readLine();
+								while (filePath != null && !filePath.isEmpty())
+								{
+									filesToProcess.add(new File(new URI(filePath)));
+									filePath = temp.readLine();
+								}
+							}
 
                             Collections.sort(filesToProcess);
                             ProcessFileListDrop(filesToProcess, dl);
@@ -1946,7 +1941,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                             return true;
                         }
 					}
-					catch (Exception ex)
+					catch (UnsupportedFlavorException | IOException | URISyntaxException ex)
 					{
 						_logger.error(ExStack.toString(ex));
                         return false;

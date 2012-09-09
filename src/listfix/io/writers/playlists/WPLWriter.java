@@ -45,8 +45,15 @@ import listfix.view.support.ProgressAdapter;
  *
  * @author jcaron
  */
-class WPLWriter implements IPlaylistWriter
+public class WPLWriter implements IPlaylistWriter
 {
+	/**
+	 *
+	 * @param list
+	 * @param saveRelative
+	 * @param adapter
+	 * @throws IOException
+	 */
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException
 	{

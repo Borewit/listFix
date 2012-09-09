@@ -21,10 +21,19 @@ package listfix.view.dialogs;
 
 import listfix.model.Playlist;
 
+/**
+ *
+ * @author jcaron
+ */
 public class ReorderPlaylistDialog extends javax.swing.JDialog
 {
 
-    /** Creates new form ReorderPlaylistDialog */
+	/** Creates new form ReorderPlaylistDialog
+	 * @param parent 
+	 * @param modal
+	 * @param sortIx
+	 * @param isDescending  
+	 */
     public ReorderPlaylistDialog(java.awt.Frame parent, boolean modal, Playlist.SortIx sortIx, boolean isDescending)
     {
         super(parent, modal);
@@ -56,7 +65,11 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         }
     }
 
-    public Playlist.SortIx getSelectedSortIx()
+    /**
+	 *
+	 * @return
+	 */
+	public Playlist.SortIx getSelectedSortIx()
     {
         if (_wasCancelled)
             return Playlist.SortIx.None;
@@ -75,7 +88,11 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
     }
     boolean _wasCancelled;
 
-    public boolean getIsDescending()
+    /**
+	 *
+	 * @return
+	 */
+	public boolean getIsDescending()
     {
         return _chkDescending.isSelected();
     }

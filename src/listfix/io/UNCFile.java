@@ -59,31 +59,57 @@ public class UNCFile extends File
 		}
 	}
 
+	/**
+	 *
+	 * @param pathname
+	 */
 	public UNCFile(String pathname)
 	{
 		super(pathname);
 	}
 
+	/**
+	 *
+	 * @param parent
+	 * @param child
+	 */
 	public UNCFile(File parent, String child)
 	{
 		super(parent, child);
 	}
 
+	/**
+	 *
+	 * @param parent
+	 * @param child
+	 */
 	public UNCFile(String parent, String child)
 	{
 		super(parent, child);
 	}
 
+	/**
+	 *
+	 * @param uri
+	 */
 	public UNCFile(URI uri)
 	{
 		super(uri);
 	}
 
+	/**
+	 *
+	 * @param file
+	 */
 	public UNCFile(File file)
 	{
 		super(file.getPath());
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getDrivePath()
 	{
 		String result = this.getPath();
@@ -94,6 +120,10 @@ public class UNCFile extends File
 		return result;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getUNCPath()
 	{
 		String result = this.getPath();
@@ -104,16 +134,28 @@ public class UNCFile extends File
 		return result;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean isInUNCFormat()
 	{
 		return this.getAbsolutePath().startsWith("\\\\");
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public static List<UNCFile> listMappedRoots()
 	{
 		return networkDrives;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean onNetworkDrive()
 	{
 		return driveLister.onNetworkDrive(this.getAbsolutePath());

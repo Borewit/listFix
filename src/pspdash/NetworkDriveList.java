@@ -260,6 +260,8 @@ public class NetworkDriveList
 	 * too long and was abandoned.
 	 *
 	 * On non-Windows systems, this will always return false.
+	 * 
+	 * @return 
 	 */
 	public boolean wasSuccessful()
 	{
@@ -269,6 +271,9 @@ public class NetworkDriveList
 	/** Returns true if the given drive letter names a network drive.
 	 *
 	 * If wasSuccessful() returns false, this will generally return false.
+	 * 
+	 * @param driveLetter 
+	 * @return 
 	 */
 	public boolean isNetworkDrive(String driveLetter)
 	{
@@ -283,6 +288,9 @@ public class NetworkDriveList
 	/** Returns true if the given file is on a network drive.
 	 *
 	 * If wasSuccessful() returns false, this will generally return false.
+	 * 
+	 * @param filename 
+	 * @return 
 	 */
 	public boolean onNetworkDrive(String filename)
 	{
@@ -296,6 +304,9 @@ public class NetworkDriveList
 	/** Get the UNC name associated with a particular drive letter.
 	 * If isNetworkDrive() returns false for this drive letter,
 	 * returns null.
+	 * 
+	 * @param driveLetter 
+	 * @return 
 	 */
 	public String getUNCName(String driveLetter)
 	{
@@ -309,6 +320,7 @@ public class NetworkDriveList
 	}
 
 	/** Convert the given filename (in drive letter format) to an UNC name.
+	 * @param filename 
 	 * @return an UNC name, or null if the filename could not be translated.
 	 */
 	public String toUNCName(String filename)
@@ -345,6 +357,7 @@ public class NetworkDriveList
 
 	/** Convert the given filename (in UNC format) to a drive letter format
 	 * name.
+	 * @param uncName 
 	 * @return a filename beginning with a drive letter, or null if
 	 * the filename could not be translated.
 	 */

@@ -892,7 +892,7 @@ public class Playlist
 
 		List<BatchMatchItem> fixed = new ArrayList<>();
 		PlaylistEntry entry;
-		List<MatchedPlaylistEntry> matches;
+		List<PotentialPlaylistEntryMatch> matches;
 		for (int ix = 0; ix < _entries.size(); ix++)
 		{
 			progress.stepCompleted();
@@ -931,7 +931,7 @@ public class Playlist
 
 		List<BatchMatchItem> fixed = new ArrayList<>();
 		PlaylistEntry entry;
-		List<MatchedPlaylistEntry> matches;
+		List<PotentialPlaylistEntryMatch> matches;
 		for (Integer ix : rowList)
 		{
 			progress.stepCompleted();

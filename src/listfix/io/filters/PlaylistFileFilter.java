@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2012 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -18,21 +18,21 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.filters;
+
+import java.io.FileFilter;
 import java.util.Set;
 
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     PlaylistFileChooserFilter.java
-= Purpose:  Simple instance of FilenameFilter that displays only
-=           Playlist files or directories.
+= File:     PlaylistFileFilter.java
+= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
 ============================================================================
  */
-
-public class PlaylistFileChooserFilter extends FileExtensionFilterBase
+public class PlaylistFileFilter extends FileExtensionFilterBase implements FileFilter
 {
-    public PlaylistFileChooserFilter()
+    public PlaylistFileFilter()
     {
         super(_extensions);
     }
@@ -57,3 +57,4 @@ public class PlaylistFileChooserFilter extends FileExtensionFilterBase
 		return getDescription();
 	}
 }
+

@@ -29,35 +29,67 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+/**
+ *
+ * @author jcaron
+ */
 public class ZebraJTable extends javax.swing.JTable
 {
 	private java.awt.Color rowColors[] = new java.awt.Color[2];
 	private boolean drawStripes = false;
 
+	/**
+	 *
+	 */
 	public ZebraJTable()
 	{
 	}
 
+	/**
+	 *
+	 * @param numRows
+	 * @param numColumns
+	 */
 	public ZebraJTable(int numRows, int numColumns)
 	{
 		super(numRows, numColumns);
 	}
 
+	/**
+	 *
+	 * @param rowData
+	 * @param columnNames
+	 */
 	public ZebraJTable(Object[][] rowData, Object[] columnNames)
 	{
 		super(rowData, columnNames);
 	}
 
+	/**
+	 *
+	 * @param dataModel
+	 */
 	public ZebraJTable(javax.swing.table.TableModel dataModel)
 	{
 		super(dataModel);
 	}
 
+	/**
+	 *
+	 * @param dataModel
+	 * @param columnModel
+	 */
 	public ZebraJTable(javax.swing.table.TableModel dataModel, javax.swing.table.TableColumnModel columnModel)
 	{
 		super(dataModel, columnModel);
 	}
 
+	/**
+	 *
+	 * @param dataModel
+	 * @param columnModel
+	 * @param selectionModel
+	 */
 	public ZebraJTable(javax.swing.table.TableModel dataModel, javax.swing.table.TableColumnModel columnModel, javax.swing.ListSelectionModel selectionModel)
 	{
 		super(dataModel, columnModel, selectionModel);
@@ -68,7 +100,9 @@ public class ZebraJTable extends javax.swing.JTable
 //		super(rowData, columnNames);
 //	}
 
-	/** Add stripes between cells and behind non-opaque cells. */
+	/** Add stripes between cells and behind non-opaque cells.
+	 * @param g 
+	 */
 	@Override
 	public void paintComponent(java.awt.Graphics g)
 	{
@@ -113,7 +147,12 @@ public class ZebraJTable extends javax.swing.JTable
 		setOpaque(true);
 	}
 
-	/** Add background stripes behind rendered cells. */
+	/** Add background stripes behind rendered cells.
+	 * @param renderer 
+	 * @param row
+	 * @param col
+	 * @return  
+	 */
 	@Override
 	public java.awt.Component prepareRenderer(
 		javax.swing.table.TableCellRenderer renderer, int row, int col)
@@ -126,7 +165,12 @@ public class ZebraJTable extends javax.swing.JTable
 		return c;
 	}
 
-	/** Add background stripes behind edited cells. */
+	/** Add background stripes behind edited cells.
+	 * @param editor 
+	 * @param row 
+	 * @param col 
+	 * @return 
+	 */
 	@Override
 	public java.awt.Component prepareEditor(
 		javax.swing.table.TableCellEditor editor, int row, int col)
@@ -139,7 +183,9 @@ public class ZebraJTable extends javax.swing.JTable
 		return c;
 	}
 
-	/** Force the table to fill the viewport's height. */
+	/** Force the table to fill the viewport's height.
+	 * @return 
+	 */
 	@Override
 	public boolean getScrollableTracksViewportHeight()
 	{
@@ -168,17 +214,35 @@ public class ZebraJTable extends javax.swing.JTable
 		rowColors[1] = new java.awt.Color(240, 240, 240);
 	}
 
-    public int autoResizeColumn(int colIx)
+    /**
+	 *
+	 * @param colIx
+	 * @return
+	 */
+	public int autoResizeColumn(int colIx)
     {
         return autoResizeColumn(colIx, false, -1);
     }
 	
+	/**
+	 *
+	 * @param colIx
+	 * @param fixedWidth
+	 * @return
+	 */
 	public int autoResizeColumn(int colIx, boolean fixedWidth)
     {
         return autoResizeColumn(colIx, fixedWidth, -1);
     }
 
-    public int autoResizeColumn(int colIx, boolean fixedWidth, int minWidth)
+    /**
+	 *
+	 * @param colIx
+	 * @param fixedWidth
+	 * @param minWidth
+	 * @return
+	 */
+	public int autoResizeColumn(int colIx, boolean fixedWidth, int minWidth)
     {
         TableCellRenderer renderer = getCellRenderer(0, colIx);
         int maxWidth = 0;
@@ -206,7 +270,11 @@ public class ZebraJTable extends javax.swing.JTable
         return maxWidth;
     }
     
-    public void initFillColumnForScrollPane(final JScrollPane scroller)
+    /**
+	 *
+	 * @param scroller
+	 */
+	public void initFillColumnForScrollPane(final JScrollPane scroller)
     {
         scroller.addComponentListener(new java.awt.event.ComponentAdapter() 
         {
@@ -218,7 +286,11 @@ public class ZebraJTable extends javax.swing.JTable
         });
     }
 
-    public void setFillerColumnWidth(JScrollPane scroller)
+    /**
+	 *
+	 * @param scroller
+	 */
+	public void setFillerColumnWidth(JScrollPane scroller)
     {
         TableColumnModel cm = getColumnModel();
         int colCount = cm.getColumnCount();
@@ -240,17 +312,27 @@ public class ZebraJTable extends javax.swing.JTable
         }
     }
 
-    public static class IntRenderer extends DefaultTableCellRenderer
+    /**
+	 *
+	 */
+	public static class IntRenderer extends DefaultTableCellRenderer
     {
 		private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
 		
-        public IntRenderer()
+        /**
+		 *
+		 */
+		public IntRenderer()
         {
             super();
             setHorizontalAlignment(JLabel.RIGHT);
         }
 
-        @Override
+        /**
+		 *
+		 * @param value
+		 */
+		@Override
         protected void setValue(Object value)
         {
             setText((value == null) ? "" : _intFormatter.format(value));

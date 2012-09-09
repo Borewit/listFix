@@ -22,10 +22,20 @@ package listfix.comparators;
 
 import listfix.model.*;
 
-public class MatchedPlaylistEntryComparator implements java.util.Comparator<MatchedPlaylistEntry>
+/**
+ *
+ * @author jcaron
+ */
+public class MatchedPlaylistEntryComparator implements java.util.Comparator<PotentialPlaylistEntryMatch>
 {
+	/**
+	 *
+	 * @param aa
+	 * @param bb
+	 * @return
+	 */
 	@Override
-	public int compare(MatchedPlaylistEntry aa, MatchedPlaylistEntry bb)
+	public int compare(PotentialPlaylistEntryMatch aa, PotentialPlaylistEntryMatch bb)
 	{
 		if (aa.getScore() < bb.getScore())
 		{

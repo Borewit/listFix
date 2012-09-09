@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import listfix.io.filters.PlaylistFileFilter;
+
 /*
 ============================================================================
 = Author:   Jeremy Caron
@@ -32,11 +34,20 @@ import java.util.List;
 =           directory and its subdirectories.
 ============================================================================
  */
+/**
+ *
+ * @author jcaron
+ */
 public class PlaylistScanner
 {
+	/**
+	 *
+	 * @param directory
+	 * @return
+	 */
 	public static List<File> getAllPlaylists(File directory)
 	{
-		List<File> result = new ArrayList<File>();
+		List<File> result = new ArrayList<>();
 		if (directory.exists() && directory.isDirectory())
 		{
 			File[] inodes = directory.listFiles(new PlaylistFileFilter());

@@ -32,6 +32,11 @@ import listfix.controller.GUIDriver;
  */
 public class FileUtils
 {
+	/**
+	 *
+	 * @param file
+	 * @return
+	 */
 	public static File findDeepestPathToExist(File file)
 	{
 		if (file == null || file.exists())
@@ -41,6 +46,12 @@ public class FileUtils
 		return findDeepestPathToExist(file.getParentFile());
 	}
 
+	/**
+	 *
+	 * @param file
+	 * @param relativeTo
+	 * @return
+	 */
 	public static String getRelativePath(File file, File relativeTo)
 	{
 		try
@@ -131,6 +142,12 @@ public class FileUtils
 		}
 	}
 	
+	/**
+	 *
+	 * @param input
+	 * @param replacement
+	 * @return
+	 */
 	public static String replaceInvalidWindowsFileSystemCharsWithChar(String input, char replacement)
 	{
 		StringBuilder result = new StringBuilder();
@@ -148,6 +165,10 @@ public class FileUtils
 		return result.toString();
 	}
 	
+	/**
+	 *
+	 * @param dir
+	 */
 	public static void deleteDirectory(File dir)
 	{
 		if (dir.isDirectory())
@@ -173,6 +194,11 @@ public class FileUtils
 		}
 	}
 
+	/**
+	 *
+	 * @param nodeFile
+	 * @return
+	 */
 	public static String GetExtension(TreeNodeFile nodeFile)
 	{
 		return nodeFile.getName().substring(nodeFile.getName().lastIndexOf("."));

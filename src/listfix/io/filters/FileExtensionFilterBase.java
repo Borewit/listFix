@@ -17,16 +17,19 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.filters;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.swing.filechooser.FileFilter;
 
 public abstract class FileExtensionFilterBase extends FileFilter
-{
+{	
+    private Set<String> _extensions;
+	
     protected FileExtensionFilterBase(Set<String> extensions)
     {
         _extensions = extensions;
@@ -36,7 +39,9 @@ public abstract class FileExtensionFilterBase extends FileFilter
     public boolean accept(File file)
     {
         if (file.isDirectory())
-            return true;
+		{
+			return true;
+		}
 
         String name = file.getName();
         int ix = name.lastIndexOf('.');
@@ -46,14 +51,14 @@ public abstract class FileExtensionFilterBase extends FileFilter
             return _extensions.contains(ext);
         }
         else
-            return false;
+		{
+			return false;
+		}
     }
-    private Set<String> _extensions;
 
     protected static Set<String> createExtensionSet(String... extensions)
     {
-        Set<String> set = new HashSet<String>(Arrays.asList(extensions));
+        Set<String> set = new HashSet<>(Arrays.asList(extensions));
         return set;
     }
-
 }

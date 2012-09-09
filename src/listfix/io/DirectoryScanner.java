@@ -37,6 +37,11 @@ public class DirectoryScanner
 	private List<String> thisFileList;
 	private int recursiveCount = 0;
 
+	/**
+	 *
+	 * @param baseDirs
+	 * @param task
+	 */
 	public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
 	{
 		this.reset();
@@ -132,6 +137,9 @@ public class DirectoryScanner
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void reset()
 	{
 		recursiveCount = 0;
@@ -139,6 +147,10 @@ public class DirectoryScanner
 		thisFileList = new ArrayList<String>();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getFileList()
 	{
 		String[] result = new String[thisFileList.size()];
@@ -146,6 +158,10 @@ public class DirectoryScanner
 		return result;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getDirectoryList()
 	{
 		String[] result = new String[thisDirList.size()];

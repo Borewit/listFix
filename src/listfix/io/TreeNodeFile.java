@@ -26,11 +26,19 @@ package listfix.io;
  */
 public class TreeNodeFile extends java.io.File
 {
+	/**
+	 *
+	 * @param filename
+	 */
 	public TreeNodeFile(String filename)
 	{
 		super(filename);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public String toString()
 	{

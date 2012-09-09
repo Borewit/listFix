@@ -31,6 +31,12 @@ import listfix.model.enums.PlaylistType;
  */
 public class PlaylistWriterFactory
 {
+	/**
+	 *
+	 * @param inputFile
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	public static IPlaylistWriter getPlaylistwriter(File inputFile) throws FileNotFoundException
 	{
 		PlaylistType type = Playlist.determinePlaylistType(inputFile);

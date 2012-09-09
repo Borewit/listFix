@@ -50,9 +50,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "playlists")
 public class Playlists {
 
-    @XmlElement(required = true)
+    /**
+	 *
+	 */
+	@XmlElement(required = true)
     protected List<Playlist> playlist;
-    @XmlAttribute(required = true)
+    /**
+	 *
+	 */
+	@XmlAttribute(required = true)
     protected int playlists;
 
     /**
@@ -76,7 +82,8 @@ public class Playlists {
      * {@link Playlist }
      * 
      * 
-     */
+	 * @return 
+	 */
     public List<Playlist> getPlaylist() {
         if (playlist == null) {
             playlist = new ArrayList<Playlist>();
@@ -87,7 +94,8 @@ public class Playlists {
     /**
      * Gets the value of the playlists property.
      * 
-     */
+	 * @return 
+	 */
     public int getPlaylists() {
         return playlists;
     }
@@ -95,7 +103,8 @@ public class Playlists {
     /**
      * Sets the value of the playlists property.
      * 
-     */
+	 * @param value 
+	 */
     public void setPlaylists(int value) {
         this.playlists = value;
     }

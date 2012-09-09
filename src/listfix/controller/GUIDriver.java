@@ -41,6 +41,10 @@ import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class GUIDriver
 {
 	private boolean showMediaDirWindow = false;
@@ -49,10 +53,17 @@ public class GUIDriver
 	private String[] mediaLibraryFileList = null;
 	private AppOptions options = new AppOptions();
 	private PlaylistHistory history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
+	/**
+	 *
+	 */
 	public static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
 	private static final Logger _logger = Logger.getLogger(GUIDriver.class);
 
-    public static GUIDriver getInstance()
+    /**
+	 *
+	 * @return
+	 */
+	public static GUIDriver getInstance()
     {
         if (_instance == null)
             _instance = new GUIDriver();
@@ -76,7 +87,7 @@ public class GUIDriver
 			mediaDir = initReader.getMediaDirs();
 			history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
 			history.initHistory(initReader.getHistory());
-			mediaLibraryDirectoryList = initReader.getMediaLibrary();
+			mediaLibraryDirectoryList = initReader.getMediaLibraryDirectories();
 			mediaLibraryFileList = initReader.getMediaLibraryFiles();
 
 			for (String dir : mediaDir)
@@ -99,21 +110,37 @@ public class GUIDriver
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public AppOptions getAppOptions()
 	{
 		return options;
 	}
 
+	/**
+	 *
+	 * @param opts
+	 */
 	public void setAppOptions(AppOptions opts)
 	{
 		options = opts;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public final boolean hasAddedMediaDirectory()
 	{
 		return mediaDir.length != 0;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getMediaDirs()
 	{
 		if (mediaDir.length > 0)
@@ -123,52 +150,93 @@ public class GUIDriver
 		return new String[] {"Please Add A Media Directory..."};
 	}
 
+	/**
+	 *
+	 * @param value
+	 */
 	public void setMediaDirs(String[] value)
 	{
 		mediaDir = value;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getMediaLibraryDirectoryList()
 	{
 		return mediaLibraryDirectoryList;
 	}
 
+	/**
+	 *
+	 * @param value
+	 */
 	public void setMediaLibraryDirectoryList(String[] value)
 	{
 		mediaLibraryDirectoryList = value;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getMediaLibraryFileList()
 	{
 		return mediaLibraryFileList;
 	}
 
+	/**
+	 *
+	 * @param value
+	 */
 	public void setMediaLibraryFileList(String[] value)
 	{
 		mediaLibraryFileList = value;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getShowMediaDirWindow()
 	{
 		return showMediaDirWindow;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public PlaylistHistory getHistory()
 	{
 		return history;
 	}
 
+	/**
+	 *
+	 */
 	public void clearM3UHistory()
 	{
 		history.clearHistory();
 		(new FileWriter()).writeMruPlaylists(history);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getRecentM3Us()
 	{
 		return history.getFilenames();
 	}
 
+	/**
+	 *
+	 * @param dir
+	 * @return
+	 * @throws MediaDirNotFoundException
+	 */
 	public final String[] removeMediaDir(String dir) throws MediaDirNotFoundException
 	{
 		boolean found = false;
@@ -251,6 +319,9 @@ public class GUIDriver
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void switchMediaLibraryToUNCPaths()
 	{
 		if (mediaDir != null)
@@ -291,6 +362,9 @@ public class GUIDriver
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void switchMediaLibraryToMappedDrives()
 	{
 		if (mediaDir != null)

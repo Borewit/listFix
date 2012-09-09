@@ -28,13 +28,40 @@ import java.io.File;
  */
 public class Constants
 {
+	/**
+	 *
+	 */
 	public static final String FS									= System.getProperty("file.separator");
+	/**
+	 *
+	 */
 	public static final String HOME_DIR								= System.getProperty("user.home");
+	/**
+	 *
+	 */
 	public static final String DATA_DIR								= HOME_DIR + FS + ".listFix()" + FS;
+	/**
+	 *
+	 */
 	public static final String BR									= System.getProperty("line.separator");
+	/**
+	 *
+	 */
 	public static final String MEDIA_LIBRARY_INI					= DATA_DIR + "dirLists.ini";
+	/**
+	 *
+	 */
 	public static final String HISTORY_INI							= DATA_DIR + "history.ini";
+	/**
+	 *
+	 */
 	public static final String OPTIONS_INI							= DATA_DIR + "options.ini";
+	/**
+	 *
+	 */
 	public static final String INVALID_WINDOWS_FILENAME_CHARACTERS	= "*|\\/:\"<>?";		
+	/**
+	 *
+	 */
 	public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE		= File.separatorChar == '/';
 }

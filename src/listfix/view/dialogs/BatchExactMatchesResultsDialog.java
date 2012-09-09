@@ -51,7 +51,11 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 	private boolean _userCancelled = false;
 	private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
 
-	/** Creates new form BatchExactMatchesResultsDialog */
+	/** Creates new form BatchExactMatchesResultsDialog
+	 * @param parent 
+	 * @param batch
+	 * @param modal  
+	 */
 	public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
 	{
 		super(parent, batch.getDescription(), modal);

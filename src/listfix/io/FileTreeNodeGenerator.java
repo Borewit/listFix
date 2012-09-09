@@ -20,18 +20,28 @@
 
 package listfix.io;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import listfix.comparators.FileComparator;
+import listfix.io.filters.PlaylistFileFilter;
 
+/**
+ *
+ * @author jcaron
+ */
 public class FileTreeNodeGenerator
 {
-	/** Add nodes from under "dir" into curTop. Highly recursive. */
+	/** Add nodes from under "dir" into curTop. Highly recursive.
+	 * @param curTop 
+	 * @param dir
+	 * @return  
+	 */
 	public static DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir)
 	{
 		if (dir.exists())
@@ -47,7 +57,7 @@ public class FileTreeNodeGenerator
 				curDir.setUserObject(new File(curPath));
 			}
 
-			List<File> ol = new ArrayList<File>();
+			List<File> ol = new ArrayList<>();
 			File[] inodes = dir.listFiles(new PlaylistFileFilter());
 
 			if (inodes != null && inodes.length > 0)
@@ -55,7 +65,7 @@ public class FileTreeNodeGenerator
                 ol.addAll(Arrays.asList(inodes));
 				Collections.sort(ol, new FileComparator());
 				File f;
-				List<File> files = new ArrayList<File>();
+				List<File> files = new ArrayList<>();
 				// Make two passes, one for Dirs and one for Files. This is #1.
 				for (int i = 0; i < ol.size(); i++)
 				{
@@ -92,6 +102,11 @@ public class FileTreeNodeGenerator
 		return null;
 	}
 
+	/**
+	 *
+	 * @param node
+	 * @return
+	 */
 	public static String TreePathToFileSystemPath(TreePath node)
 	{
 		return ((File) ((DefaultMutableTreeNode) node.getLastPathComponent()).getUserObject()).getPath();

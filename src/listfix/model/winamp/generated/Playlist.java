@@ -66,15 +66,30 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "playlist")
 public class Playlist {
 
-    @XmlAttribute(required = true)
+    /**
+	 *
+	 */
+	@XmlAttribute(required = true)
     protected String title;
-    @XmlAttribute(required = true)
+    /**
+	 *
+	 */
+	@XmlAttribute(required = true)
     protected int songs;
-    @XmlAttribute(required = true)
+    /**
+	 *
+	 */
+	@XmlAttribute(required = true)
     protected int seconds;
-    @XmlAttribute(required = true)
+    /**
+	 *
+	 */
+	@XmlAttribute(required = true)
     protected String id;
-    @XmlAttribute(required = true)
+    /**
+	 *
+	 */
+	@XmlAttribute(required = true)
     protected String filename;
 
     /**
@@ -104,7 +119,8 @@ public class Playlist {
     /**
      * Gets the value of the songs property.
      * 
-     */
+	 * @return 
+	 */
     public int getSongs() {
         return songs;
     }
@@ -112,7 +128,8 @@ public class Playlist {
     /**
      * Sets the value of the songs property.
      * 
-     */
+	 * @param value 
+	 */
     public void setSongs(int value) {
         this.songs = value;
     }
@@ -120,7 +137,8 @@ public class Playlist {
     /**
      * Gets the value of the seconds property.
      * 
-     */
+	 * @return 
+	 */
     public int getSeconds() {
         return seconds;
     }
@@ -128,7 +146,8 @@ public class Playlist {
     /**
      * Sets the value of the seconds property.
      * 
-     */
+	 * @param value 
+	 */
     public void setSeconds(int value) {
         this.seconds = value;
     }

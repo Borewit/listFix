@@ -52,6 +52,10 @@ import org.apache.log4j.Logger;
 =           a String array containing the directories listed in the file.
 ============================================================================
  */
+/**
+ *
+ * @author jcaron
+ */
 public class IniFileConverter
 {
 	private BufferedReader B1;
@@ -66,6 +70,11 @@ public class IniFileConverter
 
 	private static final Logger _logger = Logger.getLogger(IniFileConverter.class);
 
+	/**
+	 *
+	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
+	 */
 	public IniFileConverter() throws FileNotFoundException, UnsupportedEncodingException
 	{
 		File in_data1 = new File(fname1);
@@ -120,6 +129,9 @@ public class IniFileConverter
 		return (new File(fname1)).exists() && (new File(fname2)).exists() && !(new File(Constants.OPTIONS_INI)).exists() && !(new File(Constants.MEDIA_LIBRARY_INI)).exists();
 	}
 
+	/**
+	 *
+	 */
 	public void convert()
 	{
 		try
@@ -272,11 +284,19 @@ public class IniFileConverter
 		B2.close();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getHistory()
 	{
 		return history;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getMediaDirs()
 	{
 		if (options.getAlwaysUseUNCPaths())

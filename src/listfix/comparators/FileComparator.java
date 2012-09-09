@@ -30,8 +30,18 @@ import java.io.File;
 =           and then sorts files alphabetically (ignoring case).
 ============================================================================
  */
+/**
+ *
+ * @author jcaron
+ */
 public class FileComparator implements java.util.Comparator<File>
 {
+	/**
+	 *
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	@Override
 	public int compare(File a, File b)
 	{

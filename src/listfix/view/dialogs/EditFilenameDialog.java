@@ -27,15 +27,30 @@ package listfix.view.dialogs;
 import listfix.model.EditFilenameResult;
 import java.awt.Point;
 
+/**
+ *
+ * @author jcaron
+ */
 public class EditFilenameDialog extends javax.swing.JDialog
 {
 	private static final long serialVersionUID = 1825443635993970657L;
+	/**
+	 *
+	 */
 	public static final int OK = 0;
+	/**
+	 *
+	 */
 	public static final int CANCEL = 1;
 	private int resultCode = CANCEL;
 	private String fileName;
 
-	/** Creates new form EditFilenameDialog */
+	/** Creates new form EditFilenameDialog
+	 * @param parent 
+	 * @param modal
+	 * @param title
+	 * @param filename  
+	 */
 	public EditFilenameDialog(java.awt.Frame parent, String title, boolean modal, String filename)
 	{
 		super(parent, title, modal);
@@ -45,25 +60,44 @@ public class EditFilenameDialog extends javax.swing.JDialog
 		this.center();
 	}
 
+	/**
+	 *
+	 */
 	public EditFilenameDialog()
 	{
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getFileName()
 	{
 		return fileName;
 	}
 
+	/**
+	 *
+	 * @param x
+	 */
 	public void setFileName(String x)
 	{
 		fileName = x;
 	}
 
+	/**
+	 *
+	 * @param i
+	 */
 	public void setResultCode(int i)
 	{
 		resultCode = i;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getResultCode()
 	{
 		return resultCode;
@@ -183,6 +217,14 @@ public class EditFilenameDialog extends javax.swing.JDialog
 		dispose();
     }//GEN-LAST:event_closeDialog
 
+	/**
+	 *
+	 * @param parent
+	 * @param title
+	 * @param modal
+	 * @param filename
+	 * @return
+	 */
 	public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal, String filename)
 	{
 		EditFilenameDialog tempDBox = new EditFilenameDialog(parent, title, modal, filename);

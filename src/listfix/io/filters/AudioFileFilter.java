@@ -1,6 +1,5 @@
-/*
+/**
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2012 Jeremy Caron
  *
  * This file is part of listFix().
  *
@@ -18,25 +17,34 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.io.filters;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PlaylistFileFilter.java
-= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
-============================================================================
- */
-public class PlaylistFileFilter implements java.io.FileFilter
+import java.util.Set;
+
+public class AudioFileFilter extends FileExtensionFilterBase
 {
+    public AudioFileFilter()
+    {
+        super(_extensions);
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Audio Files and Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf, *.mp3, *.flac, *.aac, *.ogg, *.aiff, *.au, *.wma)";
+    }
+    
+    private static final Set<String> _extensions;
+
+    static
+    {
+        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "mp3", "flac", "aac", "ogg", "aiff", "au", "wma");
+    }
+
 	@Override
-	public boolean accept(java.io.File file)
+	// Fixes display in linux
+	public String toString()
 	{
-		return (file.getName().toLowerCase().endsWith(".m3u")
-			|| file.getName().toLowerCase().endsWith(".m3u8")
-			|| file.getName().toLowerCase().endsWith(".pls")
-			|| file.getName().toLowerCase().endsWith(".wpl")
-			|| file.getName().toLowerCase().endsWith(".xspf")
-			|| file.isDirectory());
+		return getDescription();
 	}
 }

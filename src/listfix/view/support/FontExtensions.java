@@ -21,7 +21,9 @@ package listfix.view.support;
 
 import java.awt.Font;
 import java.util.StringTokenizer;
+
 import listfix.util.ExStack;
+
 import org.apache.log4j.Logger;
 
 /**

@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
+/**
+ *
+ * @author jcaron
+ */
 public class UnicodeInputStream extends InputStream
 {
 	private PushbackInputStream internalIn;
@@ -31,19 +35,36 @@ public class UnicodeInputStream extends InputStream
 	private int BOMOffset = -1;
 	private String defaultEnc;
 	private String encoding;
+	
+	/**
+	 *
+	 */
 	public static final int BOM_SIZE = 4;
 
+	/**
+	 *
+	 * @param in
+	 * @param defaultEnc
+	 */
 	public UnicodeInputStream(InputStream in, String defaultEnc)
 	{
 		internalIn = new PushbackInputStream(in, BOM_SIZE);
 		this.defaultEnc = defaultEnc;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getDefaultEncoding()
 	{
 		return defaultEnc;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getEncoding()
 	{
 		if (!isInited)
@@ -54,9 +75,7 @@ public class UnicodeInputStream extends InputStream
 			}
 			catch (IOException ex)
 			{
-				IllegalStateException ise = new IllegalStateException("Init method failed.");
-				ise.initCause(ise);
-				throw ise;
+				throw new IllegalStateException("Init method failed.", ex);
 			}
 		}
 		return encoding;
@@ -65,6 +84,8 @@ public class UnicodeInputStream extends InputStream
 	/**
 	 * Read-ahead four bytes and check for BOM marks. Extra bytes are unread
 	 * back to the stream, only BOM bytes are skipped.
+	 * 
+	 * @throws IOException 
 	 */
 	protected void init() throws IOException
 	{
@@ -117,6 +138,10 @@ public class UnicodeInputStream extends InputStream
 		isInited = true;
 	}
 
+	/**
+	 *
+	 * @throws IOException
+	 */
 	@Override
 	public void close() throws IOException
 	{
@@ -125,6 +150,12 @@ public class UnicodeInputStream extends InputStream
 		internalIn.close();
 	}
 
+	/**
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	@Override
 	public int read() throws IOException
 	{
 		init();
@@ -132,6 +163,10 @@ public class UnicodeInputStream extends InputStream
 		return internalIn.read();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getBOMOffset()
 	{
 		return BOMOffset;

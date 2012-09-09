@@ -28,13 +28,24 @@ package listfix.exceptions;
 =           Not currently used since check for #EXTM3U has been removed.
 ============================================================================
  */
+/**
+ *
+ * @author jcaron
+ */
 public class UnsupportedPlaylistFormat extends java.lang.Exception
 {
+	/**
+	 *
+	 */
 	public UnsupportedPlaylistFormat()
 	{
 		super();
 	}
 
+	/**
+	 *
+	 * @param s
+	 */
 	public UnsupportedPlaylistFormat(String s)
 	{
 		super(s);

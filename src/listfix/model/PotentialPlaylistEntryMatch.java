@@ -1,6 +1,7 @@
-/**
+/*
  * listFix() - Fix Broken Playlists!
- *
+ * Copyright (C) 2001-2012 Jeremy Caron
+ * 
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -17,34 +18,34 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io;
+package listfix.model;
 
-import java.util.Set;
+import java.io.File;
 
-public class AudioFileFilter extends FileExtensionFilterBase
+/**
+ * Serves to model a closest match on a single playlist entry.  
+ * @author jcaron
+ */
+
+public class PotentialPlaylistEntryMatch
 {
-    public AudioFileFilter()
-    {
-        super(_extensions);
-    }
+	private PlaylistEntry thisEntry = null;
+	private int _score = 0;
 
-    @Override
-    public String getDescription()
-    {
-        return "Audio Files and Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.mp3, *.flac, *.aac, *.ogg, *.aiff, *.au, *.wma)";
-    }
-    
-    private static final Set<String> _extensions;
-
-    static
-    {
-        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "mp3", "flac", "aac", "ogg", "aiff", "au", "wma");
-    }
-
-	@Override
-	// Fixes display in linux
-	public String toString()
+	public PotentialPlaylistEntryMatch(File file, int score, File list)
 	{
-		return getDescription();
+		thisEntry = new PlaylistEntry(file, "", list);
+		thisEntry.setFixed(true);
+		_score = score;
+	}
+
+	public int getScore()
+	{
+		return _score;
+	}
+
+	public PlaylistEntry getPlaylistFile()
+	{
+		return thisEntry;
 	}
 }

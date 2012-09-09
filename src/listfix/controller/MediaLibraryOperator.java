@@ -25,6 +25,10 @@ import listfix.io.writers.FileWriter;
 import listfix.util.*;
 import listfix.view.support.ProgressWorker;
 
+/**
+ *
+ * @author jcaron
+ */
 public class MediaLibraryOperator
 {
 	private GUIDriver guiDriver;
@@ -34,12 +38,20 @@ public class MediaLibraryOperator
 	private String[] mediaDirs;
 	private ProgressWorker _observer;
 
+	/**
+	 *
+	 * @param observer
+	 */
 	public MediaLibraryOperator(ProgressWorker observer)
 	{
 		_observer = observer;
 		guiDriver = GUIDriver.getInstance();
 	}
 
+	/**
+	 *
+	 * @param dir
+	 */
 	public void addDirectory(String dir)
 	{
 		if (!guiDriver.hasAddedMediaDirectory())
@@ -85,6 +97,9 @@ public class MediaLibraryOperator
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void refresh()
 	{
 		mediaDirs = guiDriver.getMediaDirs();

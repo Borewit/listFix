@@ -47,7 +47,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.model.BatchMatchItem;
-import listfix.model.MatchedPlaylistEntry;
+import listfix.model.PotentialPlaylistEntryMatch;
 import listfix.util.ExStack;
 import listfix.view.support.ZebraJTable;
 
@@ -64,13 +64,18 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 	private static final Logger _logger = Logger.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
 	private int _width;
 
+	/**
+	 *
+	 */
 	public ClosestMatchesSearchScrollableResultsPanel()
 	{
 		_items = new ArrayList<BatchMatchItem>();
 		initComponents();
 		initialize();
 	}
-    /** Creates new form ClosestMatchesSearchScrollableResultsPanel */
+	/** Creates new form ClosestMatchesSearchScrollableResultsPanel
+	 * @param items 
+	 */
     public ClosestMatchesSearchScrollableResultsPanel(List<BatchMatchItem> items)
 	{
 		_items = items;
@@ -112,26 +117,48 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		_uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getSelectedRow()
 	{
 		return _uiTable.getSelectedRow();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getSelectedColumn()
 	{
 		return _uiTable.getSelectedColumn();
 	}
 
+	/**
+	 *
+	 * @param row
+	 * @param column
+	 * @return
+	 */
 	public TableCellEditor getCellEditor(int row, int column)
 	{
 		return _uiTable.getCellEditor(row, column);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getTableWidth()
 	{
 		return _width;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public int getWidth()
 	{
@@ -161,7 +188,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 						}
 						else
 						{
-							MatchedPlaylistEntry match = item.getSelectedMatch();
+							PotentialPlaylistEntryMatch match = item.getSelectedMatch();
 							if (match != null)
 							{
 								return match.getPlaylistFile().getPath();
@@ -174,6 +201,10 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		};
 	}
 
+	/**
+	 *
+	 * @param closestMatches
+	 */
 	public void setResults(List<BatchMatchItem> closestMatches)
 	{
 		_items = closestMatches;
@@ -235,7 +266,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 			int row = table.getEditingRow();
 			int rowIx = table.getRowSorter().convertRowIndexToModel(row);
 			BatchMatchItem item = _items.get(rowIx);
-			MatchedPlaylistEntry match = item.getSelectedMatch();
+			PotentialPlaylistEntryMatch match = item.getSelectedMatch();
 
 			try
 			{
@@ -327,7 +358,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 					case 2:
 						return "";
 					case 3:
-						MatchedPlaylistEntry match = item.getSelectedMatch();
+						PotentialPlaylistEntryMatch match = item.getSelectedMatch();
 						if (match != null)
 						{
 							return match.getPlaylistFile().getFileName();
@@ -428,7 +459,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 				{
 					if (index > 0)
 					{
-						list.setToolTipText(((MatchedPlaylistEntry)((MatchComboBoxModel)list.getModel())._matches.get(index - 1)).getPlaylistFile().getPath());
+						list.setToolTipText(((PotentialPlaylistEntryMatch)((MatchComboBoxModel)list.getModel())._matches.get(index - 1)).getPlaylistFile().getPath());
 					}
 				}
 
@@ -439,10 +470,10 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 
 	private static class MatchComboBoxModel extends AbstractListModel implements ComboBoxModel
 	{
-		List<MatchedPlaylistEntry> _matches;
+		List<PotentialPlaylistEntryMatch> _matches;
 		Object _selected;
 
-		public void setMatches(List<MatchedPlaylistEntry> matches)
+		public void setMatches(List<PotentialPlaylistEntryMatch> matches)
 		{
 			_matches = matches;
 			_selected = null;
@@ -462,7 +493,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 			{
 				if (index > 0)
 				{
-					MatchedPlaylistEntry match = _matches.get(index - 1);
+					PotentialPlaylistEntryMatch match = _matches.get(index - 1);
 					return Integer.toString(match.getScore()) + ": " + match.getPlaylistFile().getFileName();
 				}
 				else

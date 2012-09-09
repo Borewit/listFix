@@ -36,13 +36,9 @@ import listfix.io.UnicodeInputStream;
 
 import listfix.model.AppOptions;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     ProcessIniFile.java
-= Purpose:  Read in the dirLists.ini file and return
-=           a String array containing the directories listed in the file.
-============================================================================
+/**
+ * Read in the media library and history files, providing methods for retrieving the data.
+ * @author jcaron
  */
 public class IniFileReader
 {
@@ -56,6 +52,12 @@ public class IniFileReader
 	private String[] mediaLibraryFiles = new String[0];
 	private AppOptions options;
 
+	/**
+	 *
+	 * @param opts
+	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
+	 */
 	public IniFileReader(AppOptions opts) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		options = opts;
@@ -89,9 +91,14 @@ public class IniFileReader
 	
 	}
 
+	/**
+	 *
+	 * @throws Exception
+	 */
 	public void readIni() throws Exception
 	{
-		List<String> tempList = new ArrayList<String>();
+		List<String> tempList = new ArrayList<>();
+		
 		// Read in base media directories
 		// skip first line, contains header
 		String line = B1.readLine();
@@ -143,17 +150,29 @@ public class IniFileReader
 		tempList.clear();
 	}
 
+	/**
+	 *
+	 * @throws IOException
+	 */
 	public void closeFile() throws IOException
 	{
 		B1.close();
 		B2.close();
 	}
 
+	/**
+	 * Get a list of paths to playlists that have been opened recently.
+	 * @return
+	 */
 	public String[] getHistory()
 	{
 		return history;
 	}
 
+	/**
+	 * Get the root media directories the user has specified.
+	 * @return
+	 */
 	public String[] getMediaDirs()
 	{
 		if (options.getAlwaysUseUNCPaths())
@@ -179,7 +198,11 @@ public class IniFileReader
 		}
 	}
 
-	public String[] getMediaLibrary()
+	/**
+	 * Get the cached list of all directories in the media library.
+	 * @return
+	 */
+	public String[] getMediaLibraryDirectories()
 	{
 		if (options.getAlwaysUseUNCPaths())
 		{
@@ -204,6 +227,10 @@ public class IniFileReader
 		}
 	}
 
+	/**
+	 * Get the cached list of all files in the media library.
+	 * @return
+	 */
 	public String[] getMediaLibraryFiles()
 	{
 		if (options.getAlwaysUseUNCPaths())

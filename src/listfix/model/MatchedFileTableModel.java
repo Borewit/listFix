@@ -40,21 +40,21 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	};
 	public Integer sortCol = new Integer(1);
 	public Boolean isSortAsc = Boolean.FALSE;
-	public List<MatchedPlaylistEntry> vectorData;
+	public List<PotentialPlaylistEntryMatch> vectorData;
 
-	public MatchedFileTableModel(List<MatchedPlaylistEntry> input)
+	public MatchedFileTableModel(List<PotentialPlaylistEntryMatch> input)
 	{
 		vectorData = input;
 		updateData(vectorData);
 	}
 
-	public void updateData(List<MatchedPlaylistEntry> input)
+	public void updateData(List<PotentialPlaylistEntryMatch> input)
 	{
 		int n = input.size();
 		String[][] tempData = new String[n][2];
 		for (int i = 0; i < n; i++)
 		{
-            MatchedPlaylistEntry entry = input.get(i);
+            PotentialPlaylistEntryMatch entry = input.get(i);
 			tempData[i][0] = entry.getPlaylistFile().getFileName();
 			tempData[i][1] = entry.getScore() + "";
 		}

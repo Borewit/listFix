@@ -25,29 +25,51 @@ import java.util.List;
 
 import listfix.view.support.IProgressObserver;
 
+/**
+ *
+ * @author jcaron
+ */
 public abstract class Task extends Thread
 {
 	private List<IProgressObserver> observers;
 	private int progress = 0;
 
+	/**
+	 *
+	 */
 	public Task()
 	{
 		observers = new ArrayList<IProgressObserver>();
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public abstract void run();
 
+	/**
+	 *
+	 * @param observer
+	 */
 	public final void addProgressObserver(IProgressObserver observer)
 	{
 		observers.add(observer);
 	}
 
+	/**
+	 *
+	 * @param observer
+	 */
 	public final void removeProgressObserver(IProgressObserver observer)
 	{
 		observers.remove(observer);
 	}
 
+	/**
+	 *
+	 * @param percent
+	 */
 	public final void notifyObservers(int percent)
 	{
 		if (percent < 0)
@@ -64,6 +86,10 @@ public abstract class Task extends Thread
             observer.reportProgress(percent);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getProgress()
 	{
 		return progress;

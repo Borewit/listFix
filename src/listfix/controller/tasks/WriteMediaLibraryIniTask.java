@@ -31,6 +31,10 @@ import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class WriteMediaLibraryIniTask extends listfix.controller.Task
 {
 	private String[] mediaDir;
@@ -39,6 +43,12 @@ public class WriteMediaLibraryIniTask extends listfix.controller.Task
 
 	private static final Logger _logger = Logger.getLogger(WriteMediaLibraryIniTask.class);
 
+	/**
+	 *
+	 * @param m
+	 * @param mldl
+	 * @param mlfl
+	 */
 	public WriteMediaLibraryIniTask(String[] m, String[] mldl, String[] mlfl)
 	{
 		mediaDir = m;

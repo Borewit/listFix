@@ -68,7 +68,15 @@ import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-import listfix.io.*;
+import listfix.io.BrowserLauncher;
+import listfix.io.Constants;
+import listfix.io.FileTreeNodeGenerator;
+import listfix.io.FileUtils;
+import listfix.io.PlaylistScanner;
+import listfix.io.TreeNodeFile;
+import listfix.io.UNCFile;
+import listfix.io.WinampHelper;
+import listfix.io.filters.PlaylistFileFilter;
 import listfix.io.readers.OptionsReader;
 import listfix.io.writers.FileWriter;
 import listfix.io.writers.OptionsWriter;
@@ -396,7 +404,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	{
 		_jM3UChooser.setDialogTitle("Choose Playlists...");
 		_jM3UChooser.setAcceptAllFileFilterUsed(false);
-		_jM3UChooser.setFileFilter(new PlaylistFileChooserFilter());
+		_jM3UChooser.setFileFilter(new PlaylistFileFilter());
 		_jM3UChooser.setMultiSelectionEnabled(true);
 
 		_jMediaDirChooser.setDialogTitle("Specify a media directory...");
@@ -407,7 +415,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		_jSaveFileChooser.setDialogTitle("Save File:");
 		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
 		_jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		_jSaveFileChooser.setFileFilter(new PlaylistFileChooserFilter());
+		_jSaveFileChooser.setFileFilter(new PlaylistFileFilter());
 	}
 
 	@Override
@@ -2213,7 +2221,7 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 	JFileChooser dlg = new JFileChooser();
 	dlg.setDialogTitle("Select Playlists and/or Directories");
 	dlg.setAcceptAllFileFilterUsed(false);
-	dlg.addChoosableFileFilter(new PlaylistFileChooserFilter());
+	dlg.addChoosableFileFilter(new PlaylistFileFilter());
 	dlg.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 	dlg.setMultiSelectionEnabled(true);
 	if (dlg.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)

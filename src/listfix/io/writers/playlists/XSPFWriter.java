@@ -43,13 +43,21 @@ import org.apache.log4j.Logger;
  *
  * @author jcaron
  */
-class XSPFWriter implements IPlaylistWriter
+public class XSPFWriter implements IPlaylistWriter
 {
 	private static final Logger _logger = Logger.getLogger(XSPFWriter.class);
 	
+	/**
+	 * Saves the given list to disk in XSPF format.
+	 * @param list The playlist to save to disk.
+	 * @param saveRelative Currently ignored due to lack of player support on Windows.
+	 * @param adapter A progress observer, may be null.
+	 * @throws Exception
+	 */
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception
 	{
+		// TODO: Support relative saving!
 		boolean track = adapter != null;
 		
 		// First, construct a generic lizzy playlist
@@ -112,29 +120,7 @@ class XSPFWriter implements IPlaylistWriter
 				mediaURI = entry.getFile().toURI();
 			}
 		}
-		if (!mediaURI.toString().startsWith("file://") && mediaURI.toString().startsWith("file:/"))
-		{
-			try
-			{
-				mediaURI = new URI(mediaURI.toString().replace("file:/", "file:///"));
-			}
-			catch (URISyntaxException ex)
-			{
-				_logger.error(ExStack.toString(ex), ex);
-			}
-		}
-		if (mediaURI.toString().contains("////"))
-		{
-			try
-			{
-				mediaURI = new URI(mediaURI.toString().replace("////", "//"));
-			}
-			catch (URISyntaxException ex)
-			{
-				_logger.error(ExStack.toString(ex), ex);
-				throw ex;
-			}
-		}
+		mediaURI = normalizeFileUri(mediaURI);
 		return new Content(mediaURI);
 	}
 
@@ -155,5 +141,37 @@ class XSPFWriter implements IPlaylistWriter
 				}
 			}
 		}
+	}
+
+	// Files not on UNC drives need to have file:// as the prefix. 	// UNCs need file:///.
+	private URI normalizeFileUri(URI mediaURI) throws URISyntaxException
+	{
+		// By default, UNC URIs have file:/ - need to convert to file:///.
+		if (!mediaURI.toString().startsWith("file://") && mediaURI.toString().startsWith("file:/"))
+		{
+			try
+			{
+				mediaURI = new URI(mediaURI.toString().replace("file:/", "file:///"));
+			}
+			catch (URISyntaxException ex)
+			{
+				_logger.error(ExStack.toString(ex), ex);
+			}
+		}
+		
+		// Non-UNCs have file:////, two of the slashes need to be removed.
+		if (mediaURI.toString().contains("////"))
+		{
+			try
+			{
+				mediaURI = new URI(mediaURI.toString().replace("////", "//"));
+			}
+			catch (URISyntaxException ex)
+			{
+				_logger.error(ExStack.toString(ex), ex);
+				throw ex;
+			}
+		}
+		return mediaURI;
 	}
 }

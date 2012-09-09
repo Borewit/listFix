@@ -61,13 +61,22 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 	private boolean _userAccepted = false;
 	private static final Logger _logger = Logger.getLogger(MultiListBatchClosestMatchResultsDialog.class);
 
-    /** Creates new form MultiListBatchClosestMatchResultsDialog */
+	/** Creates new form MultiListBatchClosestMatchResultsDialog
+	 * @param parent 
+	 * @param modal 
+	 */
     public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal)
 	{
         super(parent, modal);
         initComponents();
     }
 
+	/**
+	 *
+	 * @param parent
+	 * @param modal
+	 * @param br
+	 */
 	public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br)
 	{
 		super(parent, br.getDescription(), modal);
@@ -364,6 +373,10 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 		_userCancelled = userCancelled;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getUserCancelled()
 	{
 		return _userCancelled;

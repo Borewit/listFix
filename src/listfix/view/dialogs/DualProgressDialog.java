@@ -28,15 +28,30 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+/**
+ *
+ * @author jcaron
+ */
 public class DualProgressDialog extends javax.swing.JDialog
 {
-	/** Creates new form DualProgressDialog */
+	/** Creates new form DualProgressDialog
+	 * @param parent 
+	 * @param title
+	 * @param modal  
+	 */
 	public DualProgressDialog(java.awt.Frame parent, String title, boolean modal)
 	{
 		super(parent, title, modal);
 		initComponents();
 	}
 
+	/**
+	 *
+	 * @param parent
+	 * @param title
+	 * @param taskMsg
+	 * @param overallMsg
+	 */
 	public DualProgressDialog(java.awt.Frame parent, String title, String taskMsg, String overallMsg)
 	{
 		this(parent, title, true);
@@ -60,6 +75,10 @@ public class DualProgressDialog extends javax.swing.JDialog
 		});
 	}
 
+	/**
+	 *
+	 * @param worker
+	 */
 	public void show(SwingWorker worker)
 	{
 		_worker = worker;
@@ -179,21 +198,37 @@ public class DualProgressDialog extends javax.swing.JDialog
 		}
 	}//GEN-LAST:event__cancelButtonKeyPressed
 
+	/**
+	 *
+	 * @return
+	 */
 	public JLabel getTaskLabel()
 	{
 		return _taskLabel;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public JProgressBar getTaskProgressBar()
 	{
 		return _taskProgress;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public JLabel getOverallLabel()
 	{
 		return _overallLabel;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public JProgressBar getOverallProgressBar()
 	{
 		return _overallProgress;

@@ -44,6 +44,10 @@ public class OptionsReader
 {
 	private static final Logger _logger = Logger.getLogger(OptionsReader.class);
 
+	/**
+	 *
+	 * @return
+	 */
 	public static AppOptions read()
 	{
 		BufferedReader B1;

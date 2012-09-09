@@ -76,6 +76,13 @@ public class WinampHelper
 		}
 	}
 
+	/**
+	 *
+	 * @param destDir
+	 * @param observer
+	 * @throws JAXBException
+	 * @throws IOException
+	 */
 	public static void extractPlaylists(File destDir, IProgressObserver observer) throws JAXBException, IOException
 	{
 		// avoid resetting total if part of batch operation
@@ -100,6 +107,10 @@ public class WinampHelper
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public static boolean isWinampInstalled()
 	{
 		return OperatingSystem.isWindows() && (new File(WINAMP_PATH)).exists();

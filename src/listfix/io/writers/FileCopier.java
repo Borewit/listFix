@@ -26,7 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import listfix.util.ExStack;
+
 import org.apache.log4j.Logger;
 
 /** Copies a source file to the destination file. */
@@ -38,7 +40,7 @@ public class FileCopier
 
 	/** Copies from source to destination.
 	 * @param input : The source stream.
-	 * @param output: The destination.
+	 * @param output 
 	 * @exception IOException
 	 */
 	public static void copy(File input, File output) throws IOException

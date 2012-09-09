@@ -28,17 +28,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * @author jcaron
+ */
 public class PlaylistHistory
 {
 	private List<String> playlists = new ArrayList<String>();
 	private int limit = 0;
 
-	/** Creates a new instance of PlaylistHistory */
+	/** Creates a new instance of PlaylistHistory
+	 * @param x 
+	 */
 	public PlaylistHistory(int x)
 	{
 		limit = x;
 	}
 
+	/**
+	 *
+	 * @param maxPlaylistHistoryEntries
+	 */
 	public void setCapacity(int maxPlaylistHistoryEntries)
 	{
 		limit = maxPlaylistHistoryEntries;
@@ -48,16 +58,28 @@ public class PlaylistHistory
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	protected int getLimit() // added to assist testing
 	{
 		return limit;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	protected List<String> getPlaylists() // added to assist testing
 	{
 		return playlists;
 	}
 
+	/**
+	 *
+	 * @param input
+	 */
 	public void initHistory(String[] input)
 	{
 		int i = 0;
@@ -72,6 +94,10 @@ public class PlaylistHistory
 		}
 	}
 
+	/**
+	 *
+	 * @param filename
+	 */
 	public void add(String filename)
 	{
 		File testFile = new File(filename);
@@ -98,6 +124,10 @@ public class PlaylistHistory
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String[] getFilenames()
 	{
 		String[] result = new String[playlists.size()];
@@ -108,6 +138,9 @@ public class PlaylistHistory
 		return result;
 	}
 
+	/**
+	 *
+	 */
 	public void clearHistory()
 	{
 		playlists.clear();
