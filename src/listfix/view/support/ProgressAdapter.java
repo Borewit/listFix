@@ -19,9 +19,20 @@
 
 package listfix.view.support;
 
+/**
+ *
+ * @author jcaron
+ * @param <T>
+ */
 public class ProgressAdapter<T> implements IProgressObserver<T>
 {
-    public static <T> ProgressAdapter<T> wrap(IProgressObserver<T> observer)
+    /**
+	 *
+	 * @param <T>
+	 * @param observer
+	 * @return
+	 */
+	public static <T> ProgressAdapter<T> wrap(IProgressObserver<T> observer)
     {
         if (observer instanceof ProgressAdapter)
             return (ProgressAdapter<T>)observer;
@@ -34,13 +45,22 @@ public class ProgressAdapter<T> implements IProgressObserver<T>
         _observer = observer;
     }
 
-    public void reportProgress(int progress)
+    /**
+	 *
+	 * @param progress
+	 */
+	public void reportProgress(int progress)
     {
         if (_observer != null)
             _observer.reportProgress(progress);
     }
 
-    public void reportProgress(int progress, T state)
+    /**
+	 *
+	 * @param progress
+	 * @param state
+	 */
+	public void reportProgress(int progress, T state)
     {
         if (_observer != null)
             _observer.reportProgress(progress, state);
@@ -51,34 +71,57 @@ public class ProgressAdapter<T> implements IProgressObserver<T>
 
 
 
-    public int getCompleted()
+    /**
+	 *
+	 * @return
+	 */
+	public int getCompleted()
     {
         return _completed;
     }
-    public void setCompleted(int completed)
+    /**
+	 *
+	 * @param completed
+	 */
+	public void setCompleted(int completed)
     {
         _completed = completed;
         refreshPercentComplete();
     }
     private int _completed;
 
-    public void stepCompleted()
+    /**
+	 *
+	 */
+	public void stepCompleted()
     {
         _completed += 1;
         refreshPercentComplete();
     }
 
-    public void stepCompleted(int done)
+    /**
+	 *
+	 * @param done
+	 */
+	public void stepCompleted(int done)
     {
         _completed += done;
         refreshPercentComplete();
     }
 
-    public int getTotal()
+    /**
+	 *
+	 * @return
+	 */
+	public int getTotal()
     {
         return _total;
     }
-    public void setTotal(int total)
+    /**
+	 *
+	 * @param total
+	 */
+	public void setTotal(int total)
     {
         boolean report = isValid() && _percentComplete != 0 && total != 0;
         _total = total;
@@ -110,6 +153,10 @@ public class ProgressAdapter<T> implements IProgressObserver<T>
 
     private int _percentComplete;
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getCancelled()
 	{
 		return _observer != null ? _observer.getCancelled() : false;

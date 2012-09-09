@@ -22,10 +22,18 @@ import java.awt.*;
 
 import javax.swing.*;
 
+/**
+ *
+ * @author jcaron
+ */
 public class SplashScreen extends JFrame
 {
 	private JLabel statusBar;
 
+	/**
+	 *
+	 * @param imageResourcePath
+	 */
 	public SplashScreen(String imageResourcePath)
 	{
 		ClassLoader cl = this.getClass().getClassLoader();
@@ -49,6 +57,10 @@ public class SplashScreen extends JFrame
 		setVisible(true);
 	}
 
+	/**
+	 *
+	 * @param text
+	 */
 	public void setStatusBar(String text)
 	{
 		statusBar.setText(text);

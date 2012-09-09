@@ -19,13 +19,33 @@
 
 package listfix.view.support;
 
+/**
+ *
+ * @author jcaron
+ */
 public interface ICloseableTabManager
 {
-    boolean tryCloseTab(ClosableTabCtrl ctrl);
+    /**
+	 *
+	 * @param ctrl
+	 * @return
+	 */
+	boolean tryCloseTab(ClosableTabCtrl ctrl);
 
+	/**
+	 *
+	 * @return
+	 */
 	boolean tryCloseAllTabs();
 
+	/**
+	 *
+	 * @param tabIx
+	 */
 	void closeAllOtherTabs(int tabIx);
 
+	/**
+	 *
+	 */
 	void repairAllTabs();
 }

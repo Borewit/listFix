@@ -32,6 +32,10 @@ import javax.print.attribute.standard.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+/**
+ *
+ * @author jcaron
+ */
 public class FileEditor extends JFrame
 {
 	private Clipboard clipboard = null;
@@ -47,12 +51,21 @@ public class FileEditor extends JFrame
 	private JTextArea textArea = null;
 	private Toolkit toolkit = null;
 
+	/**
+	 *
+	 * @param title
+	 */
 	public FileEditor(String title)
 	{
 		super(title);
 		initializeComponents();
 	}
 
+	/**
+	 *
+	 * @param filename
+	 * @param title
+	 */
 	public FileEditor(String filename, String title)
 	{
 		super(title);
@@ -553,6 +566,10 @@ public class FileEditor extends JFrame
 		this.dispose();
 	}
 
+	/**
+	 *
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		if (args.length > 0)

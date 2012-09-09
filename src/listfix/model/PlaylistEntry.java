@@ -694,6 +694,10 @@ public class PlaylistEntry implements Cloneable
 		return matches;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public Object clone()
 	{

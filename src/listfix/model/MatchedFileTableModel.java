@@ -22,6 +22,10 @@ package listfix.model;
 
 import java.util.List;
 
+/**
+ *
+ * @author jcaron
+ */
 public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 {
 	private static final long serialVersionUID = -1888652455638101278L;
@@ -38,16 +42,33 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	{
 		java.lang.String.class, java.lang.String.class
 	};
+	/**
+	 *
+	 */
 	public Integer sortCol = new Integer(1);
+	/**
+	 *
+	 */
 	public Boolean isSortAsc = Boolean.FALSE;
+	/**
+	 *
+	 */
 	public List<PotentialPlaylistEntryMatch> vectorData;
 
+	/**
+	 *
+	 * @param input
+	 */
 	public MatchedFileTableModel(List<PotentialPlaylistEntryMatch> input)
 	{
 		vectorData = input;
 		updateData(vectorData);
 	}
 
+	/**
+	 *
+	 * @param input
+	 */
 	public void updateData(List<PotentialPlaylistEntryMatch> input)
 	{
 		int n = input.size();
@@ -63,16 +84,29 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 		this.fireTableDataChanged();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getColumnCount()
 	{
 		return columnNames.length;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getRowCount()
 	{
 		return data.length;
 	}
 
+	/**
+	 *
+	 * @param col
+	 * @return
+	 */
 	@Override
 	public String getColumnName(int col)
 	{
@@ -84,23 +118,44 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 		return columnNames[col] + suffix;
 	}
 
+	/**
+	 *
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 	public java.lang.Object getValueAt(int row, int col)
 	{
 		return data[row][col];
 	}
 
+	/**
+	 *
+	 * @param c
+	 * @return
+	 */
 	@Override
 	public Class<?> getColumnClass(int c)
 	{
 		return types[c];
 	}
 
+	/**
+	 *
+	 * @param rowIndex
+	 * @param columnIndex
+	 * @return
+	 */
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex)
 	{
 		return canEdit[columnIndex];
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public Object[] longestValues()
 	{
 		String[] result = new String[2];

@@ -39,6 +39,11 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
 	private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
 
+	/**
+	 *
+	 * @param parent
+	 * @param items
+	 */
 	public BatchClosestMatchResultsDialog(java.awt.Frame parent, List<BatchMatchItem> items)
 	{
 		super(parent, true);
@@ -60,12 +65,20 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
         setSize(Math.min(newWidth, screenWidth - 50), getHeight());
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean isAccepted()
 	{
 		return _isAccepted;
 	}
 	private boolean _isAccepted;
 
+	/**
+	 *
+	 * @return
+	 */
 	public List<BatchMatchItem> getMatches()
 	{
 		return _items;

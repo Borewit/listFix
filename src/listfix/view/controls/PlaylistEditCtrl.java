@@ -91,6 +91,10 @@ import listfix.view.support.ZebraJTable;
 
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
 	private static final Logger _logger = Logger.getLogger(PlaylistEditCtrl.class);
@@ -112,6 +116,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	};
 
+	/**
+	 *
+	 */
 	public PlaylistEditCtrl()
 	{
 		initComponents();
@@ -1123,11 +1130,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		reloadPlaylist();
 	}//GEN-LAST:event__btnReloadMouseClicked
 
+	/**
+	 *
+	 * @param table
+	 * @param row
+	 * @param column
+	 */
 	public void scrollCellToVisible(JTable table, int row, int column)
 	{
 		table.scrollRectToVisible(table.getCellRect(row, column, true));
 	}
 	
+	/**
+	 *
+	 */
 	public void reloadPlaylist()
 	{
 		if (_playlist.isModified())
@@ -1379,16 +1395,29 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JToolBar.Separator jSeparator5;
     // End of variables declaration//GEN-END:variables
 
+	/**
+	 *
+	 * @return
+	 */
 	public Playlist getPlaylist()
 	{
 		return _playlist;
 	}
 
+	/**
+	 *
+	 * @param list
+	 */
 	public void setPlaylist(Playlist list)
 	{
 		setPlaylist(list, false);
 	}
 
+	/**
+	 *
+	 * @param list
+	 * @param force
+	 */
 	public void setPlaylist(Playlist list, boolean force)
 	{
 		if (_playlist == list && !force)

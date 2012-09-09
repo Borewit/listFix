@@ -19,10 +19,29 @@
 
 package listfix.view.support;
 
+/**
+ *
+ * @author jcaron
+ * @param <T>
+ */
 public interface IDualProgressObserver<T>
 {
-    void reportTaskProgress(int percentComplete, T state);
-    void reportOverallProgress(int percentComplete, T state);
+    /**
+	 *
+	 * @param percentComplete
+	 * @param state
+	 */
+	void reportTaskProgress(int percentComplete, T state);
+    /**
+	 *
+	 * @param percentComplete
+	 * @param state
+	 */
+	void reportOverallProgress(int percentComplete, T state);
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getCancelled();
 }

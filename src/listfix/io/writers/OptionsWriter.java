@@ -39,6 +39,11 @@ public class OptionsWriter
 {
 	private static final Logger _logger = Logger.getLogger(OptionsWriter.class);
 
+	/**
+	 *
+	 * @param buffer
+	 * @param options
+	 */
 	public static void appendOptionsText(StringBuilder buffer, AppOptions options)
 	{
 		buffer.append("[Options]").append(Constants.BR);
@@ -53,6 +58,9 @@ public class OptionsWriter
 		buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(Constants.BR);
 	}
 
+	/**
+	 *
+	 */
 	public static void writeDefaults()
 	{
 		File test = new File(Constants.OPTIONS_INI);
@@ -62,6 +70,10 @@ public class OptionsWriter
 		}
 	}
 
+	/**
+	 *
+	 * @param options
+	 */
 	public static void write(AppOptions options)
 	{
 		File test = new File(Constants.OPTIONS_INI);

@@ -19,9 +19,20 @@
 
 package listfix.view.support;
 
+/**
+ *
+ * @author jcaron
+ * @param <T>
+ */
 public class DualProgressAdapter<T> implements IDualProgressObserver<T>
 {
-    public static <T> DualProgressAdapter<T> wrap(IDualProgressObserver<T> observer)
+    /**
+	 *
+	 * @param <T>
+	 * @param observer
+	 * @return
+	 */
+	public static <T> DualProgressAdapter<T> wrap(IDualProgressObserver<T> observer)
     {
         if (observer instanceof DualProgressAdapter)
             return (DualProgressAdapter<T>)observer;
@@ -74,13 +85,23 @@ public class DualProgressAdapter<T> implements IDualProgressObserver<T>
         _overall = ProgressAdapter.wrap(overallObserver);
     }
 
-    public void reportTaskProgress(int percentComplete, T state)
+    /**
+	 *
+	 * @param percentComplete
+	 * @param state
+	 */
+	public void reportTaskProgress(int percentComplete, T state)
     {
         if (_observer != null)
             _observer.reportTaskProgress(percentComplete, state);
     }
 
-    public void reportOverallProgress(int percentComplete, T state)
+    /**
+	 *
+	 * @param percentComplete
+	 * @param state
+	 */
+	public void reportOverallProgress(int percentComplete, T state)
     {
         if (_observer != null)
             _observer.reportOverallProgress(percentComplete, state);
@@ -88,18 +109,30 @@ public class DualProgressAdapter<T> implements IDualProgressObserver<T>
 
     IDualProgressObserver<T> _observer;
 
-    public ProgressAdapter<T> getTask()
+    /**
+	 *
+	 * @return
+	 */
+	public ProgressAdapter<T> getTask()
     {
         return _task;
     }
     ProgressAdapter<T> _task;
 
-    public ProgressAdapter<T> getOverall()
+    /**
+	 *
+	 * @return
+	 */
+	public ProgressAdapter<T> getOverall()
     {
         return _overall;
     }
     ProgressAdapter<T> _overall;
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public boolean getCancelled()
 	{

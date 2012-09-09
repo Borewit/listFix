@@ -31,8 +31,18 @@ package listfix.util;
 
 import java.util.List;
 
+/**
+ *
+ * @author jcaron
+ */
 public class ArrayFunctions
 {
+	/**
+	 *
+	 * @param array1
+	 * @param constant
+	 * @return
+	 */
 	public static float[] multByConstant(int[] array1, float constant)
 	{
 		float[] temp = new float[array1.length];
@@ -43,6 +53,12 @@ public class ArrayFunctions
 		return temp;
 	}
 
+	/**
+	 *
+	 * @param array1
+	 * @param constant
+	 * @return
+	 */
 	public static float[] multByConstant(float[] array1, int constant)
 	{
 		float[] temp = new float[array1.length];
@@ -53,6 +69,13 @@ public class ArrayFunctions
 		return temp;
 	}
 
+	/**
+	 *
+	 * @param array1
+	 * @param array2
+	 * @return
+	 * @throws Exception
+	 */
 	public static float[] addTwoArrays(float[] array1, float[] array2) throws Exception
 	{
 		if (array1.length == array2.length)
@@ -70,6 +93,13 @@ public class ArrayFunctions
 		}
 	}
 
+	/**
+	 *
+	 * @param array1
+	 * @param array2
+	 * @return
+	 * @throws Exception
+	 */
 	public static int[] addTwoArrays(int[] array1, int[] array2) throws Exception
 	{
 		if (array1.length == array2.length)
@@ -87,6 +117,12 @@ public class ArrayFunctions
 		}
 	}
 
+	/**
+	 *
+	 * @param array1
+	 * @param value
+	 * @return
+	 */
 	public static int[] copyArrayAddOneValue(int[] array1, int value)
 	{
 		int[] copied = new int[array1.length + 1];
@@ -98,6 +134,12 @@ public class ArrayFunctions
 		return copied;
 	}
 
+	/**
+	 *
+	 * @param array1
+	 * @param value
+	 * @return
+	 */
 	public static String[] copyArrayAddOneValue(String[] array1, String value)
 	{
 		String[] copied = new String[array1.length + 1];
@@ -109,6 +151,12 @@ public class ArrayFunctions
 		return copied;
 	}
 
+	/**
+	 *
+	 * @param array1
+	 * @param location
+	 * @return
+	 */
 	public static String[] removeItem(String[] array1, int location)
 	{
 		String[] result = new String[array1.length - 1];
@@ -123,6 +171,12 @@ public class ArrayFunctions
 		return result;
 	}
 
+	/**
+	 *
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static String[] mergeArray(String[] a, String[] b)
 	{
 		int c = a.length + b.length;
@@ -138,6 +192,13 @@ public class ArrayFunctions
 		return cArray;
 	}
 
+	/**
+	 *
+	 * @param a
+	 * @param b
+	 * @param ignoreCase
+	 * @return
+	 */
 	public static boolean ContainsStringPrefixingAnotherString(String[] a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
@@ -156,6 +217,13 @@ public class ArrayFunctions
 		return result;
 	}
 
+	/**
+	 *
+	 * @param a
+	 * @param b
+	 * @param ignoreCase
+	 * @return
+	 */
 	public static boolean ContainsStringPrefixingAnotherString(List<String> a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
@@ -174,6 +242,11 @@ public class ArrayFunctions
 		return result;
 	}
 
+	/**
+	 *
+	 * @param v
+	 * @return
+	 */
 	public static String[] convertVectorToStringArray(List<Object> v)
 	{
 		int size = v.size();
@@ -185,6 +258,11 @@ public class ArrayFunctions
 		return result;
 	}
 
+	/**
+	 *
+	 * @param list
+	 * @return
+	 */
 	public static int[] integerListToArray(List<Integer> list)
 	{
 		int[] rows = new int[list.size()];

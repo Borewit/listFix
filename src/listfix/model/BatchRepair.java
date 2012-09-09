@@ -55,6 +55,11 @@ public class BatchRepair
 	// The list of files in the media library to be considered during the repair.
 	private String[] _mediaFiles;
 	
+	/**
+	 *
+	 * @param mediaFiles
+	 * @param rootDirectory
+	 */
 	public BatchRepair(String[] mediaFiles, File rootDirectory)
 	{
 		_mediaFiles = mediaFiles;
@@ -65,36 +70,65 @@ public class BatchRepair
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public List<BatchRepairItem> getItems()
 	{
 		return _items;
 	}
 
+	/**
+	 *
+	 * @param ix
+	 * @return
+	 */
 	public BatchRepairItem getItem(int ix)
 	{
 		return _items.get(ix);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public Boolean isEmpty()
 	{
 		return _items.isEmpty();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getDescription()
 	{
 		return _description;
 	}
 
+	/**
+	 *
+	 * @param description
+	 */
 	public void setDescription(String description)
 	{
 		_description = description;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public File getRootDirectory()
 	{
 		return _rootDirectory;
 	}	
 
+	/**
+	 *
+	 * @return
+	 */
 	public List<Playlist> getPlaylists()
 	{
 		List<Playlist> result = new ArrayList<>();
@@ -105,6 +139,10 @@ public class BatchRepair
 		return result;
 	}
 
+	/**
+	 *
+	 * @param item
+	 */
 	public void add(BatchRepairItem item)
 	{
 		_items.add(item);

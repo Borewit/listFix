@@ -53,6 +53,10 @@ public class WindowSaver implements AWTEventListener
 		framemap = new HashMap();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public static WindowSaver getInstance()
 	{
 		if (saver == null)
@@ -62,6 +66,10 @@ public class WindowSaver implements AWTEventListener
 		return saver;
 	}
 
+	/**
+	 *
+	 * @param evt
+	 */
 	@Override
 	public void eventDispatched(AWTEvent evt)
 	{
@@ -83,6 +91,10 @@ public class WindowSaver implements AWTEventListener
 		}
 	}
 
+	/**
+	 *
+	 * @param frame
+	 */
 	public void loadSettings(JFrame frame)
 	{
 		Properties settings = new Properties();
@@ -105,6 +117,13 @@ public class WindowSaver implements AWTEventListener
 		frame.validate();
 	}
 
+	/**
+	 *
+	 * @param props
+	 * @param name
+	 * @param value
+	 * @return
+	 */
 	public int getInt(Properties props, String name, int value)
 	{
 		String v = props.getProperty(name);
@@ -115,6 +134,9 @@ public class WindowSaver implements AWTEventListener
 		return Integer.parseInt(v);
 	}
 
+	/**
+	 *
+	 */
 	public void saveSettings()
 	{
 		Properties settings = new Properties();

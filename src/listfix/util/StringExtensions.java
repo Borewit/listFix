@@ -31,8 +31,17 @@ import java.util.List;
 ============================================================================
  */
 
+/**
+ *
+ * @author jcaron
+ */
 public class StringExtensions
 {
+	/**
+	 *
+	 * @param inputString
+	 * @return
+	 */
 	public static List<String> splitCamelCase(String inputString)
 	{
 		List<String> result = new ArrayList<String>();

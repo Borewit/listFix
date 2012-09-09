@@ -43,6 +43,9 @@ public class AppOptions
 	private Font appFont = new Font("SansSerif", 0, 11);
 	private int maxClosestResults = 20;
 	
+	/**
+	 *
+	 */
 	public static final HashMap<String, Integer> optionEnumTable = new HashMap<String, Integer>();
 
 	static
@@ -58,71 +61,127 @@ public class AppOptions
 		optionEnumTable.put("MAX_CLOSEST_RESULTS", AppOptionsEnum.MAX_CLOSEST_RESULTS);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getAutoLocateEntriesOnPlaylistLoad()
 	{
 		return autoLocateEntriesOnPlaylistLoad;
 	}
 
+	/**
+	 *
+	 * @param autoLocateEntriesOnPlaylistLoad
+	 */
 	public void setAutoLocateEntriesOnPlaylistLoad(boolean autoLocateEntriesOnPlaylistLoad)
 	{
 		this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getMaxPlaylistHistoryEntries()
 	{
 		return maxPlaylistHistoryEntries;
 	}
 
+	/**
+	 *
+	 * @param lookAndFeel
+	 */
 	public void setLookAndFeel(String lookAndFeel)
 	{
 		this.lookAndFeel = lookAndFeel;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getLookAndFeel()
 	{
 		return lookAndFeel;
 	}
 
+	/**
+	 *
+	 * @param maxPlaylistHistoryEntries
+	 */
 	public void setMaxPlaylistHistoryEntries(int maxPlaylistHistoryEntries)
 	{
 		this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
 	}
 
+	/**
+	 *
+	 * @param autoRefreshMediaLibraryOnStartup
+	 */
 	public void setAutoRefreshMediaLibraryOnStartup(boolean autoRefreshMediaLibraryOnStartup)
 	{
 		this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getAutoRefreshMediaLibraryOnStartup()
 	{
 		return autoRefreshMediaLibraryOnStartup;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getSavePlaylistsWithRelativePaths()
 	{
 		return savePlaylistsWithRelativePaths;
 	}
 
+	/**
+	 *
+	 * @param savePlaylistsWithRelativePaths
+	 */
 	public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths)
 	{
 		this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public boolean getAlwaysUseUNCPaths()
 	{
 		return alwaysUseUNCPaths;
 	}
 
+	/**
+	 *
+	 * @param alwaysUseUNCPaths
+	 */
 	public void setAlwaysUseUNCPaths(boolean alwaysUseUNCPaths)
 	{
 		this.alwaysUseUNCPaths = alwaysUseUNCPaths;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getPlaylistsDirectory()
 	{
 		return playlistsDirectory;
 	}
 
+	/**
+	 *
+	 * @param playlistsDirectory
+	 */
 	public void setPlaylistsDirectory(String playlistsDirectory)
 	{
 		if (new File(playlistsDirectory).exists())

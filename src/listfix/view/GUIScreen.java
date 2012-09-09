@@ -102,6 +102,10 @@ import listfix.view.support.WindowSaver;
 
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
 {
 	private static final long _serialVersionUID = 7691786927987534889L;
@@ -418,30 +422,50 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		_jSaveFileChooser.setFileFilter(new PlaylistFileFilter());
 	}
 
+	/**
+	 *
+	 * @param dtde
+	 */
 	@Override
 	public void dragEnter(DropTargetDragEvent dtde)
 	{
 
 	}
 
+	/**
+	 *
+	 * @param dte
+	 */
 	@Override
 	public void dragExit(DropTargetEvent dte)
 	{
 
 	}
 
+	/**
+	 *
+	 * @param dtde
+	 */
 	@Override
 	public void dragOver(DropTargetDragEvent dtde)
 	{
 
 	}
 
+	/**
+	 *
+	 * @param dtde
+	 */
 	@Override
 	public void dropActionChanged(DropTargetDragEvent dtde)
 	{
 
 	}
 
+	/**
+	 *
+	 * @param dtde
+	 */
 	@Override
 	public void drop(DropTargetDropEvent dtde)
 	{
@@ -499,6 +523,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         }
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public AppOptions getOptions()
 	{
 		return _guiDriver.getAppOptions();
@@ -1549,6 +1577,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	private static Border _normalBorder;
 	private static Border _pressedBorder;
 
+	/**
+	 *
+	 * @param list
+	 */
 	public void updateCurrentTab(Playlist list)
 	{
 		PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _uiTabs.getSelectedComponent();
@@ -1572,6 +1604,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		updateRecentMenu();
 	}
 
+	/**
+	 *
+	 */
 	public void updateRecentMenu()
 	{
 		recentMenu.removeAll();
@@ -1817,6 +1852,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public boolean tryCloseAllTabs()
 	{
@@ -1829,6 +1868,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		return result;
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void repairAllTabs()
 	{
@@ -1859,6 +1901,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 	}
 
+	/**
+	 *
+	 * @param tabIx
+	 */
 	@Override
 	public void closeAllOtherTabs(int tabIx)
 	{
@@ -1879,6 +1925,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 	}
 
+	/**
+	 *
+	 * @param ctrl
+	 * @return
+	 */
 	@Override
 	public boolean tryCloseTab(ClosableTabCtrl ctrl)
 	{
@@ -2528,6 +2579,10 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		}
 	}//GEN-LAST:event__playlistDirectoryTreeKeyPressed
 
+	/**
+	 *
+	 * @param font
+	 */
 	public void setApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();
@@ -2546,6 +2601,10 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 		updateAllComponentTreeUIs();
 	}
 
+	/**
+	 *
+	 * @param font
+	 */
 	public static void InitApplicationFont(Font font)
 	{
 		Enumeration enumer = UIManager.getDefaults().keys();

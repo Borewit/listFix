@@ -28,6 +28,10 @@ import javax.swing.JTextArea;
  */
 public class JTransparentTextArea extends JTextArea
 {
+	/**
+	 *
+	 * @param msg
+	 */
 	public JTransparentTextArea(String msg)
 	{
 		super(msg);

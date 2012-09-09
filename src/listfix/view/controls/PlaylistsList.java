@@ -54,6 +54,10 @@ public class PlaylistsList extends javax.swing.JPanel
 		initComponents();
     }
 
+	/**
+	 *
+	 * @param batch
+	 */
 	public PlaylistsList(BatchRepair batch)
 	{
 		_batch = batch;
@@ -70,6 +74,9 @@ public class PlaylistsList extends javax.swing.JPanel
 		_uiLists.setRowSelectionAllowed(true);
 	}
 
+	/**
+	 *
+	 */
 	public void initPlaylistsList()
 	{
 		_uiLists.autoResizeColumn(0);
@@ -83,11 +90,19 @@ public class PlaylistsList extends javax.swing.JPanel
 		sorter.setSortKeys(keys);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public ListSelectionModel getSelectionModel()
 	{
 		return _uiLists.getSelectionModel();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getSelectedModelRow()
 	{
 		return _uiLists.getSelectedRow() < 0 ? -1 : _uiLists.convertRowIndexToModel(_uiLists.getSelectedRow());
@@ -154,11 +169,19 @@ public class PlaylistsList extends javax.swing.JPanel
     private javax.swing.JPanel jPanel5;
     // End of variables declaration//GEN-END:variables
 
+	/**
+	 *
+	 * @param listCountTxt
+	 */
 	public void setText(String listCountTxt)
 	{
 		_labListCount.setText(listCountTxt);
 	}
 
+	/**
+	 *
+	 * @param list
+	 */
 	public void playlistModified(Playlist list)
 	{
 		int uiIndex = _uiLists.getSelectedRow();
@@ -179,6 +202,9 @@ public class PlaylistsList extends javax.swing.JPanel
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void anchorLeft()
 	{
 		_uiScrollLists.getHorizontalScrollBar().setValue(0);

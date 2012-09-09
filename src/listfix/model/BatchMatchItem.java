@@ -33,39 +33,69 @@ public class BatchMatchItem
 	private PlaylistEntry _entry;
     private List<PotentialPlaylistEntryMatch> _matches;
 	
-    public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
+    /**
+	 *
+	 * @param ix
+	 * @param entry
+	 * @param matches
+	 */
+	public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
     {
         _entryIx = ix;
         _entry = entry;
         _matches = matches;
     }
 
-    public int getEntryIx()
+    /**
+	 *
+	 * @return
+	 */
+	public int getEntryIx()
     {
         return _entryIx;
     }
 
-    public PlaylistEntry getEntry()
+    /**
+	 *
+	 * @return
+	 */
+	public PlaylistEntry getEntry()
     {
         return _entry;
     }    
 
-    public List<PotentialPlaylistEntryMatch> getMatches()
+    /**
+	 *
+	 * @return
+	 */
+	public List<PotentialPlaylistEntryMatch> getMatches()
     {
         return _matches;
     }
 
-    public int getSelectedIx()
+    /**
+	 *
+	 * @return
+	 */
+	public int getSelectedIx()
     {
         return _selectedIx;
     }
 	
-    public void setSelectedIx(int ix)
+    /**
+	 *
+	 * @param ix
+	 */
+	public void setSelectedIx(int ix)
     {
         _selectedIx = ix;
     }
 
-    public PotentialPlaylistEntryMatch getSelectedMatch()
+    /**
+	 *
+	 * @return
+	 */
+	public PotentialPlaylistEntryMatch getSelectedMatch()
     {
         if (_selectedIx >= 0)
 		{

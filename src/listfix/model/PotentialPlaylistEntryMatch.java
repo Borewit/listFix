@@ -32,6 +32,12 @@ public class PotentialPlaylistEntryMatch
 	private PlaylistEntry thisEntry = null;
 	private int _score = 0;
 
+	/**
+	 *
+	 * @param file
+	 * @param score
+	 * @param list
+	 */
 	public PotentialPlaylistEntryMatch(File file, int score, File list)
 	{
 		thisEntry = new PlaylistEntry(file, "", list);
@@ -39,11 +45,19 @@ public class PotentialPlaylistEntryMatch
 		_score = score;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getScore()
 	{
 		return _score;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public PlaylistEntry getPlaylistFile()
 	{
 		return thisEntry;

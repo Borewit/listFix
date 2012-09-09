@@ -34,6 +34,12 @@ import listfix.comparators.FileComparator;
  */
 public class FileTypeSearch
 {
+	/**
+	 *
+	 * @param directoryToSearch
+	 * @param filter
+	 * @return
+	 */
 	public List<File> findFiles(File directoryToSearch, FileFilter filter)
 	{
 		if (directoryToSearch.exists())

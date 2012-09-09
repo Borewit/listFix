@@ -37,11 +37,21 @@ import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+/**
+ *
+ * @author jcaron
+ */
 public class ClosableTabCtrl extends javax.swing.JPanel
 {
 	private Component _comp = null;
 
-    public ClosableTabCtrl(ICloseableTabManager tabMgr, JTabbedPane tabPane, String title)
+    /**
+	 *
+	 * @param tabMgr
+	 * @param tabPane
+	 * @param title
+	 */
+	public ClosableTabCtrl(ICloseableTabManager tabMgr, JTabbedPane tabPane, String title)
     {
         _tabPane = tabPane;
         _tabMgr = tabMgr;
@@ -53,7 +63,11 @@ public class ClosableTabCtrl extends javax.swing.JPanel
         //jLabel1.setToolTipText(tooltip);
     }
 
-    public void setText(String text)
+    /**
+	 *
+	 * @param text
+	 */
+	public void setText(String text)
     {
         jLabel1.setText(text);
     }
@@ -133,11 +147,19 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 		_tabMgr.closeAllOtherTabs(getTabIx());
 	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
 	
+	/**
+	 *
+	 */
 	public void closeMe()
 	{
 		_tabMgr.tryCloseTab(this);
 	}
 	
+	/**
+	 *
+	 * @param x
+	 * @param y
+	 */
 	public void showRightClickMenu(int x, int y)
 	{
 		rightClickMenu.show(_tabPane, x, y);

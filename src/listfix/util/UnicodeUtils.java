@@ -34,10 +34,21 @@ import java.io.Writer;
 import listfix.io.UnicodeInputStream;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class UnicodeUtils
 {
 	private static final Logger _logger = Logger.getLogger(UnicodeUtils.class);
 
+	/**
+	 *
+	 * @param bytes
+	 * @param encout
+	 * @return
+	 * @throws Exception
+	 */
 	public static byte[] convert(byte[] bytes, String encout) throws Exception
 	{
 		// Workaround for bug that will not be fixed by Sun/Oracle
@@ -78,6 +89,12 @@ public class UnicodeUtils
 		return out.toByteArray();
 	}
 
+	/**
+	 *
+	 * @param enc
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	public static String getBOM(String enc) throws UnsupportedEncodingException
 	{
 		if ("UTF-8".equals(enc))
@@ -126,6 +143,11 @@ public class UnicodeUtils
 		}
 	}
 
+	/**
+	 *
+	 * @param input
+	 * @return
+	 */
 	public static String getEncoding(File input)
 	{
 		if (input.isDirectory() || !input.canRead())

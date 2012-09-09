@@ -37,10 +37,17 @@ import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class FileWriter
 {
 	private static final Logger _logger = Logger.getLogger(FileWriter.class);
 
+	/**
+	 *
+	 */
 	public void writeDefaultIniFilesIfNeeded()
 	{
 		BufferedWriter output;
@@ -98,6 +105,10 @@ public class FileWriter
 		}
 	}
 
+	/**
+	 *
+	 * @param history
+	 */
 	public void writeMruPlaylists(PlaylistHistory history)
 	{
 		try
@@ -123,6 +134,12 @@ public class FileWriter
 		}
 	}
 
+	/**
+	 *
+	 * @param mediaDir
+	 * @param mediaLibraryDirList
+	 * @param mediaLibraryFileList
+	 */
 	public void writeMediaLibrary(String[] mediaDir, String[] mediaLibraryDirList, String[] mediaLibraryFileList)
 	{
 		try

@@ -8,25 +8,46 @@ import listfix.model.BatchRepairItem;
 import listfix.model.Playlist;
 import listfix.view.support.ImageIcons;
 
+/**
+ *
+ * @author jcaron
+ */
 public class PlaylistsTableModel extends AbstractTableModel
 {
+	/**
+	 *
+	 * @param items
+	 */
 	public PlaylistsTableModel(BatchRepair items)
 	{
 		_items = items;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public int getRowCount()
 	{
 		return _items == null ? 0 : _items.getItems().size();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public int getColumnCount()
 	{
 		return 4;
 	}
 
+	/**
+	 *
+	 * @param column
+	 * @return
+	 */
 	@Override
 	public String getColumnName(int column)
 	{
@@ -43,6 +64,11 @@ public class PlaylistsTableModel extends AbstractTableModel
 		}
 	}
 
+	/**
+	 *
+	 * @param columnIndex
+	 * @return
+	 */
 	@Override
 	public Class<?> getColumnClass(int columnIndex)
 	{
@@ -56,6 +82,12 @@ public class PlaylistsTableModel extends AbstractTableModel
 		}
 	}
 
+	/**
+	 *
+	 * @param rowIndex
+	 * @param columnIndex
+	 * @return
+	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex)
 	{

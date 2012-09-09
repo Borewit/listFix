@@ -229,6 +229,10 @@ public class Playlist
 		}
 	}
 
+	/**
+	 *
+	 * @param observer
+	 */
 	protected void resetInternalStateAfterSave(IProgressObserver observer)
 	{
 		// change original _entries
@@ -1260,6 +1264,11 @@ public class Playlist
 		return determinePlaylistType(input) != PlaylistType.UNKNOWN;
 	}
 
+	/**
+	 *
+	 * @param input
+	 * @return
+	 */
 	public static PlaylistType determinePlaylistType(File input)
 	{
 		if (input != null)

@@ -26,7 +26,16 @@ package listfix.model.enums;
  */
 public enum PlaylistEntryStatus
 {
+	/**
+	 *
+	 */
 	Unknown,
+	/**
+	 *
+	 */
 	Missing,
+	/**
+	 *
+	 */
 	Found
 }

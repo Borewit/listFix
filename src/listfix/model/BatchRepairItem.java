@@ -36,6 +36,10 @@ public class BatchRepairItem
 	private File _playlistFile;
 	private List<BatchMatchItem> _closestMatches;
 
+	/**
+	 *
+	 * @param file
+	 */
 	public BatchRepairItem(File file)
 	{
 		_path = file.getPath();
@@ -47,6 +51,10 @@ public class BatchRepairItem
 		}
 	}
 
+	/**
+	 *
+	 * @param list
+	 */
 	public BatchRepairItem(Playlist list)
 	{
 		_playlist = list;
@@ -55,31 +63,55 @@ public class BatchRepairItem
 		_playlistFile = list.getFile();
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getPath()
 	{
 		return _path;
 	}
 
+	/**
+	 *
+	 * @param path
+	 */
 	public void setPath(String path)
 	{
 		this._path = path;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getDisplayName()
 	{
 		return _displayName;
 	}
 
+	/**
+	 *
+	 * @param displayName
+	 */
 	public void setDisplayName(String displayName)
 	{
 		this._displayName = displayName;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public Playlist getPlaylist()
 	{
 		return _playlist;
 	}
 
+	/**
+	 *
+	 * @param playlist
+	 */
 	public void setPlaylist(Playlist playlist)
 	{
 		this._playlist = playlist;
@@ -106,6 +138,10 @@ public class BatchRepairItem
 		_closestMatches = findClosestMatches;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public List<BatchMatchItem> getClosestMatches()
 	{
 		return _closestMatches;

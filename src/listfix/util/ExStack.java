@@ -30,6 +30,11 @@ import java.io.Writer;
  */
 public class ExStack
 {
+	/**
+	 *
+	 * @param aThrowable
+	 * @return
+	 */
 	public static String toString(Throwable aThrowable)
 	{
 		final Writer result = new StringWriter();

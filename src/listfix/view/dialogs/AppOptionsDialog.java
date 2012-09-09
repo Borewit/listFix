@@ -51,10 +51,20 @@ import net.mariottini.swing.JFontChooser;
 
 import org.apache.log4j.Logger;
 
+/**
+ *
+ * @author jcaron
+ */
 public class AppOptionsDialog extends javax.swing.JDialog
 {
 	private static final long serialVersionUID = 3409894354485158935L;
+	/**
+	 *
+	 */
 	public static final int OK = 0;
+	/**
+	 *
+	 */
 	public static final int CANCEL = 1;
 	private static final Logger _logger = Logger.getLogger(AppOptionsDialog.class);
 	
@@ -138,25 +148,44 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		_jMediaDirChooser.setRecentListVisible(false);
 	}
 
+	/**
+	 *
+	 */
 	public AppOptionsDialog()
 	{
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getFileName()
 	{
 		return _fileName;
 	}
 
+	/**
+	 *
+	 * @param x
+	 */
 	public void setFileName(String x)
 	{
 		_fileName = x;
 	}
 
+	/**
+	 *
+	 * @param i
+	 */
 	public void setResultCode(int i)
 	{
 		_resultCode = i;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getResultCode()
 	{
 		return _resultCode;
@@ -586,6 +615,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
 	}//GEN-LAST:event__changeFontButtonActionPerformed
 
+	/**
+	 *
+	 * @return
+	 */
 	public AppOptions showDialog()
 	{
 		this.center();

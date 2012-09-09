@@ -27,9 +27,19 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
+/**
+ *
+ * @author jcaron
+ */
 public class FileNameTokenizer
 {
+	/**
+	 *
+	 */
 	public static final List<String> ignoreList = new ArrayList<String>();
+	/**
+	 *
+	 */
 	public static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";
 
 	static
@@ -44,11 +54,22 @@ public class FileNameTokenizer
 		ignoreList.add("to");
 	}
 
+	/**
+	 *
+	 * @param filename1
+	 * @param filename2
+	 * @return
+	 */
 	public static int score(String filename1, String filename2)
 	{
 		return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @return
+	 */
 	public static String removeExtensionFromFileName(String name)
 	{
 		String result = name;
@@ -60,7 +81,12 @@ public class FileNameTokenizer
 		return result;
 	}
 
-    public static String getExtensionFromFileName(String name)
+    /**
+	 *
+	 * @param name
+	 * @return
+	 */
+	public static String getExtensionFromFileName(String name)
     {
         int ix = name.lastIndexOf('.');
         if (ix >= 0 && ix < name.length() - 1)

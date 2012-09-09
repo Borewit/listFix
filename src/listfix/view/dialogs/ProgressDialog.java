@@ -29,14 +29,33 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import listfix.view.support.ProgressWorker;
 
+/**
+ *
+ * @author jcaron
+ */
 public class ProgressDialog extends javax.swing.JDialog
 {
+	/**
+	 *
+	 * @param parent
+	 * @param modal
+	 * @param worker
+	 * @param label
+	 */
 	public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label)
 	{
 		this(parent, modal, worker, label, false);
 	}
 
-    public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode)
+    /**
+	 *
+	 * @param parent
+	 * @param modal
+	 * @param worker
+	 * @param label
+	 * @param textMode
+	 */
+	public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode)
     {
         super(parent, modal);
         initComponents();
@@ -76,12 +95,20 @@ public class ProgressDialog extends javax.swing.JDialog
         setLocationRelativeTo(parent);
     }
 
-    public JProgressBar getProgressBar()
+    /**
+	 *
+	 * @return
+	 */
+	public JProgressBar getProgressBar()
     {
         return _progressBar;
     }
 
-    public JLabel getProgressLabel()
+    /**
+	 *
+	 * @return
+	 */
+	public JLabel getProgressLabel()
     {
         return _progressTitle;
     }
