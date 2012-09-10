@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Major Version</key><integer>1</integer>
+	<key>Minor Version</key><integer>1</integer>
+	<key>Application Version</key><string>10.1</string>
+	<key>Features</key><integer>5</integer>
+	<key>Show Content Ratings</key><true/>
+	<key>Music Folder</key><string>file://localhost/C:/Users/jcaron/Music/iTunes/iTunes%20Music/</string>
+	<key>Library Persistent ID</key><string>859AD5822049F2EA</string>
+	<key>Tracks</key>
+	<dict>
+		<key>4355</key>
+		<dict>
+			<key>Track ID</key><integer>4355</integer>
+			<key>Name</key><string>Let's Celebrate (Club Mix)</string>
+			<key>Artist</key><string>Scotty</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>6842409</integer>
+			<key>Total Time</key><integer>283324</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>1</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3360496742</integer>
+			<key>Play Date UTC</key><date>2010-06-27T19:19:02Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2012-08-17T20:32:39Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>EBAC3026F7751B6B</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/101.%20Scotty%20-%20Let's%20Celebrate%20(Club%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4357</key>
+		<dict>
+			<key>Track ID</key><integer>4357</integer>
+			<key>Name</key><string>Dreams 2002 (Cosmic Gate Remix)</string>
+			<key>Artist</key><string>Miss Shiva</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8769000</integer>
+			<key>Total Time</key><integer>363598</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>2</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3360497114</integer>
+			<key>Play Date UTC</key><date>2010-06-27T19:25:14Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>B1993B06A2E67571</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/102.%20Miss%20Shiva%20-%20Dreams%202002%20(Cosmic%20Gate%20Remix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4359</key>
+		<dict>
+			<key>Track ID</key><integer>4359</integer>
+			<key>Name</key><string>Lifestyle (Megara vs. DJ Lee Remix)</string>
+			<key>Artist</key><string>Beam vs. Cyrus</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5969727</integer>
+			<key>Total Time</key><integer>246961</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3423028227</integer>
+			<key>Play Date UTC</key><date>2012-06-20T13:10:27Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2012-06-13T13:13:36Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>ACD8B133717ECFD9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/103.%20Beam%20vs.%20Cyrus%20-%20Lifestyle%20(Megara%20vs.%20DJ%20Lee%20Remix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4361</key>
+		<dict>
+			<key>Track ID</key><integer>4361</integer>
+			<key>Name</key><string>Can't Stop Raving (Club Mix)</string>
+			<key>Artist</key><string>Adrima</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>8063060</integer>
+			<key>Total Time</key><integer>334184</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2012-07-26T21:03:38Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>C61DF8DAB3463BA9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/104.%20Adrima%20-%20Can't%20Stop%20Raving%20(Club%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4363</key>
+		<dict>
+			<key>Track ID</key><integer>4363</integer>
+			<key>Name</key><string>Heaven (Green Court Mix)</string>
+			<key>Artist</key><string>DJ Sammy &#38; Yanou</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>6891318</integer>
+			<key>Total Time</key><integer>285361</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>5</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>811FBBED7D020E36</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/105.%20DJ%20Sammy%20&#38;%20Yanou%20-%20Heaven%20(Green%20Court%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4365</key>
+		<dict>
+			<key>Track ID</key><integer>4365</integer>
+			<key>Name</key><string>L'Esperanza (Extended Mix)</string>
+			<key>Artist</key><string>Topmodelz</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5028678</integer>
+			<key>Total Time</key><integer>207751</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>6</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>E2DEC68533197A49</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/106.%20Topmodelz%20-%20L'Esperanza%20(Extended%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4367</key>
+		<dict>
+			<key>Track ID</key><integer>4367</integer>
+			<key>Name</key><string>Into The Sea (Voodoo &#38; Serano Mix)</string>
+			<key>Artist</key><string>CJ Stone</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7673739</integer>
+			<key>Total Time</key><integer>317962</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3426431126</integer>
+			<key>Play Date UTC</key><date>2012-07-29T22:25:26Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2012-05-16T22:50:15Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>4C432930E763DCB8</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/107.%20CJ%20Stone%20-%20Into%20The%20Sea%20(Voodoo%20&#38;%20Serano%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4369</key>
+		<dict>
+			<key>Track ID</key><integer>4369</integer>
+			<key>Name</key><string>Ong-Diggi-Dong (Essential Hard House Club Mix)</string>
+			<key>Artist</key><string>Essential DJ Team</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5996072</integer>
+			<key>Total Time</key><integer>248058</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>8</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3423719980</integer>
+			<key>Play Date UTC</key><date>2012-06-28T13:19:40Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2012-06-14T20:09:39Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>E19E3D04A852E6D2</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/108.%20Essential%20DJ%20Team%20-%20Ong-Diggi-Dong%20(Essential%20Hard%20House%20Club%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4371</key>
+		<dict>
+			<key>Track ID</key><integer>4371</integer>
+			<key>Name</key><string>Come With Me (DJ Scot Project Remix)</string>
+			<key>Artist</key><string>Talla 2XLC</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7964643</integer>
+			<key>Total Time</key><integer>330083</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>9</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>4EA65CF8BCA43283</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/109.%20Talla%202XLC%20-%20Come%20With%20Me%20(DJ%20Scot%20Project%20Remix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4373</key>
+		<dict>
+			<key>Track ID</key><integer>4373</integer>
+			<key>Name</key><string>Prepare To Qualify (Elephant Mix)</string>
+			<key>Artist</key><string>Bassraiders</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5896371</integer>
+			<key>Total Time</key><integer>243905</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>10</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:50Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3426258549</integer>
+			<key>Play Date UTC</key><date>2012-07-27T22:29:09Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>ABF07B58A77597D6</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/110.%20Bassraiders%20-%20Prepare%20To%20Qualify%20(Elephant%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4375</key>
+		<dict>
+			<key>Track ID</key><integer>4375</integer>
+			<key>Name</key><string>Blue Planet</string>
+			<key>Artist</key><string>Impegement Synrom</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>7379065</integer>
+			<key>Total Time</key><integer>305684</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>11</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>2CEA766E88DA14BB</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/111.%20Impegement%20Synrom%20-%20Blue%20Planet.mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4377</key>
+		<dict>
+			<key>Track ID</key><integer>4377</integer>
+			<key>Name</key><string>Urban Train (Cosmic Gate Mix)</string>
+			<key>Artist</key><string>DJ Tiesto feat. Kirsty Hawkshaw</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4329040</integer>
+			<key>Total Time</key><integer>178599</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>12</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>E09190B879320E3D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/112.%20DJ%20Tiesto%20feat.%20Kirsty%20Hawkshaw%20-%20Urban%20Train%20(Cosmic%20Gate%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4379</key>
+		<dict>
+			<key>Track ID</key><integer>4379</integer>
+			<key>Name</key><string>Red Planet (Reverb's Mix)</string>
+			<key>Artist</key><string>Avatar</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>9416619</integer>
+			<key>Total Time</key><integer>390582</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>13</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3427342729</integer>
+			<key>Play Date UTC</key><date>2012-08-09T11:38:49Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2012-08-09T11:32:16Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>C2488AA18D7B6286</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/113.%20Avatar%20-%20Red%20Planet%20(Reverb's%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4381</key>
+		<dict>
+			<key>Track ID</key><integer>4381</integer>
+			<key>Name</key><string>The Trance-All Anthem (Gary D's Tranced Out Remix)</string>
+			<key>Artist</key><string>Trance-All DJ Team</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4189868</integer>
+			<key>Total Time</key><integer>172800</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>14</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2012-06-01T23:00:29Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Name</key><string>Trance-All Anthem (Gary D's Tranced Out Remix)</string>
+			<key>Persistent ID</key><string>9816EAAF82C60C8F</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/114.%20Trance-All%20DJ%20Team%20-%20The%20Trance-All%20Anthem%20(Gary%20D's%20Tranced%20Out%20Remix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4383</key>
+		<dict>
+			<key>Track ID</key><integer>4383</integer>
+			<key>Name</key><string>Pandora (Fridge Trance Mix)</string>
+			<key>Artist</key><string>Dragon</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>4152843</integer>
+			<key>Total Time</key><integer>171258</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>15</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3423572103</integer>
+			<key>Play Date UTC</key><date>2012-06-26T20:15:03Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2012-05-23T21:23:22Z</date>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>0DACB6F53C294816</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/115.%20Dragon%20-%20Pandora%20(Fridge%20Trance%20Mix).mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4385</key>
+		<dict>
+			<key>Track ID</key><integer>4385</integer>
+			<key>Name</key><string>The Change</string>
+			<key>Artist</key><string>Accuface</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>6277524</integer>
+			<key>Total Time</key><integer>259787</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>16</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Name</key><string>Change</string>
+			<key>Persistent ID</key><string>E112874058C1396E</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/116.%20Accuface%20-%20The%20Change.mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+		<key>4387</key>
+		<dict>
+			<key>Track ID</key><integer>4387</integer>
+			<key>Name</key><string>I Feel For You</string>
+			<key>Artist</key><string>Sonic Inc.</string>
+			<key>Album Artist</key><string>VA</string>
+			<key>Album</key><string>Tunnel Trance Force Vol. 20 / CD1</string>
+			<key>Kind</key><string>MPEG audio file</string>
+			<key>Size</key><integer>5284459</integer>
+			<key>Total Time</key><integer>218409</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>2</integer>
+			<key>Track Number</key><integer>17</integer>
+			<key>Track Count</key><integer>17</integer>
+			<key>Date Modified</key><date>2012-08-18T02:10:22Z</date>
+			<key>Date Added</key><date>2011-10-02T13:51:51Z</date>
+			<key>Bit Rate</key><integer>192</integer>
+			<key>Sample Rate</key><integer>44100</integer>
+			<key>Part Of Gapless Album</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>FEEFEADF95E9174A</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file://localhost/C:/Users/jcaron/Music/MP3s/07.%20Techno/01.%20Compilations/02.%20Tunnel%20Trance%20Rips/Tunnel%20Trance%20Force%20Vol.%2020%20(2002)/117.%20Sonic%20Inc.%20-%20I%20Feel%20For%20You.mp3</string>
+			<key>File Folder Count</key><integer>-1</integer>
+			<key>Library Folder Count</key><integer>-1</integer>
+		</dict>
+	</dict>
+	<key>Playlists</key>
+	<array>
+		<dict>
+			<key>Name</key><string>TTF Vol. 20 - CD1 (2002)</string>
+			<key>Playlist ID</key><integer>18114</integer>
+			<key>Playlist Persistent ID</key><string>597BB017AA453780</string>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>4355</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4357</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4359</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4361</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4363</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4365</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4367</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4369</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4371</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4373</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4375</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4377</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4379</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4381</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4383</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4385</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>4387</integer>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
