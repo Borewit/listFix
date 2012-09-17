@@ -20,7 +20,7 @@
 
 package listfix.io.writers.playlists;
 
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 import listfix.view.support.ProgressAdapter;
 
 /**

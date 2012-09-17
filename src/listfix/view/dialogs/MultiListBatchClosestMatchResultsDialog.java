@@ -39,7 +39,7 @@ import javax.swing.table.TableCellEditor;
 import listfix.controller.GUIDriver;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 import listfix.util.ExStack;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
 import listfix.view.controls.JTransparentTextArea;

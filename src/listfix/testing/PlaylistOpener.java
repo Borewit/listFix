@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import listfix.io.readers.playlists.itunes.ITunesMediaLibrary;
-import listfix.io.readers.playlists.itunes.ITunesPlaylist;
-import listfix.io.readers.playlists.itunes.ITunesTrack;
-import listfix.model.Playlist;
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.itunes.ITunesMediaLibrary;
+import listfix.model.playlists.itunes.ITunesPlaylist;
+import listfix.model.playlists.itunes.ITunesTrack;
+import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistEntry;
 
 /**
  *

@@ -284,8 +284,8 @@ public class GUIDriver
 			}
 			if (found)
 			{
-				List<String> mldVector = new ArrayList<String>(Arrays.asList(mediaLibraryDirectoryList));
-				List<String> toRemove = new ArrayList<String>();
+				List<String> mldVector = new ArrayList<>(Arrays.asList(mediaLibraryDirectoryList));
+				List<String> toRemove = new ArrayList<>();
 				for (String toTest : mldVector)
 				{
 					if (toTest.startsWith(dir))
@@ -299,7 +299,7 @@ public class GUIDriver
 				// Clear this out for the next run.
 				toRemove.clear();
 
-				List<String> mlfVector = new ArrayList<String>(Arrays.asList(mediaLibraryFileList));
+				List<String> mlfVector = new ArrayList<>(Arrays.asList(mediaLibraryFileList));
 				for (String toTest : mlfVector)
 				{
 					if (toTest.startsWith(dir))

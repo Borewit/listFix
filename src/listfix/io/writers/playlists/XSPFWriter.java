@@ -32,8 +32,8 @@ import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import listfix.model.Playlist;
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.util.ExStack;
 import listfix.view.support.ProgressAdapter;
 

@@ -21,9 +21,16 @@ package listfix.io.filters;
 
 import java.util.Set;
 
+/**
+ * 
+ * @author jcaron
+ */
 public class AudioFileFilter extends FileExtensionFilterBase
 {
-    public AudioFileFilter()
+	/**
+	 * 
+	 */
+	public AudioFileFilter()
     {
         super(_extensions);
     }

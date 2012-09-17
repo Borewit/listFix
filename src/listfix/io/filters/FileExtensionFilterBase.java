@@ -26,11 +26,19 @@ import java.util.Set;
 
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * 
+ * @author jcaron
+ */
 public abstract class FileExtensionFilterBase extends FileFilter
 {	
     private Set<String> _extensions;
 	
-    protected FileExtensionFilterBase(Set<String> extensions)
+	/**
+	 * 
+	 * @param extensions
+	 */
+	protected FileExtensionFilterBase(Set<String> extensions)
     {
         _extensions = extensions;
     }
@@ -56,7 +64,12 @@ public abstract class FileExtensionFilterBase extends FileFilter
 		}
     }
 
-    protected static Set<String> createExtensionSet(String... extensions)
+	/**
+	 * 
+	 * @param extensions
+	 * @return
+	 */
+	protected static Set<String> createExtensionSet(String... extensions)
     {
         Set<String> set = new HashSet<>(Arrays.asList(extensions));
         return set;

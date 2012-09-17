@@ -108,7 +108,7 @@ import listfix.io.writers.OptionsWriter;
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 import listfix.model.PlaylistHistory;
 import listfix.util.ArrayFunctions;
 import listfix.util.FileTypeSearch;

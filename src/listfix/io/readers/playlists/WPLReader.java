@@ -34,7 +34,7 @@ import java.util.StringTokenizer;
 
 import listfix.io.Constants;
 import listfix.io.UnicodeInputStream;
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;

@@ -30,17 +30,18 @@ import listfix.view.controls.JTransparentTextArea;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * A class who's sole responsibility is to launch the default web browser on various OSes.
  * @author jcaron
  */
 public class BrowserLauncher
 {
-	private static final String errMsg = "Error attempting to launch web browser";
+	private static final String _errMsg = "Error attempting to launch web browser";
 	private static final Logger _logger = Logger.getLogger(BrowserLauncher.class);
 
 	/**
-	 *
-	 * @param url
+	 * Attempts to open the given url in the system's default web browser.
+	 * Logs failure details and silently fails if a browser can't be opened.
+	 * @param url The URL to display in the browser, if successfully launched.
 	 */
 	public static void launch(String url)
 	{
@@ -83,7 +84,7 @@ public class BrowserLauncher
 		}
 		catch (Exception e)
 		{
-			JOptionPane.showMessageDialog(null, new JTransparentTextArea(errMsg + ": " + e.getLocalizedMessage()));
+			JOptionPane.showMessageDialog(null, new JTransparentTextArea(_errMsg + ": " + e.getLocalizedMessage()));
 			_logger.info(ExStack.toString(e));
 		}
 	}

@@ -18,25 +18,27 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.model.playlists;
 
-import listfix.model.enums.PlaylistEntryStatus;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.controller.GUIDriver;
-
 import listfix.io.Constants;
+import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
 import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+
 import org.apache.log4j.Logger;
 
 /**

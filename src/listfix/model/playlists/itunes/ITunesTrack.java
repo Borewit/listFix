@@ -18,7 +18,7 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.readers.playlists.itunes;
+package listfix.model.playlists.itunes;
 
 import christophedelory.plist.Dict;
 import java.util.Hashtable;

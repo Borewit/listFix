@@ -19,7 +19,7 @@
 
 package listfix.view.dialogs;
 
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 
 /**
  *

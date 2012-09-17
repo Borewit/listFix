@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.model.playlists;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +38,7 @@ import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.io.writers.FileCopier;
 import listfix.io.writers.playlists.IPlaylistWriter;
 import listfix.io.writers.playlists.PlaylistWriterFactory;
+import listfix.model.BatchMatchItem;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;

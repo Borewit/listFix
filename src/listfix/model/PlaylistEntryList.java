@@ -26,6 +26,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.List;
 
+import listfix.model.playlists.PlaylistEntry;
+
 /**
  *
  * Needed to support DnD.

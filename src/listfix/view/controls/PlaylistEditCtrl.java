@@ -74,9 +74,9 @@ import listfix.io.filters.AudioFileFilter;
 import listfix.io.filters.PlaylistFileFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
-import listfix.model.Playlist;
-import listfix.model.PlaylistEntry;
 import listfix.model.PlaylistEntryList;
+import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.GUIScreen;
@@ -348,7 +348,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			_playlist.reorder(sortIx, dlg.getIsDescending());
 
 			RowSorter sorter = _uiTable.getRowSorter();
-			ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+			ArrayList<RowSorter.SortKey> keys = new ArrayList<>();
 			keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 			sorter.setSortKeys(keys);
 
@@ -384,7 +384,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			@Override
 			protected List<BatchMatchItem> doInBackground()
 			{
-				List<Integer> rowList = new ArrayList<Integer>();
+				List<Integer> rowList = new ArrayList<>();
 				int[] uiRows = _uiTable.getSelectedRows();
 				for (int x : uiRows)
 				{
@@ -1608,6 +1608,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		RowSorter sorter = _uiTable.getRowSorter();
 		sorter.addRowSorterListener(new RowSorterListener()
 		{
+			@Override
 			public void sorterChanged(RowSorterEvent e)
 			{
 				RowSorter sorter = e.getSource();

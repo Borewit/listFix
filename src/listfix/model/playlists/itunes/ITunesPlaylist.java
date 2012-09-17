@@ -18,7 +18,7 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.readers.playlists.itunes;
+package listfix.model.playlists.itunes;
 
 import java.util.List;
 
@@ -31,6 +31,11 @@ public class ITunesPlaylist
 	private String _name;
 	private List<ITunesTrack> _tracks;
 	
+	/**
+	 * 
+	 * @param name
+	 * @param tracks
+	 */
 	public ITunesPlaylist(String name, List<ITunesTrack> tracks)
 	{
 		_name = name;

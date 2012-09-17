@@ -21,6 +21,8 @@ package listfix.model;
 
 import java.io.File;
 import java.util.List;
+
+import listfix.model.playlists.Playlist;
 import listfix.util.FileNameTokenizer;
 
 /**
@@ -128,11 +130,15 @@ public class BatchRepairItem
 	/**
 	 * @param playlistFile the _playlistFile to set
 	 */
-	 public void setPlaylistFile(File playlistFile)
+	public void setPlaylistFile(File playlistFile)
 	{
 		this._playlistFile = playlistFile;
 	}
 
+	 /**
+	  * 
+	  * @param findClosestMatches
+	  */
 	void setClosestMatches(List<BatchMatchItem> findClosestMatches)
 	{
 		_closestMatches = findClosestMatches;

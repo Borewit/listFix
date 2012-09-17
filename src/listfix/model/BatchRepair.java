@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import listfix.model.playlists.Playlist;
 import listfix.view.support.DualProgressAdapter;
 import listfix.view.support.IDualProgressObserver;
 import listfix.view.support.IProgressObserver;

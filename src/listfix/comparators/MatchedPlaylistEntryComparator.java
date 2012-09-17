@@ -20,7 +20,7 @@
 
 package listfix.comparators;
 
-import listfix.model.*;
+import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
 /**
  *

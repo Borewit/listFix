@@ -30,7 +30,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
 import listfix.util.UnicodeUtils;

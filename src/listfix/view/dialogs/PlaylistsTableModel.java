@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 import listfix.view.support.ImageIcons;
 
 /**

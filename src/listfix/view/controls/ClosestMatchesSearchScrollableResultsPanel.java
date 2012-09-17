@@ -47,7 +47,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.model.BatchMatchItem;
-import listfix.model.PotentialPlaylistEntryMatch;
+import listfix.model.playlists.PotentialPlaylistEntryMatch;
 import listfix.util.ExStack;
 import listfix.view.support.ZebraJTable;
 

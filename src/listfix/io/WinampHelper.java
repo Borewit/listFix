@@ -21,7 +21,6 @@ package listfix.io;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -31,8 +30,8 @@ import javax.xml.bind.Unmarshaller;
 import listfix.io.writers.FileCopier;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import listfix.model.winamp.generated.Playlist;
-import listfix.model.winamp.generated.Playlists;
+import listfix.model.playlists.winamp.generated.Playlist;
+import listfix.model.playlists.winamp.generated.Playlists;
 import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;

@@ -23,16 +23,23 @@ package listfix.io.filters;
 import java.io.FileFilter;
 import java.util.Set;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PlaylistFileFilter.java
-= Purpose:  A FileFilter that accepts M3Us, M3U8s, and directories.
-============================================================================
+/**
+ * A FileFilter that accepts our currently supported playlist types, and directories.
+ * @author jcaron
  */
 public class PlaylistFileFilter extends FileExtensionFilterBase implements FileFilter
 {
-    public PlaylistFileFilter()
+    private static final Set<String> _extensions;
+
+    static
+    {
+        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml");
+    }
+	
+	/**
+	 * 
+	 */
+	public PlaylistFileFilter()
     {
         super(_extensions);
     }
@@ -43,15 +50,7 @@ public class PlaylistFileFilter extends FileExtensionFilterBase implements FileF
         return "Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf, *.xml)";
     }
 
-    private static final Set<String> _extensions;
-
-    static
-    {
-        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml");
-    }
-
 	@Override
-	// Fixes display in linux
 	public String toString()
 	{
 		return getDescription();

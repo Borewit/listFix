@@ -36,8 +36,8 @@ import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
-import listfix.model.Playlist;
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.view.support.ProgressAdapter;
 
@@ -52,7 +52,7 @@ public class WPLWriter implements IPlaylistWriter
 	 * @param list The list to persist to disk.
 	 * @param saveRelative Specifies if the playlist should be written out relatively or not.
 	 * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
-	 * @throws Exception
+	 * @throws IOException  
 	 */
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException

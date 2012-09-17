@@ -21,6 +21,7 @@
 package listfix.model;
 
 import java.util.List;
+import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
 /**
  *
@@ -88,6 +89,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	 *
 	 * @return
 	 */
+	@Override
 	public int getColumnCount()
 	{
 		return columnNames.length;
@@ -97,6 +99,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	 *
 	 * @return
 	 */
+	@Override
 	public int getRowCount()
 	{
 		return data.length;
@@ -124,6 +127,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	 * @param col
 	 * @return
 	 */
+	@Override
 	public java.lang.Object getValueAt(int row, int col)
 	{
 		return data[row][col];

@@ -22,7 +22,7 @@ package listfix.io.writers.playlists;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 import listfix.model.enums.PlaylistType;
 
 /**

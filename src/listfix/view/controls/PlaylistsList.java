@@ -33,7 +33,7 @@ import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import listfix.model.Playlist;
+import listfix.model.playlists.Playlist;
 import listfix.util.ExStack;
 import listfix.view.dialogs.PlaylistsTableModel;
 import org.apache.log4j.Logger;

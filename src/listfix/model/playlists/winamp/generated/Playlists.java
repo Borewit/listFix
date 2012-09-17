@@ -6,7 +6,7 @@
 //
 
 
-package listfix.model.winamp.generated;
+package listfix.model.playlists.winamp.generated;
 
 import java.util.ArrayList;
 import java.util.List;

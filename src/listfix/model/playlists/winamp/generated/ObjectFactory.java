@@ -6,7 +6,7 @@
 //
 
 
-package listfix.model.winamp.generated;
+package listfix.model.playlists.winamp.generated;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

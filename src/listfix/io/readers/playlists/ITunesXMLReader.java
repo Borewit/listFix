@@ -30,13 +30,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import listfix.io.readers.playlists.itunes.ITunesMediaLibrary;
-import listfix.io.readers.playlists.itunes.ITunesPlaylist;
-import listfix.io.readers.playlists.itunes.ITunesTrack;
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.itunes.ITunesMediaLibrary;
+import listfix.model.playlists.itunes.ITunesPlaylist;
+import listfix.model.playlists.itunes.ITunesTrack;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -49,6 +50,10 @@ public class ITunesXMLReader implements IPlaylistReader
 	private String _encoding;
 	private static final Logger _logger = Logger.getLogger(ITunesXMLReader.class);
 	
+	/**
+	 * 
+	 * @param inputFile
+	 */
 	public ITunesXMLReader(File inputFile)
 	{
 		_listFile = inputFile;

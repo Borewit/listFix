@@ -23,7 +23,7 @@ package listfix.io.readers.playlists;
 import java.io.IOException;
 import java.util.List;
 
-import listfix.model.PlaylistEntry;
+import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.view.support.IProgressObserver;
 
