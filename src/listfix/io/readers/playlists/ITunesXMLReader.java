@@ -89,15 +89,13 @@ public class ITunesXMLReader implements IPlaylistReader
 		if (playlists.size() > 0)
 		{
 			ITunesPlaylist toLoad = playlists.get(0);
+			PlaylistEntry convertedTrack;
 			for (ITunesTrack track : toLoad.getTracks())
 			{
-				try
+				convertedTrack = iTunesTrackToPlaylistEntry(track);
+				if (convertedTrack != null)
 				{
-					results.add(new PlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile));
-				}
-				catch (URISyntaxException ex)
-				{
-					_logger.error("[ITunesXMLReader] - Failed to create a PlaylistEntry from a ITunesTrack, see exception for details.", ex);
+					results.add(convertedTrack);
 				}
 			}
 		}
@@ -115,18 +113,31 @@ public class ITunesXMLReader implements IPlaylistReader
 		if (playlists.size() > 0)
 		{
 			ITunesPlaylist toLoad = playlists.get(0);
+			PlaylistEntry convertedTrack;
 			for (ITunesTrack track : toLoad.getTracks())
 			{
-				try
+				convertedTrack = iTunesTrackToPlaylistEntry(track);
+				if (convertedTrack != null)
 				{
-					results.add(new PlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile));
-				}
-				catch (URISyntaxException ex)
-				{
-					_logger.error("[ITunesXMLReader] - Failed to create a PlaylistEntry from a ITunesTrack, see exception for details.", ex);
+					results.add(convertedTrack);
 				}
 			}
 		}
 		return results;
-	}	
+	}
+	
+	private PlaylistEntry iTunesTrackToPlaylistEntry(ITunesTrack track)
+	{
+		try
+		{
+			PlaylistEntry result = new PlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile);
+			result.setTrackId(track.getTrackId());
+			return result;
+		}
+		catch (URISyntaxException ex)
+		{
+			_logger.error("[ITunesXMLReader] - Failed to create a PlaylistEntry from a ITunesTrack, see exception for details.", ex);
+			return null;
+		}
+	}
 }

@@ -1,6 +1,6 @@
 /*
  *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2010 Jeremy Caron
+ *  Copyright (C) 2001-2012 Jeremy Caron
  * 
  *  This file is part of listFix().
  * 
@@ -30,21 +30,30 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * Wraps a lizzy PlistPlaylist to provide easy access to the important/relevant sections of an iTunes XML (plist) file.
+ * Unlike other playlist formats supported by listFix(), iTunes XML files can contain one or more playlists.  This means that when opening
+ * an iTunes XML file, we may be handling a single exported playlist, or the entire media library for iTunes; there's really no way to know
+ * since the structure is identical in both cases (some metadata followed by a tracks section, and then a playlists section).
+ * 
+ * Tracks in the library may not be referenced by any playlists.  Playlists themselves are just a name (string) and list of track IDs from 
+ * the tracks section.
+ * 
  * @author jcaron
+ * @see ITunesPlaylist
+ * @see ITunesTrack
  */
 public class ITunesMediaLibrary 
 {
 	private final PlistPlaylist _plist;
 	
 	/**
-	 * 
-	 * @param plist
+	 * Constructor that accepts a PlistPlaylist to be wrapped.
+	 * @param plist The PlistPlaylist to be wrapped.
+	 * @see PlistPlaylist
 	 */
 	public ITunesMediaLibrary(PlistPlaylist plist)
 	{
@@ -52,14 +61,15 @@ public class ITunesMediaLibrary
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Gets the "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks.
+	 * @return The "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks
+	 * @see ITunesTrack
 	 */
 	public Map<String, ITunesTrack> getTracks()
 	{
 		Map<String, ITunesTrack> result = new HashMap<>();
 		Dict rootDict = ((Dict)_plist.getPlist().getPlistObject());
-		Dict tracksDict = getDictValueForKey(rootDict, "Tracks");
+		Dict tracksDict = DictionaryParser.getKeyValueAsDict(rootDict, "Tracks");
 		Dictionary tracksDictionary = tracksDict.getDictionary();
 		Enumeration keys = tracksDictionary.keys();
 		christophedelory.plist.Key key;
@@ -73,14 +83,15 @@ public class ITunesMediaLibrary
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Gets the Playlists section of an iTunes library/playlist file as a list of ITunesPlaylist objects.
+	 * @return The Playlists section of an iTunes library/playlist file as a list of ITunesPlaylist objects.
+	 * @see ITunesPlaylist
 	 */
 	public List<ITunesPlaylist> getPlaylists()
 	{
 		List<ITunesPlaylist> result = new ArrayList<>();
 		Dict rootDict = ((Dict)_plist.getPlist().getPlistObject());
-		Array playlistsArray = getArrayValueForKey(rootDict, "Playlists");
+		Array playlistsArray = DictionaryParser.getKeyValueAsArray(rootDict, "Playlists");
 		Map<String, ITunesTrack> tracks = getTracks();
 		Dict playlistDict;
 		Array playlistItems;
@@ -90,59 +101,19 @@ public class ITunesMediaLibrary
 		{			
 			List<ITunesTrack> contents = new ArrayList<>();
 			playlistDict = (Dict)object;
-			playlistItems = getArrayValueForKey(playlistDict, "Playlist Items");
+			playlistItems = DictionaryParser.getKeyValueAsArray(playlistDict, "Playlist Items");
 			if (playlistItems != null)
 			{
 				for (PlistObject innerObj : playlistItems.getPlistObjects())
 				{
 					// now each thing is a dict of "Track ID" to Integer.
 					innerDict = (Dict)innerObj;
-					trackId = getIntegerValueForKey(innerDict, "Track ID");
+					trackId = DictionaryParser.getKeyValueAsInteger(innerDict, "Track ID");
 					contents.add(tracks.get(trackId.getValue()));
 				}
 			}
-			result.add(new ITunesPlaylist(getStringValueForKey(playlistDict, "Name"), contents));
+			result.add(new ITunesPlaylist(DictionaryParser.getKeyValueAsString(playlistDict, "Name"), contents));
 		}		
 		return result;
 	}
-	
-	private Dict getDictValueForKey(Dict dict, String key)
-	{
-		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
-		if (value != null)
-		{
-			return (Dict)value;
-		}
-		return null;
-	}
-	
-	private Array getArrayValueForKey(Dict dict, String key)
-	{
-		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
-		if (value != null)
-		{
-			return (Array)value;
-		}
-		return null;
-	}
-	
-	private christophedelory.plist.Integer getIntegerValueForKey(Dict dict, String key)
-	{
-		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
-		if (value != null)
-		{
-			return (christophedelory.plist.Integer)value;
-		}
-		return null;
-	}
-	
-	private String getStringValueForKey(Dict dict, String keyName)
-	{
-		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(keyName));
-		if (value != null)
-		{
-			return ((christophedelory.plist.String)value).getValue();
-		}
-		return null;
-	}	
 }

@@ -1578,7 +1578,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 					updateRecentMenu();
 
-					// update title and status bar if list was modified during loading
+					// update title and status bar if list was modified during loading (due to fix on load option)
 					if (list.isModified())
 					{
 						refreshStatusLabel(list);
@@ -1595,7 +1595,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			_uiTabs.setSelectedIndex(tabIx);
 		}
-
 	}
 	
 	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<>();

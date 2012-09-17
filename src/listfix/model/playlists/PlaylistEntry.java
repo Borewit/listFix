@@ -92,6 +92,7 @@ public class PlaylistEntry implements Cloneable
 	
 	private static final Pattern APOS_PATTERN = Pattern.compile("\'");
 	private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(([a-z])([A-Z]))");
+	private String _trackId;
 
 	/**
 	 * @return the _status
@@ -795,6 +796,24 @@ public class PlaylistEntry implements Cloneable
 	public void setPlaylist(File list)
 	{
 		_playlist = list;
+	}	
+
+	/**
+	 * Some playlist types support this notion, and it must be tracked up until the list is saved in another format if so.
+	 * @return the _trackId
+	 */
+	public String getTrackId()
+	{
+		return _trackId;
+	}
+
+	/**
+	 * Some playlist types support this notion, and it must be tracked up until the list is saved in another format if so.
+	 * @param trackId the _trackId to set
+	 */
+	public void setTrackId(String trackId)
+	{
+		this._trackId = trackId;
 	}
 
 	private int convertDurationToSeconds(long length)

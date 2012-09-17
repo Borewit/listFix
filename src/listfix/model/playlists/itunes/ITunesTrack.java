@@ -1,6 +1,6 @@
 /*
  *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2010 Jeremy Caron
+ *  Copyright (C) 2001-2012 Jeremy Caron
  * 
  *  This file is part of listFix().
  * 
@@ -21,10 +21,12 @@
 package listfix.model.playlists.itunes;
 
 import christophedelory.plist.Dict;
+
 import java.util.Hashtable;
 
 /**
- *
+ * Wrapper around a christophedelory.plist.Dict to provide easy access to the information about a track
+ * in an iTunes library/playlist file for the purposes of conversion to a listFix() PlaylistEntry object.
  * @author jcaron
  */
 public class ITunesTrack
@@ -36,26 +38,24 @@ public class ITunesTrack
 	private String _album;
 	private String _albumArtist;
 	private long _duration;
+	private String _trackId;
 	
 	/**
-	 * 
-	 * @param trackDict
+	 * Constructor that takes a christophedelory.plist.Dict object.
+	 * @param trackDict The christophedelory.plist.Dict object containing information about the track.
 	 */
 	public ITunesTrack(Dict trackDict)
 	{
 		_trackDict = trackDict;
-		_location = getStringValueForKey("Location");
-		_artist = getStringValueForKey("Artist");
-		_name = getStringValueForKey("Name");
-		_album = getStringValueForKey("Album");
-		_albumArtist = getStringValueForKey("Album Artist");
+		_location = DictionaryParser.getKeyValueAsString(_trackDict, "Location");
+		_artist = DictionaryParser.getKeyValueAsString(_trackDict, "Artist");
+		_name = DictionaryParser.getKeyValueAsString(_trackDict, "Name");
+		_album = DictionaryParser.getKeyValueAsString(_trackDict, "Album");
+		_albumArtist = DictionaryParser.getKeyValueAsString(_trackDict, "Album Artist");
+		_trackId = DictionaryParser.getKeyValueAsString(_trackDict, "Track ID");
 		_duration = parseDuration();
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	private long parseDuration()
 	{
 		long result = -1;
@@ -66,16 +66,6 @@ public class ITunesTrack
 			result = Long.parseLong(timeText);
 		}
 		return result;
-	}
-	
-	private String getStringValueForKey(String keyName)
-	{
-		Object value = ((Hashtable)_trackDict.getDictionary()).get(new christophedelory.plist.Key(keyName));
-		if (value != null)
-		{
-			return ((christophedelory.plist.String)value).getValue();
-		}
-		return null;
 	}
 
 	/**
@@ -124,5 +114,13 @@ public class ITunesTrack
 	public long getDuration()
 	{
 		return _duration;
+	}
+
+	/**
+	 * @return the _trackId
+	 */
+	public String getTrackId()
+	{
+		return _trackId;
 	}
 }

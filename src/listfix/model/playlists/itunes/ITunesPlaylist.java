@@ -1,6 +1,6 @@
 /*
  *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2010 Jeremy Caron
+ *  Copyright (C) 2001-2012 Jeremy Caron
  * 
  *  This file is part of listFix().
  * 
@@ -23,8 +23,17 @@ package listfix.model.playlists.itunes;
 import java.util.List;
 
 /**
- *
+ * A thin wrapper meant to represent an iTunes "playlist".
+ * iTunes XML files can contain one or more playlists.  As such, the name of the playlist
+ * is not the name of the file it's found it, so the name must be tracked here.
+ * Also maintains a list of the ITunesTracks that make up this list.
+ * 
+ * In the iTunes model, the tracks are stored in a separate section of the XML file, each
+ * with an ID, and the playlist is then just a list of the track ids making up the list.
+ * Our internal representation takes it a bit further, as ITunesTrack actually has information
+ * about the track from the tracks section of the XML.
  * @author jcaron
+ * @see ITunesTrack
  */
 public class ITunesPlaylist
 {
@@ -32,7 +41,7 @@ public class ITunesPlaylist
 	private List<ITunesTrack> _tracks;
 	
 	/**
-	 * 
+	 * Constructs a new ITunesPlaylist object.
 	 * @param name
 	 * @param tracks
 	 */

@@ -1356,7 +1356,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				{
 				}
 			}
-			catch (Exception e)
+			catch (InterruptedException | ExecutionException e)
 			{
 				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("An error has occured, 1 or more files were not copied."));
 				_logger.error(ExStack.toString(e));
