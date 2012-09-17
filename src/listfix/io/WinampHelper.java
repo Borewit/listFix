@@ -27,8 +27,8 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import listfix.io.writers.FileCopier;
 
+import listfix.io.writers.FileCopier;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.winamp.generated.Playlist;

@@ -82,18 +82,22 @@ public class ITunesMediaLibrary
 		Dict rootDict = ((Dict)_plist.getPlist().getPlistObject());
 		Array playlistsArray = getArrayValueForKey(rootDict, "Playlists");
 		Map<String, ITunesTrack> tracks = getTracks();
+		Dict playlistDict;
+		Array playlistItems;
+		Dict innerDict;
+		Integer trackId;
 		for (PlistObject object : playlistsArray.getPlistObjects())
 		{			
 			List<ITunesTrack> contents = new ArrayList<>();
-			Dict playlistDict = (Dict)object;
-			Array playlistItems = getArrayValueForKey(playlistDict, "Playlist Items");
+			playlistDict = (Dict)object;
+			playlistItems = getArrayValueForKey(playlistDict, "Playlist Items");
 			if (playlistItems != null)
 			{
 				for (PlistObject innerObj : playlistItems.getPlistObjects())
 				{
 					// now each thing is a dict of "Track ID" to Integer.
-					Dict innerDict = (Dict)innerObj;
-					Integer trackId = getIntegerValueForKey(innerDict, "Track ID");
+					innerDict = (Dict)innerObj;
+					trackId = getIntegerValueForKey(innerDict, "Track ID");
 					contents.add(tracks.get(trackId.getValue()));
 				}
 			}
@@ -104,21 +108,41 @@ public class ITunesMediaLibrary
 	
 	private Dict getDictValueForKey(Dict dict, String key)
 	{
-		return (Dict)((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
+		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
+		if (value != null)
+		{
+			return (Dict)value;
+		}
+		return null;
 	}
 	
 	private Array getArrayValueForKey(Dict dict, String key)
 	{
-		return (Array)((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
+		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
+		if (value != null)
+		{
+			return (Array)value;
+		}
+		return null;
 	}
 	
 	private christophedelory.plist.Integer getIntegerValueForKey(Dict dict, String key)
 	{
-		return (christophedelory.plist.Integer)((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
+		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(key));
+		if (value != null)
+		{
+			return (christophedelory.plist.Integer)value;
+		}
+		return null;
 	}
 	
 	private String getStringValueForKey(Dict dict, String keyName)
 	{
-		return ((christophedelory.plist.String)((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(keyName))).getValue();
+		Object value = ((Hashtable)dict.getDictionary()).get(new christophedelory.plist.Key(keyName));
+		if (value != null)
+		{
+			return ((christophedelory.plist.String)value).getValue();
+		}
+		return null;
 	}	
 }

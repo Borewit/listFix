@@ -20,16 +20,24 @@
 
 package listfix.testing;
 
-import christophedelory.playlist.Playlist;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.plist.PlistPlaylist;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import listfix.io.readers.playlists.itunes.ITunesMediaLibrary;
+import listfix.io.readers.playlists.itunes.ITunesPlaylist;
+import listfix.io.readers.playlists.itunes.ITunesTrack;
+import listfix.model.Playlist;
+import listfix.model.PlaylistEntry;
 
 /**
  *
@@ -41,10 +49,13 @@ public class PlaylistOpener
 	{
 		try
 		{
-			SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(new File("C:\\Users\\jcaron\\Music\\iTunes\\iTunes Music Library.xml"));
+			// SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(new File("C:\\Users\\jcaron\\Desktop\\svnListfix\\testing\\iTunes Music Library.xml"));
+			File toOpen = new File("C:\\Users\\jcaron\\Desktop\\svnListfix\\testing\\iTunesTest.xml");
+			SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(toOpen);
 			PlistPlaylist plistList = (PlistPlaylist)playlist;
 			ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-			list.getPlaylists();
+			List<ITunesPlaylist> playlists = list.getPlaylists();
+			Playlist myList = convertToListFixPlaylist(playlists.get(0), toOpen);
 		}
 		catch (IOException ex)
 		{
@@ -52,28 +63,28 @@ public class PlaylistOpener
 		}
 	}
 
-	private static Playlist convertToListFixPlaylist(PlistPlaylist xspfList)
+	private static Playlist convertToListFixPlaylist(ITunesPlaylist list, File listFile)
 	{
-//		List<PlaylistEntry> newList = new ArrayList<>();
-//		for (Track track : xspfList.getTracks())
-//		{
-//			try
-//			{
-//				newList.add(new PlaylistEntry(new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration()));
-//			}
-//			catch (URISyntaxException ex)
-//			{
-//				Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
-//			}
-//		}
-//		try
-//		{
-//			return new Playlist(newList);
-//		}
-//		catch (Exception ex)
-//		{
-//			Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
-//		}
+		List<PlaylistEntry> newList = new ArrayList<>();
+		for (ITunesTrack track : list.getTracks())
+		{
+			try
+			{
+				newList.add(new PlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), listFile));
+			}
+			catch (URISyntaxException ex)
+			{
+				Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		try
+		{
+			return new Playlist(newList);
+		}
+		catch (Exception ex)
+		{
+			Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		return null;
 	}
 }

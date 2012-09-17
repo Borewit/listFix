@@ -67,6 +67,7 @@ public class Playlist
 	private int _missingCount;
 	private boolean _isModified;
 	private boolean _isNew;
+	private String _trackId;
 	private static final Logger _logger = Logger.getLogger(Playlist.class);		
 
 	/**
@@ -250,6 +251,24 @@ public class Playlist
 			}
 			refreshStatusAndFirePlaylistModified();
 		}
+	}
+
+	/**
+	 * Some playlist types support this notion, and it must be tracked up until the list is saved in another format if so.
+	 * @return the _trackId
+	 */
+	public String getTrackId()
+	{
+		return _trackId;
+	}
+
+	/**
+	 * Some playlist types support this notion, and it must be tracked up until the list is saved in another format if so.
+	 * @param trackId the _trackId to set
+	 */
+	public void setTrackId(String trackId)
+	{
+		this._trackId = trackId;
 	}
 
 	/**
@@ -1285,6 +1304,8 @@ public class Playlist
 					return PlaylistType.WPL;
 				case "xspf":
 					return PlaylistType.XSPF;
+				case "xml":
+					return PlaylistType.ITUNES;
 			}
 		}
 		return PlaylistType.UNKNOWN;

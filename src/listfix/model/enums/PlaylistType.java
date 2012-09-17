@@ -37,7 +37,7 @@ public enum PlaylistType
 	/**
 	 *
 	 */
-	PLIST,
+	ITUNES,
 	/**
 	 *
 	 */

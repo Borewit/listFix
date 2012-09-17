@@ -40,14 +40,14 @@ public class PlaylistFileFilter extends FileExtensionFilterBase implements FileF
     @Override
     public String getDescription()
     {
-        return "Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf)";
+        return "Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf, *.xml)";
     }
 
     private static final Set<String> _extensions;
 
     static
     {
-        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf");
+        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml");
     }
 
 	@Override

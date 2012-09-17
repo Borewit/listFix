@@ -29,7 +29,13 @@ import java.util.Hashtable;
  */
 public class ITunesTrack
 {
-	private final Dict _trackDict;
+	private Dict _trackDict;
+	private String _location;
+	private String _artist;
+	private String _name;
+	private String _album;
+	private String _albumArtist;
+	private long _duration;
 	
 	/**
 	 * 
@@ -38,58 +44,19 @@ public class ITunesTrack
 	public ITunesTrack(Dict trackDict)
 	{
 		_trackDict = trackDict;
+		_location = getStringValueForKey("Location");
+		_artist = getStringValueForKey("Artist");
+		_name = getStringValueForKey("Name");
+		_album = getStringValueForKey("Album");
+		_albumArtist = getStringValueForKey("Album Artist");
+		_duration = parseDuration();
 	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public String getLocation()
-	{
-		return getStringValueForKey("Location");
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getArtist()
-	{
-		return getStringValueForKey("Artist");
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName()
-	{
-		return getStringValueForKey("Name");
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getAlbum()
-	{
-		return getStringValueForKey("Album");
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getAlbumArtist()
-	{
-		return getStringValueForKey("Album Artist");
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public long getDuration()
+	private long parseDuration()
 	{
 		long result = -1;
 		christophedelory.plist.Integer timeInt = ((christophedelory.plist.Integer)((Hashtable)_trackDict.getDictionary()).get(new christophedelory.plist.Key("Total Time")));
@@ -103,6 +70,59 @@ public class ITunesTrack
 	
 	private String getStringValueForKey(String keyName)
 	{
-		return ((christophedelory.plist.String)((Hashtable)_trackDict.getDictionary()).get(new christophedelory.plist.Key(keyName))).getValue();
+		Object value = ((Hashtable)_trackDict.getDictionary()).get(new christophedelory.plist.Key(keyName));
+		if (value != null)
+		{
+			return ((christophedelory.plist.String)value).getValue();
+		}
+		return null;
+	}
+
+	/**
+	 * @return the _location
+	 */
+	public String getLocation()
+	{
+		return _location;
+	}
+
+	/**
+	 * @return the _artist
+	 */
+	public String getArtist()
+	{
+		return _artist;
+	}
+
+	/**
+	 * @return the _name
+	 */
+	public String getName()
+	{
+		return _name;
+	}
+
+	/**
+	 * @return the _album
+	 */
+	public String getAlbum()
+	{
+		return _album;
+	}
+
+	/**
+	 * @return the _albumArtist
+	 */
+	public String getAlbumArtist()
+	{
+		return _albumArtist;
+	}
+
+	/**
+	 * @return the _duration
+	 */
+	public long getDuration()
+	{
+		return _duration;
 	}
 }

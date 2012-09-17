@@ -24,7 +24,17 @@ import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.DefaultKeyboardFocusManager;
+import java.awt.DisplayMode;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.KeyEventPostProcessor;
+import java.awt.Point;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -53,8 +63,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import javax.swing.*;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.event.TreeModelEvent;
@@ -63,7 +85,10 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.UIResource;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
@@ -1366,7 +1391,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 				// make sure file has correct extension
 				String normalizedName = playlist.getName().trim().toLowerCase();
 				if (!Playlist.isPlaylist(playlist)
-					|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls") && !normalizedName.endsWith(".wpl") && !normalizedName.endsWith(".xspf")))
+					|| (!normalizedName.endsWith(".m3u") 
+						&& !normalizedName.endsWith(".m3u8") 
+						&& !normalizedName.endsWith(".pls") 
+						&& !normalizedName.endsWith(".wpl") 
+						&& !normalizedName.endsWith(".xspf")
+						&& !normalizedName.endsWith(".xml")))
 				{
 					if (_currentPlaylist.isUtfFormat())
 					{
@@ -1432,7 +1462,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			File[] playlists = _jM3UChooser.getSelectedFiles();
 			for (File file : playlists)
+			{
 				this.openPlaylist(file);
+			}
 		}
 	}//GEN-LAST:event_openIconButtonActionPerformed
 
@@ -2325,7 +2357,9 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 	{
 		File[] playlists = _jM3UChooser.getSelectedFiles();
 		for (File file : playlists)
+		{
 			this.openPlaylist(file);
+		}
 	}
 	else
 	{

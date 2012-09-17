@@ -57,6 +57,10 @@ public class PlaylistReaderFactory
 		{
 			return new WPLReader(inputFile);
 		}
+		else if (type == PlaylistType.ITUNES)
+		{
+			return new ITunesXMLReader(inputFile);
+		}
 		else
 		{
 			return null;
