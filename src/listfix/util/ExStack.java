@@ -23,6 +23,7 @@ package listfix.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import listfix.io.Constants;
 
 /**
  *
@@ -43,4 +44,14 @@ public class ExStack
 		return result.toString();
 	}
 
+	/**
+	 * 
+	 * @param message
+	 * @param aThrowable
+	 * @return
+	 */
+	public static String formatErrorForUser(String message, Throwable aThrowable)
+	{
+		return message + Constants.BR + Constants.BR + "\t" + toString(aThrowable);
+	}
 }

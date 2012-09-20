@@ -32,13 +32,14 @@ import java.util.Hashtable;
 public class ITunesTrack
 {
 	private Dict _trackDict;
-	private String _location;
-	private String _artist;
-	private String _name;
+	
 	private String _album;
 	private String _albumArtist;
-	private long _duration;
+	private String _artist;
+	private String _location;
+	private String _name;
 	private String _trackId;
+	private long _duration;
 	
 	/**
 	 * Constructor that takes a christophedelory.plist.Dict object.
