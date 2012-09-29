@@ -31,12 +31,14 @@ public interface IProgressObserver<T>
 	 * @param progress
 	 */
 	public void reportProgress(int progress);
+	
     /**
 	 *
 	 * @param progress
 	 * @param state
 	 */
 	public void reportProgress(int progress, T state);
+	
 	/**
 	 *
 	 * @return

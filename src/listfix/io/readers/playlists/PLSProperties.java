@@ -16,7 +16,11 @@ import java.io.Reader;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Set;
+
 
 /**
  * The <code>Properties</code> class represents a persistent set of
@@ -347,7 +351,6 @@ public class PLSProperties extends Hashtable<Object, Object>
 
 		while ((limit = lr.readLine()) >= 0)
 		{
-			c = 0;
 			keyLen = 0;
 			valueStart = limit;
 			hasSep = false;
@@ -467,7 +470,7 @@ public class PLSProperties extends Hashtable<Object, Object>
 		int readLine() throws IOException
 		{
 			int len = 0;
-			char c = 0;
+			char c;
 
 			boolean skipWhiteSpace = true;
 			boolean isCommentLine = false;
@@ -480,8 +483,7 @@ public class PLSProperties extends Hashtable<Object, Object>
 			{
 				if (inOff >= inLimit)
 				{
-					inLimit = (inStream == null) ? reader.read(inCharBuf)
-						: inStream.read(inByteBuf);
+					inLimit = (inStream == null) ? reader.read(inCharBuf) : inStream.read(inByteBuf);
 					inOff = 0;
 					if (inLimit <= 0)
 					{
@@ -703,7 +705,7 @@ public class PLSProperties extends Hashtable<Object, Object>
 		{
 			bufLen = Integer.MAX_VALUE;
 		}
-		StringBuffer outBuffer = new StringBuffer(bufLen);
+		StringBuilder outBuffer = new StringBuilder(bufLen);
 
 		for (int x = 0; x < len; x++)
 		{
@@ -1029,7 +1031,7 @@ public class PLSProperties extends Hashtable<Object, Object>
 	 */
 	public Set<String> stringPropertyNames()
 	{
-		Hashtable<String, String> h = new Hashtable<String, String>();
+		Hashtable<String, String> h = new Hashtable<>();
 		enumerateStringProperties(h);
 		return h.keySet();
 	}

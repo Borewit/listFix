@@ -32,13 +32,14 @@ public interface IDualProgressObserver<T>
 	 * @param state
 	 */
 	void reportTaskProgress(int percentComplete, T state);
+	
     /**
 	 *
 	 * @param percentComplete
 	 * @param state
 	 */
 	void reportOverallProgress(int percentComplete, T state);
-
+	
 	/**
 	 *
 	 * @return
