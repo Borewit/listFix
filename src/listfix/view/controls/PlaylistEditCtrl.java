@@ -1862,7 +1862,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                                     catch (Exception ex)
                                     {
                                         JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), 
-											ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?  Error details follow:", ex.getCause()), 
+											ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
 											"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
                                         _logger.error(ExStack.toString(ex));
                                     }
@@ -1945,7 +1945,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                                     catch (Exception ex)
                                     {
                                         JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), 
-											ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?  Error details follow:", ex.getCause()), 
+											ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
 											"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
                                         _logger.error(ExStack.toString(ex));
                                         return;

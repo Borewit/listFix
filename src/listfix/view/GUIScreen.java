@@ -1495,7 +1495,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		catch (IOException | HeadlessException ex)
 		{
-			JOptionPane.showMessageDialog(this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?  Error details follow:", ex.getCause()), 
+			JOptionPane.showMessageDialog(this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
 				"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
 			return;
@@ -1542,7 +1542,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					catch (Exception ex)
 					{
 						_logger.error(ExStack.toString(ex));
-						JOptionPane.showMessageDialog(GUIScreen.this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?  Error details follow:", ex.getCause()), 
+						JOptionPane.showMessageDialog(GUIScreen.this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
 							"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
