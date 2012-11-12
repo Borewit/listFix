@@ -53,7 +53,7 @@ public class ITunesTrack
 		_name = DictionaryParser.getKeyValueAsString(_trackDict, "Name");
 		_album = DictionaryParser.getKeyValueAsString(_trackDict, "Album");
 		_albumArtist = DictionaryParser.getKeyValueAsString(_trackDict, "Album Artist");
-		_trackId = DictionaryParser.getKeyValueAsString(_trackDict, "Track ID");
+		_trackId = DictionaryParser.getKeyValueAsInteger(_trackDict, "Track ID").getValue();
 		_duration = parseDuration();
 	}
 	
