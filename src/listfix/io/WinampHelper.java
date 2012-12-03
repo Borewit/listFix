@@ -124,7 +124,7 @@ public class WinampHelper
 			return null;
 		}
 
-		JAXBContext context = JAXBContext.newInstance("listfix.model.winamp.generated");
+		JAXBContext context = JAXBContext.newInstance("listfix.model.playlists.winamp.generated");
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		Playlists lists = (Playlists) unmarshaller.unmarshal(listsFile);
 		return lists.getPlaylist();

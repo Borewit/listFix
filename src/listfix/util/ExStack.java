@@ -24,8 +24,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import listfix.io.Constants;
-
 /**
  *
  * @author jcaron
@@ -66,33 +64,22 @@ public class ExStack
 	private static String getHTMLDetails(Throwable throwable)
 	{
 		StringBuilder b = new StringBuilder();
-		// int lengthOfLastTrace = 1;  // initial value
-
-		// Start with the specified throwable and loop through the chain of
-		// causality for the throwable.
-		while (throwable != null)
+		
+		Throwable tempThrow = throwable;
+		// Start with the specified throwable and loop through the chain of causality for the throwable.
+		while (tempThrow != null)
 		{
 			// Output Exception name and message, and begin a list 
 			b.append(throwable.toString()).append(throwable.getMessage() == null ? "" : " - " + throwable.getMessage()).append("<br/>");
-			// Get the stack trace and output each frame.  
-			// Be careful not to repeat stack frames that were already reported
-			// for the exception that this one caused.
-			StackTraceElement[] stack = throwable.getStackTrace();
-			for (int i = 0; i < stack.length; i++)
+			for (StackTraceElement ste : throwable.getStackTrace())
 			{
-				b.append("&nbsp;&nbsp;&nbsp;&nbsp;at ").append(stack[i].getClassName()).append(".").append(stack[i].getMethodName()).append("(").append(stack[i].getFileName()).append(":").append(stack[i].getLineNumber()).append(")<br/>");
+				b.append("&nbsp;&nbsp;&nbsp;&nbsp;at ").append(ste.getClassName()).append(".")
+						.append(ste.getMethodName()).append("(").append(ste.getFileName()).append(":")
+						.append(ste.getLineNumber()).append(")<br/>");
 			}
 			// See if there is a cause for this exception
-			throwable = null;
-//					throwable.getCause();
-//			if (throwable != null)
-//			{
-//				// If so, output a header
-//				b.append("<i>Caused by: </i>");
-//				// And remember how many frames to skip in the stack trace
-//				// of the cause exception
-//				lengthOfLastTrace = stack.length;
-//			}
+			tempThrow = null;
+			// tempThrow = throwable.getCause();
 		}
 		return b.toString();
 	}
