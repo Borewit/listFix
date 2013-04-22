@@ -83,23 +83,30 @@ public class ITunesXMLReader implements IPlaylistReader
 	{
 		List<PlaylistEntry> results = new ArrayList<>();
 		SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
-		PlistPlaylist plistList = (PlistPlaylist) playlist;
-		ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-		List<ITunesPlaylist> playlists = list.getPlaylists();
-		if (playlists.size() > 0)
+		if (playlist != null)
 		{
-			ITunesPlaylist toLoad = playlists.get(0);
-			PlaylistEntry convertedTrack;
-			for (ITunesTrack track : toLoad.getTracks())
+			PlistPlaylist plistList = (PlistPlaylist) playlist;
+			ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
+			List<ITunesPlaylist> playlists = list.getPlaylists();
+			if (playlists.size() > 0)
 			{
-				convertedTrack = iTunesTrackToPlaylistEntry(track);
-				if (convertedTrack != null)
+				ITunesPlaylist toLoad = playlists.get(0);
+				PlaylistEntry convertedTrack;
+				for (ITunesTrack track : toLoad.getTracks())
 				{
-					results.add(convertedTrack);
+					convertedTrack = iTunesTrackToPlaylistEntry(track);
+					if (convertedTrack != null)
+					{
+						results.add(convertedTrack);
+					}
 				}
 			}
+			return results;
 		}
-		return results;
+		else
+		{
+			throw new IOException("Source XML file did not contain a playlist.");
+		}
 	}
 
 	@Override

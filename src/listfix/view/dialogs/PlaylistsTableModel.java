@@ -98,21 +98,21 @@ public class PlaylistsTableModel extends AbstractTableModel
 		else
 		{
 			BatchRepairItem item = _items.getItem(rowIndex);
-			Playlist list = item.getPlaylist();
+			Playlist list = item.getPlaylist();	
 			switch (columnIndex)
 			{
 				case 0:
 					if (list.getMissingCount() > 0)
 					{
-						return ImageIcons.IMG_MISSING; // red
+						return ImageIcons.IMG_MISSING; 
 					}
 					else if (list.getFixedCount() > 0)
 					{
-						return ImageIcons.IMG_FIXED; // light green
+						return ImageIcons.IMG_FIXED; 
 					}
 					else
 					{
-						return ImageIcons.IMG_FOUND; // dark green
+						return ImageIcons.IMG_FOUND; 
 					}
 				case 1:
 					return item.getDisplayName();

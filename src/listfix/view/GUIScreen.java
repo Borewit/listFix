@@ -1188,6 +1188,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 			else
 			{
+				// We're dealing w/ a folder, get all the lists it contains.
 				files.addAll(PlaylistScanner.getAllPlaylists(file));
 			}
 		}
@@ -1322,7 +1323,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to rename the selected files and folders?"), "Rename Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
 			{
-				File toOpen;
 				List<TreePath> selPaths = new ArrayList<>();
 				for (int i : selRows)
 				{

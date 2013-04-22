@@ -188,9 +188,8 @@ public class BatchRepair
 	/**
 	 * Performs a closest matches search on all entries in multiple playlists. 
 	 * @param observer The progress observer for this operation.
-	 * @throws IOException
 	 */
-	public void performClosestMatchRepair(IDualProgressObserver<String> observer) throws IOException
+	public void performClosestMatchRepair(IDualProgressObserver<String> observer)
 	{
 		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
 		progress.getOverall().setTotal(_items.size() * 2);
@@ -206,7 +205,15 @@ public class BatchRepair
 				if (item.getPlaylist() == null)
 				{
 					File file = new File(item.getPath());
-					item.setPlaylist(new Playlist(file, progress.getTask()));
+					try
+					{
+						Playlist temp = new Playlist(file, progress.getTask());					
+						item.setPlaylist(temp);
+					}
+					catch (IOException e)
+					{
+						toRemoveFromBatch.add(item);
+					}
 				}
 
 				// repair
