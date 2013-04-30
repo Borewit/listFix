@@ -38,6 +38,7 @@ import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
+import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -287,7 +288,7 @@ public class M3UReader implements IPlaylistReader
 		{
 			// do nothing, leave tokenizer null
 		}
-		else if (Constants.FS.equalsIgnoreCase("/")) // OS Specific Hack
+		else if (OperatingSystem.isLinux()) // Linux Specific Setup
 		{
 			if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith(Constants.FS))
 			{
@@ -296,17 +297,13 @@ public class M3UReader implements IPlaylistReader
 			}
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
-		else if (Constants.FS.equalsIgnoreCase(":")) // OS Specific Hack
+		else if (OperatingSystem.isMac()) // MacOS Specific Setup
 		{
 			pathTokenizer = new StringTokenizer(L2, ":\\/");
 		}
-		else if (Constants.FS.equalsIgnoreCase("\\")) // OS Specific Hack
+		else if (OperatingSystem.isWindows()) // Windows Specific Setup
 		{
 			pathTokenizer = new StringTokenizer(L2, "\\/");
-			if (!L2.startsWith("\\\\") && L2.startsWith("\\"))
-			{
-				path.append("\\");
-			}
 		}
 
 		if (pathTokenizer != null)

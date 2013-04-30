@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.controller.GUIDriver;
 import listfix.io.Constants;
+import listfix.io.FileUtils;
 import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
@@ -190,11 +191,35 @@ public class PlaylistEntry implements Cloneable
 				if (_absoluteFile.exists())
 				{
 					_status = PlaylistEntryStatus.Found;
-					// _path = parentPath.getPath();
+					// _path = parentPath.getPath();					
 				}
 				else
-				{
-					_status = PlaylistEntryStatus.Missing;
+				{					
+					if (OperatingSystem.isWindows())
+					{
+						// try one more thing, winamp creates some stupid lists (saves out psuedo-relative lists where the entries are assumed to be on the same drive as where the list is found)
+						// only attempt this hack on windows...
+						File root = list.getParentFile();
+						while (root.getParentFile() != null)
+						{
+							root = root.getParentFile();
+						}						
+						_absoluteFile = new File(root, p + Constants.FS + f);			
+						if (_absoluteFile.exists())
+						{
+							_status = PlaylistEntryStatus.Found;
+							_thisFile = new File(FileUtils.getRelativePath(_absoluteFile, list));
+							_path = _thisFile.getPath();
+						}
+						else
+						{
+							_status = PlaylistEntryStatus.Missing;
+						}
+					}
+					else
+					{
+						_status = PlaylistEntryStatus.Missing;
+					}
 				}
 			}
 			else
