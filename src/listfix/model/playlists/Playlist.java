@@ -139,42 +139,35 @@ public class Playlist
 		refreshStatus();
 	}
 
-	private void init(File playlist, IProgressObserver observer)
+	private void init(File playlist, IProgressObserver observer) throws IOException
 	{
-		try
+		IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist);
+		if (observer != null)
 		{
-			IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist);
-			if (observer != null)
+			List<PlaylistEntry> tempEntries = playlistProcessor.readPlaylist(observer);
+			if (tempEntries != null)
 			{
-				List<PlaylistEntry> tempEntries = playlistProcessor.readPlaylist(observer);
-				if (tempEntries != null)
-				{
-					this.setEntries(tempEntries);
-				}
-				else
-				{
-					return;
-				}
+				this.setEntries(tempEntries);
 			}
 			else
 			{
-				this.setEntries(playlistProcessor.readPlaylist());
+				return;
 			}
-			_utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
-			_file = playlist;
-			_type = playlistProcessor.getPlaylistType();
-			if (_type == PlaylistType.PLS)
-			{
-				// let's override our previous determination in the PLS case so we don't end up saving it out incorrectly
-				_utfFormat = false;
-			}
-			_isModified = false;
-			refreshStatus();
 		}
-		catch (IOException e)
+		else
 		{
-			_logger.error(ExStack.toString(e));
+			this.setEntries(playlistProcessor.readPlaylist());
 		}
+		_utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+		_file = playlist;
+		_type = playlistProcessor.getPlaylistType();
+		if (_type == PlaylistType.PLS)
+		{
+			// let's override our previous determination in the PLS case so we don't end up saving it out incorrectly
+			_utfFormat = false;
+		}
+		_isModified = false;
+		refreshStatus();
 	}
 
 	/**
@@ -1230,8 +1223,9 @@ public class Playlist
 	/**
 	 * 
 	 * @param observer
+	 * @throws IOException  
 	 */
-	public void reload(IProgressObserver observer)
+	public void reload(IProgressObserver observer) throws IOException
 	{
 		if (_isNew)
 		{

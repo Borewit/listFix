@@ -510,14 +510,27 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
                     if (data instanceof List)
                     {
-                        // Process the drop...
+                        // Process the drop, in this case, of file or folder paths from the OS.						
                         List list = (List) data;
+						File tempFile;
                         for (int j = 0; j < list.size(); j++)
                         {
-                            if (list.get(j) instanceof File && Playlist.isPlaylist((File) list.get(j)))
-                            {
-                                openPlaylist((File) list.get(j));
-                            }
+							if (list.get(j) instanceof File)
+							{
+								tempFile = (File) list.get(j);
+								if (Playlist.isPlaylist(tempFile))
+								{
+									openPlaylist(tempFile);
+								}
+								else if (tempFile.isDirectory())
+								{
+									List<File> playlists = PlaylistScanner.getAllPlaylists(tempFile);
+									for (File f : playlists)
+									{
+										openPlaylist(f);
+									}
+								}
+							}                            
                         }
                     }
                     else if (data instanceof InputStreamReader)

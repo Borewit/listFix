@@ -70,7 +70,7 @@ public class ExStack
 		while (tempThrow != null)
 		{
 			// Output Exception name and message, and begin a list 
-			b.append(throwable.toString()).append(throwable.getMessage() == null ? "" : " - " + throwable.getMessage()).append("<br/>");
+			b.append(throwable.toString()).append("<br/>");
 			for (StackTraceElement ste : throwable.getStackTrace())
 			{
 				b.append("&nbsp;&nbsp;&nbsp;&nbsp;at ").append(ste.getClassName()).append(".")

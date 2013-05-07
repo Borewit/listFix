@@ -159,6 +159,7 @@ public class BatchRepair
 		DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
 		progress.getOverall().setTotal(_items.size() * 2);
 
+		List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
 		for (BatchRepairItem item : _items)
 		{
 			if (!observer.getCancelled())
@@ -169,19 +170,40 @@ public class BatchRepair
 				if (item.getPlaylist() == null)
 				{
 					File file = new File(item.getPath());
-					item.setPlaylist(new Playlist(file, progress.getTask()));
+					try
+					{
+						Playlist temp = new Playlist(file, progress.getTask());					
+						item.setPlaylist(temp);
+					}
+					catch (IOException e)
+					{
+						toRemoveFromBatch.add(item);
+					}
 				}
 
 				// repair
-				progress.getOverall().stepCompleted();
-				progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
-				Playlist list = item.getPlaylist();
-				list.batchRepair(_mediaFiles, progress.getTask());
+				if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0)
+				{
+					progress.getOverall().stepCompleted();
+					progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
+					Playlist list = item.getPlaylist();
+					list.batchRepair(_mediaFiles, progress.getTask());
+				}
+				else
+				{
+					// Don't fix playlists that have nothing to fix... instead remove them from the result set.
+					toRemoveFromBatch.add(item);
+				}
 			}
 			else
 			{
 				return;
 			}
+		}
+		
+		for (BatchRepairItem item : toRemoveFromBatch)
+		{
+			_items.remove(item);
 		}
 	}
 	
@@ -217,7 +239,7 @@ public class BatchRepair
 				}
 
 				// repair
-				if (item.getPlaylist().getMissingCount() > 0)
+				if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0)
 				{
 					progress.getOverall().stepCompleted();
 					progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");

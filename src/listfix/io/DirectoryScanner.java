@@ -83,13 +83,13 @@ public class DirectoryScanner
 
 			File mediaDir = new File(baseDir);
 			String[] entryList = mediaDir.list();
-			List<String> fileList = new ArrayList<String>();
-			List<String> dirList = new ArrayList<String>();
+			List<String> fileList = new ArrayList<>();
+			List<String> dirList = new ArrayList<>();
 			StringBuilder s = new StringBuilder();
 
 			if (entryList != null)
 			{
-				File tempFile = null;
+				File tempFile;
 				for (int i = 0; i < entryList.length; i++)
 				{
 					s.append(baseDir);
@@ -143,8 +143,8 @@ public class DirectoryScanner
 	public void reset()
 	{
 		recursiveCount = 0;
-		thisDirList = new ArrayList<String>();
-		thisFileList = new ArrayList<String>();
+		thisDirList = new ArrayList<>();
+		thisFileList = new ArrayList<>();
 	}
 
 	/**

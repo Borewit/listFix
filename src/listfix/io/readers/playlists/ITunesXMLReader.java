@@ -105,7 +105,7 @@ public class ITunesXMLReader implements IPlaylistReader
 		}
 		else
 		{
-			throw new IOException("Source XML file did not contain a playlist.");
+			throw new IOException("Source XML file did not contain a playlist");
 		}
 	}
 
