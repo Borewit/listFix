@@ -33,9 +33,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
@@ -45,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
@@ -69,7 +72,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
+import listfix.io.Base64Coder;
 import listfix.io.FileUtils;
+import listfix.io.PlaylistScanner;
+import listfix.io.StringArrayListSerializer;
 import listfix.io.filters.AudioFileFilter;
 import listfix.io.filters.PlaylistFileFilter;
 import listfix.model.BatchMatchItem;
@@ -1823,57 +1829,18 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                     if (tempFile instanceof File)
                     {
                         if (Playlist.isPlaylist(tempFile))
-                        {
-                            final String[] libraryFiles;
-							final int currentInsertPoint = insertAt;
-                            if (GUIDriver.getInstance().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
-                            {
-                                libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-                            }
-                            else
-                            {
-                                libraryFiles = null;
-                            }
-                            ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
-                            {
-                                @Override
-                                protected Playlist doInBackground() throws Exception
-                                {
-                                    Playlist list = new Playlist(tempFile, this);
-                                    if (libraryFiles != null)
-                                    {
-                                        list.repair(libraryFiles, this);
-                                    }
-                                    return list;
-                                }
-
-                                @Override
-                                protected void done()
-                                {
-                                    Playlist list;
-                                    try
-                                    {
-                                        list = get();
-                                        _playlist.addAllAt(currentInsertPoint, list.getEntries());
-                                    }
-                                    catch (CancellationException ex)
-                                    {
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), 
-											ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
-											"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
-                                        _logger.error(ExStack.toString(ex));
-                                    }
-                                }
-                            };
-                            ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading '" + (tempFile.getName().length() > 70 ? tempFile.getName().substring(0, 70) : tempFile.getName()) + "'...");
-                            int plistSize = _playlist.size();
-                            pd.setVisible(true);
-                            insertAt += _playlist.size() - plistSize;
+                        {                            
+                            insertAt += ProcessDroppedPlaylist(tempFile, insertAt);
                         }
-                        else
+						else if (tempFile.isDirectory())
+						{
+							List<File> filesToInsert = PlaylistScanner.getAllPlaylists(tempFile);
+							for (File f : filesToInsert)
+							{
+								insertAt += ProcessDroppedPlaylist(f, insertAt);
+							}
+						}
+						else if (FileUtils.IsMediaFile(tempFile))
                         {
                             // addAt it to the playlist!
                             try
@@ -1889,6 +1856,58 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                     }
                 }
             }
+			
+			private int ProcessDroppedPlaylist(final File tempFile, int insertAt)
+			{
+				final String[] libraryFiles;
+				final int currentInsertPoint = insertAt;
+				if (GUIDriver.getInstance().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+				{
+					libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+				}
+				else
+				{
+					libraryFiles = null;
+				}
+				ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+				{
+					@Override
+					protected Playlist doInBackground() throws Exception
+					{
+						Playlist list = new Playlist(tempFile, this);
+						if (libraryFiles != null)
+						{
+							list.repair(libraryFiles, this);
+						}
+						return list;
+					}
+
+					@Override
+					protected void done()
+					{
+						Playlist list;
+						try
+						{
+							list = get();
+							_playlist.addAllAt(currentInsertPoint, list.getEntries());
+						}
+						catch (CancellationException ex)
+						{
+						}
+						catch (Exception ex)
+						{
+							JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(),
+								ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()),
+								"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+							_logger.error(ExStack.toString(ex));
+						}
+					}
+				};
+				ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading '" + (tempFile.getName().length() > 70 ? tempFile.getName().substring(0, 70) : tempFile.getName()) + "'...");
+				int plistSize = _playlist.size();
+				pd.setVisible(true);
+				return _playlist.size() - plistSize;
+			}
 
 			private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl)
 			{
@@ -1901,59 +1920,18 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						final String data;
                         if (t.getTransferData(flavors[i]) instanceof String)
                         {
-                            // In this case, it's a string coming from the playlist panel
-                            data = (String) t.getTransferData(flavors[i]);
-                            final String[] libraryFiles;
-                            if (GUIDriver.getInstance().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
-                            {
-                                libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-                            }
-                            else
-                            {
-                                libraryFiles = null;
-                            }
-                            ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
-                            {
-                                @Override
-                                protected Playlist doInBackground() throws Exception
-                                {
-                                    Playlist list = new Playlist(new File(data), this);
-                                    if (libraryFiles != null)
-                                    {
-                                        list.repair(libraryFiles, this);
-                                    }
-                                    return list;
-                                }
-
-                                @Override
-                                protected void done()
-                                {
-                                    Playlist list;
-                                    try
-                                    {
-                                        list = get();
-                                        _playlist.addAllAt(dl.getRow(), list.getEntries());
-                                        if (_playlist.size() == list.size())
-                                        {
-                                            resizeAllColumns();
-                                        }
-                                    }
-                                    catch (CancellationException ex)
-                                    {
-                                        return;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), 
-											ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
-											"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
-                                        _logger.error(ExStack.toString(ex));
-                                        return;
-                                    }
-                                }
-						    };
-                            ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading '" + (data.length() > 70 ? data.substring(0, 70) : data) + "'...");
-                            pd.setVisible(true);
+                            // In this case, it's a magically delicious string coming from the playlist panel
+                            String input = (String) t.getTransferData(flavors[i]);							
+							List<String> paths = StringArrayListSerializer.Deserialize(input);
+							
+							// Turn this into a list of files, and reuse the processing code above
+							List<File> files = new ArrayList<>();
+							for (String path : paths)
+							{
+								files.add(new File(path));
+							}
+							
+							ProcessFileListDrop(files, dl);
                         }
                         else if (t.getTransferData(flavors[i]) instanceof InputStreamReader)
                         {
@@ -1975,7 +1953,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                             return true;
                         }
 					}
-					catch (UnsupportedFlavorException | IOException | URISyntaxException ex)
+					catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
 					{
 						_logger.error(ExStack.toString(ex));
                         return false;

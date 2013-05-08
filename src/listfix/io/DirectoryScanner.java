@@ -55,25 +55,6 @@ public class DirectoryScanner
 		}
 	}
 
-	private static boolean endsWithIndexedExtension(String input)
-	{
-		input = input.toLowerCase();
-		return (input.endsWith(".mp3") || input.endsWith(".wma")
-			|| input.endsWith(".flac") || input.endsWith(".ogg")
-			|| input.endsWith(".wav")  || input.endsWith(".midi")
-			|| input.endsWith(".cda")  || input.endsWith(".mpg")
-			|| input.endsWith(".mpeg") || input.endsWith(".m2v")
-			|| input.endsWith(".avi")  || input.endsWith(".m4v")
-			|| input.endsWith(".flv")  || input.endsWith(".mid")
-			|| input.endsWith(".mp2")  || input.endsWith(".mp1")
-			|| input.endsWith(".aac")  || input.endsWith(".asx")
-			|| input.endsWith(".m4a")  || input.endsWith(".mp4")
-			|| input.endsWith(".m4v")  || input.endsWith(".nsv")
-			|| input.endsWith(".aiff") || input.endsWith(".au")
-			|| input.endsWith(".wmv")  || input.endsWith(".asf")
-			|| input.endsWith(".mpc"));
-	}
-
 	private void recursiveDir(String baseDir, ProgressWorker task)
 	{
 		recursiveCount++;
@@ -105,7 +86,7 @@ public class DirectoryScanner
 					}
 					else
 					{
-						if (endsWithIndexedExtension(s.toString()))
+						if (FileUtils.IsMediaFile(tempFile))
 						{
 							fileList.add(s.toString());
 						}

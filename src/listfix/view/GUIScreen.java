@@ -50,9 +50,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -63,6 +65,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -93,11 +96,13 @@ import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
+import listfix.io.Base64Coder;
 import listfix.io.BrowserLauncher;
 import listfix.io.Constants;
 import listfix.io.FileTreeNodeGenerator;
 import listfix.io.FileUtils;
 import listfix.io.PlaylistScanner;
+import listfix.io.StringArrayListSerializer;
 import listfix.io.TreeNodeFile;
 import listfix.io.UNCFile;
 import listfix.io.WinampHelper;
@@ -414,10 +419,16 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			{
 				try
 				{
-					// TODO: Support communicating multiple selections & directories
-					int selRow = _playlistDirectoryTree.getSelectionRows()[0];
-					TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
-					return new StringSelection(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+					ArrayList<String> paths = new ArrayList<>();
+					
+					for (int selRow : _playlistDirectoryTree.getSelectionRows())
+					{
+						TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
+						paths.add(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+					}
+					
+					String serializedPaths = StringArrayListSerializer.Serialize(paths);					
+					return new StringSelection(serializedPaths);
 				}
 				catch (Exception ex)
 				{
@@ -545,6 +556,31 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							}
 						}
                     }
+					else if (data instanceof String)
+					{
+						// Magically delicious string coming from the playlist panel
+						String input = (String)data;
+						List<String> paths = StringArrayListSerializer.Deserialize(input);
+
+						// Turn this into a list of files, and reuse the processing code above
+						File tempFile;
+						for (String path : paths)
+						{
+							tempFile = new File(path);
+							if (Playlist.isPlaylist(tempFile))
+							{
+								openPlaylist(tempFile);
+							}
+							else if (tempFile.isDirectory())
+							{
+								List<File> playlists = PlaylistScanner.getAllPlaylists(tempFile);
+								for (File f : playlists)
+								{
+									openPlaylist(f);
+								}
+							}
+						}
+					}
 
                     // If we made it this far, everything worked.
                     dtde.dropComplete(true);
@@ -554,7 +590,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             // Hmm, the user must not have dropped a file list
             dtde.rejectDrop();
         }
-        catch (UnsupportedFlavorException | IOException | URISyntaxException e)
+        catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException e)
         {
             _logger.warn(ExStack.toString(e));
             dtde.rejectDrop();
