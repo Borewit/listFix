@@ -30,6 +30,7 @@ import javax.swing.tree.TreePath;
 
 import listfix.comparators.FileComparator;
 import listfix.io.filters.PlaylistFileFilter;
+import listfix.view.support.PlaylistTreeNode;
 
 /**
  *
@@ -42,14 +43,14 @@ public class FileTreeNodeGenerator
 	 * @param dir
 	 * @return  
 	 */
-	public static DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir)
+	public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, File dir)
 	{
 		if (dir.exists())
 		{
 			String curPath = dir.getPath();
 			TreeNodeFile file = new TreeNodeFile(curPath);
-			DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(file);
-			curDir.setUserObject(file);
+			PlaylistTreeNode curDir = new PlaylistTreeNode(file);
+			// curDir.setUserObject(file);
 
 			// if we're creating the root node here, use a regular file to get the full path to show.
 			if (curTop == null)
@@ -86,7 +87,7 @@ public class FileTreeNodeGenerator
 				// Pass two: for files.
 				for (int fnum = 0; fnum < files.size(); fnum++)
 				{
-					curDir.add(new DefaultMutableTreeNode(new TreeNodeFile(files.get(fnum).getPath())));
+					curDir.add(new PlaylistTreeNode(new TreeNodeFile(files.get(fnum).getPath())));
 				}
 				if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
 				{
@@ -109,6 +110,6 @@ public class FileTreeNodeGenerator
 	 */
 	public static String TreePathToFileSystemPath(TreePath node)
 	{
-		return ((File) ((DefaultMutableTreeNode) node.getLastPathComponent()).getUserObject()).getPath();
+		return ((File) ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject()).getPath();
 	}
 }

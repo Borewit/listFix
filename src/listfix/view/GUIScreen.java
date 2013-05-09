@@ -50,11 +50,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -65,7 +63,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -96,7 +93,6 @@ import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-import listfix.io.Base64Coder;
 import listfix.io.BrowserLauncher;
 import listfix.io.Constants;
 import listfix.io.FileTreeNodeGenerator;
@@ -2724,7 +2720,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 	{
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
-		_playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory()))));
+		((DefaultTreeModel)_playlistDirectoryTree.getModel()).setRoot(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
 		addPlaylistPanelModelListener();
 		loadExpansionState(_playlistDirectoryTree, treeStateEnum);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -2754,6 +2750,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 			while (enumeration.hasMoreElements())
 			{
 				TreePath treePath = (TreePath) enumeration.nextElement();
+				// tree.
 				tree.expandPath(treePath);
 			}
 		}
