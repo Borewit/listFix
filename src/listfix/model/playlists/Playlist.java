@@ -1268,7 +1268,7 @@ public class Playlist
 	{
 		if (input != null)
 		{
-			String lowerCaseExtension = FileNameTokenizer.getExtensionFromFileName(input.getName()).toLowerCase();
+			String lowerCaseExtension = (new FileNameTokenizer()).getExtensionFromFileName(input.getName()).toLowerCase();
 			switch (lowerCaseExtension)
 			{
 				case "m3u":

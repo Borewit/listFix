@@ -83,14 +83,15 @@ public class OptionsWriter
 	private static void appendOptionsText(StringBuilder buffer, AppOptions options)
 	{
 		buffer.append("[Options]").append(Constants.BR);
-		buffer.append("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(Constants.BR);
-		buffer.append("MAX_PLAYLIST_HISTORY_SIZE=").append(options.getMaxPlaylistHistoryEntries()).append(Constants.BR);
-		buffer.append("SAVE_RELATIVE_REFERENCES=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(Constants.BR);
-		buffer.append("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(Constants.BR);
-		buffer.append("LOOK_AND_FEEL=").append(options.getLookAndFeel()).append(Constants.BR);
-		buffer.append("ALWAYS_USE_UNC_PATHS=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(Constants.BR);
-		buffer.append("PLAYLISTS_DIRECTORY=").append(options.getPlaylistsDirectory()).append(Constants.BR);
-		buffer.append("APP_FONT=").append(FontExtensions.serialize(options.getAppFont())).append(Constants.BR);
-		buffer.append("MAX_CLOSEST_RESULTS=").append(options.getMaxClosestResults()).append(Constants.BR);
+		buffer.append(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD).append("=").append(Boolean.toString(options.getAutoLocateEntriesOnPlaylistLoad())).append(Constants.BR);
+		buffer.append(AppOptions.MAX_PLAYLIST_HISTORY_SIZE).append("=").append(options.getMaxPlaylistHistoryEntries()).append(Constants.BR);
+		buffer.append(AppOptions.SAVE_RELATIVE_REFERENCES).append("=").append(Boolean.toString(options.getSavePlaylistsWithRelativePaths())).append(Constants.BR);
+		buffer.append(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD).append("=").append(Boolean.toString(options.getAutoRefreshMediaLibraryOnStartup())).append(Constants.BR);
+		buffer.append(AppOptions.LOOK_AND_FEEL).append("=").append(options.getLookAndFeel()).append(Constants.BR);
+		buffer.append(AppOptions.ALWAYS_USE_UNC_PATHS).append("=").append(Boolean.toString(options.getAlwaysUseUNCPaths())).append(Constants.BR);
+		buffer.append(AppOptions.PLAYLISTS_DIRECTORY).append("=").append(options.getPlaylistsDirectory()).append(Constants.BR);
+		buffer.append(AppOptions.APP_FONT).append("=").append(FontExtensions.serialize(options.getAppFont())).append(Constants.BR);
+		buffer.append(AppOptions.MAX_CLOSEST_RESULTS).append("=").append(options.getMaxClosestResults()).append(Constants.BR);
+		buffer.append(AppOptions.IGNORED_SMALL_WORDS).append("=").append(options.getIgnoredSmallWords()).append(Constants.BR);
 	}
 }

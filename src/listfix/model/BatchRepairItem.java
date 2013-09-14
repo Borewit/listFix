@@ -49,7 +49,7 @@ public class BatchRepairItem
 		_playlistFile = file;
 		if (Playlist.isPlaylist(file))
 		{
-			_displayName = FileNameTokenizer.removeExtensionFromFileName(_displayName);
+			_displayName = (new FileNameTokenizer()).removeExtensionFromFileName(_displayName);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class BatchRepairItem
 	{
 		_playlist = list;
 		_path = list.getFile().getPath();
-		_displayName = FileNameTokenizer.removeExtensionFromFileName(list.getFile().getName());
+		_displayName = (new FileNameTokenizer()).removeExtensionFromFileName(list.getFile().getName());
 		_playlistFile = list.getFile();
 	}
 

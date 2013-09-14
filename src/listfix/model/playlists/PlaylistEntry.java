@@ -694,7 +694,7 @@ public class PlaylistEntry implements Cloneable
 				mediaFile = new File(mediaFilePath);
 				
 				// Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
-				score = FileNameTokenizer.score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
+				score = (new FileNameTokenizer()).score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
 				if (score > 0)
 				{
 					// Only keep the top X highest-rated matches (default is 20), anything more than that has a good chance of using too much memory

@@ -31,7 +31,6 @@ import java.util.StringTokenizer;
 import listfix.io.Constants;
 import listfix.io.UnicodeInputStream;
 import listfix.model.AppOptions;
-import listfix.model.enums.AppOptionsEnum;
 import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
 
@@ -67,38 +66,37 @@ public class OptionsReader
 						StringTokenizer tempTizer = new StringTokenizer(line, "=");
 						String optionName = tempTizer.nextToken();
 						String optionValue = tempTizer.nextToken();
-						Integer optionEnum = AppOptions.optionEnumTable.get(optionName);
-						if (optionEnum != null)
+						if (optionName != null)
 						{
-							if (optionEnum.equals(AppOptionsEnum.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
+							if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
 							{
 								options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)).booleanValue());
 							}
-							else if (optionEnum.equals(AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE))
+							else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
 							{
 								options.setMaxPlaylistHistoryEntries((new Integer(optionValue)).intValue());
 							}
-							else if (optionEnum.equals(AppOptionsEnum.SAVE_RELATIVE_REFERENCES))
+							else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
 							{
 								options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)).booleanValue());
 							}
-							else if (optionEnum.equals(AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
+							else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
 							{
 								options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)).booleanValue());
 							}
-							else if (optionEnum.equals(AppOptionsEnum.LOOK_AND_FEEL))
+							else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
 							{
 								options.setLookAndFeel(optionValue);
 							}
-							else if (optionEnum.equals(AppOptionsEnum.ALWAYS_USE_UNC_PATHS))
+							else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
 							{
 								options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)).booleanValue());
 							}
-							else if (optionEnum.equals(AppOptionsEnum.PLAYLISTS_DIRECTORY))
+							else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
 							{
 								options.setPlaylistsDirectory(optionValue);
 							}
-							else if (optionEnum.equals(AppOptionsEnum.APP_FONT))
+							else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
 							{
 								Font temp = FontExtensions.deserialize(optionValue);
 								if (temp != null)
@@ -106,9 +104,13 @@ public class OptionsReader
 									options.setAppFont(temp);
 								}
 							}
-							else if (optionEnum.equals(AppOptionsEnum.MAX_CLOSEST_RESULTS))
+							else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
 							{
 								options.setMaxClosestResults((new Integer(optionValue)).intValue());
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.IGNORED_SMALL_WORDS))
+							{
+								options.setIgnoredSmallWords(optionValue);
 							}
 						}
 						line = B1.readLine();

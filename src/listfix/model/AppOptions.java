@@ -21,9 +21,7 @@
 package listfix.model;
 
 import java.awt.Font;
-import listfix.model.enums.AppOptionsEnum;
 import java.io.File;
-import java.util.HashMap;
 import javax.swing.UIManager;
 
 /**
@@ -33,6 +31,8 @@ import javax.swing.UIManager;
 public class AppOptions
 {
 	private static final String EMPTY_STRING = "None Selected";
+	
+	// Init default values.
 	private boolean savePlaylistsWithRelativePaths = false;
 	private boolean autoLocateEntriesOnPlaylistLoad = false;
 	private boolean autoRefreshMediaLibraryOnStartup = false;
@@ -42,24 +42,19 @@ public class AppOptions
 	private String playlistsDirectory = EMPTY_STRING;
 	private Font appFont = new Font("SansSerif", 0, 11);
 	private int maxClosestResults = 20;
+	private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
 	
-	/**
-	 *
-	 */
-	public static final HashMap<String, Integer> optionEnumTable = new HashMap<String, Integer>();
-
-	static
-	{
-		optionEnumTable.put("SAVE_RELATIVE_REFERENCES", AppOptionsEnum.SAVE_RELATIVE_REFERENCES);
-		optionEnumTable.put("AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD", AppOptionsEnum.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD);
-		optionEnumTable.put("MAX_PLAYLIST_HISTORY_SIZE", AppOptionsEnum.MAX_PLAYLIST_HISTORY_SIZE);
-		optionEnumTable.put("AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD", AppOptionsEnum.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD);
-		optionEnumTable.put("LOOK_AND_FEEL", AppOptionsEnum.LOOK_AND_FEEL);
-		optionEnumTable.put("ALWAYS_USE_UNC_PATHS", AppOptionsEnum.ALWAYS_USE_UNC_PATHS);
-		optionEnumTable.put("PLAYLISTS_DIRECTORY", AppOptionsEnum.PLAYLISTS_DIRECTORY);
-		optionEnumTable.put("APP_FONT", AppOptionsEnum.APP_FONT);
-		optionEnumTable.put("MAX_CLOSEST_RESULTS", AppOptionsEnum.MAX_CLOSEST_RESULTS);
-	}
+	// Define option constants
+	public static final String SAVE_RELATIVE_REFERENCES = "SAVE_RELATIVE_REFERENCES";
+	public static final String AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD = "AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD";
+	public static final String MAX_PLAYLIST_HISTORY_SIZE = "MAX_PLAYLIST_HISTORY_SIZE";
+	public static final String AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD = "AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD";
+	public static final String LOOK_AND_FEEL = "LOOK_AND_FEEL";
+	public static final String ALWAYS_USE_UNC_PATHS = "ALWAYS_USE_UNC_PATHS";
+	public static final String PLAYLISTS_DIRECTORY = "PLAYLISTS_DIRECTORY";
+	public static final String APP_FONT = "APP_FONT";
+	public static final String MAX_CLOSEST_RESULTS = "MAX_CLOSEST_RESULTS";
+	public static final String IGNORED_SMALL_WORDS = "IGNORED_SMALL_WORDS";
 
 	/**
 	 *
@@ -192,29 +187,49 @@ public class AppOptions
 
 	/**
 	 * @return the appFont
-	 */ public Font getAppFont()
+	 */ 
+	public Font getAppFont()
 	{
 		return appFont;
 	}
 
 	/**
 	 * @param appFont the appFont to set
-	 */ public void setAppFont(Font appFont)
+	 */ 
+	public void setAppFont(Font appFont)
 	{
 		this.appFont = appFont;
 	}
 
 	/**
 	 * @return the maxClosestResults
-	 */ public int getMaxClosestResults()
+	 */ 
+	public int getMaxClosestResults()
 	{
 		return maxClosestResults;
 	}
 
 	/**
 	 * @param maxClosestResults the maxClosestResults to set
-	 */ public void setMaxClosestResults(int maxClosestResults)
+	 */ 
+	public void setMaxClosestResults(int maxClosestResults)
 	{
 		this.maxClosestResults = maxClosestResults;
+	}
+
+	/**
+	 * @return the ignoredSmallWords
+	 */
+	public String getIgnoredSmallWords()
+	{
+		return ignoredSmallWords;
+	}
+
+	/**
+	 * @param ignoredSmallWords the ignoredSmallWords to set
+	 */
+	public void setIgnoredSmallWords(String ignoredSmallWords)
+	{
+		this.ignoredSmallWords = ignoredSmallWords;
 	}
 }

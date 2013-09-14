@@ -641,7 +641,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	 */
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         _playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
         _miRefreshDirectoryTree = new javax.swing.JMenuItem();
@@ -708,32 +709,40 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _aboutMenuItem = new javax.swing.JMenuItem();
 
         _miRefreshDirectoryTree.setText("Refresh");
-        _miRefreshDirectoryTree.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miRefreshDirectoryTree.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miRefreshDirectoryTreeActionPerformed(evt);
             }
         });
         _playlistTreeRightClickMenu.add(_miRefreshDirectoryTree);
 
         _miOpenSelectedPlaylists.setText("Open");
-        _miOpenSelectedPlaylists.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miOpenSelectedPlaylists.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miOpenSelectedPlaylistsActionPerformed(evt);
             }
         });
         _playlistTreeRightClickMenu.add(_miOpenSelectedPlaylists);
 
         _miExactMatchesSearch.setText("Find Exact Matches");
-        _miExactMatchesSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miExactMatchesSearch.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miExactMatchesSearchActionPerformed(evt);
             }
         });
         _playlistTreeRightClickMenu.add(_miExactMatchesSearch);
 
         _miClosestMatchesSearch.setText("Find Closest Matches");
-        _miClosestMatchesSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miClosestMatchesSearch.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miClosestMatchesSearchActionPerformed(evt);
             }
         });
@@ -742,8 +751,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _miDeletePlaylist.setMnemonic('D');
         _miDeletePlaylist.setText("Delete Select Playlists");
         _miDeletePlaylist.setToolTipText("Delete Select Playlists");
-        _miDeletePlaylist.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miDeletePlaylist.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miDeletePlaylistActionPerformed(evt);
             }
         });
@@ -752,8 +763,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _miRenameSelectedItem.setMnemonic('R');
         _miRenameSelectedItem.setText("Rename");
         _miRenameSelectedItem.setToolTipText("Rename selected file or folder");
-        _miRenameSelectedItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miRenameSelectedItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miRenameSelectedItemActionPerformed(evt);
             }
         });
@@ -763,13 +776,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         setTitle("listFix( ) - v2.3.0");
         setMinimumSize(new java.awt.Dimension(600, 149));
         setName("mainFrame"); // NOI18N
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+        addWindowListener(new java.awt.event.WindowAdapter()
+        {
+            public void windowClosing(java.awt.event.WindowEvent evt)
+            {
                 exitForm(evt);
             }
         });
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
+        addComponentListener(new java.awt.event.ComponentAdapter()
+        {
+            public void componentResized(java.awt.event.ComponentEvent evt)
+            {
                 formComponentResized(evt);
             }
         });
@@ -810,8 +827,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _addMediaDirButton.setFocusable(false);
         _addMediaDirButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _addMediaDirButton.setMinimumSize(new java.awt.Dimension(53, 25));
-        _addMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _addMediaDirButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _addMediaDirButtonActionPerformed(evt);
             }
         });
@@ -822,8 +841,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _removeMediaDirButton.setFocusable(false);
         _removeMediaDirButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
-        _removeMediaDirButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _removeMediaDirButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _removeMediaDirButtonActionPerformed(evt);
             }
         });
@@ -834,8 +855,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _refreshMediaDirsButton.setFocusable(false);
         _refreshMediaDirsButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
-        _refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _refreshMediaDirsButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _refreshMediaDirsButtonActionPerformed(evt);
             }
         });
@@ -868,8 +891,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _playlistDirectoryTree.setMaximumSize(null);
         _playlistDirectoryTree.setMinimumSize(null);
         _playlistDirectoryTree.setPreferredSize(null);
-        _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 _playlistDirectoryTreeKeyPressed(evt);
             }
         });
@@ -884,8 +909,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _btnSetPlaylistsDir.setText("Set");
         _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
         _btnSetPlaylistsDir.setMargin(new java.awt.Insets(2, 8, 2, 8));
-        _btnSetPlaylistsDir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnSetPlaylistsDir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnSetPlaylistsDirActionPerformed(evt);
             }
         });
@@ -896,8 +923,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _btnRefresh.setFocusable(false);
         _btnRefresh.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _btnRefresh.setMinimumSize(new java.awt.Dimension(71, 25));
-        _btnRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnRefresh.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnRefreshActionPerformed(evt);
             }
         });
@@ -909,8 +938,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _btnOpenSelected.setFocusable(false);
         _btnOpenSelected.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _btnOpenSelected.setMinimumSize(new java.awt.Dimension(71, 25));
-        _btnOpenSelected.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnOpenSelected.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnOpenSelectedActionPerformed(evt);
             }
         });
@@ -920,8 +951,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _btnBatchExactMatches.setToolTipText("Exact Matches Repair");
         _btnBatchExactMatches.setEnabled(false);
         _btnBatchExactMatches.setMargin(new java.awt.Insets(2, 8, 2, 8));
-        _btnBatchExactMatches.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnBatchExactMatches.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnBatchExactMatchesActionPerformed(evt);
             }
         });
@@ -931,8 +964,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _btnBatchClosestMatches.setToolTipText("Closest Matches Repair");
         _btnBatchClosestMatches.setEnabled(false);
         _btnBatchClosestMatches.setMargin(new java.awt.Insets(2, 8, 2, 8));
-        _btnBatchClosestMatches.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnBatchClosestMatches.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnBatchClosestMatchesActionPerformed(evt);
             }
         });
@@ -954,8 +989,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _verticalPanel.setLayout(new javax.swing.BoxLayout(_verticalPanel, javax.swing.BoxLayout.Y_AXIS));
 
         _openIconButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-big.png"))); // NOI18N
-        _openIconButton.setText("Open A Playlist");
-        _openIconButton.setToolTipText("Open A Playlist");
+        _openIconButton.setText("Open a Playlist");
+        _openIconButton.setToolTipText("Open a Playlist");
         _openIconButton.setAlignmentY(0.0F);
         _openIconButton.setFocusable(false);
         _openIconButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -965,8 +1000,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _openIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
         _openIconButton.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         _openIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _openIconButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _openIconButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _openIconButtonActionPerformed1(evt);
             }
         });
@@ -986,8 +1023,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _newIconButton.setMinimumSize(new java.awt.Dimension(220, 180));
         _newIconButton.setPreferredSize(new java.awt.Dimension(220, 180));
         _newIconButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _newIconButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _newIconButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _newIconButtonActionPerformed(evt);
             }
         });
@@ -999,13 +1038,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _uiTabs.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         _uiTabs.setFocusable(false);
-        _uiTabs.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+        _uiTabs.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseReleased(java.awt.event.MouseEvent evt)
+            {
                 _uiTabsMouseReleased(evt);
             }
         });
-        _uiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        _uiTabs.addChangeListener(new javax.swing.event.ChangeListener()
+        {
+            public void stateChanged(javax.swing.event.ChangeEvent evt)
+            {
                 _uiTabsStateChanged(evt);
             }
         });
@@ -1024,8 +1067,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _newPlaylistMenuItem.setMnemonic('N');
         _newPlaylistMenuItem.setText("New Playlist");
         _newPlaylistMenuItem.setToolTipText("Creates a New Playlist");
-        _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _newPlaylistMenuItemActionPerformed(evt);
             }
         });
@@ -1035,8 +1080,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _loadMenuItem.setMnemonic('O');
         _loadMenuItem.setText("Open Playlist");
         _loadMenuItem.setToolTipText("Opens a Playlist");
-        _loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _loadMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 openIconButtonActionPerformed(evt);
             }
         });
@@ -1046,8 +1093,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _closeMenuItem.setMnemonic('C');
         _closeMenuItem.setText("Close");
         _closeMenuItem.setToolTipText("Closes The Current Playlist");
-        _closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _closeMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _closeMenuItemActionPerformed(evt);
             }
         });
@@ -1057,8 +1106,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _closeAllMenuItem.setMnemonic('A');
         _closeAllMenuItem.setText("Close All");
         _closeAllMenuItem.setToolTipText("Closes All Open Playlists");
-        _closeAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _closeAllMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _closeAllMenuItemActionPerformed(evt);
             }
         });
@@ -1067,8 +1118,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         _saveMenuItem.setMnemonic('S');
         _saveMenuItem.setText("Save");
-        _saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _saveMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _saveMenuItemActionPerformed(evt);
             }
         });
@@ -1077,8 +1130,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         _saveAsMenuItem.setMnemonic('V');
         _saveAsMenuItem.setText("Save As");
-        _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _saveAsMenuItemActionPerformed(evt);
             }
         });
@@ -1088,8 +1143,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _miReload.setMnemonic('R');
         _miReload.setText("Reload");
         _miReload.setToolTipText("Reloads The Currently Open Playlist");
-        _miReload.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miReload.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miReloadActionPerformed(evt);
             }
         });
@@ -1102,8 +1159,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _miBatchRepair.setMnemonic('E');
         _miBatchRepair.setText("Exact Matches Repair...");
         _miBatchRepair.setToolTipText("Runs an \"Exact Matches Repair\" on the current list");
-        _miBatchRepair.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miBatchRepair.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onMenuBatchRepairActionPerformed(evt);
             }
         });
@@ -1112,8 +1171,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         _batchRepairWinampMenuItem.setMnemonic('B');
         _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
-        _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _batchRepairWinampMenuItemActionPerformed(evt);
             }
         });
@@ -1123,8 +1184,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _extractPlaylistsMenuItem.setMnemonic('W');
         _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
         _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
-        _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _extractPlaylistsMenuItemActionPerformed(evt);
             }
         });
@@ -1141,8 +1204,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _clearHistoryMenuItem.setMnemonic('H');
         _clearHistoryMenuItem.setText("Clear Playlist History");
         _clearHistoryMenuItem.setToolTipText("Clears the recently opened playlist history");
-        _clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _clearHistoryMenuItemActionPerformed(evt);
             }
         });
@@ -1155,8 +1220,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _appOptionsMenuItem.setMnemonic('p');
         _appOptionsMenuItem.setText("Options...");
         _appOptionsMenuItem.setToolTipText("");
-        _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _appOptionsMenuItemActionPerformed(evt);
             }
         });
@@ -1168,8 +1235,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         _exitMenuItem.setMnemonic('x');
         _exitMenuItem.setText("Exit");
-        _exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _exitMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _exitMenuItemActionPerformed(evt);
             }
         });
@@ -1184,8 +1253,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _helpMenuItem.setMnemonic('H');
         _helpMenuItem.setText("Help");
         _helpMenuItem.setToolTipText("Open listFix() documentation");
-        _helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _helpMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _helpMenuItemActionPerformed(evt);
             }
         });
@@ -1195,8 +1266,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _updateCheckMenuItem.setMnemonic('C');
         _updateCheckMenuItem.setText("Check For Updates");
         _updateCheckMenuItem.setToolTipText("Opens the listFix() download site");
-        _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _updateCheckMenuItemActionPerformed(evt);
             }
         });
@@ -1206,8 +1279,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _aboutMenuItem.setMnemonic('A');
         _aboutMenuItem.setText("About");
         _aboutMenuItem.setToolTipText("Version info and such...");
-        _aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _aboutMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _aboutMenuItemActionPerformed(evt);
             }
         });

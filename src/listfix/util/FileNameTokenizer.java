@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
+import listfix.controller.GUIDriver;
 
 /**
  *
@@ -33,25 +33,17 @@ import java.util.StringTokenizer;
  */
 public class FileNameTokenizer
 {
-	/**
-	 *
-	 */
-	public static final List<String> ignoreList = new ArrayList<String>();
-	/**
-	 *
-	 */
-	public static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";
+	private static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";		
+	public List<String> ignoreList = new ArrayList<>();
 
-	static
+	public FileNameTokenizer()
 	{
-		ignoreList.add("an");
-		ignoreList.add("of");
-		ignoreList.add("the");
-		ignoreList.add("in");
-		ignoreList.add("dsp");
-		ignoreList.add("my");
-		ignoreList.add("and");
-		ignoreList.add("to");
+		String ignoredWords = GUIDriver.getInstance().getAppOptions().getIgnoredSmallWords();
+		StringTokenizer tokenMaker = new StringTokenizer(ignoredWords, " ,;|");
+		while (tokenMaker.hasMoreTokens())
+		{
+			ignoreList.add(tokenMaker.nextToken());
+		}
 	}
 
 	/**
@@ -60,7 +52,7 @@ public class FileNameTokenizer
 	 * @param filename2
 	 * @return
 	 */
-	public static int score(String filename1, String filename2)
+	public int score(String filename1, String filename2)
 	{
 		return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
 	}
@@ -70,7 +62,7 @@ public class FileNameTokenizer
 	 * @param name
 	 * @return
 	 */
-	public static String removeExtensionFromFileName(String name)
+	public String removeExtensionFromFileName(String name)
 	{
 		String result = name;
 		int index = name.lastIndexOf(".");
@@ -86,7 +78,7 @@ public class FileNameTokenizer
 	 * @param name
 	 * @return
 	 */
-	public static String getExtensionFromFileName(String name)
+	public String getExtensionFromFileName(String name)
     {
         int ix = name.lastIndexOf('.');
         if (ix >= 0 && ix < name.length() - 1)
@@ -95,12 +87,12 @@ public class FileNameTokenizer
             return "";
     }
 
-	private static List<String> splitFileName(String fileName)
+	private List<String> splitFileName(String fileName)
 	{
 		fileName = removeExtensionFromFileName(fileName);
 		StringTokenizer tokenMaker = new StringTokenizer(fileName, separators);
 		int tokenCount = tokenMaker.countTokens();
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		String token = "";
 		for (int i = 0; i < tokenCount; i++)
 		{
@@ -113,10 +105,10 @@ public class FileNameTokenizer
 		return result;
 	}
 
-	private static int scoreMatchingTokens(List<String> array1, List<String> array2)
+	private int scoreMatchingTokens(List<String> array1, List<String> array2)
 	{
-		HashMap<String, Integer> array1Counts = new HashMap<String, Integer>();
-		HashMap<String, Integer> array2Counts = new HashMap<String, Integer>();
+		HashMap<String, Integer> array1Counts = new HashMap<>();
+		HashMap<String, Integer> array2Counts = new HashMap<>();
 
 		for (String t : array1)
 		{
