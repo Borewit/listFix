@@ -232,7 +232,7 @@ public class IniFileConverter
 					else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
 					{
 						options.setMaxClosestResults((new Integer(optionValue)).intValue());
-					}
+					}					
 				}
 				line = B1.readLine();
 			}

@@ -70,6 +70,14 @@ public class AppOptionsDialog extends javax.swing.JDialog
 	
 	private FolderChooser _jMediaDirChooser = new FolderChooser();
 
+	private void ApplyOperatingSystemBasedVisibility()
+	{
+		if (!OperatingSystem.isWindows())
+		{
+			_pnlUseUnc.setVisible(false);
+		}
+	}
+
 	private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
 	{
 		private List<Integer> intList = new ArrayList<>();
@@ -133,10 +141,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		initComponents();
 		_chosenFont = opts.getAppFont();
 		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
-		if (!OperatingSystem.isWindows())
-		{
-			_pnlUseUnc.setVisible(false);
-		}
+		ApplyOperatingSystemBasedVisibility();
 		initPlaylistDirectoryFolderChooser();
 	}
 
@@ -296,6 +301,9 @@ public class AppOptionsDialog extends javax.swing.JDialog
         _pnlSmallWords = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         _smallWordsTxtField = new javax.swing.JTextField();
+        _pnlDisableCaseSensitivity = new javax.swing.JPanel();
+        _lblCaseSensitivity = new javax.swing.JLabel();
+        _cbxCaseSensitivity = new javax.swing.JCheckBox();
         buttonPanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -312,7 +320,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        topPanel.setMinimumSize(null);
         topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.Y_AXIS));
 
         optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("General Config"));
@@ -551,6 +558,26 @@ public class AppOptionsDialog extends javax.swing.JDialog
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
         optionsPanel.add(_pnlSmallWords, gridBagConstraints);
 
+        _pnlDisableCaseSensitivity.setMinimumSize(new java.awt.Dimension(165, 20));
+        _pnlDisableCaseSensitivity.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+
+        _lblCaseSensitivity.setText("Exact matches ignore upper/lower case:");
+        _lblCaseSensitivity.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        _lblCaseSensitivity.setMinimumSize(new java.awt.Dimension(111, 20));
+        _lblCaseSensitivity.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        _pnlDisableCaseSensitivity.add(_lblCaseSensitivity);
+
+        _cbxCaseSensitivity.setSelected(_options.getCaseInsensitiveExactMatching());
+        _pnlDisableCaseSensitivity.add(_cbxCaseSensitivity);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+        optionsPanel.add(_pnlDisableCaseSensitivity, gridBagConstraints);
+
         topPanel.add(optionsPanel);
 
         buttonPanel.setMaximumSize(null);
@@ -666,11 +693,14 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		return _options;
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox _cbxCaseSensitivity;
     private javax.swing.JComboBox _cbxMaxClosestMatches;
     private javax.swing.JButton _changeFontButton;
     private javax.swing.JLabel _fontDisplayLabel;
+    private javax.swing.JLabel _lblCaseSensitivity;
     private javax.swing.JPanel _pnRefreshMediaLibraryOnStart;
     private javax.swing.JPanel _pnlAutoLocate;
+    private javax.swing.JPanel _pnlDisableCaseSensitivity;
     private javax.swing.JPanel _pnlListsDir;
     private javax.swing.JPanel _pnlLookAndFeel;
     private javax.swing.JPanel _pnlNumClosestMatches;

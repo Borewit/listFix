@@ -43,6 +43,7 @@ public class AppOptions
 	private Font appFont = new Font("SansSerif", 0, 11);
 	private int maxClosestResults = 20;
 	private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
+	private boolean caseInsensitiveExactMatching = false;
 	
 	// Define option constants
 	public static final String SAVE_RELATIVE_REFERENCES = "SAVE_RELATIVE_REFERENCES";
@@ -55,6 +56,7 @@ public class AppOptions
 	public static final String APP_FONT = "APP_FONT";
 	public static final String MAX_CLOSEST_RESULTS = "MAX_CLOSEST_RESULTS";
 	public static final String IGNORED_SMALL_WORDS = "IGNORED_SMALL_WORDS";
+	public static final String CASE_INSENSITIVE_EXACT_MATCHING =  "CASE_INSENSITIVE_EXACT_MATCHING";
 
 	/**
 	 *
@@ -231,5 +233,21 @@ public class AppOptions
 	public void setIgnoredSmallWords(String ignoredSmallWords)
 	{
 		this.ignoredSmallWords = ignoredSmallWords;
+	}
+
+	/**
+	 * @return the caseInsensitiveExactMatching
+	 */
+	public boolean getCaseInsensitiveExactMatching()
+	{
+		return caseInsensitiveExactMatching;
+	}
+
+	/**
+	 * @param caseInsensitiveExactMatching the caseInsensitiveExactMatching to set
+	 */
+	public void setCaseInsensitiveExactMatching(boolean caseInsensitiveExactMatching)
+	{
+		this.caseInsensitiveExactMatching = caseInsensitiveExactMatching;
 	}
 }

@@ -112,6 +112,10 @@ public class OptionsReader
 							{
 								options.setIgnoredSmallWords(optionValue);
 							}
+							else if (optionName.equalsIgnoreCase(AppOptions.CASE_INSENSITIVE_EXACT_MATCHING))
+							{
+								options.setCaseInsensitiveExactMatching((Boolean.valueOf(optionValue)).booleanValue());
+							}
 						}
 						line = B1.readLine();
 					}

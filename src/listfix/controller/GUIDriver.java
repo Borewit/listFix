@@ -66,7 +66,9 @@ public class GUIDriver
 	public static GUIDriver getInstance()
     {
         if (_instance == null)
+		{
             _instance = new GUIDriver();
+		}
         return _instance;
     }
     private static GUIDriver _instance;

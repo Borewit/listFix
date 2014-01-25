@@ -624,7 +624,8 @@ public class PlaylistEntry implements Cloneable
 	public boolean findNewLocationFromFileList(String[] fileList)
 	{
 		int searchResult = -1;
-		String trimmedFileName = Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? _fileName.trim() : _fileName.trim().toLowerCase();		
+		String trimmedFileName = 
+			Constants.FILE_SYSTEM_IS_CASE_SENSITIVE && !GUIDriver.getInstance().getAppOptions().getCaseInsensitiveExactMatching() ? _fileName.trim() : _fileName.trim().toLowerCase();	
 		String candidateFileName;
 		int lastFileSeparatorIndex;
 		for (int i = 0; i < fileList.length; i++)
@@ -637,7 +638,7 @@ public class PlaylistEntry implements Cloneable
 			if (lastFileSeparatorIndex >= 0)
 			{
 				candidateFileName = fileList[i].substring(lastFileSeparatorIndex + 1);
-				if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? candidateFileName.equals(trimmedFileName) : candidateFileName.toLowerCase().equals(trimmedFileName))
+				if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE && !GUIDriver.getInstance().getAppOptions().getCaseInsensitiveExactMatching() ? candidateFileName.equals(trimmedFileName) : candidateFileName.toLowerCase().equals(trimmedFileName))
 				{
 					searchResult = i;
 					break;
@@ -650,7 +651,7 @@ public class PlaylistEntry implements Cloneable
 				// which would mean including at least one OS-specific file separator character somewhere in the string.  But, the logic below
 				// has served us well for years, so it's a reasonable fallback should this case somehow arise.
 				candidateFileName = fileList[i];
-				if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE ? candidateFileName.endsWith(trimmedFileName) : candidateFileName.toLowerCase().endsWith(trimmedFileName))
+				if (Constants.FILE_SYSTEM_IS_CASE_SENSITIVE && !GUIDriver.getInstance().getAppOptions().getCaseInsensitiveExactMatching() ? candidateFileName.endsWith(trimmedFileName) : candidateFileName.toLowerCase().endsWith(trimmedFileName))
 				{
 					searchResult = i;
 					break;

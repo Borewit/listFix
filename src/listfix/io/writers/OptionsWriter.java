@@ -93,5 +93,6 @@ public class OptionsWriter
 		buffer.append(AppOptions.APP_FONT).append("=").append(FontExtensions.serialize(options.getAppFont())).append(Constants.BR);
 		buffer.append(AppOptions.MAX_CLOSEST_RESULTS).append("=").append(options.getMaxClosestResults()).append(Constants.BR);
 		buffer.append(AppOptions.IGNORED_SMALL_WORDS).append("=").append(options.getIgnoredSmallWords()).append(Constants.BR);
+		buffer.append(AppOptions.CASE_INSENSITIVE_EXACT_MATCHING).append("=").append(options.getCaseInsensitiveExactMatching()).append(Constants.BR);
 	}
 }
