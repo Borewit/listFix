@@ -1096,16 +1096,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		{
 			if (_playlist.isModified())
 			{
-				Object[] options =
-				{
-					"Yes, save.", "No, launch from disk."
-				};
-				int rc = JOptionPane.showOptionDialog(this.getParentFrame(), new JTransparentTextArea("Save the list before launching playback?"), "Save list first?",
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-				if (rc == JOptionPane.YES_OPTION)
-				{
-					savePlaylist();
-				}
+				// this plays all entries if nothing is selected, and plays what the user has in memory
+				playSelectedEntries();
 			}
 			_playlist.play();
 		}
@@ -1235,7 +1227,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		if (_playlist.size() > 0)
 		{
 			int row = _uiTable.getSelectedRow();
-			int modelRow = 0;
+			int modelRow;
+			
 			// search from the selected row (or the beginning of the list)
 			// for the next missing entry, if found, jump to it and bail out.
 			for (int i = (row < 0 ? 0 : row + 1); i < _playlist.size(); i++)
@@ -1247,6 +1240,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					return;
 				}
 			}
+			
 			// if we made it this far, and we didn't search from the beginning
 			// of the list, loop back around...
 			if (row >= 0)
@@ -1281,6 +1275,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		{
 			int row = _uiTable.getSelectedRow();
 			int modelRow = 0;
+			
 			// search from the selected row (or the beginning of the list)
 			// for the next missing entry, if found, jump to it and bail out.
 			for (int i = (row < 0 ? _playlist.size() - 1 : row - 1); i >= 0; i--)
@@ -1292,6 +1287,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					return;
 				}
 			}
+			
 			// if we made it this far, and we didn't search from the end
 			// of the list, loop back around...
 			if (row >= 0)

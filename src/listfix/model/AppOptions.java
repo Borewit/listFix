@@ -22,7 +22,10 @@ package listfix.model;
 
 import java.awt.Font;
 import java.io.File;
+
 import javax.swing.UIManager;
+
+import listfix.io.Constants;
 
 /**
  *
@@ -43,7 +46,7 @@ public class AppOptions
 	private Font appFont = new Font("SansSerif", 0, 11);
 	private int maxClosestResults = 20;
 	private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
-	private boolean caseInsensitiveExactMatching = false;
+	private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
 	
 	// Define option constants
 	public static final String SAVE_RELATIVE_REFERENCES = "SAVE_RELATIVE_REFERENCES";

@@ -76,6 +76,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		{
 			_pnlUseUnc.setVisible(false);
 		}
+		else if (OperatingSystem.isWindows())
+		{
+			_pnlDisableCaseSensitivity.setVisible(false);
+		}
 	}
 
 	private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
@@ -689,6 +693,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			_options.setAppFont(_chosenFont);
 			_options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())).intValue());
 			_options.setIgnoredSmallWords(_smallWordsTxtField.getText());
+			_options.setCaseInsensitiveExactMatching(_cbxCaseSensitivity.isSelected());
 		}
 		return _options;
 	}
