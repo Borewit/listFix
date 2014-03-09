@@ -2792,12 +2792,15 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 
 	private void updatePlaylistDirectoryPanel()
 	{
+            if (_playlistDirectoryTree.getModel().getRoot() != null)
+            {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
 		((DefaultTreeModel)_playlistDirectoryTree.getModel()).setRoot(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
 		addPlaylistPanelModelListener();
 		loadExpansionState(_playlistDirectoryTree, treeStateEnum);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
 	}
 	
 	/**	
