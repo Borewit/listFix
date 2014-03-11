@@ -1344,12 +1344,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		{
 			if (br.isEmpty())
 			{
-				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) you selected."));
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
 			}
 			else
 			{
 				dlg.setLocationRelativeTo(this);
 				dlg.setVisible(true);
+				updatePlaylistDirectoryPanel();
 			}
 		}
 	}
@@ -1383,8 +1384,16 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
 		if (!dlg.getUserCancelled())
 		{
-			dlg.setLocationRelativeTo(this);
-			dlg.setVisible(true);
+			if (br.isEmpty())
+			{
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
+			}
+			else
+			{
+				dlg.setLocationRelativeTo(this);
+				dlg.setVisible(true);
+				updatePlaylistDirectoryPanel();
+			}
 		}
 	}
 
@@ -2203,10 +2212,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
 		if (!dlg.getUserCancelled())
 		{
-			dlg.setLocationRelativeTo(this);
-			dlg.setVisible(true);
-			if (!dlg.getUserCancelled())
+			if (br.isEmpty())
 			{
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
+			}
+			else
+			{
+				dlg.setLocationRelativeTo(this);
+				dlg.setVisible(true);
 				updatePlaylistDirectoryPanel();
 			}
 		}
@@ -2551,8 +2564,15 @@ private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEven
 	BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
 	if (!dlg.getUserCancelled())
 	{
-		dlg.setLocationRelativeTo(this);
-		dlg.setVisible(true);
+		if (br.isEmpty())
+		{
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
+		}
+		else
+		{
+			dlg.setLocationRelativeTo(this);
+			dlg.setVisible(true);
+		}
 	}
 }//GEN-LAST:event__batchRepairWinampMenuItemActionPerformed
 
@@ -2595,10 +2615,16 @@ private void onMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//G
 		BatchExactMatchesResultsDialog repairDlg = new BatchExactMatchesResultsDialog(this, true, br);
 		if (!repairDlg.getUserCancelled())
 		{
-			repairDlg.setLocationRelativeTo(this);
-			repairDlg.setVisible(true);
-
-			updatePlaylistDirectoryPanel();
+			if (br.isEmpty())
+			{
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
+			}
+			else
+			{
+				repairDlg.setLocationRelativeTo(this);
+				repairDlg.setVisible(true);
+				updatePlaylistDirectoryPanel();
+			}
 		}
 	}
 }//GEN-LAST:event_onMenuBatchRepairActionPerformed
