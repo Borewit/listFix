@@ -20,12 +20,15 @@
 
 package listfix.view;
 
+import com.jidesoft.document.DocumentComponent;
+import com.jidesoft.document.DocumentComponentEvent;
+import com.jidesoft.document.DocumentComponentListener;
+import com.jidesoft.document.DocumentPane.TabbedPaneCustomizer;
 import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.DefaultKeyboardFocusManager;
 import java.awt.DisplayMode;
@@ -54,10 +57,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -70,7 +73,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
@@ -92,6 +94,7 @@ import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
+import listfix.exceptions.MediaDirNotFoundException;
 import listfix.io.BrowserLauncher;
 import listfix.io.Constants;
 import listfix.io.FileTreeNodeGenerator;
@@ -108,20 +111,18 @@ import listfix.io.writers.OptionsWriter;
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
-import listfix.model.playlists.Playlist;
 import listfix.model.PlaylistHistory;
+import listfix.model.playlists.Playlist;
 import listfix.util.ArrayFunctions;
-import listfix.util.FileTypeSearch;
 import listfix.util.ExStack;
+import listfix.util.FileTypeSearch;
 import listfix.view.controls.JTransparentTextArea;
-import listfix.view.dialogs.ProgressDialog;
-import listfix.view.dialogs.BatchExactMatchesResultsDialog;
-import listfix.view.dialogs.AppOptionsDialog;
 import listfix.view.controls.PlaylistEditCtrl;
+import listfix.view.dialogs.AppOptionsDialog;
+import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.MultiListBatchClosestMatchResultsDialog;
+import listfix.view.dialogs.ProgressDialog;
 import listfix.view.support.IPlaylistModifiedListener;
-import listfix.view.support.ClosableTabCtrl;
-import listfix.view.support.ICloseableTabManager;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
 
@@ -131,7 +132,7 @@ import org.apache.log4j.Logger;
  *
  * @author jcaron
  */
-public final class GUIScreen extends JFrame implements ICloseableTabManager, DropTargetListener
+public final class GUIScreen extends JFrame implements DropTargetListener
 {
 	private static final long _serialVersionUID = 7691786927987534889L;
 
@@ -154,6 +155,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		splashScreen.setStatusBar("Initializing UI...");
 
 		initComponents();
+		
 		_jM3UChooser = new JFileChooser();
 		_jMediaDirChooser = new FolderChooser();
 		_jSaveFileChooser = new JFileChooser();
@@ -192,33 +194,54 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		// drag-n-drop support for the playlist directory tree
 		_playlistDirectoryTree.setTransferHandler(createPlaylistTreeTransferHandler());
 
-		// Despite not being referenced again, this is need to support opening playlists that are dragged in.
+		// Despite not being referenced again, this is need to support opening playlists that are dragged in?  What voodoo is this?
 		_dropTarget = new DropTarget(this, this);
 
-		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
-		{
-			@Override
-			public void valueChanged(TreeSelectionEvent e)
+		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(
+			new TreeSelectionListener()
 			{
-				boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
-				_btnOpenSelected.setEnabled(hasSelected);
-				_btnBatchExactMatches.setEnabled(hasSelected);
-				_btnBatchClosestMatches.setEnabled(hasSelected);
+				@Override
+				public void valueChanged(TreeSelectionEvent e)
+				{
+					boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
+					_btnOpenSelected.setEnabled(hasSelected);
+					_btnBatchExactMatches.setEnabled(hasSelected);
+					_btnBatchClosestMatches.setEnabled(hasSelected);
+				}
 			}
-		});
+		);
 
 		// addAt popup menu to playlist tree on right-click
 		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
 		
 		addPlaylistPanelModelListener();
 		
+		_documentPane.setGroupsAllowed(false);
+		_documentPane.setFloatingAllowed(false);
+        _documentPane.setTabbedPaneCustomizer(
+			new TabbedPaneCustomizer() 
+			{
+				@Override
+				public void customize(final JideTabbedPane tabbedPane) 
+				{
+					tabbedPane.setShowCloseButton(true);
+					tabbedPane.setUseDefaultShowCloseButtonOnTab(false);
+					tabbedPane.setShowCloseButtonOnTab(true);
+					tabbedPane.setScrollSelectedTabOnWheel(true);
+					tabbedPane.setRightClickSelect(false);
+				}
+			}
+		);
+		
         WindowSaver.getInstance().loadSettings(this);
 
 		// Set the position of the divider in the left split pane.
 		_leftSplitPane.setDividerLocation(.7);
+		
+		updateMenuItemStatuses();
 
 		// JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
-		configureGlobalKeyboardListener();
+		 configureGlobalKeyboardListener();
 	}
 
 	private void addPlaylistPanelModelListener()
@@ -265,31 +288,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			@Override
 			public boolean postProcessKeyEvent(KeyEvent e)
-			{
+			{				
 				// Advance the selected tab on Ctrl-Tab (make sure Shift isn't pressed)
-				if (ctrlTabWasPressed(e))
-				{
-					if (_uiTabs.getSelectedIndex() == _uiTabs.getTabCount() - 1)
-					{
-						_uiTabs.setSelectedIndex(0);
-					}
-					else
-					{
-						_uiTabs.setSelectedIndex(_uiTabs.getSelectedIndex() + 1);
-					}
+				if (ctrlTabWasPressed(e) && _documentPane.getDocumentCount() > 1)
+				{					
+					_documentPane.nextDocument();
 				}
 				
 				// Regress the selected tab on Ctrl-Shift-Tab
-				if (ctrlShiftTabWasPressed(e))
+				if (ctrlShiftTabWasPressed(e) && _documentPane.getDocumentCount() > 1)
 				{
-					if (_uiTabs.getSelectedIndex() == 0)
-					{
-						_uiTabs.setSelectedIndex(_uiTabs.getTabCount() - 1);
-					}
-					else
-					{
-						_uiTabs.setSelectedIndex(_uiTabs.getSelectedIndex() - 1);
-					}
+					_documentPane.prevDocument();
 				}
 				
 				return true;
@@ -297,12 +306,12 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 			private boolean ctrlShiftTabWasPressed(KeyEvent e)
 			{
-				return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0) && _uiTabs.getTabCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
+				return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0) && _documentPane.getDocumentCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
 			}
 
 			private boolean ctrlTabWasPressed(KeyEvent e)
 			{
-				return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) == 0) && _uiTabs.getTabCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
+				return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) == 0) && _documentPane.getDocumentCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
 			}
 		};
 
@@ -425,7 +434,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					String serializedPaths = StringArrayListSerializer.Serialize(paths);					
 					return new StringSelection(serializedPaths);
 				}
-				catch (Exception ex)
+				catch (IOException ex)
 				{
 					_logger.warn(ExStack.toString(ex));
 					return null;
@@ -505,25 +514,24 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             // Ok, get the dropped object and try to figure out what it is
             Transferable tr = dtde.getTransferable();
             DataFlavor[] flavors = tr.getTransferDataFlavors();
-            for (int i = 0; i < flavors.length; i++)
-            {
-                // Check for file lists specifically
-                if (flavors[i].isFlavorJavaFileListType() || flavors[i].isFlavorTextType())
-                {
-                    // Accept the drop...
-                    dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-                    Object data = tr.getTransferData(flavors[i]);
-
-                    if (data instanceof List)
-                    {
-                        // Process the drop, in this case, of file or folder paths from the OS.						
-                        List list = (List) data;
+			for (DataFlavor flavor : flavors)
+			{
+				// Check for file lists specifically
+				if (flavor.isFlavorJavaFileListType() || flavor.isFlavorTextType())
+				{
+					// Accept the drop...
+					dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+					Object data = tr.getTransferData(flavor);
+					if (data instanceof List)
+					{
+						// Process the drop, in this case, of file or folder paths from the OS.
+						List list = (List) data;
 						File tempFile;
-                        for (int j = 0; j < list.size(); j++)
-                        {
-							if (list.get(j) instanceof File)
+						for (Object list1 : list)
+						{
+							if (list1 instanceof File)
 							{
-								tempFile = (File) list.get(j);
+								tempFile = (File) list1;
 								if (Playlist.isPlaylist(tempFile))
 								{
 									openPlaylist(tempFile);
@@ -536,11 +544,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 										openPlaylist(f);
 									}
 								}
-							}                            
-                        }
-                    }
-                    else if (data instanceof InputStreamReader)
-                    {
+							}
+						}
+					}
+					else if (data instanceof InputStreamReader)
+					{
 						try (InputStreamReader list = (InputStreamReader) data; BufferedReader temp = new BufferedReader(list))
 						{
 							String filePath = temp.readLine();
@@ -550,7 +558,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 								filePath = temp.readLine();
 							}
 						}
-                    }
+					}
 					else if (data instanceof String)
 					{
 						// Magically delicious string coming from the playlist panel
@@ -576,12 +584,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 							}
 						}
 					}
-
-                    // If we made it this far, everything worked.
-                    dtde.dropComplete(true);
-                    return;
-                }
-            }
+					// If we made it this far, everything worked.
+					dtde.dropComplete(true);
+					return;
+				}
+			}
             // Hmm, the user must not have dropped a file list
             dtde.rejectDrop();
         }
@@ -676,12 +683,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _openIconButton = new javax.swing.JButton();
         _spacerPanel = new javax.swing.JPanel();
         _newIconButton = new javax.swing.JButton();
-        _uiTabs = new JideTabbedPane();
-        JideTabbedPane temp = (JideTabbedPane)_uiTabs;
-        temp.setTabShape(JideTabbedPane.SHAPE_ROUNDED_VSNET);
-        temp.setColorTheme(JideTabbedPane.COLOR_THEME_VSNET);
-        temp.setScrollSelectedTabOnWheel(true);
-        temp.setRightClickSelect(false);
+        _docTabPanel = new javax.swing.JPanel();
+        _documentPane = new com.jidesoft.document.DocumentPane();
         _mainMenuBar = new javax.swing.JMenuBar();
         _fileMenu = new JideMenu();
         _newPlaylistMenuItem = new javax.swing.JMenuItem();
@@ -690,11 +693,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _closeAllMenuItem = new javax.swing.JMenuItem();
         _saveMenuItem = new javax.swing.JMenuItem();
         _saveAsMenuItem = new javax.swing.JMenuItem();
+        _saveAllMenuItem = new javax.swing.JMenuItem();
         _miReload = new javax.swing.JMenuItem();
-        jSeparator6 = new javax.swing.JSeparator();
-        _miBatchRepair = new javax.swing.JMenuItem();
-        _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
-        _extractPlaylistsMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         recentMenu = new javax.swing.JMenu();
         _clearHistoryMenuItem = new javax.swing.JMenuItem();
@@ -702,6 +702,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _appOptionsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         _exitMenuItem = new javax.swing.JMenuItem();
+        _repairMenu = new JideMenu();
+        _miBatchRepair = new javax.swing.JMenuItem();
+        _miExactMatchRepairOpenPlaylists = new javax.swing.JMenuItem();
+        _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
+        _extractPlaylistsMenuItem = new javax.swing.JMenuItem();
         _helpMenu = new JideMenu();
         _helpMenuItem = new javax.swing.JMenuItem();
         _updateCheckMenuItem = new javax.swing.JMenuItem();
@@ -1035,23 +1040,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
         _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
-        _uiTabs.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        _uiTabs.setFocusable(false);
-        _uiTabs.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseReleased(java.awt.event.MouseEvent evt)
-            {
-                _uiTabsMouseReleased(evt);
-            }
-        });
-        _uiTabs.addChangeListener(new javax.swing.event.ChangeListener()
-        {
-            public void stateChanged(javax.swing.event.ChangeEvent evt)
-            {
-                _uiTabsStateChanged(evt);
-            }
-        });
-        _playlistPanel.add(_uiTabs, "_uiTabs");
+        _docTabPanel.setLayout(new java.awt.BorderLayout());
+        _docTabPanel.add(_documentPane, java.awt.BorderLayout.CENTER);
+
+        _playlistPanel.add(_docTabPanel, "card5");
 
         _splitPane.setRightComponent(_playlistPanel);
 
@@ -1138,6 +1130,19 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         });
         _fileMenu.add(_saveAsMenuItem);
 
+        _saveAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _saveAllMenuItem.setMnemonic('S');
+        _saveAllMenuItem.setText("Save All");
+        _saveAllMenuItem.setToolTipText("");
+        _saveAllMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _saveAllMenuItemActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(_saveAllMenuItem);
+
         _miReload.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         _miReload.setMnemonic('R');
         _miReload.setText("Reload");
@@ -1150,47 +1155,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
             }
         });
         _fileMenu.add(_miReload);
-
-        jSeparator6.setForeground(new java.awt.Color(102, 102, 153));
-        _fileMenu.add(jSeparator6);
-
-        _miBatchRepair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
-        _miBatchRepair.setMnemonic('E');
-        _miBatchRepair.setText("Exact Matches Repair...");
-        _miBatchRepair.setToolTipText("Runs an \"Exact Matches Repair\" on the current list");
-        _miBatchRepair.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                onMenuBatchRepairActionPerformed(evt);
-            }
-        });
-        _fileMenu.add(_miBatchRepair);
-
-        _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        _batchRepairWinampMenuItem.setMnemonic('B');
-        _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
-        _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                _batchRepairWinampMenuItemActionPerformed(evt);
-            }
-        });
-        _fileMenu.add(_batchRepairWinampMenuItem);
-
-        _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
-        _extractPlaylistsMenuItem.setMnemonic('W');
-        _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
-        _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
-        _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                _extractPlaylistsMenuItemActionPerformed(evt);
-            }
-        });
-        _fileMenu.add(_extractPlaylistsMenuItem);
 
         jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
         _fileMenu.add(jSeparator3);
@@ -1244,6 +1208,60 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
         _fileMenu.add(_exitMenuItem);
 
         _mainMenuBar.add(_fileMenu);
+
+        _repairMenu.setText("Repair");
+
+        _miBatchRepair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
+        _miBatchRepair.setMnemonic('E');
+        _miBatchRepair.setText("Exact Matches Repair...");
+        _miBatchRepair.setToolTipText("Runs an \"Exact Matches Repair\" on lists chosen from the file system");
+        _miBatchRepair.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                onMenuBatchRepairActionPerformed(evt);
+            }
+        });
+        _repairMenu.add(_miBatchRepair);
+
+        _miExactMatchRepairOpenPlaylists.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _miExactMatchRepairOpenPlaylists.setText("Repair Currently Open Playlists");
+        _miExactMatchRepairOpenPlaylists.setToolTipText("Runs an \"Exact Matches Repair\" on all open playlists");
+        _miExactMatchRepairOpenPlaylists.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(evt);
+            }
+        });
+        _repairMenu.add(_miExactMatchRepairOpenPlaylists);
+
+        _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _batchRepairWinampMenuItem.setMnemonic('B');
+        _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
+        _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _batchRepairWinampMenuItemActionPerformed(evt);
+            }
+        });
+        _repairMenu.add(_batchRepairWinampMenuItem);
+
+        _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        _extractPlaylistsMenuItem.setMnemonic('W');
+        _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
+        _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
+        _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _extractPlaylistsMenuItemActionPerformed(evt);
+            }
+        });
+        _repairMenu.add(_extractPlaylistsMenuItem);
+
+        _mainMenuBar.add(_repairMenu);
 
         _helpMenu.setMnemonic('H');
         _helpMenu.setText("Help");
@@ -1487,87 +1505,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			return;
 		}
 
-		_jSaveFileChooser.setSelectedFile(_currentPlaylist.getFile());
-		int rc = _jSaveFileChooser.showSaveDialog(this);
-		if (rc == JFileChooser.APPROVE_OPTION)
-		{
-			try
-			{
-				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-				File playlist = _jSaveFileChooser.getSelectedFile();
-
-				// prompt for confirmation if the file already exists...
-				if (playlist.exists())
-				{
-					int result = JOptionPane.showConfirmDialog(this, new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists:", JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.NO_OPTION)
-					{
-						return;
-					}
-				}
-
-				// make sure file has correct extension
-				String normalizedName = playlist.getName().trim().toLowerCase();
-				if (!Playlist.isPlaylist(playlist)
-					|| (!normalizedName.endsWith(".m3u") 
-						&& !normalizedName.endsWith(".m3u8") 
-						&& !normalizedName.endsWith(".pls") 
-						&& !normalizedName.endsWith(".wpl") 
-						&& !normalizedName.endsWith(".xspf")
-						&& !normalizedName.endsWith(".xml")))
-				{
-					if (_currentPlaylist.isUtfFormat())
-					{
-						playlist = new File(playlist.getPath() + ".m3u8");
-					}
-					else
-					{
-						playlist = new File(playlist.getPath() + ".m3u");
-					}
-				}
-
-				final File finalPlaylistFile = playlist;
-				String oldPath = _currentPlaylist.getFile().getCanonicalPath();
-				ProgressWorker worker = new ProgressWorker<Void, Void>()
-				{
-					@Override
-					protected Void doInBackground() throws Exception
-					{
-						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-						_currentPlaylist.saveAs(finalPlaylistFile, saveRelative, this);
-						return null;
-					}
-				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
-				pd.setVisible(true);
-
-				worker.get();
-				int tabIx = getPlaylistTabIx(_currentPlaylist);
-				String newPath = finalPlaylistFile.getCanonicalPath();
-				_uiTabs.setToolTipTextAt(tabIx, newPath);
-				_pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
-				_pathToEditorMap.remove(oldPath);
-				updatePlaylistDirectoryPanel();
-
-				// update playlist history
-				_guiDriver.getHistory().add(newPath);
-				(new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
-				updateRecentMenu();
-			}
-			catch (CancellationException exception)
-			{
-			}
-			catch (Exception e)
-			{
-				_logger.error(ExStack.toString(e));
-				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
-			}
-			finally
-			{
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}
-		}
+		handleSavePlaylistAs(_currentPlaylist);
 	}//GEN-LAST:event__saveAsMenuItemActionPerformed
 
 	private void openIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_openIconButtonActionPerformed
@@ -1594,7 +1532,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		{
 			if (list.getFile().equals(file))
 			{
-				_uiTabs.setSelectedComponent(_playlistToEditorMap.get(list));
+				String path = list.getFile().getPath();
+				try
+				{
+					path = list.getFile().getCanonicalPath();
+				}
+				catch (IOException e)
+				{
+					
+				}
+				_documentPane.setActiveDocument(path);
+				// _uiTabs.setSelectedComponent(_playlistToEditorMap.get(list));
 				return;
 			}
 		}
@@ -1630,8 +1578,8 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			libraryFiles = null;
 		}
 
-		int tabIx = getPlaylistTabIx(path);
-		if (tabIx == -1)
+		DocumentComponent tempComp = _documentPane.getDocument(path);
+		if (tempComp == null)
 		{
 			ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
 			{
@@ -1658,39 +1606,15 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					{
 						return;
 					}
-					catch (Exception ex)
+					catch (InterruptedException | ExecutionException ex)
 					{
 						_logger.error(ExStack.toString(ex));
 						JOptionPane.showMessageDialog(GUIScreen.this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
 							"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-
-					PlaylistEditCtrl editor = new PlaylistEditCtrl();
-					editor.setPlaylist(list);
-					list.addModifiedListener(new IPlaylistModifiedListener()
-					{
-						@Override
-						public void playlistModified(Playlist list)
-						{
-							updateTabTitleForPlaylist(list);
-						}
-					});
-
-					// Add the tab to the tabbed pane
-					String title = list.getFilename();
-					_uiTabs.addTab(title, null, editor, path);
-
-					// Set the tab we just added as selected
-					int ix = _uiTabs.getTabCount() - 1;
-					_uiTabs.setSelectedIndex(ix);
-
-					// Update the editor maps
-					_pathToEditorMap.put(path, editor);
-					_playlistToEditorMap.put(list, editor);
-
-					// addAt custom tab controls
-					_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
+					
+					openNewTabForPlaylist(list);
 
 					// update playlist history
 					PlaylistHistory history = _guiDriver.getHistory();
@@ -1698,24 +1622,135 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					(new FileWriter()).writeMruPlaylists(history);
 
 					updateRecentMenu();
-
-					// update title and status bar if list was modified during loading (due to fix on load option)
-					if (list.isModified())
-					{
-						refreshStatusLabel(list);
-						updateTabTitleForPlaylist(list);
-					}
-
-					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
 				}
+
+
 			};
 			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0,70) : file.getName()) + "'...", false);
 			pd.setVisible(true);
 		}
 		else
 		{
-			_uiTabs.setSelectedIndex(tabIx);
+			_documentPane.setActiveDocument(path);
 		}
+	}
+	
+	private void openNewTabForPlaylist(Playlist list)
+	{
+		PlaylistEditCtrl editor = new PlaylistEditCtrl();
+		editor.setPlaylist(list);
+
+		// Add the tab to the tabbed pane
+		String title = list.getFilename();
+		String path = list.getFile().getPath();
+		try 
+		{
+			path = list.getFile().getCanonicalPath();
+		}
+		catch (IOException e)
+		{
+			
+		}
+		
+		final DocumentComponent tempComp = CreateDocumentComponentForEditor(editor, path, title);
+		
+		_documentPane.openDocument(tempComp);
+		_documentPane.setActiveDocument(tempComp.getName());
+		
+		// Tie the DocumentComponent and the Playlist in the editor together via listeners, so the former can update when the latter is modified
+		list.addModifiedListener(
+			new IPlaylistModifiedListener()
+			{
+				@Override
+				public void playlistModified(Playlist list)
+				{
+					updateTabTitleForPlaylist(list, tempComp);
+				}
+			}
+		);
+
+		// Update the editor maps
+		_pathToEditorMap.put(path, editor);
+		_playlistToEditorMap.put(list, editor);		
+
+		// update title and status bar if list was modified during loading (due to fix on load option)
+		if (list.isModified())
+		{
+			refreshStatusLabel(list);
+			updateTabTitleForPlaylist(list, tempComp);
+		}
+		
+		if (_documentPane.getDocumentCount() == 1)
+		{
+			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "card5");
+		}
+	}
+
+	private DocumentComponent CreateDocumentComponentForEditor(PlaylistEditCtrl editor, String path, String title)
+	{
+		final DocumentComponent tempComp = new DocumentComponent(editor, path, title);
+		tempComp.addDocumentComponentListener(new DocumentComponentListener()
+		{
+			@Override
+			public void documentComponentOpened(DocumentComponentEvent e)
+			{
+				updateMenuItemStatuses();
+			}
+			
+			@Override
+			public void documentComponentClosing(DocumentComponentEvent e)
+			{
+				tryCloseTab(e.getDocumentComponent());
+			}
+
+			@Override
+			public void documentComponentClosed(DocumentComponentEvent e)
+			{
+				if (_documentPane.getDocumentCount() == 0)
+				{
+					((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
+					currentTabChanged();
+					updateMenuItemStatuses();
+				}
+			}
+
+			@Override
+			public void documentComponentMoving(DocumentComponentEvent e)
+			{
+				
+			}
+
+			@Override
+			public void documentComponentMoved(DocumentComponentEvent e)
+			{
+				
+			}
+
+			@Override
+			public void documentComponentActivated(DocumentComponentEvent e)
+			{
+				currentTabChanged();
+			}
+
+			@Override
+			public void documentComponentDeactivated(DocumentComponentEvent e)
+			{
+				
+			}
+
+			@Override
+			public void documentComponentDocked(DocumentComponentEvent e)
+			{
+				
+			}
+
+			@Override
+			public void documentComponentFloated(DocumentComponentEvent e)
+			{
+				
+			}
+		});
+		return tempComp;
 	}
 	
 	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<>();
@@ -1735,10 +1770,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	 */
 	public void updateCurrentTab(Playlist list)
 	{
-		PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _uiTabs.getSelectedComponent();
-		int spot = _uiTabs.getSelectedIndex();
-
-		((ClosableTabCtrl) _uiTabs.getTabComponentAt(spot)).setText(list.getFilename());
+		PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _documentPane.getActiveDocument().getComponent();
+		
+		_documentPane.getActiveDocument().setTitle(list.getFilename());
 		oldEditor.setPlaylist(list, true);
 
 		// update playlist history
@@ -1754,6 +1788,15 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		(new FileWriter()).writeMruPlaylists(history);
 
 		updateRecentMenu();
+	}
+	
+		/**
+	 *
+	 * @param list
+	 */
+	public void openPlaylist(Playlist list)
+	{
+		openNewTabForPlaylist(list);
 	}
 
 	/**
@@ -1771,9 +1814,9 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		else
 		{
-			for (int i = 0; i < files.length; i++)
+			for (String file : files)
 			{
-				JMenuItem temp = new JMenuItem(files[i]);
+				JMenuItem temp = new JMenuItem(file);
 				temp.addActionListener(new java.awt.event.ActionListener()
 				{
 					@Override
@@ -1794,7 +1837,167 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		SwingUtilities.updateComponentTreeUI(_jMediaDirChooser);
 		SwingUtilities.updateComponentTreeUI(_jSaveFileChooser);
 		SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
-		SwingUtilities.updateComponentTreeUI(_uiTabs);
+		SwingUtilities.updateComponentTreeUI(_documentPane);
+	}
+
+	private Playlist getPlaylistFromDocumentComponent(DocumentComponent ctrl)
+	{
+		return ((PlaylistEditCtrl)ctrl.getComponent()).getPlaylist();
+	}
+
+	private void handlePlaylistSave(final Playlist list) throws HeadlessException
+	{
+		if (list.isNew())
+		{
+			handleSavePlaylistAs(list);
+		}
+		else
+		{
+			try
+			{
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				ProgressWorker worker = new ProgressWorker<Void, Void>()
+				{
+					@Override
+					protected Void doInBackground() throws Exception
+					{
+						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+						list.save(saveRelative, this);
+						return null;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+				pd.setVisible(true);
+				worker.get();
+			}
+			catch (InterruptedException | ExecutionException ex)
+			{
+				_logger.error(ExStack.toString(ex));
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+			}
+			finally
+			{
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
+	}
+
+	private void handleSavePlaylistAs(Playlist list)
+	{
+		_jSaveFileChooser.setSelectedFile(list.getFile());
+		int rc = _jSaveFileChooser.showSaveDialog(this);
+		if (rc == JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+				File playlist = _jSaveFileChooser.getSelectedFile();
+
+				// prompt for confirmation if the file already exists...
+				if (playlist.exists())
+				{
+					int result = JOptionPane.showConfirmDialog(this, new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists:", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.NO_OPTION)
+					{
+						return;
+					}
+				}
+
+				// make sure file has correct extension
+				String normalizedName = playlist.getName().trim().toLowerCase();
+				if (!Playlist.isPlaylist(playlist)
+					|| (!normalizedName.endsWith(".m3u") 
+						&& !normalizedName.endsWith(".m3u8") 
+						&& !normalizedName.endsWith(".pls") 
+						&& !normalizedName.endsWith(".wpl") 
+						&& !normalizedName.endsWith(".xspf")
+						&& !normalizedName.endsWith(".xml")))
+				{
+					if (list.isUtfFormat())
+					{
+						playlist = new File(playlist.getPath() + ".m3u8");
+					}
+					else
+					{
+						playlist = new File(playlist.getPath() + ".m3u");
+					}
+				}
+
+				final File finalPlaylistFile = playlist;
+				final Playlist finalList = list;
+				String oldPath = list.getFile().getCanonicalPath();
+				ProgressWorker worker = new ProgressWorker<Void, Void>()
+				{
+					@Override
+					protected Void doInBackground() throws Exception
+					{
+						boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+						finalList.saveAs(finalPlaylistFile, saveRelative, this);
+						return null;
+					}
+				};
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+				pd.setVisible(true);
+
+				worker.get();
+				// int tabIx = getPlaylistTabIx(_currentPlaylist);
+				String newPath = finalPlaylistFile.getCanonicalPath();
+				// _uiTabs.setToolTipTextAt(tabIx, newPath);
+				_documentPane.getActiveDocument().setTooltip(newPath);
+				
+				_pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
+				_pathToEditorMap.remove(oldPath);
+				updatePlaylistDirectoryPanel();
+
+				// update playlist history
+				_guiDriver.getHistory().add(newPath);
+				(new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
+				updateRecentMenu();
+			}
+			catch (CancellationException exception)
+			{
+			}
+			catch (HeadlessException | IOException | InterruptedException | ExecutionException e)
+			{
+				_logger.error(ExStack.toString(e));
+				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+			}
+			finally
+			{
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
+	}
+
+	private void updateMenuItemStatuses()
+	{
+		if (_documentPane.getDocumentCount() > 0)
+		{
+			_saveAllMenuItem.setEnabled(true);
+			_saveAsMenuItem.setEnabled(true);
+			_saveMenuItem.setEnabled(true);
+			
+			_closeAllMenuItem.setEnabled(true);
+			_closeMenuItem.setEnabled(true);
+			
+			_miReload.setEnabled(true);
+			
+			_miExactMatchRepairOpenPlaylists.setEnabled(true);
+		}
+		else
+		{
+			_saveAllMenuItem.setEnabled(false);
+			_saveAsMenuItem.setEnabled(false);
+			_saveMenuItem.setEnabled(false);
+			
+			_closeAllMenuItem.setEnabled(false);
+			_closeMenuItem.setEnabled(false);
+			
+			_miReload.setEnabled(false);
+			
+			_miExactMatchRepairOpenPlaylists.setEnabled(false);
+		}
 	}
 
 	class TButton extends JButton implements UIResource
@@ -1884,37 +2087,10 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		}
 		private boolean _allowBoundsSetting = true;
 	}
-
-	private int getPlaylistTabIx(String path)
+	
+	private void currentTabChanged()
 	{
-		PlaylistEditCtrl ctrl = _pathToEditorMap.get(path);
-		if (ctrl != null)
-		{
-			return _uiTabs.indexOfComponent(ctrl);
-		}
-		else
-		{
-			return -1;
-		}
-	}
-
-	private int getPlaylistTabIx(Playlist list)
-	{
-		PlaylistEditCtrl ctrl = _playlistToEditorMap.get(list);
-		if (ctrl != null)
-		{
-			return _uiTabs.indexOfComponent(ctrl);
-		}
-		else
-		{
-			return -1;
-		}
-	}
-
-	private void onSelectedTabChanged()
-	{
-		int tabIx = _uiTabs.getSelectedIndex();
-		Playlist list = getPlaylistFromTab(tabIx);
+		Playlist list = _documentPane.getActiveDocument() != null ? ((PlaylistEditCtrl)_documentPane.getActiveDocument().getComponent()).getPlaylist() : null;
 		if (list == _currentPlaylist)
 		{
 			return;
@@ -1930,27 +2106,17 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		if (_currentPlaylist == null)
 		{
 			// clear status label
-			statusLabel.setText("No list loaded");
+			statusLabel.setText("No list(s) loaded");
 		}
 		else
 		{
 			// set status label
 			refreshStatusLabel(_currentPlaylist);
-			updateTabTitleForPlaylist(_currentPlaylist);
+			// updateTabTitleForPlaylist(_currentPlaylist);
 
 			// addAt listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
 		}
-	}
-
-	private Playlist getPlaylistFromTab(int tabIx)
-	{
-		if (tabIx < 0)
-		{
-			return null;
-		}
-		Component comp = _uiTabs.getComponentAt(tabIx);
-		return comp != null ? ((PlaylistEditCtrl) _uiTabs.getComponentAt(tabIx)).getPlaylist() : null;
 	}
 
 	// Setup the listener for changes to the current playlist.  Essentially turns around and calls onPlaylistModified().
@@ -1976,7 +2142,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 		if (list != null)
 		{
 			String fmt = "Currently Open: %s%s     Number of entries in list: %d     Number of lost entries: %d     Number of URLs: %d     Number of open playlists: %d";
-			String txt = String.format(fmt, list.getFilename(), list.isModified() ? "*" : "", list.size(), list.getMissingCount(), list.getUrlCount(), _uiTabs.getTabCount());
+			String txt = String.format(fmt, list.getFilename(), list.isModified() ? "*" : "", list.size(), list.getMissingCount(), list.getUrlCount(), _documentPane.getDocumentCount());
 			statusLabel.setText(txt);
 		}
 		else
@@ -1984,38 +2150,32 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			statusLabel.setText("No list(s) loaded");
 		}
 	}
-
-	private void updateTabTitleForPlaylist(Playlist list)
+	
+	private void updateTabTitleForPlaylist(Playlist list, DocumentComponent comp)
 	{
-		int tabIx = getPlaylistTabIx(list);
-		if (tabIx != -1)
+		String title;
+		if (list.isModified())
 		{
-			String title;
-			if (list.isModified())
-			{
-				title = list.getFilename() + "*";
-			}
-			else
-			{
-				title = list.getFilename();
-			}
-			// ((DnDTabbedPane)_uiTabs).setTitleAt(tabIx, title);
-			((ClosableTabCtrl) _uiTabs.getTabComponentAt(tabIx)).setText(title);
+			title = list.getFilename() + "*";
 		}
-	}
+		else
+		{
+			title = list.getFilename();
+		}
+		// ((DnDTabbedPane)_uiTabs).setTitleAt(tabIx, title);
+		comp.setTitle(title);	
+	}	
 
 	/**
 	 *
 	 * @return
 	 */
-	@Override
 	public boolean tryCloseAllTabs()
 	{
 		boolean result = true;
-		while (_uiTabs.getTabCount() > 0 && result)
+		while (_documentPane.getDocumentCount() > 0 && result)
 		{
-			_uiTabs.setSelectedIndex(0);
-			result = result && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
+			result = result && tryCloseTab(_documentPane.getActiveDocument());
 		}
 		return result;
 	}
@@ -2023,7 +2183,6 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	/**
 	 *
 	 */
-	@Override
 	public void repairAllTabs()
 	{
 		List<Playlist> files = new ArrayList<>();
@@ -2055,26 +2214,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 
 	/**
 	 *
-	 * @param tabIx
+	 * @param comp
 	 */
-	@Override
-	public void closeAllOtherTabs(int tabIx)
+	public void closeAllOtherTabs(DocumentComponent comp)
 	{
-		if (_uiTabs.getTabCount() > 1)
-		{
-			Component comp = _uiTabs.getComponentAt(tabIx);
-			boolean success = true;
-			while (success && !_uiTabs.getComponentAt(0).equals(comp))
-			{
-				_uiTabs.setSelectedIndex(0);
-				success = success && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(0));
-			}
-			while (_uiTabs.getTabCount() > 1 && success)
-			{
-				_uiTabs.setSelectedIndex(1);
-				success = success && tryCloseTab((ClosableTabCtrl)_uiTabs.getTabComponentAt(1));
-			}
-		}
+		_documentPane.closeAllButThis(comp.getName());
 	}
 
 	/**
@@ -2082,15 +2226,13 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 	 * @param ctrl
 	 * @return
 	 */
-	@Override
-	public boolean tryCloseTab(ClosableTabCtrl ctrl)
-	{
-		int tabIx = _uiTabs.indexOfTabComponent(ctrl);
-		if (tabIx == -1)
+	public boolean tryCloseTab(DocumentComponent ctrl)
+	{		
+		if (!_documentPane.isDocumentOpened(ctrl.getName()))
 		{
 			return false;
 		}
-		final Playlist list = getPlaylistFromTab(tabIx);
+		final Playlist list = getPlaylistFromDocumentComponent(ctrl);
 		if (list.isModified())
 		{
 			Object[] options =
@@ -2119,7 +2261,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					boolean savedOk = worker.get();
 					if (savedOk)
 					{
-						closeTab(list, tabIx);
+						cleanupOnTabClose(list);
 						return true;
 					}
 				}
@@ -2136,24 +2278,24 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 			else if (rc == JOptionPane.NO_OPTION)
 			{
-				closeTab(list, tabIx);
+				cleanupOnTabClose(list);
 				return true;
 			}
 			else
 			{
+				ctrl.setAllowClosing(false);
 				return false;
 			}
 		}
 		else
 		{
-			closeTab(list, tabIx);
+			cleanupOnTabClose(list);
 			return true;
 		}
 	}
 
-	private void closeTab(Playlist list, int tabIx)
+	private void cleanupOnTabClose(Playlist list)
 	{
-		_uiTabs.remove(tabIx);
 		_playlistToEditorMap.remove(list);
 
 		try
@@ -2161,16 +2303,11 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			String path = list.getFile().getCanonicalPath();
 			_pathToEditorMap.remove(path);
 		}
-		catch (Exception ex)
+		catch (IOException ex)
 		{
 			// user doesn't need this detail, we clean up after ourselves...
 			// JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
-		}
-
-		if (_uiTabs.getTabCount() <= 0)
-		{
-			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
 		}
 	}
 
@@ -2219,7 +2356,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					}
 				}
 				final String dir = mediaDir.getPath();
-				if (_guiDriver.getMediaDirs() != null && mediaDir != null)
+				if (_guiDriver.getMediaDirs() != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
 					if (ArrayFunctions.ContainsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.fileSystemIsCaseSensitive))
@@ -2277,7 +2414,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 					_logger.error(ExStack.toString(ex));
 				}
 			}
-			catch (Exception e)
+			catch (HeadlessException e)
 			{
 				JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, media directory could not be added."));
 				_logger.error(ExStack.toString(e));
@@ -2306,7 +2443,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
-		catch (Exception e)
+		catch (MediaDirNotFoundException e)
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library."));
@@ -2324,7 +2461,7 @@ public final class GUIScreen extends JFrame implements ICloseableTabManager, Dro
 			_mediaLibraryList.setListData(_guiDriver.removeMediaDir((String) _mediaLibraryList.getModel().getElementAt(index)));
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
-		catch (Exception e)
+		catch (MediaDirNotFoundException e)
 		{
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library."));
@@ -2489,45 +2626,12 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 
 private void _saveMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveMenuItemActionPerformed
 {//GEN-HEADEREND:event__saveMenuItemActionPerformed
-
 	if (_currentPlaylist == null)
 	{
 		return;
 	}
 
-	if (_currentPlaylist.isNew())
-	{
-		_saveAsMenuItemActionPerformed(evt);
-	}
-	else
-	{
-		try
-		{
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			ProgressWorker worker = new ProgressWorker<Void, Void>()
-			{
-				@Override
-				protected Void doInBackground() throws Exception
-				{
-					boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-					_currentPlaylist.save(saveRelative, this);
-					return null;
-				}
-			};
-			ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
-			pd.setVisible(true);
-			worker.get();
-		}
-		catch (InterruptedException | ExecutionException ex)
-		{
-			_logger.error(ExStack.toString(ex));
-			JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
-		}
-		finally
-		{
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-	}
+	handlePlaylistSave(_currentPlaylist);
 }//GEN-LAST:event__saveMenuItemActionPerformed
 
 private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__newIconButtonActionPerformed
@@ -2535,34 +2639,33 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	try
 	{
 		_currentPlaylist = new Playlist();
-		// _currentPlaylist.addModifiedListener(this);
 		String path = _currentPlaylist.getFile().getCanonicalPath();
 		PlaylistEditCtrl editor = new PlaylistEditCtrl();
 		editor.setPlaylist(_currentPlaylist);
 		String title = _currentPlaylist.getFilename();
-		_uiTabs.addTab(title, null, editor, path);
-
-		int ix = _uiTabs.getTabCount() - 1;
-		_uiTabs.setSelectedIndex(ix);
+		final DocumentComponent tempComp = CreateDocumentComponentForEditor(editor, path, title);
+		_documentPane.openDocument(tempComp);
+		_documentPane.setActiveDocument(tempComp.getName());
+		
 		_pathToEditorMap.put(path, editor);
 		_playlistToEditorMap.put(_currentPlaylist, editor);
 
-		// addAt custom tab controls
-		_uiTabs.setTabComponentAt(ix, new ClosableTabCtrl(GUIScreen.this, _uiTabs, title));
 		refreshStatusLabel(_currentPlaylist);
 		_currentPlaylist.addModifiedListener(_playlistListener);
 
 		_currentPlaylist.addModifiedListener(new IPlaylistModifiedListener()
 		{
-
 			@Override
 			public void playlistModified(Playlist list)
 			{
-				updateTabTitleForPlaylist(list);
+				updateTabTitleForPlaylist(list, tempComp);
 			}
 		});
 
-		((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_uiTabs");
+		if (_documentPane.getDocumentCount() == 1)
+		{
+			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "card5");
+		}
 	}
 	catch (IOException ex)
 	{
@@ -2615,9 +2718,9 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 
 private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__closeMenuItemActionPerformed
 {//GEN-HEADEREND:event__closeMenuItemActionPerformed
-	if (_uiTabs.getComponents().length > 0 && _uiTabs.getSelectedIndex() >= 0)
+	if (_documentPane.getDocumentCount() > 0 && _documentPane.getActiveDocument() != null)
 	{
-		this.tryCloseTab((ClosableTabCtrl) _uiTabs.getTabComponentAt(_uiTabs.getSelectedIndex()));
+		_documentPane.closeDocument(_documentPane.getActiveDocumentName());
 	}
 }//GEN-LAST:event__closeMenuItemActionPerformed
 
@@ -2648,7 +2751,7 @@ private void _btnBatchExactMatchesActionPerformed(java.awt.event.ActionEvent evt
 
 private void _closeAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__closeAllMenuItemActionPerformed
 {//GEN-HEADEREND:event__closeAllMenuItemActionPerformed
-	tryCloseAllTabs();
+	_documentPane.closeAll();
 }//GEN-LAST:event__closeAllMenuItemActionPerformed
 
 private void _miRefreshDirectoryTreeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miRefreshDirectoryTreeActionPerformed
@@ -2666,46 +2769,11 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 	runClosestMatchesSearchOnSelectedLists();
 }//GEN-LAST:event__miClosestMatchesSearchActionPerformed
 
-private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event__uiTabsStateChanged
-{//GEN-HEADEREND:event__uiTabsStateChanged
-	onSelectedTabChanged();
-}//GEN-LAST:event__uiTabsStateChanged
-
-	private void _uiTabsMouseReleased(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTabsMouseReleased
-	{//GEN-HEADEREND:event__uiTabsMouseReleased
-		// Middle click case
-		if (evt.getModifiers() == MouseEvent.BUTTON2_MASK)
-		{
-			Point tabPt = evt.getPoint();
-			JTabbedPane src = (JTabbedPane) evt.getSource();
-			int tabIndex = src.indexAtLocation(tabPt.x, tabPt.y);
-			Component tab = _uiTabs.getTabComponentAt(tabIndex);
-
-			if (tab instanceof ClosableTabCtrl)
-			{
-				((ClosableTabCtrl) tab).closeMe();
-			}
-		}
-		// Right-click case
-		else if (evt.getModifiers() == MouseEvent.BUTTON3_MASK)
-		{
-			Point tabPt = evt.getPoint();
-			JTabbedPane src = (JTabbedPane) evt.getSource();
-			int tabIndex = src.indexAtLocation(tabPt.x, tabPt.y);
-			Component tab = _uiTabs.getTabComponentAt(tabIndex);
-
-			if (tab instanceof ClosableTabCtrl)
-			{
-				((ClosableTabCtrl) tab).showRightClickMenu(tabPt.x, tabPt.y);
-			}
-		}
-	}//GEN-LAST:event__uiTabsMouseReleased
-
 	private void _miReloadActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miReloadActionPerformed
 	{//GEN-HEADEREND:event__miReloadActionPerformed
-		if (_uiTabs.getComponents().length > 0 && _uiTabs.getSelectedIndex() >= 0)
+		if (_documentPane.getActiveDocument() != null)
 		{
-			((PlaylistEditCtrl) _uiTabs.getComponentAt(_uiTabs.getSelectedIndex())).reloadPlaylist();
+			((PlaylistEditCtrl) _documentPane.getActiveDocument().getComponent()).reloadPlaylist();
 		}
 	}//GEN-LAST:event__miReloadActionPerformed
 
@@ -2732,6 +2800,21 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 			_btnOpenSelectedActionPerformed(null);
 		}
 	}//GEN-LAST:event__playlistDirectoryTreeKeyPressed
+
+    private void _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+    {//GEN-HEADEREND:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+        repairAllTabs();
+    }//GEN-LAST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+
+    private void _saveAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveAllMenuItemActionPerformed
+    {//GEN-HEADEREND:event__saveAllMenuItemActionPerformed
+        for (int i = 0; i < _documentPane.getDocumentCount(); i++)
+		{
+			PlaylistEditCtrl ctrl = (PlaylistEditCtrl)_documentPane.getDocumentAt(i).getComponent();
+			Playlist list = ctrl.getPlaylist();
+			handlePlaylistSave(list);
+		}
+    }//GEN-LAST:event__saveAllMenuItemActionPerformed
 
 	/**
 	 *
@@ -2858,6 +2941,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
 	 */
 	public static void main(String args[])
 	{
+		com.jidesoft.utils.Lm.verifyLicense("Jeremy Caron", "listFix()", "AMu.5dFy1Fuos0hs:l2.GQ9AzUy2GgB2");
 		AppOptions tempOptions = OptionsReader.read();
 		InitApplicationFont(tempOptions.getAppFont());
 		GUIScreen mainWindow = new GUIScreen();
@@ -2901,6 +2985,8 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
     private javax.swing.JMenuItem _clearHistoryMenuItem;
     private javax.swing.JMenuItem _closeAllMenuItem;
     private javax.swing.JMenuItem _closeMenuItem;
+    private javax.swing.JPanel _docTabPanel;
+    private com.jidesoft.document.DocumentPane _documentPane;
     private javax.swing.JMenuItem _exitMenuItem;
     private javax.swing.JMenuItem _extractPlaylistsMenuItem;
     private javax.swing.JMenu _fileMenu;
@@ -2917,6 +3003,7 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
     private javax.swing.JMenuItem _miBatchRepair;
     private javax.swing.JMenuItem _miClosestMatchesSearch;
     private javax.swing.JMenuItem _miDeletePlaylist;
+    private javax.swing.JMenuItem _miExactMatchRepairOpenPlaylists;
     private javax.swing.JMenuItem _miExactMatchesSearch;
     private javax.swing.JMenuItem _miOpenSelectedPlaylists;
     private javax.swing.JMenuItem _miRefreshDirectoryTree;
@@ -2932,19 +3019,19 @@ private void _uiTabsStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:e
     private javax.swing.JPanel _playlistsDirectoryButtonPanel;
     private javax.swing.JButton _refreshMediaDirsButton;
     private javax.swing.JButton _removeMediaDirButton;
+    private javax.swing.JMenu _repairMenu;
+    private javax.swing.JMenuItem _saveAllMenuItem;
     private javax.swing.JMenuItem _saveAsMenuItem;
     private javax.swing.JMenuItem _saveMenuItem;
     private javax.swing.JPanel _spacerPanel;
     private javax.swing.JSplitPane _splitPane;
     private javax.swing.JPanel _statusPanel;
     private javax.swing.JScrollPane _treeScrollPane;
-    private javax.swing.JTabbedPane _uiTabs;
     private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JPanel _verticalPanel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSeparator jSeparator6;
     private javax.swing.JMenu recentMenu;
     private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables

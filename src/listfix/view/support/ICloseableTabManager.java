@@ -19,6 +19,8 @@
 
 package listfix.view.support;
 
+import com.jidesoft.document.DocumentComponent;
+
 /**
  *
  * @author jcaron
@@ -30,7 +32,7 @@ public interface ICloseableTabManager
 	 * @param ctrl
 	 * @return
 	 */
-	boolean tryCloseTab(ClosableTabCtrl ctrl);
+	boolean tryCloseTab(DocumentComponent ctrl);
 
 	/**
 	 *
@@ -42,7 +44,7 @@ public interface ICloseableTabManager
 	 *
 	 * @param tabIx
 	 */
-	void closeAllOtherTabs(int tabIx);
+	void closeAllOtherTabs(DocumentComponent ctrl);
 
 	/**
 	 *

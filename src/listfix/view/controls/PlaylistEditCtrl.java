@@ -706,7 +706,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	 */
 	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         _playlistEntryRightClickMenu = new javax.swing.JPopupMenu();
         _miEditFilename = new javax.swing.JMenuItem();
@@ -717,6 +718,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _miRemoveDups = new javax.swing.JMenuItem();
         _miRemoveMissing = new javax.swing.JMenuItem();
         _miCopySelectedFiles = new javax.swing.JMenuItem();
+        _miNewPlaylistFromSelected = new javax.swing.JMenuItem();
         _uiToolbar = new javax.swing.JToolBar();
         _btnSave = new javax.swing.JButton();
         _btnReload = new javax.swing.JButton();
@@ -738,16 +740,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable = createTable();
 
         _miEditFilename.setText("Edit Filename");
-        _miEditFilename.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miEditFilename.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onMenuEditFilenameActionPerformed(evt);
             }
         });
         _playlistEntryRightClickMenu.add(_miEditFilename);
 
         _miReplace.setText("Replace Selected Entry");
-        _miReplace.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miReplace.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onMenuReplaceSelectedEntry(evt);
             }
         });
@@ -755,8 +761,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _playlistEntryRightClickMenu.add(jSeparator3);
 
         _miFindClosest.setText("Find Closest Matches");
-        _miFindClosest.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miFindClosest.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onMenuFindClosestActionPerformed(evt);
             }
         });
@@ -764,29 +772,45 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _playlistEntryRightClickMenu.add(jSeparator4);
 
         _miRemoveDups.setText("Remove Duplicates");
-        _miRemoveDups.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miRemoveDups.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onMenuRemoveDuplicatesActionPerformed(evt);
             }
         });
         _playlistEntryRightClickMenu.add(_miRemoveDups);
 
         _miRemoveMissing.setText("Remove Missing");
-        _miRemoveMissing.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miRemoveMissing.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onMenuRemoveMissingActionPerformed(evt);
             }
         });
         _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
-        _miCopySelectedFiles.setText("Copy Selected Files To...");
+        _miCopySelectedFiles.setText("Copy Selected Items To...");
         _miCopySelectedFiles.setToolTipText("");
-        _miCopySelectedFiles.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _miCopySelectedFiles.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _miCopySelectedFilesActionPerformed(evt);
             }
         });
         _playlistEntryRightClickMenu.add(_miCopySelectedFiles);
+
+        _miNewPlaylistFromSelected.setText("Create New Playlist with Selected Items...");
+        _miNewPlaylistFromSelected.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _miNewPlaylistFromSelectedActionPerformed(evt);
+            }
+        });
+        _playlistEntryRightClickMenu.add(_miNewPlaylistFromSelected);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -802,8 +826,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnSave.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnSave.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnSave.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnSaveActionPerformed(evt);
             }
         });
@@ -818,8 +844,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnReload.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnReload.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnReload.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnReload.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        _btnReload.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
                 _btnReloadMouseClicked(evt);
             }
         });
@@ -833,8 +861,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnAdd.setMaximumSize(new java.awt.Dimension(31, 31));
         _btnAdd.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnAdd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnAdd.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnAddActionPerformed(evt);
             }
         });
@@ -847,8 +877,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnDelete.setMaximumSize(new java.awt.Dimension(31, 31));
         _btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnDelete.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnDeleteActionPerformed(evt);
             }
         });
@@ -864,8 +896,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnUp.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnUp.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnUp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnUp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnUp.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnUpActionPerformed(evt);
             }
         });
@@ -880,8 +914,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnDown.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnDown.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnDown.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnDown.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnDown.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnDownActionPerformed(evt);
             }
         });
@@ -894,8 +930,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnInvert.setMaximumSize(new java.awt.Dimension(31, 31));
         _btnInvert.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnInvert.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnInvert.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnInvert.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnInvertActionPerformed(evt);
             }
         });
@@ -910,8 +948,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnReorder.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnReorder.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnReorder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnReorder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnReorder.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnReorderActionPerformed(evt);
             }
         });
@@ -927,8 +967,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnMagicFix.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnMagicFix.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnMagicFix.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnMagicFix.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnMagicFix.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnMagicFixonBtnLocateActionPerformed(evt);
             }
         });
@@ -943,8 +985,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnLocate.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnLocate.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnLocate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnLocate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnLocate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnLocateActionPerformed(evt);
             }
         });
@@ -959,8 +1003,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnPlay.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnPlay.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnPlayActionPerformed(evt);
             }
         });
@@ -976,8 +1022,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnPrevMissing.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnPrevMissing.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnPrevMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnPrevMissing.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnPrevMissing.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnPrevMissingActionPerformed(evt);
             }
         });
@@ -992,8 +1040,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _btnNextMissing.setMinimumSize(new java.awt.Dimension(31, 31));
         _btnNextMissing.setPreferredSize(new java.awt.Dimension(31, 31));
         _btnNextMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        _btnNextMissing.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _btnNextMissing.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 _btnNextMissingActionPerformed(evt);
             }
         });
@@ -1011,13 +1061,17 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         _uiTable.setRowHeight(20);
         _uiTable.getTableHeader().setReorderingAllowed(false);
-        _uiTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        _uiTable.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mousePressed(java.awt.event.MouseEvent evt)
+            {
                 _uiTableMousePressed(evt);
             }
         });
-        _uiTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        _uiTable.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyPressed(java.awt.event.KeyEvent evt)
+            {
                 _uiTableKeyPressed(evt);
             }
         });
@@ -1099,7 +1153,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				// this plays all entries if nothing is selected, and plays what the user has in memory
 				playSelectedEntries();
 			}
-			_playlist.play();
+			else
+			{
+				_playlist.play();
+			}
 		}
     }//GEN-LAST:event_onBtnPlayActionPerformed
 
@@ -1366,6 +1423,31 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}//GEN-LAST:event__miCopySelectedFilesActionPerformed
 
+    private void _miNewPlaylistFromSelectedActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miNewPlaylistFromSelectedActionPerformed
+    {//GEN-HEADEREND:event__miNewPlaylistFromSelectedActionPerformed
+        if (getParentFrame() instanceof GUIScreen)
+		{
+			List<Integer> rowList = new ArrayList<>();
+			int[] uiRows = _uiTable.getSelectedRows();
+			for (int x : uiRows)
+			{
+				rowList.add(_uiTable.convertRowIndexToModel(x));
+			}
+			int[] rows = ArrayFunctions.integerListToArray(rowList);
+			try
+			{
+				// Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
+				Playlist sublist = new Playlist();
+				sublist.addAllAt(0, _playlist.getSublist(rows).getEntries());
+				((GUIScreen) getParentFrame()).openPlaylist(sublist);
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}		
+    }//GEN-LAST:event__miNewPlaylistFromSelectedActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnAdd;
     private javax.swing.JButton _btnDelete;
@@ -1383,6 +1465,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     private javax.swing.JMenuItem _miCopySelectedFiles;
     private javax.swing.JMenuItem _miEditFilename;
     private javax.swing.JMenuItem _miFindClosest;
+    private javax.swing.JMenuItem _miNewPlaylistFromSelected;
     private javax.swing.JMenuItem _miRemoveDups;
     private javax.swing.JMenuItem _miRemoveMissing;
     private javax.swing.JMenuItem _miReplace;

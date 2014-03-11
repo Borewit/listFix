@@ -144,7 +144,7 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 
 	private void closeAllOtherTabsMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeAllOtherTabsMenuItemActionPerformed
 	{//GEN-HEADEREND:event_closeAllOtherTabsMenuItemActionPerformed
-		_tabMgr.closeAllOtherTabs(getTabIx());
+		// _tabMgr.closeAllOtherTabs(getTabIx());
 	}//GEN-LAST:event_closeAllOtherTabsMenuItemActionPerformed
 	
 	/**
@@ -152,7 +152,7 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 	 */
 	public void closeMe()
 	{
-		_tabMgr.tryCloseTab(this);
+		// _tabMgr.tryCloseTab(this);
 	}
 	
 	/**
@@ -262,10 +262,10 @@ public class ClosableTabCtrl extends javax.swing.JPanel
 
         public void actionPerformed(ActionEvent e)
         {
-            int tabIx = getTabIx();
-            if (tabIx != -1)
-                _tabMgr.tryCloseTab(ClosableTabCtrl.this);
-                //_tabPane.remove(tabIx);
+//            int tabIx = getTabIx();
+//            if (tabIx != -1)
+//                // _tabMgr.tryCloseTab(ClosableTabCtrl.this);
+//                //_tabPane.remove(tabIx);
         }
 
         //we don't want to update UI for this button
