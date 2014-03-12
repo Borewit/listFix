@@ -46,8 +46,28 @@ import org.apache.log4j.Logger;
 public class WinampHelper
 {
 	private static final String HOME_PATH = System.getenv("APPDATA");
-	private static final String WINAMP_PATH = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
+	private static final String WINAMP_PATH1 = HOME_PATH + "\\Winamp\\Plugins\\ml\\playlists\\";
+	private static final String WINAMP_PATH2 = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
 	private static final Logger _logger = Logger.getLogger(WinampHelper.class);
+	
+	private static String WINAMP_PATH = "";
+	
+	static
+	{
+		File tester = new File(WINAMP_PATH1);
+		if (tester.exists())
+		{
+			WINAMP_PATH = WINAMP_PATH1;
+		}
+		else
+		{
+			tester = new File(WINAMP_PATH2);
+			if (tester.exists())
+			{
+				WINAMP_PATH = WINAMP_PATH2;
+			}
+		}			
+	}
 
 	/**
 	 * Generates an exact match batch repair for the cryptically named playlists in Winamp.
@@ -68,7 +88,7 @@ public class WinampHelper
 			}
 			return br;
 		}
-		catch (Exception ex)
+		catch (JAXBException ex)
 		{
 			_logger.error(ExStack.toString(ex));
 			return null;
@@ -112,7 +132,7 @@ public class WinampHelper
 	 */
 	public static boolean isWinampInstalled()
 	{
-		return OperatingSystem.isWindows() && (new File(WINAMP_PATH)).exists();
+		return OperatingSystem.isWindows() && !WINAMP_PATH.isEmpty();
 	}
 
 	private static List<listfix.model.playlists.winamp.generated.Playlist> getWinampPlaylists() throws JAXBException

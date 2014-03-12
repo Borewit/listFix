@@ -16,6 +16,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
+ *//*
+ * listFix() - Fix Broken Playlists!
+ * Copyright (C) 2001-2012 Jeremy Caron
+ *
+ * This file is part of listFix().
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
 package listfix.view;
@@ -27,7 +45,6 @@ import com.jidesoft.document.DocumentPane.TabbedPaneCustomizer;
 import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.DefaultKeyboardFocusManager;
@@ -65,8 +82,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -91,7 +108,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
-
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
 import listfix.exceptions.MediaDirNotFoundException;
@@ -123,9 +139,9 @@ import listfix.view.dialogs.BatchExactMatchesResultsDialog;
 import listfix.view.dialogs.MultiListBatchClosestMatchResultsDialog;
 import listfix.view.dialogs.ProgressDialog;
 import listfix.view.support.IPlaylistModifiedListener;
+import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -276,7 +292,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	
 	private void recheckStatusOfOpenPlaylists()
 	{
-		for (Playlist list : _playlistToEditorMap.keySet())
+		for (Playlist list : _openPlaylists)
 		{
 			list.updateModifiedStatus();
 		}
@@ -1043,7 +1059,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _docTabPanel.setLayout(new java.awt.BorderLayout());
         _docTabPanel.add(_documentPane, java.awt.BorderLayout.CENTER);
 
-        _playlistPanel.add(_docTabPanel, "card5");
+        _playlistPanel.add(_docTabPanel, "_docTabPanel");
 
         _splitPane.setRightComponent(_playlistPanel);
 
@@ -1537,7 +1553,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	private void openPlaylist(final File file)
 	{
 		// do nothing if the file is already open.
-		for (Playlist list : _playlistToEditorMap.keySet())
+		for (Playlist list : _openPlaylists)
 		{
 			if (list.getFile().equals(file))
 			{
@@ -1551,7 +1567,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 					
 				}
 				_documentPane.setActiveDocument(path);
-				// _uiTabs.setSelectedComponent(_playlistToEditorMap.get(list));
+				// _uiTabs.setSelectedComponent(_openPlaylists.get(list));
 				return;
 			}
 		}
@@ -1644,7 +1660,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 	}
 	
-	private void openNewTabForPlaylist(Playlist list)
+	public void openNewTabForPlaylist(Playlist list)
 	{
 		PlaylistEditCtrl editor = new PlaylistEditCtrl();
 		editor.setPlaylist(list);
@@ -1674,13 +1690,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				public void playlistModified(Playlist list)
 				{
 					updateTabTitleForPlaylist(list, tempComp);
+					tempComp.setIcon(getIconForPlaylist(list));
 				}
 			}
 		);
 
-		// Update the editor maps
-		_pathToEditorMap.put(path, editor);
-		_playlistToEditorMap.put(list, editor);		
+		// Update the list of open playlists
+		_openPlaylists.add(list);		
 
 		// update title and status bar if list was modified during loading (due to fix on load option)
 		if (list.isModified())
@@ -1691,13 +1707,15 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		
 		if (_documentPane.getDocumentCount() == 1)
 		{
-			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "card5");
+			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_docTabPanel");
 		}
 	}
 
 	private DocumentComponent CreateDocumentComponentForEditor(PlaylistEditCtrl editor, String path, String title)
 	{
-		final DocumentComponent tempComp = new DocumentComponent(editor, path, title);
+		ImageIcon icon;
+		icon = getIconForPlaylist(editor.getPlaylist());
+		final DocumentComponent tempComp = new DocumentComponent(editor, path, title, icon);
 		tempComp.addDocumentComponentListener(new DocumentComponentListener()
 		{
 			@Override
@@ -1761,9 +1779,32 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		});
 		return tempComp;
 	}
+
+	private ImageIcon getIconForPlaylist(Playlist list)
+	{
+		ImageIcon icon;
+		int missing = list.getMissingCount();
+		if (missing > 0)
+		{
+			icon = ImageIcons.IMG_MISSING;
+		}
+		else
+		{
+			if (list.getFixedCount() > 0)
+			{
+				icon = ImageIcons.IMG_FIXED;
+			}
+			else
+			{
+				icon = ImageIcons.IMG_FOUND;
+			}
+		}
+		return icon;
+	}
 	
 	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<>();
-	Map<Playlist, PlaylistEditCtrl> _playlistToEditorMap = new HashMap<>();
+	List<Playlist> _openPlaylists = new ArrayList<>();
+	
 	static
 	{
 		Color highlight = UIManager.getColor("TabbedPane.highlight");
@@ -1799,15 +1840,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		updateRecentMenu();
 	}
 	
-		/**
-	 *
-	 * @param list
-	 */
-	public void openPlaylist(Playlist list)
-	{
-		openNewTabForPlaylist(list);
-	}
-
 	/**
 	 *
 	 */
@@ -1955,8 +1987,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				// _uiTabs.setToolTipTextAt(tabIx, newPath);
 				_documentPane.getActiveDocument().setTooltip(newPath);
 				
-				_pathToEditorMap.put(newPath, _pathToEditorMap.get(oldPath));
-				_pathToEditorMap.remove(oldPath);
 				updatePlaylistDirectoryPanel();
 
 				// update playlist history
@@ -2195,7 +2225,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	public void repairAllTabs()
 	{
 		List<Playlist> files = new ArrayList<>();
-		for (Playlist list : _playlistToEditorMap.keySet())
+		for (Playlist list : _openPlaylists)
 		{
 			files.add(list);
 		}
@@ -2309,29 +2339,15 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 	private void cleanupOnTabClose(Playlist list)
 	{
-		_playlistToEditorMap.remove(list);
-
-		try
-		{
-			String path = list.getFile().getCanonicalPath();
-			_pathToEditorMap.remove(path);
-		}
-		catch (IOException ex)
-		{
-			// user doesn't need this detail, we clean up after ourselves...
-			// JOptionPane.showMessageDialog(this, ex, "Close Playlist Error (ignoring)", JOptionPane.ERROR_MESSAGE);
-			_logger.error(ExStack.toString(ex));
-		}
+		_openPlaylists.remove(list);
 	}
 
 	private void confirmCloseApp()
 	{
-		Set<Playlist> lists = _playlistToEditorMap.keySet();
-		for (Playlist list : lists)
+		for (Playlist list : _openPlaylists)
 		{
 			if (list.isModified())
 			{
-
 				Object[] options =
 				{
 					"Discard Changes and Exit", "Cancel"
@@ -2673,8 +2689,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		_documentPane.openDocument(tempComp);
 		_documentPane.setActiveDocument(tempComp.getName());
 		
-		_pathToEditorMap.put(path, editor);
-		_playlistToEditorMap.put(_currentPlaylist, editor);
+		_openPlaylists.add(_currentPlaylist);
 
 		refreshStatusLabel(_currentPlaylist);
 		_currentPlaylist.addModifiedListener(_playlistListener);
@@ -2685,12 +2700,13 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 			public void playlistModified(Playlist list)
 			{
 				updateTabTitleForPlaylist(list, tempComp);
+				tempComp.setIcon(getIconForPlaylist(list));
 			}
 		});
 
 		if (_documentPane.getDocumentCount() == 1)
 		{
-			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "card5");
+			((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_docTabPanel");
 		}
 	}
 	catch (IOException ex)
@@ -2836,8 +2852,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
     {//GEN-HEADEREND:event__saveAllMenuItemActionPerformed
         for (int i = 0; i < _documentPane.getDocumentCount(); i++)
 		{
-			PlaylistEditCtrl ctrl = (PlaylistEditCtrl)_documentPane.getDocumentAt(i).getComponent();
-			Playlist list = ctrl.getPlaylist();
+			Playlist list = getPlaylistFromDocumentComponent(_documentPane.getDocumentAt(i));
 			handlePlaylistSave(list);
 		}
     }//GEN-LAST:event__saveAllMenuItemActionPerformed

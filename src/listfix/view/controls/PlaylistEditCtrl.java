@@ -1435,7 +1435,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				// Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
 				Playlist sublist = new Playlist();
 				sublist.addAllAt(0, _playlist.getSublist(rows).getEntries());
-				((GUIScreen) getParentFrame()).openPlaylist(sublist);
+				((GUIScreen) getParentFrame()).openNewTabForPlaylist(sublist);
 			}
 			catch (Exception e)
 			{

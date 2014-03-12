@@ -875,7 +875,7 @@
             <Container class="javax.swing.JPanel" name="_docTabPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-                  <CardConstraints cardName="card5"/>
+                  <CardConstraints cardName="_docTabPanel"/>
                 </Constraint>
               </Constraints>
 

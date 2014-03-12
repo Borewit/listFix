@@ -42,7 +42,7 @@ public interface ICloseableTabManager
 
 	/**
 	 *
-	 * @param tabIx
+	 * @param ctrl
 	 */
 	void closeAllOtherTabs(DocumentComponent ctrl);
 
