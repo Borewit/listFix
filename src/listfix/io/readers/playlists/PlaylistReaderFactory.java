@@ -40,7 +40,7 @@ public class PlaylistReaderFactory
 	 */
 	public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
 	{
-		PlaylistType type = Playlist.determinePlaylistType(inputFile);
+		PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
 		if (type == PlaylistType.M3U)
 		{
 			return new M3UReader(inputFile);

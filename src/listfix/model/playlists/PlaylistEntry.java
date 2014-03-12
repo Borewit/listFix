@@ -473,7 +473,7 @@ public class PlaylistEntry implements Cloneable
 		return isFound() || _thisFile.exists();
 	}
 
-	private void recheckFoundStatus()
+	public void recheckFoundStatus()
 	{
 		if (_thisFile.isFile() && _thisFile.exists())
 		{
@@ -657,8 +657,8 @@ public class PlaylistEntry implements Cloneable
 		if (searchResult >= 0)
 		{
 			this.setFile(new File(fileList[searchResult]));
-			_status = PlaylistEntryStatus.Found;
-			_isFixed = true;
+			_status = this.getFile().exists() ? PlaylistEntryStatus.Found : PlaylistEntryStatus.Missing;
+			_isFixed = _status == PlaylistEntryStatus.Found;
 			return true;
 		}
 		return false;

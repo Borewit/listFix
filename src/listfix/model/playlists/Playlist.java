@@ -488,9 +488,8 @@ public class Playlist
 		_missingCount = 0;
 		_fixedCount = 0;
 
-		for (int ix = 0; ix < _entries.size(); ix++)
+		for (PlaylistEntry entry : _entries)
 		{
-			PlaylistEntry entry = _entries.get(ix);
 			boolean entryIsUrl = entry.isURL();
 			if (entryIsUrl)
 			{
@@ -967,9 +966,14 @@ public class Playlist
 			if (item.getSelectedIx() >= 0)
 			{
 				int ix = item.getEntryIx();
-				fixed.add(ix);
 				_entries.set(ix, item.getSelectedMatch().getPlaylistFile());
-				_entries.get(ix).markFixedIfFound();
+				PlaylistEntry tempEntry = _entries.get(ix);
+				tempEntry.recheckFoundStatus();
+				tempEntry.markFixedIfFound();
+				if (tempEntry.isFixed())
+				{
+					fixed.add(ix);
+				}
 			}
 		}
 
@@ -1181,7 +1185,7 @@ public class Playlist
 	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws Exception
 	{
 		_file = destination;
-		_type = determinePlaylistType(destination);
+		_type = determinePlaylistTypeFromExtension(destination);
 		if (_type == PlaylistType.PLS)
 		{
 			// apparently winamp shits itself if PLS files are saved in UTF-8 (who knew...)
@@ -1256,7 +1260,7 @@ public class Playlist
 	 */
 	public static boolean isPlaylist(File input)
 	{
-		return determinePlaylistType(input) != PlaylistType.UNKNOWN;
+		return determinePlaylistTypeFromExtension(input) != PlaylistType.UNKNOWN;
 	}
 
 	/**
@@ -1264,7 +1268,7 @@ public class Playlist
 	 * @param input
 	 * @return
 	 */
-	public static PlaylistType determinePlaylistType(File input)
+	public static PlaylistType determinePlaylistTypeFromExtension(File input)
 	{
 		if (input != null)
 		{

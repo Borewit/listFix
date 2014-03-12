@@ -33,11 +33,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.NumberFormat;
@@ -47,7 +45,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
@@ -72,7 +69,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
-import listfix.io.Base64Coder;
 import listfix.io.FileUtils;
 import listfix.io.PlaylistScanner;
 import listfix.io.StringArrayListSerializer;
@@ -466,7 +462,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			// do nothing, the user cancelled
 			return;
 		}
-		catch (Exception ex)
+		catch (InterruptedException | ExecutionException ex)
 		{
 			_logger.error(ExStack.toString(ex));
 			JOptionPane.showMessageDialog(this.getParentFrame(), ex);
