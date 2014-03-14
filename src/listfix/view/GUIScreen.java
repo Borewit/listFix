@@ -38,6 +38,10 @@
 
 package listfix.view;
 
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.theme.DarkStar;
+import com.jgoodies.looks.plastic.theme.LightGray;
+import com.jgoodies.looks.plastic.theme.SkyBlue;
 import com.jidesoft.document.DocumentComponent;
 import com.jidesoft.document.DocumentComponentEvent;
 import com.jidesoft.document.DocumentComponentListener;
@@ -651,8 +655,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			}
 			updateRecentMenu();
 			setApplicationFont(options.getAppFont());
-			this.setLookAndFeel(options.getLookAndFeel());
-			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			setLookAndFeel(options.getLookAndFeel());
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
@@ -1678,6 +1682,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 		
 		final DocumentComponent tempComp = CreateDocumentComponentForEditor(editor, path, title);
+		tempComp.setTooltip(list.getFile().getPath());
 		
 		_documentPane.openDocument(tempComp);
 		_documentPane.setActiveDocument(tempComp.getName());
@@ -1691,6 +1696,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				{
 					updateTabTitleForPlaylist(list, tempComp);
 					tempComp.setIcon(getIconForPlaylist(list));
+					tempComp.setTooltip(list.getFile().getPath());
 				}
 			}
 		);
@@ -1727,7 +1733,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			@Override
 			public void documentComponentClosing(DocumentComponentEvent e)
 			{
-				tryCloseTab(e.getDocumentComponent());
+				e.getDocumentComponent().setAllowClosing(tryCloseTab(e.getDocumentComponent()));
 			}
 
 			@Override
@@ -1923,7 +1929,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 	}
 
-	private void handleSavePlaylistAs(Playlist list)
+	private boolean handleSavePlaylistAs(Playlist list)
 	{
 		_jSaveFileChooser.setSelectedFile(list.getFile());
 		int rc = _jSaveFileChooser.showSaveDialog(this);
@@ -1941,7 +1947,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 					int result = JOptionPane.showConfirmDialog(this, new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists:", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.NO_OPTION)
 					{
-						return;
+						return false;
 					}
 				}
 
@@ -1993,20 +1999,24 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				_guiDriver.getHistory().add(newPath);
 				(new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
 				updateRecentMenu();
+				return true;
 			}
 			catch (CancellationException exception)
 			{
+				return false;
 			}
 			catch (HeadlessException | IOException | InterruptedException | ExecutionException e)
 			{
 				_logger.error(ExStack.toString(e));
 				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+				return false;
 			}
 			finally
 			{
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
+		return false;
 	}
 
 	private void updateMenuItemStatuses()
@@ -2038,94 +2048,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			_miExactMatchRepairOpenPlaylists.setEnabled(false);
 		}
 	}
-
-	class TButton extends JButton implements UIResource
-	{
-		public TButton(Icon icon)
-		{
-			super(icon);
-
-			setContentAreaFilled(false);
-			setFocusable(false);
-			setBorder(_normalBorder);
-			setBorderPainted(false);
-
-			createMouseListener();
-			createOpenActionListener();
-		}
-
-		public TButton(String text, Icon icon)
-		{
-			super(text, icon);
-
-			setFocusable(false);
-			setToolTipText(text);
-			setAlignmentY(0.0F);
-			setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-			setMargin(new java.awt.Insets(4, 10, 4, 10));
-
-			createOpenActionListener();
-		}
-
-		private void createMouseListener()
-		{
-			addMouseListener(new MouseAdapter()
-			{
-				@Override
-				public void mouseEntered(MouseEvent e)
-				{
-					setBorderPainted(true);
-				}
-
-				@Override
-				public void mouseExited(MouseEvent e)
-				{
-					setBorderPainted(false);
-				}
-
-				@Override
-				public void mousePressed(MouseEvent e)
-				{
-					setBorder(_pressedBorder);
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent e)
-				{
-					setBorder(_normalBorder);
-				}
-			});
-		}
-
-		private void createOpenActionListener()
-		{
-			addActionListener(new java.awt.event.ActionListener()
-			{
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent evt)
-				{
-					openIconButtonActionPerformed(evt);
-				}
-			});
-		}
-
-		public void setForcedBounds(int x, int y, int width, int height)
-		{
-			_allowBoundsSetting = true;
-			setBounds(x, y, width, height);
-			_allowBoundsSetting = false;
-		}
-
-		@Override
-		public void setBounds(int x, int y, int width, int height)
-		{
-			if (_allowBoundsSetting)
-			{
-				super.setBounds(x, y, width, height);
-			}
-		}
-		private boolean _allowBoundsSetting = true;
-	}
 	
 	private void currentTabChanged()
 	{
@@ -2142,18 +2064,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 
 		_currentPlaylist = list;
-		if (_currentPlaylist == null)
+		
+		refreshStatusLabel(_currentPlaylist);
+		if (_currentPlaylist != null)
 		{
-			// clear status label
-			statusLabel.setText("No list(s) loaded");
-		}
-		else
-		{
-			// set status label
-			refreshStatusLabel(_currentPlaylist);
-			// updateTabTitleForPlaylist(_currentPlaylist);
-
-			// addAt listeners to current playlist
 			_currentPlaylist.addModifiedListener(_playlistListener);
 		}
 	}
@@ -2280,11 +2194,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		{
 			Object[] options =
 			{
-				"Save", "Don't Save", "Cancel"
+				"Save", "Save As", "Don't Save", "Cancel"
 			};
 			int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("This playlist has been modified. Do you want to save the changes?"), "Confirm Close",
-				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
-			if (rc == JOptionPane.YES_OPTION)
+				JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+			
+			if (rc == 0)
 			{
 				ProgressWorker<Boolean, Void> worker = new ProgressWorker<Boolean, Void>()
 				{
@@ -2319,14 +2234,17 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 				return false;
 			}
-			else if (rc == JOptionPane.NO_OPTION)
+			else if (rc == 1)
+			{
+				return handleSavePlaylistAs(list);
+			}
+			else if (rc == 2)
 			{
 				cleanupOnTabClose(list);
 				return true;
 			}
 			else
-			{
-				ctrl.setAllowClosing(false);
+			{				
 				return false;
 			}
 		}
@@ -2701,6 +2619,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 			{
 				updateTabTitleForPlaylist(list, tempComp);
 				tempComp.setIcon(getIconForPlaylist(list));
+				tempComp.setTooltip(list.getFile().getPath());
 			}
 		});
 
@@ -2916,36 +2835,36 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 
 	private void updatePlaylistDirectoryPanel()
 	{
-            if (_playlistDirectoryTree.getModel().getRoot() != null)
-            {
-		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
-		((DefaultTreeModel)_playlistDirectoryTree.getModel()).setRoot(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
-		addPlaylistPanelModelListener();
-		loadExpansionState(_playlistDirectoryTree, treeStateEnum);
-		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
+		if (_playlistDirectoryTree.getModel().getRoot() != null)
+		{
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
+			((DefaultTreeModel) _playlistDirectoryTree.getModel()).setRoot(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
+			addPlaylistPanelModelListener();
+			loadExpansionState(_playlistDirectoryTree, treeStateEnum);
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
 	}
-	
-	/**	
-	 * Save the expansion state of a tree.	
-	 *	
-	 * @param tree	
-	 * @return expanded tree path as Enumeration	
+
+	/**
+	 * Save the expansion state of a tree.
+	 *
+	 * @param tree
+	 * @return expanded tree path as Enumeration
 	 */
 	private Enumeration saveExpansionState(JTree tree)
 	{
 		return tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
 	}
 
-	/**	
-	 * Restore the expansion state of a JTree.	
-	 *	
-	 * @param tree	
-	 * @param enumeration an Enumeration of expansion state. You can get it using {@link #saveExpansionState(javax.swing.JTree)}.	
+	/**
+	 * Restore the expansion state of a JTree.
+	 *
+	 * @param tree
+	 * @param enumeration an Enumeration of expansion state. You can get it using {@link #saveExpansionState(javax.swing.JTree)}.
 	 */
 	private void loadExpansionState(JTree tree, Enumeration enumeration)
-	{		
+	{
 		if (enumeration != null)
 		{
 			while (enumeration.hasMoreElements())
@@ -2968,7 +2887,30 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 	{
 		try
 		{
-			UIManager.setLookAndFeel(className);
+			String realClassName = className;
+			if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.theme.DarkStar"))
+			{
+				PlasticLookAndFeel.setPlasticTheme(new DarkStar());
+				realClassName = "com.jgoodies.looks.plastic.PlasticLookAndFeel";
+			}
+			else if (className.equals("com.jgoodies.looks.plastic.theme.SkyBlue"))
+			{
+				PlasticLookAndFeel.setPlasticTheme(new SkyBlue());
+				realClassName = "com.jgoodies.looks.plastic.PlasticLookAndFeel";
+			}
+			else if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.PlasticLookAndFeel"))
+			{
+				PlasticLookAndFeel.setPlasticTheme(new LightGray());
+			}
+			else if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.Plastic3DLookAndFeel"))
+			{
+				PlasticLookAndFeel.setPlasticTheme(new LightGray());
+			}
+			else if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.PlasticXPLookAndFeel"))
+			{
+				PlasticLookAndFeel.setPlasticTheme(new LightGray());
+			}
+			UIManager.setLookAndFeel(realClassName);
 			updateAllComponentTreeUIs();
 		}
 		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
@@ -3012,6 +2954,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 			}
 		}
 	}
+	
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem _aboutMenuItem;

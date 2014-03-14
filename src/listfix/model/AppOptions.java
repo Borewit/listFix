@@ -41,7 +41,7 @@ public class AppOptions
 	private boolean autoRefreshMediaLibraryOnStartup = false;
 	private boolean alwaysUseUNCPaths = false;
 	private int maxPlaylistHistoryEntries = 5;
-	private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+	private String lookAndFeel = com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName();
 	private String playlistsDirectory = EMPTY_STRING;
 	private Font appFont = new Font("SansSerif", 0, 11);
 	private int maxClosestResults = 20;
