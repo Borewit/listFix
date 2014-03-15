@@ -46,11 +46,14 @@ import com.jgoodies.looks.plastic.theme.SkyBlue;
 import com.jidesoft.document.DocumentComponent;
 import com.jidesoft.document.DocumentComponentEvent;
 import com.jidesoft.document.DocumentComponentListener;
+import com.jidesoft.document.DocumentPane;
 import com.jidesoft.document.DocumentPane.TabbedPaneCustomizer;
+
 import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.DefaultKeyboardFocusManager;
 import java.awt.Dimension;
@@ -74,12 +77,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -106,11 +112,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import javax.xml.bind.JAXBException;
 
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
+
 import listfix.exceptions.MediaDirNotFoundException;
+
 import listfix.io.BrowserLauncher;
 import listfix.io.Constants;
 import listfix.io.FileTreeNodeGenerator;
@@ -124,14 +133,17 @@ import listfix.io.filters.PlaylistFileFilter;
 import listfix.io.readers.OptionsReader;
 import listfix.io.writers.FileWriter;
 import listfix.io.writers.OptionsWriter;
+
 import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.PlaylistHistory;
 import listfix.model.playlists.Playlist;
+
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.util.FileTypeSearch;
+
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.AppOptionsDialog;
@@ -165,7 +177,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 	private static final Logger _logger = Logger.getLogger(GUIScreen.class);	
 	
-	/** Creates new form GUIScreen */
+	/** 
+	 * Creates new form GUIScreen 
+	 */
 	public GUIScreen()
 	{
 		preInitComponents();
@@ -176,13 +190,20 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		postInitComponents();
 	}
 	
+	/**
+	 * Show the splash screen with initial text, load the media library & option files into memory, then prepare to init the UI
+	 */
 	private void preInitComponents()
-	{		
+	{
+		splashScreen.setVisible(true);
 		splashScreen.setStatusBar("Loading Media Library & Options...");
 		_guiDriver = GUIDriver.getInstance();
 		splashScreen.setStatusBar("Initializing UI...");
 	}
 	
+	/**
+	 * All UI components have been instantiated at this point.  
+	 */
 	private void postInitComponents()
 	{
 		// Set the user-selected font and look & feel
@@ -191,9 +212,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 		configureFileAndFolderChoosers();
 
-		// Stop showing the loading screen
-		splashScreen.setVisible(false);
-
+		// Warn the user if no media directories have been defined, and set the 
 		if (_guiDriver.getShowMediaDirWindow())
 		{
 			JOptionPane.showMessageDialog(
@@ -204,7 +223,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 		else
 		{
-			_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
+			_lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
 		}
 
 		updateMediaDirButtons();
@@ -228,8 +247,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		// Java... what voodoo/nonsense is this?
 		new DropTarget(this, this);
 
-		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(
-			new TreeSelectionListener()
+		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
 		{
 			@Override
 			public void valueChanged(TreeSelectionEvent e)
@@ -248,8 +266,26 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 		_documentPane.setGroupsAllowed(false);
 		_documentPane.setFloatingAllowed(false);
-		_documentPane.setTabbedPaneCustomizer(
-			new TabbedPaneCustomizer()
+		_documentPane.setTabbedPaneCustomizer(createTabCustomizer());
+		_documentPane.setTabColorProvider(createTabColorProvider());
+		
+		WindowSaver.getInstance().loadSettings(this);
+
+		// Set the position of the divider in the left split pane.
+		_leftSplitPane.setDividerLocation(.7);
+
+		updateMenuItemStatuses();
+
+		// JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
+		configureGlobalKeyboardListener();		
+
+		// Stop showing the loading screen
+		splashScreen.setVisible(false);
+	}
+	
+	private TabbedPaneCustomizer createTabCustomizer()
+	{
+		return new TabbedPaneCustomizer()
 		{
 			@Override
 			public void customize(final JideTabbedPane tabbedPane)
@@ -259,18 +295,49 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				tabbedPane.setShowCloseButtonOnTab(true);
 				tabbedPane.setScrollSelectedTabOnWheel(true);
 				tabbedPane.setRightClickSelect(false);
+				tabbedPane.setCloseTabOnMouseMiddleButton(true);
+				tabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
 			}
-		});
+		};
+	}
 
-		WindowSaver.getInstance().loadSettings(this);
+	private DocumentPane.DocumentTabColorProvider createTabColorProvider()
+	{
+		return new DocumentPane.DocumentTabColorProvider()
+		{
+			@Override
+			public Color getBackgroundAt(int documentIndex)
+			{
+				if (_documentPane.getDocumentAt(documentIndex) == _documentPane.getActiveDocument())
+				{
+					return new Color(255, 179, 93);
+				}
+				return _docTabPanel.getBackground();
+			}
 
-		// Set the position of the divider in the left split pane.
-		_leftSplitPane.setDividerLocation(.7);
+			@Override
+			public Color getForegroundAt(int documentIndex)
+			{
+				Color c = getBackgroundAt(documentIndex);
+				float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+				float brightness = hsb[2];
 
-		updateMenuItemStatuses();
+				if (brightness < 0.5)
+				{
+					return Color.WHITE;
+				}
+				else
+				{
+					return Color.BLACK;
+				}
+			}
 
-		// JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
-		configureGlobalKeyboardListener();
+			@Override
+			public float getGradientRatio(int documentIndex)
+			{
+				return 0.5F;
+			}
+		};
 	}
 
 	private void addPlaylistPanelModelListener()
@@ -652,12 +719,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			if (options.getAlwaysUseUNCPaths())
 			{
 				_guiDriver.switchMediaLibraryToUNCPaths();
-				_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
+				_lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
 			}
 			else
 			{
 				_guiDriver.switchMediaLibraryToMappedDrives();
-				_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
+				_lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
 			}
 			OptionsWriter.write(options);
 			if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
@@ -696,7 +763,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _removeMediaDirButton = new javax.swing.JButton();
         _refreshMediaDirsButton = new javax.swing.JButton();
         _mediaLibraryScrollPane = new javax.swing.JScrollPane();
-        _mediaLibraryList = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
+        _lstMediaLibraryDirs = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
         _playlistDirectoryPanel = new javax.swing.JPanel();
         _treeScrollPane = new javax.swing.JScrollPane();
         _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
@@ -720,16 +787,19 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _loadMenuItem = new javax.swing.JMenuItem();
         _closeMenuItem = new javax.swing.JMenuItem();
         _closeAllMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         _saveMenuItem = new javax.swing.JMenuItem();
         _saveAsMenuItem = new javax.swing.JMenuItem();
         _saveAllMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         _miReload = new javax.swing.JMenuItem();
-        jSeparator3 = new javax.swing.JSeparator();
+        _miReloadAll = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         recentMenu = new javax.swing.JMenu();
         _clearHistoryMenuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         _appOptionsMenuItem = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
         _exitMenuItem = new javax.swing.JMenuItem();
         _repairMenu = new JideMenu();
         _miBatchRepair = new javax.swing.JMenuItem();
@@ -903,11 +973,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _mediaLibraryScrollPane.setMaximumSize(null);
         _mediaLibraryScrollPane.setMinimumSize(null);
 
-        _mediaLibraryList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        _mediaLibraryList.setMaximumSize(null);
-        _mediaLibraryList.setMinimumSize(null);
-        _mediaLibraryList.setPreferredSize(null);
-        _mediaLibraryScrollPane.setViewportView(_mediaLibraryList);
+        _lstMediaLibraryDirs.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        _lstMediaLibraryDirs.setMaximumSize(null);
+        _lstMediaLibraryDirs.setMinimumSize(null);
+        _lstMediaLibraryDirs.setPreferredSize(null);
+        _mediaLibraryScrollPane.setViewportView(_lstMediaLibraryDirs);
 
         _mediaLibraryPanel.add(_mediaLibraryScrollPane, java.awt.BorderLayout.CENTER);
 
@@ -1135,6 +1205,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             }
         });
         _fileMenu.add(_closeAllMenuItem);
+        _fileMenu.add(jSeparator1);
 
         _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         _saveMenuItem.setMnemonic('S');
@@ -1172,6 +1243,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             }
         });
         _fileMenu.add(_saveAllMenuItem);
+        _fileMenu.add(jSeparator2);
 
         _miReload.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
         _miReload.setMnemonic('R');
@@ -1186,7 +1258,18 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         });
         _fileMenu.add(_miReload);
 
-        jSeparator3.setForeground(new java.awt.Color(102, 102, 153));
+        _miReloadAll.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
+        _miReloadAll.setMnemonic('l');
+        _miReloadAll.setText("Reload All");
+        _miReloadAll.setToolTipText("Reloads All Currently Open Playlists");
+        _miReloadAll.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _miReloadAllActionPerformed(evt);
+            }
+        });
+        _fileMenu.add(_miReloadAll);
         _fileMenu.add(jSeparator3);
 
         recentMenu.setText("Recent Playlists");
@@ -1205,9 +1288,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             }
         });
         _fileMenu.add(_clearHistoryMenuItem);
-
-        jSeparator1.setForeground(new java.awt.Color(102, 102, 153));
-        _fileMenu.add(jSeparator1);
+        _fileMenu.add(jSeparator4);
 
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
         _appOptionsMenuItem.setMnemonic('p');
@@ -1221,9 +1302,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             }
         });
         _fileMenu.add(_appOptionsMenuItem);
-
-        jSeparator2.setForeground(new java.awt.Color(102, 102, 153));
-        _fileMenu.add(jSeparator2);
+        _fileMenu.add(jSeparator5);
 
         _exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         _exitMenuItem.setMnemonic('x');
@@ -1984,7 +2063,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 				final File finalPlaylistFile = playlist;
 				final Playlist finalList = list;
-				String oldPath = list.getFile().getCanonicalPath();
 				ProgressWorker worker = new ProgressWorker<Void, Void>()
 				{
 					@Override
@@ -1999,9 +2077,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				pd.setVisible(true);
 
 				worker.get();
-				// int tabIx = getPlaylistTabIx(_currentPlaylist);
 				String newPath = finalPlaylistFile.getCanonicalPath();
-				// _uiTabs.setToolTipTextAt(tabIx, newPath);
 				_documentPane.getActiveDocument().setTooltip(newPath);
 				
 				updatePlaylistDirectoryPanel();
@@ -2042,8 +2118,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			_closeMenuItem.setEnabled(true);
 			
 			_miReload.setEnabled(true);
+			_miReloadAll.setEnabled(true);
 			
 			_miExactMatchRepairOpenPlaylists.setEnabled(true);
+			_miClosestMatchRepairOpenPlaylists.setEnabled(true);
 		}
 		else
 		{
@@ -2055,8 +2133,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			_closeMenuItem.setEnabled(false);
 			
 			_miReload.setEnabled(false);
+			_miReloadAll.setEnabled(false);
 			
 			_miExactMatchRepairOpenPlaylists.setEnabled(false);
+			_miClosestMatchRepairOpenPlaylists.setEnabled(false);
 		}
 	}
 	
@@ -2184,15 +2264,24 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			comp = _documentPane.getActiveDocument();
 		}
 		while (!firstComp.equals(comp));
-	}
+	}	
 
-	/**
-	 *
-	 * @param comp
-	 */
-	public void closeAllOtherTabs(DocumentComponent comp)
+	private void reloadAllTabs()
 	{
-		_documentPane.closeAllButThis(comp.getName());
+		DocumentComponent firstComp = _documentPane.getActiveDocument();
+		DocumentComponent comp = _documentPane.getActiveDocument();
+		do
+		{
+			PlaylistEditCtrl ctrl = (PlaylistEditCtrl) comp.getComponent();
+			if (ctrl != null)
+			{
+				_documentPane.setActiveDocument(comp.getName());
+				ctrl.reloadPlaylist();
+			}
+			_documentPane.nextDocument();
+			comp = _documentPane.getActiveDocument();
+		}
+		while (!firstComp.equals(comp));
 	}
 
 	/**
@@ -2368,7 +2457,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				try
 				{
 					worker.get();
-					_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
+					_lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
 				}
 				catch (InterruptedException | CancellationException ex)
 				{
@@ -2396,13 +2485,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		try
 		{
-			String selection = (String) _mediaLibraryList.getSelectedValue();
+			String selection = (String) _lstMediaLibraryDirs.getSelectedValue();
 			if (selection != null)
 			{
 				if (!selection.equals("Please Add A Media Directory..."))
 				{
 					_guiDriver.removeMediaDir(selection);
-					_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
+					_lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
 				}
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -2422,7 +2511,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		try
 		{
 
-			_mediaLibraryList.setListData(_guiDriver.removeMediaDir((String) _mediaLibraryList.getModel().getElementAt(index)));
+			_lstMediaLibraryDirs.setListData(_guiDriver.removeMediaDir((String) _lstMediaLibraryDirs.getModel().getElementAt(index)));
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 		catch (MediaDirNotFoundException e)
@@ -2474,7 +2563,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		try
 		{
 			worker.get();
-			_mediaLibraryList.setListData(_guiDriver.getMediaDirs());
+			_lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
 		}
 		catch (InterruptedException | CancellationException ex)
 		{
@@ -2504,7 +2593,6 @@ private void _updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event__updateCheckMenuItemActionPerformed
 
 private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
-
 	final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibraryFileList());
 	if (br == null || br.isEmpty())
 	{
@@ -2798,6 +2886,11 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
         runClosestMatchOnAllTabs();
     }//GEN-LAST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
 
+    private void _miReloadAllActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miReloadAllActionPerformed
+    {//GEN-HEADEREND:event__miReloadAllActionPerformed
+        reloadAllTabs();
+    }//GEN-LAST:event__miReloadAllActionPerformed
+
 	/**
 	 *
 	 * @param font
@@ -2843,12 +2936,12 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 
 	private void updateMediaDirButtons()
 	{
-		if (_mediaLibraryList.getModel().getSize() == 0)
+		if (_lstMediaLibraryDirs.getModel().getSize() == 0)
 		{
 			_removeMediaDirButton.setEnabled(false);
 			_refreshMediaDirsButton.setEnabled(false);
 		}
-		else if (_mediaLibraryList.getModel().getSize() != 0)
+		else if (_lstMediaLibraryDirs.getModel().getSize() != 0)
 		{
 			_removeMediaDirButton.setEnabled(true);
 			_refreshMediaDirsButton.setEnabled(true);
@@ -2932,7 +3025,9 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 			{
 				PlasticLookAndFeel.setPlasticTheme(new LightGray());
 			}
-			UIManager.setLookAndFeel(realClassName);
+			
+			UIManager.setLookAndFeel(realClassName);			
+			_documentPane.setTabbedPaneCustomizer(createTabCustomizer());
 			updateAllComponentTreeUIs();
 		}
 		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
@@ -3001,9 +3096,9 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JMenuItem _helpMenuItem;
     private javax.swing.JSplitPane _leftSplitPane;
     private javax.swing.JMenuItem _loadMenuItem;
+    private javax.swing.JList _lstMediaLibraryDirs;
     private javax.swing.JMenuBar _mainMenuBar;
     private javax.swing.JPanel _mediaLibraryButtonPanel;
-    private javax.swing.JList _mediaLibraryList;
     private javax.swing.JPanel _mediaLibraryPanel;
     private javax.swing.JScrollPane _mediaLibraryScrollPane;
     private javax.swing.JMenuItem _miBatchRepair;
@@ -3015,6 +3110,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JMenuItem _miOpenSelectedPlaylists;
     private javax.swing.JMenuItem _miRefreshDirectoryTree;
     private javax.swing.JMenuItem _miReload;
+    private javax.swing.JMenuItem _miReloadAll;
     private javax.swing.JMenuItem _miRenameSelectedItem;
     private javax.swing.JButton _newIconButton;
     private javax.swing.JMenuItem _newPlaylistMenuItem;
@@ -3036,9 +3132,11 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JScrollPane _treeScrollPane;
     private javax.swing.JMenuItem _updateCheckMenuItem;
     private javax.swing.JPanel _verticalPanel;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenu recentMenu;
     private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables

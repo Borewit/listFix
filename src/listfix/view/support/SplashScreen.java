@@ -18,9 +18,15 @@
 
 package listfix.view.support;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -53,8 +59,6 @@ public class SplashScreen extends JFrame
 		setBounds(dm.getWidth() / 2 - getWidth() / 2, dm.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-		setVisible(true);
 	}
 
 	/**
