@@ -734,6 +734,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _repairMenu = new JideMenu();
         _miBatchRepair = new javax.swing.JMenuItem();
         _miExactMatchRepairOpenPlaylists = new javax.swing.JMenuItem();
+        _miClosestMatchRepairOpenPlaylists = new javax.swing.JMenuItem();
         _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
         _extractPlaylistsMenuItem = new javax.swing.JMenuItem();
         _helpMenu = new JideMenu();
@@ -1254,7 +1255,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _repairMenu.add(_miBatchRepair);
 
         _miExactMatchRepairOpenPlaylists.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        _miExactMatchRepairOpenPlaylists.setText("Repair Currently Open Playlists");
+        _miExactMatchRepairOpenPlaylists.setText("Quick Repair Currently Open Playlists");
         _miExactMatchRepairOpenPlaylists.setToolTipText("Runs an \"Exact Matches Repair\" on all open playlists");
         _miExactMatchRepairOpenPlaylists.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1264,6 +1265,18 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             }
         });
         _repairMenu.add(_miExactMatchRepairOpenPlaylists);
+
+        _miClosestMatchRepairOpenPlaylists.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        _miClosestMatchRepairOpenPlaylists.setText("Deep Repair Currently Open Playlists");
+        _miClosestMatchRepairOpenPlaylists.setToolTipText("Runs an \"Closest Matches Repair\" on all open playlists");
+        _miClosestMatchRepairOpenPlaylists.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                _miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(evt);
+            }
+        });
+        _repairMenu.add(_miClosestMatchRepairOpenPlaylists);
 
         _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         _batchRepairWinampMenuItem.setMnemonic('B');
@@ -2113,7 +2126,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		{
 			title = list.getFilename();
 		}
-		// ((DnDTabbedPane)_uiTabs).setTitleAt(tabIx, title);
 		comp.setTitle(title);	
 	}	
 
@@ -2134,37 +2146,44 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	/**
 	 *
 	 */
-	public void repairAllTabs()
+	public void runExactMatchOnAllTabs()
 	{
-		List<Playlist> files = new ArrayList<>();
-		for (Playlist list : _openPlaylists)
+		DocumentComponent firstComp = _documentPane.getActiveDocument();
+		DocumentComponent comp = _documentPane.getActiveDocument();
+		do
 		{
-			files.add(list);
-		}
-		if (files.isEmpty())
-		{
-			return;
-		}
-		BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), files.get(0).getFile());
-		br.setDescription("Repairing All Open Playlists");
-		for (Playlist file : files)
-		{
-			br.add(new BatchRepairItem(file));
-		}
-		BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
-		if (!dlg.getUserCancelled())
-		{
-			if (br.isEmpty())
+			PlaylistEditCtrl ctrl = (PlaylistEditCtrl)comp.getComponent();
+			if (ctrl != null)
 			{
-				JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
+				_documentPane.setActiveDocument(comp.getName());
+				ctrl.locateMissingFiles();
 			}
-			else
-			{
-				dlg.setLocationRelativeTo(this);
-				dlg.setVisible(true);
-				updatePlaylistDirectoryPanel();
-			}
+			_documentPane.nextDocument();			
+			comp = _documentPane.getActiveDocument();
 		}
+		while (!firstComp.equals(comp));
+	}
+	
+	/**
+	 *
+	 */
+	public void runClosestMatchOnAllTabs()
+	{
+		DocumentComponent firstComp = _documentPane.getActiveDocument();
+		DocumentComponent comp = _documentPane.getActiveDocument();
+		do
+		{
+			PlaylistEditCtrl ctrl = (PlaylistEditCtrl) comp.getComponent();
+			if (ctrl != null)
+			{
+				_documentPane.setActiveDocument(comp.getName());
+				ctrl.locateMissingFiles();
+				ctrl.bulkFindClosestMatches();
+			}
+			_documentPane.nextDocument();
+			comp = _documentPane.getActiveDocument();
+		}
+		while (!firstComp.equals(comp));
 	}
 
 	/**
@@ -2762,7 +2781,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 
     private void _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
     {//GEN-HEADEREND:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
-        repairAllTabs();
+        runExactMatchOnAllTabs();
     }//GEN-LAST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
 
     private void _saveAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveAllMenuItemActionPerformed
@@ -2773,6 +2792,11 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 			handlePlaylistSave(list);
 		}
     }//GEN-LAST:event__saveAllMenuItemActionPerformed
+
+    private void _miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+    {//GEN-HEADEREND:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+        runClosestMatchOnAllTabs();
+    }//GEN-LAST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
 
 	/**
 	 *
@@ -2983,6 +3007,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JPanel _mediaLibraryPanel;
     private javax.swing.JScrollPane _mediaLibraryScrollPane;
     private javax.swing.JMenuItem _miBatchRepair;
+    private javax.swing.JMenuItem _miClosestMatchRepairOpenPlaylists;
     private javax.swing.JMenuItem _miClosestMatchesSearch;
     private javax.swing.JMenuItem _miDeletePlaylist;
     private javax.swing.JMenuItem _miExactMatchRepairOpenPlaylists;

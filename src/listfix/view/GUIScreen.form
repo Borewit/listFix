@@ -285,11 +285,23 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+R"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Repair Currently Open Playlists"/>
+                <Property name="text" type="java.lang.String" value="Quick Repair Currently Open Playlists"/>
                 <Property name="toolTipText" type="java.lang.String" value="Runs an &quot;Exact Matches Repair&quot; on all open playlists"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="_miClosestMatchRepairOpenPlaylists">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+Alt+R"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Deep Repair Currently Open Playlists"/>
+                <Property name="toolTipText" type="java.lang.String" value="Runs an &quot;Closest Matches Repair&quot; on all open playlists"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="_batchRepairWinampMenuItem">

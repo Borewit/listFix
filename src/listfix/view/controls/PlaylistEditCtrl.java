@@ -268,7 +268,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}
 
-	private void locateMissingFiles()
+	public void locateMissingFiles()
 	{
 		final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
 		ProgressWorker worker = new ProgressWorker<List<Integer>, Void>()
@@ -434,7 +434,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		}
 	}
 
-	private void bulkFindClosestMatches()
+	public void bulkFindClosestMatches()
 	{
 		final String[] libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
 		ProgressWorker<List<BatchMatchItem>, Void> worker = new ProgressWorker<List<BatchMatchItem>, Void>()
