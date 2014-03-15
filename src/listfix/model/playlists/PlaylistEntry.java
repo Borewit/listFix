@@ -804,7 +804,7 @@ public class PlaylistEntry implements Cloneable
 	public boolean updatePathToMediaLibraryIfFoundOutside()
 	{
 		if (_status == PlaylistEntryStatus.Found
-			&& !ArrayFunctions.ContainsStringPrefixingAnotherString(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.fileSystemIsCaseSensitive))
+			&& !ArrayFunctions.ContainsStringPrefixingAnotherString(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
 		{
 			return findNewLocationFromFileList(GUIDriver.getInstance().getMediaLibraryFileList());
 		}

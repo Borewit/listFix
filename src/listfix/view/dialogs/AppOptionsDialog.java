@@ -25,6 +25,7 @@ package listfix.view.dialogs;
  * @author  jcaron
  */
 import com.jidesoft.swing.FolderChooser;
+import java.awt.Dimension;
 
 import java.awt.Font;
 import java.awt.Point;
@@ -156,6 +157,8 @@ public class AppOptionsDialog extends javax.swing.JDialog
 		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		_jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
 		_jMediaDirChooser.setRecentListVisible(false);
+		_jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
+		_jMediaDirChooser.setPreferredSize(new Dimension(400, 500));                
 	}
 
 	/**

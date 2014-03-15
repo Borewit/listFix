@@ -22,10 +22,10 @@ package listfix.model;
 
 import java.awt.Font;
 import java.io.File;
-
 import javax.swing.UIManager;
 
 import listfix.io.Constants;
+import listfix.util.OperatingSystem;
 
 /**
  *
@@ -41,7 +41,7 @@ public class AppOptions
 	private boolean autoRefreshMediaLibraryOnStartup = false;
 	private boolean alwaysUseUNCPaths = false;
 	private int maxPlaylistHistoryEntries = 5;
-	private String lookAndFeel = com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName();
+	private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
 	private String playlistsDirectory = EMPTY_STRING;
 	private Font appFont = new Font("SansSerif", 0, 11);
 	private int maxClosestResults = 20;

@@ -42,6 +42,7 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DarkStar;
 import com.jgoodies.looks.plastic.theme.LightGray;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
+
 import com.jidesoft.document.DocumentComponent;
 import com.jidesoft.document.DocumentComponentEvent;
 import com.jidesoft.document.DocumentComponentListener;
@@ -49,9 +50,10 @@ import com.jidesoft.document.DocumentPane.TabbedPaneCustomizer;
 import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
-import java.awt.Color;
+
 import java.awt.Cursor;
 import java.awt.DefaultKeyboardFocusManager;
+import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -80,15 +82,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import javax.swing.Icon;
+
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -99,19 +97,17 @@ import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.UIResource;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
+
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
 import listfix.exceptions.MediaDirNotFoundException;
@@ -146,6 +142,7 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -157,15 +154,15 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	private static final long _serialVersionUID = 7691786927987534889L;
 
 	private final JFileChooser _jM3UChooser;
-	private final FolderChooser _jMediaDirChooser;
 	private final JFileChooser _jSaveFileChooser;
+	private final FolderChooser _jMediaDirChooser;	
+	private final List<Playlist> _openPlaylists = new ArrayList<>();
 	private GUIDriver _guiDriver = null;
-	private DropTarget _dropTarget = null;
 	private Playlist _currentPlaylist;
 	private IPlaylistModifiedListener _playlistListener;
 
-	private static Logger _logger = Logger.getLogger(GUIScreen.class);
-
+	private static final Logger _logger = Logger.getLogger(GUIScreen.class);
+	
 	/** Creates new form GUIScreen */
 	public GUIScreen()
 	{
@@ -175,7 +172,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		splashScreen.setStatusBar("Initializing UI...");
 
 		initComponents();
-		
+
 		_jM3UChooser = new JFileChooser();
 		_jMediaDirChooser = new FolderChooser();
 		_jSaveFileChooser = new JFileChooser();
@@ -190,7 +187,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 		if (_guiDriver.getShowMediaDirWindow())
 		{
-			JOptionPane.showMessageDialog(this, new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."), "Reminder", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(
+				this, 
+				new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."), 
+				"Reminder", 
+				JOptionPane.INFORMATION_MESSAGE);
 		}
 		else
 		{
@@ -213,9 +214,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 		// drag-n-drop support for the playlist directory tree
 		_playlistDirectoryTree.setTransferHandler(createPlaylistTreeTransferHandler());
-
-		// Despite not being referenced again, this is need to support opening playlists that are dragged in?  What voodoo is this?
-		_dropTarget = new DropTarget(this, this);
+		
+		// A constructor with side-effects, required to support opening playlists that are dragged in...
+		// Java... what voodoo/nonsense is this?
+		new DropTarget(this, this);
 
 		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(
 			new TreeSelectionListener()
@@ -233,16 +235,16 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 		// addAt popup menu to playlist tree on right-click
 		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
-		
+
 		addPlaylistPanelModelListener();
-		
+
 		_documentPane.setGroupsAllowed(false);
 		_documentPane.setFloatingAllowed(false);
-        _documentPane.setTabbedPaneCustomizer(
-			new TabbedPaneCustomizer() 
+		_documentPane.setTabbedPaneCustomizer(
+			new TabbedPaneCustomizer()
 			{
 				@Override
-				public void customize(final JideTabbedPane tabbedPane) 
+				public void customize(final JideTabbedPane tabbedPane)
 				{
 					tabbedPane.setShowCloseButton(true);
 					tabbedPane.setUseDefaultShowCloseButtonOnTab(false);
@@ -252,16 +254,16 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				}
 			}
 		);
-		
-        WindowSaver.getInstance().loadSettings(this);
+
+		WindowSaver.getInstance().loadSettings(this);
 
 		// Set the position of the divider in the left split pane.
 		_leftSplitPane.setDividerLocation(.7);
-		
+
 		updateMenuItemStatuses();
 
 		// JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
-		 configureGlobalKeyboardListener();
+		configureGlobalKeyboardListener();
 	}
 
 	private void addPlaylistPanelModelListener()
@@ -475,6 +477,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
 		_jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
 		_jMediaDirChooser.setRecentListVisible(false);
+		_jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
+		_jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
 
 		_jSaveFileChooser.setDialogTitle("Save File:");
 		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
@@ -529,11 +533,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	@Override
 	public void drop(DropTargetDropEvent dtde)
 	{
-        try
-        {
-            // Ok, get the dropped object and try to figure out what it is
-            Transferable tr = dtde.getTransferable();
-            DataFlavor[] flavors = tr.getTransferDataFlavors();
+		try
+		{
+			// Ok, get the dropped object and try to figure out what it is
+			Transferable tr = dtde.getTransferable();
+			DataFlavor[] flavors = tr.getTransferDataFlavors();
 			for (DataFlavor flavor : flavors)
 			{
 				// Check for file lists specifically
@@ -582,7 +586,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 					else if (data instanceof String)
 					{
 						// Magically delicious string coming from the playlist panel
-						String input = (String)data;
+						String input = (String) data;
 						List<String> paths = StringArrayListSerializer.Deserialize(input);
 
 						// Turn this into a list of files, and reuse the processing code above
@@ -609,14 +613,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 					return;
 				}
 			}
-            // Hmm, the user must not have dropped a file list
-            dtde.rejectDrop();
-        }
-        catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException e)
-        {
-            _logger.warn(ExStack.toString(e));
-            dtde.rejectDrop();
-        }
+			// Hmm, the user must not have dropped a file list
+			dtde.rejectDrop();
+		}
+		catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException e)
+		{
+			_logger.warn(ExStack.toString(e));
+			dtde.rejectDrop();
+		}
 	}
 
 	/**
@@ -660,12 +664,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 	}
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
+	/** This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
 	 * always regenerated by the Form Editor.
 	 */
-	// <editor-fold defaultstate="collapsed" desc="Generated Code">
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -1797,7 +1799,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 		else
 		{
-			if (list.getFixedCount() > 0)
+			if (list.getFixedCount() > 0 || list.isModified())
 			{
 				icon = ImageIcons.IMG_FIXED;
 			}
@@ -1808,18 +1810,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 		return icon;
 	}
-	
-	Map<String, PlaylistEditCtrl> _pathToEditorMap = new HashMap<>();
-	List<Playlist> _openPlaylists = new ArrayList<>();
-	
-	static
-	{
-		Color highlight = UIManager.getColor("TabbedPane.highlight");
-		_normalBorder = new LineBorder(highlight);
-		_pressedBorder = new LineBorder(Color.black);
-	}
-	private static Border _normalBorder;
-	private static Border _pressedBorder;
 
 	/**
 	 *
@@ -2307,7 +2297,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				if (_guiDriver.getMediaDirs() != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-					if (ArrayFunctions.ContainsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.fileSystemIsCaseSensitive))
+					if (ArrayFunctions.ContainsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
 					{
 						JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
 							"Reminder", JOptionPane.INFORMATION_MESSAGE);

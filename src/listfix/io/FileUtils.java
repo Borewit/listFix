@@ -125,7 +125,7 @@ public class FileUtils
 			boolean tokenMatch = false;
 			for (int i = 0; i < maxSize; i++)
 			{
-				if (GUIDriver.fileSystemIsCaseSensitive ? fileTokens.get(i).equals(relativeToTokens.get(i)) : fileTokens.get(i).equalsIgnoreCase(relativeToTokens.get(i)))
+				if (GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE ? fileTokens.get(i).equals(relativeToTokens.get(i)) : fileTokens.get(i).equalsIgnoreCase(relativeToTokens.get(i)))
 				{
 					tokenMatch = true;
 					fileTokens.remove(i);

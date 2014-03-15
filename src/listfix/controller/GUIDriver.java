@@ -53,25 +53,27 @@ public class GUIDriver
 	private String[] mediaLibraryFileList = null;
 	private AppOptions options = new AppOptions();
 	private PlaylistHistory history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
+	
 	/**
 	 *
 	 */
-	public static final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+	public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
+	
 	private static final Logger _logger = Logger.getLogger(GUIDriver.class);
+	private static GUIDriver _instance;
 
-    /**
+	/**
 	 *
 	 * @return
 	 */
 	public static GUIDriver getInstance()
-    {
-        if (_instance == null)
+	{
+		if (_instance == null)
 		{
-            _instance = new GUIDriver();
+			_instance = new GUIDriver();
 		}
-        return _instance;
-    }
-    private static GUIDriver _instance;
+		return _instance;
+	}
 
 	private GUIDriver()
 	{
@@ -359,7 +361,6 @@ public class GUIDriver
 				{
 					mediaLibraryFileList[i] = file.getUNCPath();
 				}
-
 			}
 		}
 	}

@@ -39,8 +39,8 @@ import java.util.Map;
  * an iTunes XML file, we may be handling a single exported playlist, or the entire media library for iTunes; there's really no way to know
  * since the structure is identical in both cases (some metadata followed by a tracks section, and then a playlists section).
  * 
- * Tracks in the library may not be referenced by any playlists.  Playlists themselves are just a name (string) and list of track IDs from 
- * the tracks section.
+ * It is possible for a track in the Tracks section of the library to be an orphaned, as in, no playlist in the library references it.
+ * Playlists themselves are just a name (string) and list of track IDs from the tracks section.
  * 
  * @author jcaron
  * @see ITunesPlaylist
