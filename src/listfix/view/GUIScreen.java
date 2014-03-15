@@ -1657,6 +1657,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			};
 			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0,70) : file.getName()) + "'...", false);
 			pd.setVisible(true);
+			pd.setVisible(false);
 		}
 		else
 		{

@@ -217,7 +217,10 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			}
 
 			// "Install" the L&Fs we have internally added.
-			lafs.add(new LookAndFeelInfo("Windows (Plastic)", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName()));
+			if (OperatingSystem.isWindows())
+			{
+				lafs.add(new LookAndFeelInfo("Windows (Plastic)", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName()));
+			}
 			lafs.add(new LookAndFeelInfo("Plastic - Default", com.jgoodies.looks.plastic.PlasticLookAndFeel.class.getName()));
 			lafs.add(new LookAndFeelInfo("Plastic - DarkStar", com.jgoodies.looks.plastic.theme.DarkStar.class.getName()));
 			lafs.add(new LookAndFeelInfo("Plastic - SkyBlue", com.jgoodies.looks.plastic.theme.SkyBlue.class.getName()));

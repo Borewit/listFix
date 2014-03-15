@@ -39,7 +39,7 @@ public abstract class Task extends Thread
 	 */
 	public Task()
 	{
-		observers = new ArrayList<IProgressObserver>();
+		observers = new ArrayList<>();
 	}
 
 	/**
