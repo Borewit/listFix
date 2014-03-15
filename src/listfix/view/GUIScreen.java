@@ -153,30 +153,39 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 {
 	private static final long _serialVersionUID = 7691786927987534889L;
 
-	private final JFileChooser _jM3UChooser;
-	private final JFileChooser _jSaveFileChooser;
-	private final FolderChooser _jMediaDirChooser;	
+	private final JFileChooser _jM3UChooser= new JFileChooser();
+	private final JFileChooser _jSaveFileChooser = new JFileChooser();
+	private final FolderChooser _jMediaDirChooser = new FolderChooser();
 	private final List<Playlist> _openPlaylists = new ArrayList<>();
+	
 	private GUIDriver _guiDriver = null;
 	private Playlist _currentPlaylist;
 	private IPlaylistModifiedListener _playlistListener;
+	private listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
 
-	private static final Logger _logger = Logger.getLogger(GUIScreen.class);
+	private static final Logger _logger = Logger.getLogger(GUIScreen.class);	
 	
 	/** Creates new form GUIScreen */
 	public GUIScreen()
 	{
-		listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
+		preInitComponents();
+
+		// Netbeans-generated form init code
+		initComponents();
+
+		postInitComponents();
+	}
+	
+	private void preInitComponents()
+	{		
 		splashScreen.setStatusBar("Loading Media Library & Options...");
 		_guiDriver = GUIDriver.getInstance();
 		splashScreen.setStatusBar("Initializing UI...");
-
-		initComponents();
-
-		_jM3UChooser = new JFileChooser();
-		_jMediaDirChooser = new FolderChooser();
-		_jSaveFileChooser = new JFileChooser();
-
+	}
+	
+	private void postInitComponents()
+	{
+		// Set the user-selected font and look & feel
 		setApplicationFont(_guiDriver.getAppOptions().getAppFont());
 		this.setLookAndFeel(_guiDriver.getAppOptions().getLookAndFeel());
 
@@ -188,9 +197,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		if (_guiDriver.getShowMediaDirWindow())
 		{
 			JOptionPane.showMessageDialog(
-				this, 
-				new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."), 
-				"Reminder", 
+				this,
+				new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."),
+				"Reminder",
 				JOptionPane.INFORMATION_MESSAGE);
 		}
 		else
@@ -214,24 +223,23 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 		// drag-n-drop support for the playlist directory tree
 		_playlistDirectoryTree.setTransferHandler(createPlaylistTreeTransferHandler());
-		
+
 		// A constructor with side-effects, required to support opening playlists that are dragged in...
 		// Java... what voodoo/nonsense is this?
 		new DropTarget(this, this);
 
 		_playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(
 			new TreeSelectionListener()
+		{
+			@Override
+			public void valueChanged(TreeSelectionEvent e)
 			{
-				@Override
-				public void valueChanged(TreeSelectionEvent e)
-				{
-					boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
-					_btnOpenSelected.setEnabled(hasSelected);
-					_btnBatchExactMatches.setEnabled(hasSelected);
-					_btnBatchClosestMatches.setEnabled(hasSelected);
-				}
+				boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
+				_btnOpenSelected.setEnabled(hasSelected);
+				_btnBatchExactMatches.setEnabled(hasSelected);
+				_btnBatchClosestMatches.setEnabled(hasSelected);
 			}
-		);
+		});
 
 		// addAt popup menu to playlist tree on right-click
 		_playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
@@ -242,18 +250,17 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		_documentPane.setFloatingAllowed(false);
 		_documentPane.setTabbedPaneCustomizer(
 			new TabbedPaneCustomizer()
+		{
+			@Override
+			public void customize(final JideTabbedPane tabbedPane)
 			{
-				@Override
-				public void customize(final JideTabbedPane tabbedPane)
-				{
-					tabbedPane.setShowCloseButton(true);
-					tabbedPane.setUseDefaultShowCloseButtonOnTab(false);
-					tabbedPane.setShowCloseButtonOnTab(true);
-					tabbedPane.setScrollSelectedTabOnWheel(true);
-					tabbedPane.setRightClickSelect(false);
-				}
+				tabbedPane.setShowCloseButton(true);
+				tabbedPane.setUseDefaultShowCloseButtonOnTab(false);
+				tabbedPane.setShowCloseButtonOnTab(true);
+				tabbedPane.setScrollSelectedTabOnWheel(true);
+				tabbedPane.setRightClickSelect(false);
 			}
-		);
+		});
 
 		WindowSaver.getInstance().loadSettings(this);
 
