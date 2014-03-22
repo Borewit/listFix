@@ -26,16 +26,23 @@
 
 package listfix.view.controls;
 
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
 import listfix.util.ExStack;
 import listfix.view.dialogs.PlaylistsTableModel;
+import listfix.view.support.ZebraJTable;
 import org.apache.log4j.Logger;
 
 /**
@@ -73,21 +80,60 @@ public class PlaylistsList extends javax.swing.JPanel
 		_uiLists.setCellSelectionEnabled(false);
 		_uiLists.setRowSelectionAllowed(true);
 	}
+	
+	private ZebraJTable createTable()
+	{
+		return new ZebraJTable()
+		{
+			@Override
+			public String getToolTipText(MouseEvent event)
+			{
+				Point point = event.getPoint();
+				int rawRowIx = rowAtPoint(point);
+				int rawColIx = columnAtPoint(point);
+				if (rawRowIx >= 0 && rawColIx >= 0)
+				{
+					int rowIx = convertRowIndexToModel(rawRowIx);
+					int colIx = convertColumnIndexToModel(rawColIx);
+					if (rowIx >= 0 && rowIx < _batch.getItems().size() && (colIx == 1))
+					{
+						return _batch.getItem(rowIx).getPath();
+					}
+				}
+				return super.getToolTipText(event);
+			}
+		};
+	}
 
 	/**
 	 *
 	 */
 	public void initPlaylistsList()
 	{
-		_uiLists.autoResizeColumn(0);
-		_uiLists.autoResizeColumn(1);
-		_uiLists.autoResizeColumn(2);
-
+		resizeAllColumns();
+		
 		// sort playlists by filename
 		RowSorter sorter = _uiLists.getRowSorter();
-		List<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+		List<RowSorter.SortKey> keys = new ArrayList<>();
 		keys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
 		sorter.setSortKeys(keys);
+	}
+	
+	private void resizeAllColumns()
+	{
+		// resize columns to fit
+		int cwidth = 0;
+		cwidth += _uiLists.autoResizeColumn(0, true);
+		cwidth += _uiLists.autoResizeColumn(1, false, 160);
+		TableColumnModel cm = _uiLists.getColumnModel();
+		TableCellRenderer renderer = _uiLists.getDefaultRenderer(Integer.class);
+		Component comp = renderer.getTableCellRendererComponent(_uiLists, (_uiLists.getRowCount() + 1) * 10, false, false, 0, 0);
+		int width = comp.getPreferredSize().width;
+		TableColumn col = cm.getColumn(0);
+		col.setMinWidth(width);
+		col.setMaxWidth(width);
+		col.setPreferredWidth(width);
+		cwidth += width;
 	}
 
 	/**
@@ -115,14 +161,15 @@ public class PlaylistsList extends javax.swing.JPanel
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         _labListCount = new javax.swing.JLabel();
         _uiScrollLists = new javax.swing.JScrollPane();
-        _uiLists = new listfix.view.support.ZebraJTable();
+        _uiLists = _uiLists = createTable();
 
         setLayout(new java.awt.BorderLayout());
 

@@ -40,7 +40,7 @@ public class PlaylistsTableModel extends AbstractTableModel
 	@Override
 	public int getColumnCount()
 	{
-		return 4;
+		return 2;
 	}
 
 	/**
@@ -57,8 +57,6 @@ public class PlaylistsTableModel extends AbstractTableModel
 				return "";
 			case 1:
 				return "Name";
-			case 2:
-				return "Location";
 			default:
 				return null;
 		}
@@ -116,8 +114,6 @@ public class PlaylistsTableModel extends AbstractTableModel
 					}
 				case 1:
 					return item.getDisplayName();
-				case 2:
-					return item.getPath();
 				default:
 					return null;
 			}

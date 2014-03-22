@@ -27,7 +27,6 @@
 package listfix.view.dialogs;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -93,8 +92,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 			@Override
 			protected void process(List<ProgressItem<String>> chunks)
 			{
-				ProgressItem<String> titem = new ProgressItem<String>(true, -1, null);
-				ProgressItem<String> oitem = new ProgressItem<String>(false, -1, null);
+				ProgressItem<String> titem = new ProgressItem<>(true, -1, null);
+				ProgressItem<String> oitem = new ProgressItem<>(false, -1, null);
 				getEffectiveItems(chunks, titem, oitem);
 
 				if (titem.percentComplete >= 0)
@@ -140,6 +139,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 					updateSelectedPlaylist();
 				}
 			});
+			
 			_pnlList.initPlaylistsList();
 
 			for (BatchRepairItem item : _batch.getItems())

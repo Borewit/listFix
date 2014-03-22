@@ -25,9 +25,11 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -69,7 +71,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 	 */
 	public ClosestMatchesSearchScrollableResultsPanel()
 	{
-		_items = new ArrayList<BatchMatchItem>();
+		_items = new ArrayList<>();
 		initComponents();
 		initialize();
 	}
@@ -85,7 +87,8 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 
 	private void initialize()
 	{			
-		TableColumnModel cm = _uiTable.getColumnModel();		
+		TableColumnModel cm = _uiTable.getColumnModel();
+		ButtonRenderer br = new ButtonRenderer();
 		cm.getColumn(2).setCellRenderer(new ButtonRenderer());
 		cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
 		cm.getColumn(3).setCellEditor(new MatchEditor());
@@ -111,7 +114,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		_uiTable.setShowVerticalLines(false);
 		
 		// set sort to #
-		ArrayList<RowSorter.SortKey> keys = new ArrayList<RowSorter.SortKey>();
+		ArrayList<RowSorter.SortKey> keys = new ArrayList<>();
 		keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 		_uiTable.getRowSorter().setSortKeys(keys);
 		_uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -228,7 +231,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 		col.setMinWidth(width);
 		col.setMaxWidth(width);
 		col.setPreferredWidth(width);
-		// _uiTable.initFillColumnForScrollPane(_uiScrollPane);
+		
 		_uiTable.setFillerColumnWidth(_uiScrollPane);
 	}
 

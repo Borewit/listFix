@@ -921,6 +921,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
         _btnInvert.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/invert.png"))); // NOI18N
         _btnInvert.setToolTipText("Inverts the current selection");
+        _btnInvert.setEnabled(false);
         _btnInvert.setFocusable(false);
         _btnInvert.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         _btnInvert.setMaximumSize(new java.awt.Dimension(31, 31));
@@ -935,7 +936,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiToolbar.add(_btnInvert);
 
-        _btnReorder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-reorder.gif"))); // NOI18N
+        _btnReorder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reorder.png"))); // NOI18N
         _btnReorder.setToolTipText("Change Playlist Order");
         _btnReorder.setEnabled(false);
         _btnReorder.setFocusable(false);
@@ -990,7 +991,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiToolbar.add(_btnLocate);
 
-        _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.gif"))); // NOI18N
+        _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.png"))); // NOI18N
         _btnPlay.setToolTipText("Play Selected");
         _btnPlay.setEnabled(_playlist != null);
         _btnPlay.setFocusable(false);
@@ -1009,7 +1010,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _uiToolbar.add(_btnPlay);
         _uiToolbar.add(jSeparator5);
 
-        _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev-broken.png"))); // NOI18N
+        _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev.png"))); // NOI18N
         _btnPrevMissing.setToolTipText("Previous Missing Entry");
         _btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
         _btnPrevMissing.setFocusable(false);
@@ -1027,7 +1028,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         });
         _uiToolbar.add(_btnPrevMissing);
 
-        _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next-broken.png"))); // NOI18N
+        _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next.png"))); // NOI18N
         _btnNextMissing.setToolTipText("Next Missing Entry");
         _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
         _btnNextMissing.setFocusable(false);
@@ -1560,6 +1561,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		col.setPreferredWidth(width);
 		cwidth += width;
 	}
+	
 	private boolean _isSortedByFileIx;
 
 	private void refreshAddTooltip(boolean hasSelected)
@@ -1678,6 +1680,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				_btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				_btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				_btnReorder.setEnabled(_playlist != null && _playlist.size() > 1);
+				_btnInvert.setEnabled(hasSelected);
 				if (_isSortedByFileIx)
 				{
 					refreshAddTooltip(hasSelected);
