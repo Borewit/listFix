@@ -21,31 +21,52 @@
 package listfix.model.playlists.itunes;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author jcaron
  */
-public class ITunesPlaylist extends Playlist
+public class ITunesPlaylistEntry extends PlaylistEntry
 {
-	private final ITunesMediaLibrary _library;
+	private final ITunesTrack _track;
 	
-	public ITunesPlaylist(File listFile, List<PlaylistEntry> entries, ITunesMediaLibrary library)
+	// logger
+	private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
+	
+	public ITunesPlaylistEntry(File input, String title, long length, File list, ITunesTrack track)
 	{
-		super(listFile, PlaylistType.ITUNES, entries);
-		_library = library;
+		super(input, title, length, list);
+		_track = track;
+	}
+
+	private ITunesPlaylistEntry(ITunesPlaylistEntry toClone)
+	{
+		super(toClone);
+		_track = toClone.getTrack();
 	}
 
 	/**
-	 * @return the _library
+	 * @return the _track
 	 */
-	public ITunesMediaLibrary getLibrary()
+	public ITunesTrack getTrack()
 	{
-		return _library;
+		return _track;
+	}
+	
+	/**
+	 *
+	 * @return
+	 */
+	@Override
+	public Object clone()
+	{
+		ITunesPlaylistEntry result = null;
+		if (!this.isURL())
+		{
+			result = new ITunesPlaylistEntry(this);
+		}
+		return result;
 	}
 }

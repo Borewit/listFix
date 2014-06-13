@@ -29,12 +29,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import listfix.model.playlists.itunes.ITunesMediaLibrary;
-import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.model.playlists.itunes.ITunesTrack;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.itunes.ITunesPlaylistEntry;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 
@@ -49,6 +50,8 @@ public class ITunesXMLReader implements IPlaylistReader
 	private final File _listFile;
 	private String _encoding;
 	private static final Logger _logger = Logger.getLogger(ITunesXMLReader.class);
+	
+	private ITunesMediaLibrary _library;
 	
 	/**
 	 * 
@@ -86,19 +89,15 @@ public class ITunesXMLReader implements IPlaylistReader
 		if (playlist != null)
 		{
 			PlistPlaylist plistList = (PlistPlaylist) playlist;
-			ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-			List<ITunesPlaylist> playlists = list.getPlaylists();
-			if (playlists.size() > 0)
+			_library = new ITunesMediaLibrary(plistList);
+			Map<String, ITunesTrack> tracks = getLibrary().getTracks();
+
+			for (String id : tracks.keySet())
 			{
-				ITunesPlaylist toLoad = playlists.get(0);
-				PlaylistEntry convertedTrack;
-				for (ITunesTrack track : toLoad.getTracks())
+				PlaylistEntry convertedTrack = iTunesTrackToPlaylistEntry(tracks.get(id));
+				if (convertedTrack != null)
 				{
-					convertedTrack = iTunesTrackToPlaylistEntry(track);
-					if (convertedTrack != null)
-					{
-						results.add(convertedTrack);
-					}
+					results.add(convertedTrack);
 				}
 			}
 			return results;
@@ -115,19 +114,15 @@ public class ITunesXMLReader implements IPlaylistReader
 		List<PlaylistEntry> results = new ArrayList<>();
 		SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
 		PlistPlaylist plistList = (PlistPlaylist) playlist;
-		ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-		List<ITunesPlaylist> playlists = list.getPlaylists();
-		if (playlists.size() > 0)
+		_library = new ITunesMediaLibrary(plistList);
+		Map<String, ITunesTrack> tracks = getLibrary().getTracks();
+		
+		for (String id : tracks.keySet())
 		{
-			ITunesPlaylist toLoad = playlists.get(0);
-			PlaylistEntry convertedTrack;
-			for (ITunesTrack track : toLoad.getTracks())
+			PlaylistEntry convertedTrack = iTunesTrackToPlaylistEntry(tracks.get(id));
+			if (convertedTrack != null)
 			{
-				convertedTrack = iTunesTrackToPlaylistEntry(track);
-				if (convertedTrack != null)
-				{
-					results.add(convertedTrack);
-				}
+				results.add(convertedTrack);			
 			}
 		}
 		return results;
@@ -137,8 +132,8 @@ public class ITunesXMLReader implements IPlaylistReader
 	{
 		try
 		{
-			PlaylistEntry result = new PlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile);
-			result.setTrackId(track.getTrackId());
+			ITunesPlaylistEntry result = new ITunesPlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile, track);
+			// result.setTrackId(track.getTrackId());
 			return result;
 		}
 		catch (URISyntaxException ex)
@@ -146,5 +141,13 @@ public class ITunesXMLReader implements IPlaylistReader
 			_logger.error("[ITunesXMLReader] - Failed to create a PlaylistEntry from a ITunesTrack, see exception for details.", ex);
 			return null;
 		}
+	}
+
+	/**
+	 * @return the _library
+	 */
+	public ITunesMediaLibrary getLibrary()
+	{
+		return _library;
 	}
 }

@@ -33,14 +33,6 @@ public class ITunesTrack
 {
 	private Dict _trackDict;
 	
-	private String _album;
-	private String _albumArtist;
-	private String _artist;
-	private String _location;
-	private String _name;
-	private String _trackId;
-	private long _duration;
-	
 	/**
 	 * Constructor that takes a christophedelory.plist.Dict object.
 	 * @param trackDict The christophedelory.plist.Dict object containing information about the track.
@@ -48,19 +40,60 @@ public class ITunesTrack
 	public ITunesTrack(Dict trackDict)
 	{
 		_trackDict = trackDict;
-		_location = DictionaryParser.getKeyValueAsString(_trackDict, "Location");
-		_artist = DictionaryParser.getKeyValueAsString(_trackDict, "Artist");
-		_name = DictionaryParser.getKeyValueAsString(_trackDict, "Name");
-		_album = DictionaryParser.getKeyValueAsString(_trackDict, "Album");
-		_albumArtist = DictionaryParser.getKeyValueAsString(_trackDict, "Album Artist");
-		_trackId = DictionaryParser.getKeyValueAsInteger(_trackDict, "Track ID").getValue();
-		_duration = parseDuration();
+	}
+
+	/**
+	 * @return the _location
+	 */
+	public String getLocation()
+	{
+		return DictionaryParser.getKeyValueAsString(_trackDict, "Location");
 	}
 	
-	private long parseDuration()
+	public void setLocation(String location)
+	{
+		DictionaryParser.setKeyValue(_trackDict, "Location", new christophedelory.plist.String(location));
+	}
+
+	/**
+	 * @return the _artist
+	 */
+	public String getArtist()
+	{
+		return DictionaryParser.getKeyValueAsString(_trackDict, "Artist");
+	}
+
+	/**
+	 * @return the _name
+	 */
+	public String getName()
+	{
+		return DictionaryParser.getKeyValueAsString(_trackDict, "Name");
+	}
+
+	/**
+	 * @return the _album
+	 */
+	public String getAlbum()
+	{
+		return DictionaryParser.getKeyValueAsString(_trackDict, "Album");
+	}
+
+	/**
+	 * @return the _albumArtist
+	 */
+	public String getAlbumArtist()
+	{
+		return DictionaryParser.getKeyValueAsString(_trackDict, "Album Artist");
+	}
+
+	/**
+	 * @return the _duration
+	 */
+	public long getDuration()
 	{
 		long result = -1;
-		christophedelory.plist.Integer timeInt = ((christophedelory.plist.Integer)((Hashtable)_trackDict.getDictionary()).get(new christophedelory.plist.Key("Total Time")));
+		christophedelory.plist.Integer timeInt = ((christophedelory.plist.Integer)((Hashtable)getTrackDict().getDictionary()).get(new christophedelory.plist.Key("Total Time")));
 		if (timeInt != null)
 		{
 			String timeText = timeInt.getValue();
@@ -70,58 +103,18 @@ public class ITunesTrack
 	}
 
 	/**
-	 * @return the _location
-	 */
-	public String getLocation()
-	{
-		return _location;
-	}
-
-	/**
-	 * @return the _artist
-	 */
-	public String getArtist()
-	{
-		return _artist;
-	}
-
-	/**
-	 * @return the _name
-	 */
-	public String getName()
-	{
-		return _name;
-	}
-
-	/**
-	 * @return the _album
-	 */
-	public String getAlbum()
-	{
-		return _album;
-	}
-
-	/**
-	 * @return the _albumArtist
-	 */
-	public String getAlbumArtist()
-	{
-		return _albumArtist;
-	}
-
-	/**
-	 * @return the _duration
-	 */
-	public long getDuration()
-	{
-		return _duration;
-	}
-
-	/**
 	 * @return the _trackId
 	 */
 	public String getTrackId()
 	{
-		return _trackId;
+		return DictionaryParser.getKeyValueAsInteger(_trackDict, "Track ID").getValue();
+	}
+
+	/**
+	 * @return the _trackDict
+	 */
+	public Dict getTrackDict()
+	{
+		return _trackDict;
 	}
 }

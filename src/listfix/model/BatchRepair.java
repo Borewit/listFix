@@ -32,6 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistFactory;
 import listfix.view.support.DualProgressAdapter;
 import listfix.view.support.IDualProgressObserver;
 import listfix.view.support.IProgressObserver;
@@ -172,7 +173,7 @@ public class BatchRepair
 					File file = new File(item.getPath());
 					try
 					{
-						Playlist temp = new Playlist(file, progress.getTask());					
+						Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask());					
 						item.setPlaylist(temp);
 					}
 					catch (IOException e)
@@ -229,7 +230,7 @@ public class BatchRepair
 					File file = new File(item.getPath());
 					try
 					{
-						Playlist temp = new Playlist(file, progress.getTask());					
+						Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask());					
 						item.setPlaylist(temp);
 					}
 					catch (IOException e)

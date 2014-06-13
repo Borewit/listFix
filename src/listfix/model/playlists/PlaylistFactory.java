@@ -18,34 +18,37 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model.playlists.itunes;
+package listfix.model.playlists;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import listfix.io.readers.playlists.IPlaylistReader;
+import listfix.io.readers.playlists.ITunesXMLReader;
+import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.Playlist;
-import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.itunes.ITunesPlaylist;
+import listfix.view.support.IProgressObserver;
 
 /**
  *
  * @author jcaron
  */
-public class ITunesPlaylist extends Playlist
+public class PlaylistFactory
 {
-	private final ITunesMediaLibrary _library;
-	
-	public ITunesPlaylist(File listFile, List<PlaylistEntry> entries, ITunesMediaLibrary library)
+	public static Playlist getPlaylist(File file, IProgressObserver observer) throws FileNotFoundException, IOException
 	{
-		super(listFile, PlaylistType.ITUNES, entries);
-		_library = library;
-	}
+		IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(file);
+		List<PlaylistEntry> entries = playlistProcessor.readPlaylist(observer);
 
-	/**
-	 * @return the _library
-	 */
-	public ITunesMediaLibrary getLibrary()
-	{
-		return _library;
+		if (playlistProcessor.getPlaylistType() == PlaylistType.ITUNES)
+		{			
+			return new ITunesPlaylist(file, entries, ((ITunesXMLReader)playlistProcessor).getLibrary());
+		}
+		else
+		{
+			return new Playlist(file, playlistProcessor.getPlaylistType(), entries);
+		}
 	}
 }

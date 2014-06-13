@@ -56,6 +56,10 @@ public class PlaylistWriterFactory
 		{
 			return new WPLWriter();
 		}
+		else if (type == PlaylistType.ITUNES)
+		{
+			return new ITunesXMLWriter();
+		}
 		else
 		{
 			return null;

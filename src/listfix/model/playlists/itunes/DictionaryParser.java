@@ -50,6 +50,12 @@ public class DictionaryParser
 		}
 		return null;
 	}
+	
+	public static void setKeyValue(Dict dict, String key, Object value) throws ClassCastException
+	{
+		((Hashtable) dict.getDictionary()).remove(new christophedelory.plist.Key(key));
+		((Hashtable) dict.getDictionary()).put(new christophedelory.plist.Key(key), value);
+	}
 
 	/**
 	 * 

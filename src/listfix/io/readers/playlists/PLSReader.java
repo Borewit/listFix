@@ -162,7 +162,7 @@ public class PLSReader implements IPlaylistReader
 		{
 			try
 			{
-				results.add(new PlaylistEntry(new URI(file), title, duration));
+				results.add(new PlaylistEntry(new URI(file), title, duration, plsFile));
 			}
 			catch (URISyntaxException ex)
 			{

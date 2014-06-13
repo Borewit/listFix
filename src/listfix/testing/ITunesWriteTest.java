@@ -1,6 +1,6 @@
 /*
  *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2012 Jeremy Caron
+ *  Copyright (C) 2001-2010 Jeremy Caron
  * 
  *  This file is part of listFix().
  * 
@@ -27,26 +27,14 @@ import christophedelory.playlist.plist.PlistPlaylist;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import listfix.model.playlists.itunes.ITunesMediaLibrary;
-import listfix.model.playlists.itunes.ITunesTrack;
-import listfix.model.playlists.Playlist;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.playlists.itunes.ITunesPlaylist;
-import listfix.model.playlists.itunes.ITunesPlaylistEntry;
 
 /**
  *
  * @author jcaron
  */
-public class PlaylistOpener
+public class ITunesWriteTest
 {
 	public static void main(String[] args)
 	{
@@ -64,41 +52,10 @@ public class PlaylistOpener
 			{
 				Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-			Playlist myList = convertToListFixPlaylist(list, toOpen);
-			myList.getEntries();
 		}
 		catch (IOException ex)
 		{
 			Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
 		}
-	}
-
-	private static Playlist convertToListFixPlaylist(ITunesMediaLibrary list, File listFile)
-	{
-		List<PlaylistEntry> newList = new ArrayList<>();
-		Map<String, ITunesTrack> tracks = list.getTracks();
-		
-		for (String id : tracks.keySet())
-		{
-			ITunesTrack track = tracks.get(id);
-			try
-			{
-				newList.add(new ITunesPlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), listFile, track));
-			}
-			catch (URISyntaxException ex)
-			{
-				Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		try
-		{
-			return new ITunesPlaylist(listFile, newList, list);
-		}
-		catch (Exception ex)
-		{
-			Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return null;
 	}
 }

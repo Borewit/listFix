@@ -50,43 +50,55 @@ public class PlaylistEntry implements Cloneable
 {
 	// logger
 	private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
-	// The list of folders we know don't exist.
+	
 	/**
-	 * 
+	 * The list of folders we know don't exist.
 	 */
 	public static List<String> NonExistentDirectories = new ArrayList<>();
-	// A list of folders we know DO exist.
+	
 	/**
-	 * 
+	 * A list of folders we know DO exist.
 	 */
 	public static List<String> ExistingDirectories = new ArrayList<>();
-	// The root folder all the entries in a relative playlist are relative to.
+	
 	/**
-	 * 
+	 * The root folder all the entries in a relative playlist are relative to.
 	 */
 	public String BasePath = "";
+	
 	// This entry's _path.
 	private String _path = ".";
+	
 	// This entry's extra info.
 	private String _extInf = "";
+	
 	// This entry's file name.
 	private String _fileName = "";
+	
 	// This entry's File object.
 	private File _thisFile = null;
+	
 	// This entry's absolute file.
 	private File _absoluteFile = null;
+	
 	// The entry's URI (for URLs).
 	private URI _thisURI = null;
+	
 	// The _title of the entry
 	private String _title = "";
+	
 	// The _length of the track
 	private long _length = -1;
+	
 	// Status of this item.
 	private PlaylistEntryStatus _status = PlaylistEntryStatus.Unknown;
+	
 	// Has this item been fixed?
 	private boolean _isFixed;
+	
 	// The file this entry belongs to.
 	private File _playlist;
+	
 	// WPL
 	private String _cid = "";
 	private String _tid = "";
@@ -137,13 +149,15 @@ public class PlaylistEntry implements Cloneable
 	 * @param uri
 	 * @param title
 	 * @param length
+	 * @param list  
 	 */
-	public PlaylistEntry(URI uri, String title, long length)
+	public PlaylistEntry(URI uri, String title, long length, File list)
 	{
 		_thisURI = uri;
 		_title = title;
 		_length = length;
 		_extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
+		_playlist = list;
 	}
 
 	// Construct an M3U path & file-name based entry.
@@ -735,7 +749,7 @@ public class PlaylistEntry implements Cloneable
 		{
 			try
 			{
-				result = new PlaylistEntry(new URI(this.getURI().toString()), this.getTitle(), this.getLength());
+				result = new PlaylistEntry(new URI(this.getURI().toString()), this.getTitle(), this.getLength(), _playlist);
 			}
 			catch (Exception e)
 			{

@@ -96,9 +96,8 @@ public class Playlist
 	 * @param listFile
 	 * @param type
 	 * @param entries
-	 * @throws IOException
 	 */
-	public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries) throws IOException
+	public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries)
 	{
 		_utfFormat = true;
 		setEntries(entries);

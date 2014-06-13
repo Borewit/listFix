@@ -138,7 +138,9 @@ import listfix.model.AppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.PlaylistHistory;
+import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistFactory;
 
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
@@ -1711,53 +1713,62 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		DocumentComponent tempComp = _documentPane.getDocument(path);
 		if (tempComp == null)
 		{
-			ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
-			{
-				@Override
-				protected Playlist doInBackground() throws Exception
+			PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file);
+				
+				ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
 				{
-					Playlist list = new Playlist(file, this);
-					if (libraryFiles != null)
+					@Override
+					protected Playlist doInBackground() throws Exception
 					{
-						list.repair(libraryFiles, this);
+						this.setMessage("Please wait while your playlist is opened and analyzed.");
+						Playlist list = PlaylistFactory.getPlaylist(file, this);
+						if (libraryFiles != null)
+						{
+							list.repair(libraryFiles, this);
+						}
+						return list;
 					}
-					return list;
-				}
 
-				@Override
-				protected void done()
+					@Override
+					protected void done()
+					{
+						Playlist list;
+						try
+						{
+							list = get();
+						}
+						catch (CancellationException ex)
+						{
+							return;
+						}
+						catch (InterruptedException | ExecutionException ex)
+						{
+							_logger.error(ExStack.toString(ex));
+							JOptionPane.showMessageDialog(GUIScreen.this, 
+														  ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()),
+														  "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+
+						openNewTabForPlaylist(list);
+
+						// update playlist history
+						PlaylistHistory history = _guiDriver.getHistory();
+						history.add(path);
+						(new FileWriter()).writeMruPlaylists(history);
+
+						updateRecentMenu();
+					}
+				};
+				
+				boolean textOnly = false;				
+				if (type == PlaylistType.ITUNES || type == PlaylistType.XSPF)
 				{
-					Playlist list;
-					try
-					{
-						list = get();
-					}
-					catch (CancellationException ex)
-					{
-						return;
-					}
-					catch (InterruptedException | ExecutionException ex)
-					{
-						_logger.error(ExStack.toString(ex));
-						JOptionPane.showMessageDialog(GUIScreen.this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
-							"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					
-					openNewTabForPlaylist(list);
-
-					// update playlist history
-					PlaylistHistory history = _guiDriver.getHistory();
-					history.add(path);
-					(new FileWriter()).writeMruPlaylists(history);
-
-					updateRecentMenu();
+					// Can't show a progress dialog for these as we have no way to track them at present.
+					textOnly = true;
 				}
-
-
-			};
-			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0,70) : file.getName()) + "'...", false);
-			pd.setVisible(true);
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0, 70) : file.getName()) + "'...", textOnly);
+				pd.setVisible(true);			
 		}
 		else
 		{
@@ -2301,7 +2312,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			{
 				"Save", "Save As", "Don't Save", "Cancel"
 			};
-			int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("This playlist has been modified. Do you want to save the changes?"), "Confirm Close",
+			int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("The playlist \"" + list.getFilename() + "\" has been modified. Do you want to save the changes?"), "Confirm Close",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			
 			if (rc == 0)

@@ -31,6 +31,8 @@ import christophedelory.playlist.xspf.Track;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import listfix.io.Constants;
+import listfix.io.FileUtils;
 
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
@@ -46,6 +48,9 @@ import org.apache.log4j.Logger;
 public class XSPFWriter implements IPlaylistWriter
 {
 	private static final Logger _logger = Logger.getLogger(XSPFWriter.class);
+	private boolean _saveRelative;
+	private Playlist _list;
+	private Media _trackToAdd;
 	
 	/**
 	 * Saves the list to disk.  Always writes in UTF-8.
@@ -57,7 +62,9 @@ public class XSPFWriter implements IPlaylistWriter
 	@Override
 	public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception
 	{
-		// TODO: Support relative saving!
+		_saveRelative = saveRelative;
+		_list = list;
+		
 		boolean track = adapter != null;
 		
 		// First, construct a generic lizzy playlist
@@ -95,9 +102,9 @@ public class XSPFWriter implements IPlaylistWriter
 
 	private AbstractPlaylistComponent getMedia(PlaylistEntry entry) throws Exception
 	{
-		Media trackToAdd = new Media();		
-		trackToAdd.setSource(getContent(entry));
-		return trackToAdd;
+		_trackToAdd = new Media();		
+		_trackToAdd.setSource(getContent(entry));
+		return _trackToAdd;
 	}
 
 	private Content getContent(PlaylistEntry entry) throws Exception
@@ -111,8 +118,25 @@ public class XSPFWriter implements IPlaylistWriter
 		{
 			if (entry.getAbsoluteFile() != null)
 			{
-				// Handle found files.
-				mediaURI = entry.getAbsoluteFile().toURI();
+				if (_saveRelative)
+				{
+					// replace existing entry with a new relative one
+					String relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _list.getFile().getAbsoluteFile().getCanonicalFile());
+					if (!relativePath.startsWith("." + Constants.FS))
+					{
+						relativePath = "." + Constants.FS + relativePath;
+					}
+
+					relativePath = "file:" + relativePath;
+					
+					//repoint entry object to a new one?
+					return new Content(relativePath);
+				}
+				else
+				{
+					// Handle found files.
+					mediaURI = entry.getAbsoluteFile().toURI();
+				}
 			}
 			else
 			{
@@ -121,6 +145,7 @@ public class XSPFWriter implements IPlaylistWriter
 			}
 		}
 		mediaURI = normalizeFileUri(mediaURI);
+		//repoint entry object to a new one?
 		return new Content(mediaURI);
 	}
 

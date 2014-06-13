@@ -135,19 +135,27 @@ public class XSPFReader implements IPlaylistReader
 				
 				try
 				{
-					uri = new URI(track.getStringContainers().get(0).getText());
-					try
+					String trackText = track.getStringContainers().get(0).getText();
+					if (isRelativeURI(trackText))
 					{
-						trackFile = new File(uri.getSchemeSpecificPart());
-						if (trackFile != null)
-						{
-							entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
-						}
+						entriesList.add(new PlaylistEntry(new File(trackText.substring(trackText.indexOf("./"))), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
 					}
-					catch (Exception e)
-					{
-						// if that didn't work, then we're probably dealing w/ a URL
-						entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
+					else
+					{	
+						uri = new URI(track.getStringContainers().get(0).getText());
+						try
+						{
+							trackFile = new File(uri.getSchemeSpecificPart());
+							if (trackFile != null)
+							{
+								entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+							}
+						}
+						catch (Exception e)
+						{
+							// if that didn't work, then we're probably dealing w/ a URL
+							entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+						}
 					}
 				}
 				catch (Exception ex)
@@ -177,43 +185,7 @@ public class XSPFReader implements IPlaylistReader
 	@Override
 	public List<PlaylistEntry> readPlaylist() throws IOException
 	{
-		List<PlaylistEntry> entriesList = new ArrayList<>();
-		URI uri; 
-		File trackFile;
-		SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
-		if (loadedList.getProvider().getId().equals("xspf"))
-		{
-			christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(_listFile);
-			for (Track track : xspfList.getTracks())
-			{
-				try
-				{
-					uri = new URI(track.getStringContainers().get(0).getText());
-					try
-					{
-						trackFile = new File(uri.getSchemeSpecificPart());
-						if (trackFile != null)
-						{
-							entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue()  : -1, _listFile));
-						}
-					}
-					catch (Exception e)
-					{
-						// if that didn't work, then we're probably dealing w/ a URL
-						entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue()  : -1));
-					}
-				}
-				catch (Exception ex)
-				{
-					_logger.error("[XSPFReader] - Could not convert lizzy entry to PlaylistEntry - " + ExStack.toString(ex), ex);
-				}
-			}
-			return entriesList;
-		}
-		else
-		{
-			throw new IOException("XSPF file was not in XSPF format!!");
-		}
+		return readPlaylist(null);
 	}
 
 	private String getTitle(Track track)
@@ -231,5 +203,10 @@ public class XSPFReader implements IPlaylistReader
 			return track.getCreator();
 		}
 		return "";
+	}
+
+	private boolean isRelativeURI(String trackText)
+	{
+		return trackText.startsWith("file:.");
 	}
 }

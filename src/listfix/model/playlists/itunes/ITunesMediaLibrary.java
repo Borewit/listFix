@@ -39,11 +39,11 @@ import java.util.Map;
  * an iTunes XML file, we may be handling a single exported playlist, or the entire media library for iTunes; there's really no way to know
  * since the structure is identical in both cases (some metadata followed by a tracks section, and then a playlists section).
  * 
- * It is possible for a track in the Tracks section of the library to be an orphaned, as in, no playlist in the library references it.
+ * It is possible for a track in the Tracks section of the library to be an orphaned, as in no playlist in the library references it.
  * Playlists themselves are just a name (string) and list of track IDs from the tracks section.
  * 
  * @author jcaron
- * @see ITunesPlaylist
+ * @see ITunesTrackList
  * @see ITunesTrack
  */
 public class ITunesMediaLibrary 
@@ -83,13 +83,29 @@ public class ITunesMediaLibrary
 	}
 	
 	/**
-	 * Gets the Playlists section of an iTunes library/playlist file as a list of ITunesPlaylist objects.
-	 * @return The Playlists section of an iTunes library/playlist file as a list of ITunesPlaylist objects.
-	 * @see ITunesPlaylist
-	 */
-	public List<ITunesPlaylist> getPlaylists()
+	public void setTracks(Map<String, ITunesTrack> trackMap)
 	{
-		List<ITunesPlaylist> result = new ArrayList<>();
+		Dict rootDict = ((Dict)_plist.getPlist().getPlistObject());
+		Dict tracksDict = DictionaryParser.getKeyValueAsDict(rootDict, "Tracks");
+		Dictionary tracksDictionary = tracksDict.getDictionary();
+		Key plistKey;
+		for (String key : trackMap.keySet())
+		{
+			plistKey = new Key(key);
+			tracksDictionary.remove(plistKey);
+			tracksDictionary.put(plistKey, trackMap.get(key).getTrackDict());
+		}
+	}
+	*/
+	
+	/**
+	 * Gets the Playlists section of an iTunes library/playlist file as a list of ITunesTrackList objects.
+	 * @return The Playlists section of an iTunes library/playlist file as a list of ITunesTrackList objects.
+	 * @see ITunesTrackList
+	 */
+	public List<ITunesTrackList> getPlaylists()
+	{
+		List<ITunesTrackList> result = new ArrayList<>();
 		Dict rootDict = ((Dict)_plist.getPlist().getPlistObject());
 		Array playlistsArray = DictionaryParser.getKeyValueAsArray(rootDict, "Playlists");
 		Map<String, ITunesTrack> tracks = getTracks();
@@ -112,8 +128,16 @@ public class ITunesMediaLibrary
 					contents.add(tracks.get(trackId.getValue()));
 				}
 			}
-			result.add(new ITunesPlaylist(DictionaryParser.getKeyValueAsString(playlistDict, "Name"), contents));
+			result.add(new ITunesTrackList(DictionaryParser.getKeyValueAsString(playlistDict, "Name"), contents));
 		}		
 		return result;
+	}
+
+	/**
+	 * @return the _plist
+	 */
+	public PlistPlaylist getPlist()
+	{
+		return _plist;
 	}
 }

@@ -77,8 +77,10 @@ import listfix.io.filters.PlaylistFileFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.PlaylistEntryList;
+import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.PlaylistFactory;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.GUIScreen;
@@ -90,6 +92,7 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
+import org.apache.commons.io.FilenameUtils;
 
 import org.apache.log4j.Logger;
 
@@ -606,7 +609,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				catch (IOException | InterruptedException | ExecutionException e)
 				{
 					_logger.error(ExStack.toString(e));
-					JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+					JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 				}
 				finally
 				{
@@ -636,7 +639,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			catch (InterruptedException | ExecutionException ex)
 			{
 				_logger.error(ExStack.toString(ex));
-				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
 			}
 			finally
 			{
@@ -1213,12 +1216,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			else
 			{
 				showWaitCursor(true);
-
 				ProgressWorker worker = new ProgressWorker()
 				{
 					@Override
 					protected Object doInBackground() throws IOException
 					{
+						this.setMessage("Please wait while your playlist is reloaded from disk.");
 						_playlist.reload(this);
 						return null;
 					}
@@ -1248,8 +1251,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						resizeAllColumns();
 					}
 				};
-
-				ProgressDialog pd = new ProgressDialog(null, true, worker, "Reloading...");
+				
+				boolean textOnly = false;			
+				if (_playlist.getType() == PlaylistType.ITUNES || _playlist.getType() == PlaylistType.XSPF)
+				{
+					// Can't show a progress dialog for these as we have no way to track them at present.
+					textOnly = true;
+				}
+				ProgressDialog pd = new ProgressDialog(this.getParentFrame(), true, worker, "Reloading '" + _playlist.getFilename() + "'...", textOnly);
 				pd.setVisible(true);
 
 				showWaitCursor(false);
@@ -1623,7 +1632,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					else if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 3))
 					{
 						PlaylistEntry entry = _playlist.get(rowIx);
-						return (entry.isURL() ? entry.getURI().toString() : entry.getPath().toString());
+						return (entry.isURL() ? entry.getURI().toString() : FilenameUtils.normalize(entry.getAbsoluteFile().toString()));
 					}
 				}
 				return super.getToolTipText(event);
@@ -1952,7 +1961,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					@Override
 					protected Playlist doInBackground() throws Exception
 					{
-						Playlist list = new Playlist(tempFile, this);
+						Playlist list = PlaylistFactory.getPlaylist(tempFile, this);
 						if (libraryFiles != null)
 						{
 							list.repair(libraryFiles, this);
