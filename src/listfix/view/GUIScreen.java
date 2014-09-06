@@ -1344,7 +1344,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
         _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         _batchRepairWinampMenuItem.setMnemonic('B');
-        _batchRepairWinampMenuItem.setText("Batch Repair Winamp Playlists...");
+        _batchRepairWinampMenuItem.setText("Batch Repair Winamp Media Library Playlists...");
         _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1356,7 +1356,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
         _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         _extractPlaylistsMenuItem.setMnemonic('W');
-        _extractPlaylistsMenuItem.setText("Extract Winamp Playlists");
+        _extractPlaylistsMenuItem.setText("Extract Winamp Media Library Playlists");
         _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
         _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener()
         {

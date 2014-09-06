@@ -312,7 +312,7 @@
                   <KeyStroke key="Ctrl+Alt+W"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="66"/>
-                <Property name="text" type="java.lang.String" value="Batch Repair Winamp Playlists..."/>
+                <Property name="text" type="java.lang.String" value="Batch Repair Winamp Media Library Playlists..."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_batchRepairWinampMenuItemActionPerformed"/>
@@ -324,7 +324,7 @@
                   <KeyStroke key="Ctrl+E"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="87"/>
-                <Property name="text" type="java.lang.String" value="Extract Winamp Playlists"/>
+                <Property name="text" type="java.lang.String" value="Extract Winamp Media Library Playlists"/>
                 <Property name="toolTipText" type="java.lang.String" value="Extract Winamp Media Library Playlists"/>
               </Properties>
               <Events>
