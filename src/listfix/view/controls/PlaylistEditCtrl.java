@@ -92,8 +92,8 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
-import org.apache.commons.io.FilenameUtils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -609,7 +609,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				catch (IOException | InterruptedException | ExecutionException e)
 				{
 					_logger.error(ExStack.toString(e));
-					JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+					
+					JOptionPane.showMessageDialog(getParentFrame(), 
+												  new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", e.getCause())),
+												  "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
 				}
 				finally
 				{
@@ -639,7 +642,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			catch (InterruptedException | ExecutionException ex)
 			{
 				_logger.error(ExStack.toString(ex));
-				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
+				
+				JOptionPane.showMessageDialog(getParentFrame(), 
+											  new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", ex.getCause())),
+											  "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
 			}
 			finally
 			{
@@ -692,8 +698,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 		}
 		catch (Exception ex)
-		{
-			JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("Could not open these playlist entries, error was: " + ex.getMessage()));
+		{			
+			JOptionPane.showMessageDialog(getParentFrame(),
+										  new JTransparentTextArea(ExStack.textFormatErrorForUser("Could not open the selected playlist entries.", ex.getCause())),
+										  "Playback Error", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
 		}
 	}
@@ -1423,7 +1431,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			}
 			catch (InterruptedException | ExecutionException e)
 			{
-				JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("An error has occured, 1 or more files were not copied."));
+				JOptionPane.showMessageDialog(getParentFrame(),
+											  new JTransparentTextArea(ExStack.textFormatErrorForUser("An error has occured, 1 or more files were not copied.", e.getCause())),
+											  "Copy Error", JOptionPane.ERROR_MESSAGE);
 				_logger.error(ExStack.toString(e));
 			}
 		}
@@ -1984,7 +1994,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						catch (Exception ex)
 						{
 							JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(),
-								ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()),
+								new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
 								"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 							_logger.error(ExStack.toString(ex));
 						}

@@ -271,6 +271,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		_documentPane.setTabbedPaneCustomizer(createTabCustomizer());
 		_documentPane.setTabColorProvider(createTabColorProvider());
 		
+		// Load the position the window was in when it was last closed.
 		WindowSaver.getInstance().loadSettings(this);
 
 		// Set the position of the divider in the left split pane.
@@ -1694,7 +1695,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 		catch (IOException | HeadlessException ex)
 		{
-			JOptionPane.showMessageDialog(this, ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()), 
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())), 
 				"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
 			return;
@@ -1744,8 +1745,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						catch (InterruptedException | ExecutionException ex)
 						{
 							_logger.error(ExStack.toString(ex));
-							JOptionPane.showMessageDialog(GUIScreen.this, 
-														  ExStack.formatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause()),
+							
+							JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
 														  "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
@@ -2098,7 +2099,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				updateRecentMenu();
 				return true;
 			}
-			catch (CancellationException exception)
+			catch (CancellationException e)
 			{
 				return false;
 			}
@@ -2606,7 +2607,7 @@ private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEven
 	final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibraryFileList());
 	if (br == null || br.isEmpty())
 	{
-		JOptionPane.showMessageDialog(this, new JTransparentTextArea("Could not find any WinAmp playlists"));
+		JOptionPane.showMessageDialog(this, new JTransparentTextArea("Could not find any WinAmp Media Library playlists"));
 		return;
 	}
 
@@ -2746,7 +2747,10 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	catch (IOException ex)
 	{
 		_logger.error(ExStack.toString(ex));
-		JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report."));
+		JOptionPane.showMessageDialog(this, 
+									  new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.", ex.getCause())), 
+									  "New Playlist Error", 
+									  JOptionPane.ERROR_MESSAGE);
 	}
 
 }//GEN-LAST:event__newIconButtonActionPerformed
@@ -2918,8 +2922,7 @@ private void _miClosestMatchesSearchActionPerformed(java.awt.event.ActionEvent e
 			}
 		}
 
-		UIManager.put("OptionPane.messsageFont", font);
-		UIManager.put("OptionPane.buttonFont", font);
+		UIManager.put("OptionPane.buttonFont", new javax.swing.plaf.FontUIResource(font));
 		updateAllComponentTreeUIs();
 	}
 

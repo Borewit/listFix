@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class BrowserLauncher
 {
-	private static final String _errMsg = "Error attempting to launch web browser";
+	private static final String _errMsg = "Error attempting to launch default web browser";
 	private static final Logger _logger = Logger.getLogger(BrowserLauncher.class);
 
 	/**
