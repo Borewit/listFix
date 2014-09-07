@@ -744,30 +744,30 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnOpenSelectedActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="_btnBatchExactMatches">
+                    <Component class="javax.swing.JButton" name="_btnQuickRepair">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Exact"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Exact Matches Repair"/>
+                        <Property name="text" type="java.lang.String" value="Quick"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Quick Batch Repair"/>
                         <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[2, 8, 2, 8]"/>
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnBatchExactMatchesActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnQuickRepairActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="_btnBatchClosestMatches">
+                    <Component class="javax.swing.JButton" name="_btnDeepRepair">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Closest"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Closest Matches Repair"/>
+                        <Property name="text" type="java.lang.String" value="Deep"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Deep Batch Repair"/>
                         <Property name="enabled" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[2, 8, 2, 8]"/>
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnBatchClosestMatchesActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnDeepRepairActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

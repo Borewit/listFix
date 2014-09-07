@@ -104,7 +104,8 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
@@ -129,45 +130,55 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.GridLayout(6, 1));
 
         buttonGroup1.add(_rbRandom);
-        _rbRandom.setText("Random");
-        _rbRandom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _rbRandom.setText("Randomized");
+        _rbRandom.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onUnsortedOptionSelected(evt);
             }
         });
         jPanel1.add(_rbRandom);
 
         buttonGroup1.add(_rbReverse);
-        _rbReverse.setText("Reverse current order");
-        _rbReverse.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _rbReverse.setText("Reversed");
+        _rbReverse.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onUnsortedOptionSelected(evt);
             }
         });
         jPanel1.add(_rbReverse);
 
         buttonGroup1.add(_rbFilename);
-        _rbFilename.setText("Filename");
-        _rbFilename.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _rbFilename.setText("By Filename");
+        _rbFilename.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onSortedOptionSelected(evt);
             }
         });
         jPanel1.add(_rbFilename);
 
         buttonGroup1.add(_rbPath);
-        _rbPath.setText("Path");
-        _rbPath.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _rbPath.setText("By Location");
+        _rbPath.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onSortedOptionSelected(evt);
             }
         });
         jPanel1.add(_rbPath);
 
         buttonGroup1.add(_rbStatus);
-        _rbStatus.setText("Status");
-        _rbStatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        _rbStatus.setText("By Status");
+        _rbStatus.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onSortedOptionSelected(evt);
             }
         });
@@ -181,17 +192,21 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jButton1.setText("Change Order");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton1.setText("Proceed");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnOkActionPerformed(evt);
             }
         });
         jPanel2.add(jButton1);
 
         jButton2.setText("Cancel");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 onBtnCancelActionPerformed(evt);
             }
         });
