@@ -1640,7 +1640,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 	}//GEN-LAST:event_openIconButtonActionPerformed
 
-	private void openPlaylist(final File file)
+	public void openPlaylist(final File file)
 	{
 		// do nothing if the file is already open.
 		for (Playlist list : _openPlaylists)
@@ -1657,7 +1657,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 					
 				}
 				_documentPane.setActiveDocument(path);
-				// _uiTabs.setSelectedComponent(_openPlaylists.get(list));
 				return;
 			}
 		}
@@ -1677,7 +1676,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 		catch (IOException | HeadlessException ex)
 		{
-			JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())), 
+			JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected.", ex.getCause())), 
 				"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
 			_logger.error(ExStack.toString(ex));
 			return;
@@ -1698,60 +1697,60 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		{
 			PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file);
 				
-				ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+			ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+			{
+				@Override
+				protected Playlist doInBackground() throws Exception
 				{
-					@Override
-					protected Playlist doInBackground() throws Exception
+					this.setMessage("Please wait while your playlist is opened and analyzed.");
+					Playlist list = PlaylistFactory.getPlaylist(file, this);
+					if (libraryFiles != null)
 					{
-						this.setMessage("Please wait while your playlist is opened and analyzed.");
-						Playlist list = PlaylistFactory.getPlaylist(file, this);
-						if (libraryFiles != null)
-						{
-							list.repair(libraryFiles, this);
-						}
-						return list;
+						list.repair(libraryFiles, this);
 					}
-
-					@Override
-					protected void done()
-					{
-						Playlist list;
-						try
-						{
-							list = get();
-						}
-						catch (CancellationException ex)
-						{
-							return;
-						}
-						catch (InterruptedException | ExecutionException ex)
-						{
-							_logger.error(ExStack.toString(ex));
-							
-							JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
-														  "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-
-						openNewTabForPlaylist(list);
-
-						// update playlist history
-						PlaylistHistory history = _guiDriver.getHistory();
-						history.add(path);
-						(new FileWriter()).writeMruPlaylists(history);
-
-						updateRecentMenu();
-					}
-				};
-				
-				boolean textOnly = false;				
-				if (type == PlaylistType.ITUNES || type == PlaylistType.XSPF)
-				{
-					// Can't show a progress dialog for these as we have no way to track them at present.
-					textOnly = true;
+					return list;
 				}
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0, 70) : file.getName()) + "'...", textOnly);
-				pd.setVisible(true);			
+
+				@Override
+				protected void done()
+				{
+					Playlist list;
+					try
+					{
+						list = get();
+					}
+					catch (CancellationException ex)
+					{
+						return;
+					}
+					catch (InterruptedException | ExecutionException ex)
+					{
+						_logger.error(ExStack.toString(ex));
+
+						JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
+								"Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					openNewTabForPlaylist(list);
+
+					// update playlist history
+					PlaylistHistory history = _guiDriver.getHistory();
+					history.add(path);
+					(new FileWriter()).writeMruPlaylists(history);
+
+					updateRecentMenu();
+				}
+			};
+
+			boolean textOnly = false;
+			if (type == PlaylistType.ITUNES || type == PlaylistType.XSPF)
+			{
+				// Can't show a progress dialog for these as we have no way to track them at present.
+				textOnly = true;
+			}
+			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0, 70) : file.getName()) + "'...", textOnly);
+			pd.setVisible(true);		
 		}
 		else
 		{
@@ -1761,7 +1760,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	
 	public void openNewTabForPlaylist(Playlist list)
 	{
-		PlaylistEditCtrl editor = new PlaylistEditCtrl();
+		PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
 		editor.setPlaylist(list);
 
 		// Add the tab to the tabbed pane
@@ -2698,7 +2697,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 	{
 		_currentPlaylist = new Playlist();
 		String path = _currentPlaylist.getFile().getCanonicalPath();
-		PlaylistEditCtrl editor = new PlaylistEditCtrl();
+		PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
 		editor.setPlaylist(_currentPlaylist);
 		String title = _currentPlaylist.getFilename();
 		final DocumentComponent tempComp = CreateDocumentComponentForEditor(editor, path, title);

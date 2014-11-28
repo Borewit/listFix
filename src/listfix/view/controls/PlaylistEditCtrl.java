@@ -70,6 +70,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.controller.GUIDriver;
+import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.PlaylistScanner;
 import listfix.io.StringArrayListSerializer;
@@ -121,14 +122,22 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 			onPlaylistModified(list);
 		}
 	};
+	
+	public PlaylistEditCtrl()
+	{
+		initComponents();
+		initPlaylistTable(null);
+		initFolderChooser();
+		SwingUtilities.updateComponentTreeUI(this);
+	}	
 
 	/**
 	 *
 	 */
-	public PlaylistEditCtrl()
+	public PlaylistEditCtrl(GUIScreen mainWindow)
 	{
 		initComponents();
-		initPlaylistTable();
+		initPlaylistTable(mainWindow);
 		initFolderChooser();
 		SwingUtilities.updateComponentTreeUI(this);
 	}
@@ -149,6 +158,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void addItems()
 	{
 		JFileChooser chooser = new JFileChooser();
+		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new AudioFileFilter());
 		chooser.setMultiSelectionEnabled(true);
 		if (GUIDriver.getInstance().hasAddedMediaDirectory())
@@ -1643,7 +1653,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					else if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 3))
 					{
 						PlaylistEntry entry = _playlist.get(rowIx);
-						return (entry.isURL() ? entry.getURI().toString() : FilenameUtils.normalize(entry.getAbsoluteFile().toString()));
+						return (entry.isURL() ? entry.getURI().toString() : FilenameUtils.normalize(entry.getPath() + Constants.FS + entry.getFileName()));
 					}
 				}
 				return super.getToolTipText(event);
@@ -1663,7 +1673,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		return false;
 	}
 
-	private void initPlaylistTable()
+	private void initPlaylistTable(final GUIScreen parent)
 	{
 		_uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
 		_uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
@@ -1858,7 +1868,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				else
 				{
                     // This is the flavor we handle when the user drags playlists over from the playlist panel, or when dragging in any file from linux
-					return HandleStringFlavor(info, dl);
+					return HandleStringFlavor(info, dl, parent);
 				}
 			}
 
@@ -2007,57 +2017,114 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				return _playlist.size() - plistSize;
 			}
 
-			private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl)
+			private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
 			{
-				Transferable t = info.getTransferable();
-				DataFlavor[] flavors = t.getTransferDataFlavors();
-				for (int i = 0; i < flavors.length; i++)
+				int result = JOptionPane.showOptionDialog(getParentFrame(), "You dragged one or more playlists into this list, would you like to insert them or open them for repair?", 
+						"Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[] {"Insert", "Open", "Cancel"}, "Insert");				
+				
+				if (result == JOptionPane.YES_OPTION)
 				{
-					try
+					Transferable t = info.getTransferable();
+					DataFlavor[] flavors = t.getTransferDataFlavors();
+					for (int i = 0; i < flavors.length; i++)
 					{
-						final String data;
-                        if (t.getTransferData(flavors[i]) instanceof String)
-                        {
-                            // In this case, it's a magically delicious string coming from the playlist panel
-                            String input = (String) t.getTransferData(flavors[i]);							
-							List<String> paths = StringArrayListSerializer.Deserialize(input);
-							
-							// Turn this into a list of files, and reuse the processing code above
-							List<File> files = new ArrayList<>();
-							for (String path : paths)
+						try
+						{
+							final String data;
+							if (t.getTransferData(flavors[i]) instanceof String)
 							{
-								files.add(new File(path));
-							}
-							
-							ProcessFileListDrop(files, dl);
-                        }
-                        else if (t.getTransferData(flavors[i]) instanceof InputStreamReader)
-                        {
-                            List<File> filesToProcess = new ArrayList<>();
-							try (InputStreamReader reader = (InputStreamReader)t.getTransferData(flavors[i]); BufferedReader temp = new BufferedReader(reader))
-							{
-								String filePath = temp.readLine();
-								while (filePath != null && !filePath.isEmpty())
+								// In this case, it's a magically delicious string coming from the playlist panel
+								String input = (String) t.getTransferData(flavors[i]);
+								List<String> paths = StringArrayListSerializer.Deserialize(input);
+
+								// Turn this into a list of files, and reuse the processing code above
+								List<File> files = new ArrayList<>();
+								for (String path : paths)
 								{
-									filesToProcess.add(new File(new URI(filePath)));
-									filePath = temp.readLine();
+									files.add(new File(path));
+								}
+
+								ProcessFileListDrop(files, dl);
+							}
+							else
+							{
+								if (t.getTransferData(flavors[i]) instanceof InputStreamReader)
+								{
+									List<File> filesToProcess = new ArrayList<>();
+									try (InputStreamReader reader = (InputStreamReader) t.getTransferData(flavors[i]); BufferedReader temp = new BufferedReader(reader))
+									{
+										String filePath = temp.readLine();
+										while (filePath != null && !filePath.isEmpty())
+										{
+											filesToProcess.add(new File(new URI(filePath)));
+											filePath = temp.readLine();
+										}
+									}
+
+									Collections.sort(filesToProcess);
+									ProcessFileListDrop(filesToProcess, dl);
+
+									// In the linux case, we need to stop here, because the other flavors are different representations of the data we just processed...
+									return true;
 								}
 							}
-
-                            Collections.sort(filesToProcess);
-                            ProcessFileListDrop(filesToProcess, dl);
-
-                            // In the linux case, we need to stop here, because the other flavors are different representations of the data we just processed...
-                            return true;
-                        }
+						}
+						catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
+						{
+							_logger.error(ExStack.toString(ex));
+							return false;
+						}
 					}
-					catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
-					{
-						_logger.error(ExStack.toString(ex));
-                        return false;
-					}
+					return true;
 				}
-				return true;
+				else if (result == JOptionPane.NO_OPTION && parent != null)
+				{
+					Transferable t = info.getTransferable();
+					DataFlavor[] flavors = t.getTransferDataFlavors();
+					for (int i = 0; i < flavors.length; i++)
+					{
+						try
+						{
+							final String data;
+							if (t.getTransferData(flavors[i]) instanceof String)
+							{
+								// In this case, it's a magically delicious string coming from the playlist panel
+								String input = (String) t.getTransferData(flavors[i]);
+								List<String> paths = StringArrayListSerializer.Deserialize(input);
+								
+								for (String path : paths)
+								{
+									parent.openPlaylist(new File(path));
+								}
+							}
+							else
+							{
+								if (t.getTransferData(flavors[i]) instanceof InputStreamReader)
+								{
+									List<File> filesToProcess = new ArrayList<>();
+									try (InputStreamReader reader = (InputStreamReader) t.getTransferData(flavors[i]); BufferedReader temp = new BufferedReader(reader))
+									{
+										String filePath = temp.readLine();
+										while (filePath != null && !filePath.isEmpty())
+										{
+											parent.openPlaylist(new File(new URI(filePath)));
+										}
+									}
+
+									// In the linux case, we need to stop here, because the other flavors are different representations of the data we just processed...
+									return true;
+								}
+							}
+						}
+						catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
+						{
+							_logger.error(ExStack.toString(ex));
+							return false;
+						}
+					}
+					return true;
+				}
+				return false;
 			};
 
 			@Override
