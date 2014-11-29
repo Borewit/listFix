@@ -29,7 +29,7 @@ public enum PlaylistEntryStatus
 	/**
 	 *
 	 */
-	Unknown,
+	Exists,
 	/**
 	 *
 	 */

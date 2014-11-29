@@ -1332,7 +1332,7 @@ public class FilenameUtils
 		boolean anyChars = false;
 		int textIdx = 0;
 		int wcsIdx = 0;
-		final Stack<int[]> backtrack = new Stack<int[]>();
+		final Stack<int[]> backtrack = new Stack<>();
 
 		// loop around a backtrack stack, to handle complex * matching
 		do
@@ -1345,67 +1345,61 @@ public class FilenameUtils
 				anyChars = true;
 			}
 
-			// loop whilst tokens and text left to process
+			OUTER:
 			while (wcsIdx < wcs.length)
 			{
-
-				if (wcs[wcsIdx].equals("?"))
+				switch (wcs[wcsIdx])
 				{
-					// ? so move to next text char
-					textIdx++;
-					if (textIdx > filename.length())
-					{
+					case "?":
+						// ? so move to next text char
+						textIdx++;
+						if (textIdx > filename.length())
+						{
+							break OUTER;
+						}
+						anyChars = false;
 						break;
-					}
-					anyChars = false;
-
-				}
-				else if (wcs[wcsIdx].equals("*"))
-				{
-					// set any chars status
-					anyChars = true;
-					if (wcsIdx == wcs.length - 1)
-					{
-						textIdx = filename.length();
-					}
-
-				}
-				else
-				{
-					// matching text token
-					if (anyChars)
-					{
-						// any chars then try to locate text token
-						textIdx = caseSensitivity.checkIndexOf(filename, textIdx, wcs[wcsIdx]);
-						if (textIdx == NOT_FOUND)
+					case "*":
+						// set any chars status
+						anyChars = true;
+						if (wcsIdx == wcs.length - 1)
 						{
-							// token not found
-							break;
-						}
-						final int repeat = caseSensitivity.checkIndexOf(filename, textIdx + 1, wcs[wcsIdx]);
-						if (repeat >= 0)
+							textIdx = filename.length();
+						}	break;
+					default:
+						// matching text token
+						if (anyChars)
 						{
-							backtrack.push(new int[]
+							// any chars then try to locate text token
+							textIdx = caseSensitivity.checkIndexOf(filename, textIdx, wcs[wcsIdx]);
+							if (textIdx == NOT_FOUND)
 							{
-								wcsIdx, repeat
-							});
+								// token not found
+								break OUTER;
+							}
+							final int repeat = caseSensitivity.checkIndexOf(filename, textIdx + 1, wcs[wcsIdx]);
+							if (repeat >= 0)
+							{
+								backtrack.push(new int[]
+								{
+									wcsIdx, repeat
+								});
+							}
 						}
-					}
-					else
-					{
-						// matching from current position
-						if (!caseSensitivity.checkRegionMatches(filename, textIdx, wcs[wcsIdx]))
+						else
 						{
-							// couldnt match token
-							break;
+							// matching from current position
+							if (!caseSensitivity.checkRegionMatches(filename, textIdx, wcs[wcsIdx]))
+							{
+								// couldnt match token
+								break OUTER;
+							}
 						}
-					}
-
-					// matched text token, move text index to end of matched token
-					textIdx += wcs[wcsIdx].length();
-					anyChars = false;
+						// matched text token, move text index to end of matched token
+						textIdx += wcs[wcsIdx].length();
+						anyChars = false;
+						break;
 				}
-
 				wcsIdx++;
 			}
 
@@ -1441,7 +1435,7 @@ public class FilenameUtils
 		}
 
 		final char[] array = text.toCharArray();
-		final ArrayList<String> list = new ArrayList<String>();
+		final ArrayList<String> list = new ArrayList<>();
 		final StringBuilder buffer = new StringBuilder();
 		char prevChar = 0;
 		for (int i = 0; i < array.length; i++)

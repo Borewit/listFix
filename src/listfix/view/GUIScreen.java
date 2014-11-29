@@ -1749,7 +1749,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				// Can't show a progress dialog for these as we have no way to track them at present.
 				textOnly = true;
 			}
-			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0, 70) : file.getName()) + "'...", textOnly);
+			ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (file.getName().length() > 70 ? file.getName().substring(0, 70) : file.getName()) + "'...", textOnly, true);
 			pd.setVisible(true);		
 		}
 		else
@@ -1995,7 +1995,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false, false);
 				pd.setVisible(true);
 				worker.get();
 			}
@@ -2065,7 +2065,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false, false);
 				pd.setVisible(true);
 
 				worker.get();
@@ -2309,7 +2309,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return true;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false);
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false, false);
 				pd.setVisible(true);
 
 				try
@@ -2443,7 +2443,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true);
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true, true);
 				pd.setVisible(true);
 
 				try
@@ -2549,7 +2549,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				return null;
 			}
 		};
-		ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true);
+		ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true, true);
 		pd.setVisible(true);
 
 		try
@@ -2772,7 +2772,7 @@ private void _extractPlaylistsMenuItemActionPerformed(java.awt.event.ActionEvent
 				}
 			}
 		};
-		ProgressDialog pd = new ProgressDialog(this, true, worker, "Extracting...", false);
+		ProgressDialog pd = new ProgressDialog(this, true, worker, "Extracting...", false, true);
 		pd.setVisible(true);
 	}
 }//GEN-LAST:event__extractPlaylistsMenuItemActionPerformed

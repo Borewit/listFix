@@ -1277,7 +1277,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					// Can't show a progress dialog for these as we have no way to track them at present.
 					textOnly = true;
 				}
-				ProgressDialog pd = new ProgressDialog(this.getParentFrame(), true, worker, "Reloading '" + _playlist.getFilename() + "'...", textOnly);
+				ProgressDialog pd = new ProgressDialog(this.getParentFrame(), true, worker, "Reloading '" + _playlist.getFilename() + "'...", textOnly, true);
 				pd.setVisible(true);
 
 				showWaitCursor(false);
@@ -1909,7 +1909,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 			private boolean HandleFileListFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
 			{
-				int result = JOptionPane.showOptionDialog(getParentFrame(), "You dragged one or more playlists into this list, would you like to insert them or open them for repair?", 
+				int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"), 
 						"Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[] {"Insert", "Open", "Cancel"}, "Insert");	
 				
 				if (result == JOptionPane.YES_OPTION)
@@ -2070,7 +2070,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
 			private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
 			{
-				int result = JOptionPane.showOptionDialog(getParentFrame(), "You dragged one or more playlists into this list, would you like to insert them or open them for repair?", 
+				int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"), 
 						"Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[] {"Insert", "Open", "Cancel"}, "Insert");				
 				
 				if (result == JOptionPane.YES_OPTION)

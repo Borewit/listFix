@@ -91,7 +91,7 @@ public class PlaylistEntry implements Cloneable
 	private long _length = -1;
 	
 	// Status of this item.
-	private PlaylistEntryStatus _status = PlaylistEntryStatus.Unknown;
+	private PlaylistEntryStatus _status = PlaylistEntryStatus.Exists;
 	
 	// Has this item been fixed?
 	private boolean _isFixed;

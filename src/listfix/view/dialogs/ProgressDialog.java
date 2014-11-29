@@ -44,7 +44,7 @@ public class ProgressDialog extends javax.swing.JDialog
 	 */
 	public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label)
 	{
-		this(parent, modal, worker, label, false);
+		this(parent, modal, worker, label, false, true);
 	}
 
     /**
@@ -54,8 +54,9 @@ public class ProgressDialog extends javax.swing.JDialog
 	 * @param worker
 	 * @param label
 	 * @param textMode
+	 * @param canCancel
 	 */
-	public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode)
+	public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode, boolean canCancel)
     {
         super(parent, modal);
         initComponents();
@@ -90,6 +91,14 @@ public class ProgressDialog extends javax.swing.JDialog
 		{
 			_progressBar.setVisible(true);
 			_pnlMessage.setVisible(false);
+		}
+		
+		if (!canCancel)
+		{
+			_cancelButton.setVisible(false);
+			sz.width = 400;
+			sz.height = 80;
+			setSize(sz);
 		}
 
         setLocationRelativeTo(parent);
