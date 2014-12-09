@@ -34,8 +34,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import javax.swing.JFrame;
+
 import listfix.io.Constants;
 import listfix.util.ExStack;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -145,7 +147,7 @@ public class WindowSaver implements AWTEventListener
 	{
 		Properties settings = new Properties();
 		
-		TODO: Delete??
+		// TODO: Delete??
 		/*
 		try
 		{
