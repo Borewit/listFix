@@ -153,11 +153,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	private final JFileChooser _jSaveFileChooser = new JFileChooser();
 	private final FolderChooser _jMediaDirChooser = new FolderChooser();
 	private final List<Playlist> _openPlaylists = new ArrayList<>();
+	private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
 	
 	private GUIDriver _guiDriver = null;
 	private Playlist _currentPlaylist;
 	private IPlaylistModifiedListener _playlistListener;
-	private listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
 
 	private static final Logger _logger = Logger.getLogger(GUIScreen.class);	
 	
@@ -1795,7 +1795,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			}
 		);
 
-		// Update the list of open playlists
+		// Update the list of open playlis
 		_openPlaylists.add(list);		
 
 		// update title and status bar if list was modified during loading (due to fix on load option)
@@ -2026,7 +2026,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				// prompt for confirmation if the file already exists...
 				if (playlist.exists())
 				{
-					int result = JOptionPane.showConfirmDialog(this, new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists:", JOptionPane.YES_NO_OPTION);
+					int result = JOptionPane.showConfirmDialog(this, new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists Warning", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.NO_OPTION)
 					{
 						return false;
@@ -2069,13 +2069,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				pd.setVisible(true);
 
 				worker.get();
-				String newPath = finalPlaylistFile.getCanonicalPath();
-				_documentPane.getActiveDocument().setTooltip(newPath);
 				
 				updatePlaylistDirectoryPanel();
 
 				// update playlist history
-				_guiDriver.getHistory().add(newPath);
+				_guiDriver.getHistory().add(list.getFile().getPath());
 				(new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
 				updateRecentMenu();
 				return true;
@@ -2084,7 +2082,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			{
 				return false;
 			}
-			catch (HeadlessException | IOException | InterruptedException | ExecutionException e)
+			catch (HeadlessException | InterruptedException | ExecutionException e)
 			{
 				_logger.error(ExStack.toString(e));
 				JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));

@@ -97,7 +97,7 @@ public class PlaylistEntry implements Cloneable
 	private boolean _isFixed;
 	
 	// The file this entry belongs to.
-	private File _playlist;
+	private Playlist _playlist;
 	
 	// WPL
 	private String _cid = "";
@@ -143,15 +143,28 @@ public class PlaylistEntry implements Cloneable
 		_tid = tid;		
 	}
 
-	// Construct a PLS/XSPF URL entry.
 	/**
-	 * 
+	 * Construct a PLS/XSPF URL entry.
+	 * @param uri
+	 * @param title
+	 * @param length  
+	 */
+	public PlaylistEntry(URI uri, String title, long length)
+	{
+		_thisURI = uri;
+		_title = title;
+		_length = length;
+		_extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
+	}
+	
+	/**
+	 * Copy constructor for a URI entry
 	 * @param uri
 	 * @param title
 	 * @param length
 	 * @param list  
 	 */
-	public PlaylistEntry(URI uri, String title, long length, File list)
+	public PlaylistEntry(URI uri, String title, long length, Playlist list)
 	{
 		_thisURI = uri;
 		_title = title;
@@ -175,7 +188,6 @@ public class PlaylistEntry implements Cloneable
 		_extInf = extra;
 		parseExtraInfo(extra);
 		_thisFile = new File(_path, _fileName);
-		_playlist = list;
 		// should we skip the exists check?
 		if (skipExistsCheck())
 		{
@@ -281,7 +293,6 @@ public class PlaylistEntry implements Cloneable
 		}
 		_extInf = extra;
 		parseExtraInfo(extra);
-		_playlist = list;
 		if (skipExistsCheck())
 		{
 			_status = PlaylistEntryStatus.Missing;
@@ -349,17 +360,18 @@ public class PlaylistEntry implements Cloneable
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 		_thisFile = input;
+		
 		// the parsing above is insufficient when going from windows to linux... special handling is necessary.
-		if (!OperatingSystem.isWindows() && _path.isEmpty() && input.getName().indexOf(Constants.FS) < 0)
+		if (!OperatingSystem.isWindows() && _path.isEmpty() && !input.getName().contains(Constants.FS))
 		{
 			_fileName = input.getName().substring(input.getName().lastIndexOf("\\") + 1);
 			_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 			_thisFile = new File(_path, _fileName);
 		}
+		
 		_extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
 		_title = title;
 		_length = length;
-		_playlist = list;
 		if (skipExistsCheck())
 		{
 			_status = PlaylistEntryStatus.Missing;
@@ -489,7 +501,7 @@ public class PlaylistEntry implements Cloneable
 
 	public void recheckFoundStatus()
 	{
-		if (_thisFile.isFile() && _thisFile.exists())
+		if (_absoluteFile.isFile() && _absoluteFile.exists())
 		{
 			_status = PlaylistEntryStatus.Found;
 		}
@@ -542,11 +554,11 @@ public class PlaylistEntry implements Cloneable
 		recheckFoundStatus();
 	}
 
-	private void setFile(File input)
+	public void setFile(File input)
 	{
-		_thisFile = input;
-		_fileName = input.getName();
-		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
+		_thisFile = input;		
+		_fileName = _thisFile.getName();
+		_path = _thisFile.getPath().substring(0, _thisFile.getPath().indexOf(_fileName));
 		resetAbsoluteFile();
 		recheckFoundStatus();
 	}
@@ -559,7 +571,7 @@ public class PlaylistEntry implements Cloneable
 		}
 		else
 		{
-			_absoluteFile = new File(_thisFile.getAbsolutePath());
+			_absoluteFile = new File(_playlist.getFile().getAbsoluteFile().getParent(), _thisFile.toString());
 		}
 	}
 
@@ -713,13 +725,13 @@ public class PlaylistEntry implements Cloneable
 					// about when people run your software on ancient PCs in Africa =])
 					if (matches.size() < GUIDriver.getInstance().getAppOptions().getMaxClosestResults())
 					{
-						matches.add(new PotentialPlaylistEntryMatch(mediaFile, score, _playlist));
+						matches.add(new PotentialPlaylistEntryMatch(mediaFile, score, _playlist.getFile()));
 					}
 					else
 					{
 						if (matches.get(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1).getScore() < score)
 						{
-							matches.set(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1, new PotentialPlaylistEntryMatch(mediaFile, score, _playlist));
+							matches.set(GUIDriver.getInstance().getAppOptions().getMaxClosestResults() - 1, new PotentialPlaylistEntryMatch(mediaFile, score, _playlist.getFile()));
 						}
 					}
 					Collections.sort(matches, new MatchedPlaylistEntryComparator());
@@ -829,7 +841,7 @@ public class PlaylistEntry implements Cloneable
 	 * 
 	 * @param list
 	 */
-	public void setPlaylist(File list)
+	public void setPlaylist(Playlist list)
 	{
 		_playlist = list;
 	}	

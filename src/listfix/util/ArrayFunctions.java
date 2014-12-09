@@ -126,10 +126,7 @@ public class ArrayFunctions
 	public static int[] copyArrayAddOneValue(int[] array1, int value)
 	{
 		int[] copied = new int[array1.length + 1];
-		for (int i = 0; i < array1.length; i++)
-		{
-			copied[i] = array1[i];
-		}
+		System.arraycopy(array1, 0, copied, 0, array1.length);
 		copied[copied.length - 1] = value;
 		return copied;
 	}
@@ -143,10 +140,7 @@ public class ArrayFunctions
 	public static String[] copyArrayAddOneValue(String[] array1, String value)
 	{
 		String[] copied = new String[array1.length + 1];
-		for (int i = 0; i < array1.length; i++)
-		{
-			copied[i] = array1[i];
-		}
+		System.arraycopy(array1, 0, copied, 0, array1.length);
 		copied[copied.length - 1] = value;
 		return copied;
 	}
@@ -160,10 +154,7 @@ public class ArrayFunctions
 	public static String[] removeItem(String[] array1, int location)
 	{
 		String[] result = new String[array1.length - 1];
-		for (int i = 0; i < location; i++)
-		{
-			result[i] = array1[i];
-		}
+		System.arraycopy(array1, 0, result, 0, location);
 		for (int i = location + 1; i < array1.length; i++)
 		{
 			result[i - 1] = array1[i];
@@ -181,10 +172,7 @@ public class ArrayFunctions
 	{
 		int c = a.length + b.length;
 		String[] cArray = new String[c];
-		for (int i = 0; i < a.length; i++)
-		{
-			cArray[i] = a[i];
-		}
+		System.arraycopy(a, 0, cArray, 0, a.length);
 		for (int i = a.length; i < c; i++)
 		{
 			cArray[i] = b[i - a.length];
@@ -204,14 +192,13 @@ public class ArrayFunctions
 		boolean result = false;
 		if (a != null && a.length > 0)
 		{
-			for (int i = 0; i < a.length; i++)
+			for (String a1 : a)
 			{
-				if (ignoreCase ? b.toLowerCase().startsWith(a[i].toLowerCase()) : b.startsWith(a[i]))
+				if (ignoreCase ? b.toLowerCase().startsWith(a1.toLowerCase()) : b.startsWith(a1))
 				{
 					result = true;
 					break;
 				}
-
 			}
 		}
 		return result;
@@ -229,14 +216,13 @@ public class ArrayFunctions
 		boolean result = false;
 		if (a != null && a.size() > 0)
 		{
-			for (int i = 0; i < a.size(); i++)
+			for (String a1 : a)
 			{
-				if (ignoreCase ? b.toLowerCase().startsWith(a.get(i).toLowerCase()) : b.startsWith(a.get(i)))
+				if (ignoreCase ? b.toLowerCase().startsWith(a1.toLowerCase()) : b.startsWith(a1))
 				{
 					result = true;
 					break;
 				}
-
 			}
 		}
 		return result;

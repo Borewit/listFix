@@ -73,7 +73,6 @@ public class WPLWriter implements IPlaylistWriter
 					adapter.stepCompleted();
 				}
 				entry = entries.get(i);
-				entry.setPlaylist(listFile);
 				if (!entry.isURL())
 				{
 					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)

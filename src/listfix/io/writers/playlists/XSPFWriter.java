@@ -27,13 +27,15 @@ import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.SpecificPlaylistProvider;
 import christophedelory.playlist.xspf.Track;
+import java.io.File;
 
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import listfix.io.Constants;
 import listfix.io.FileUtils;
-
+import listfix.io.UNCFile;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.ExStack;
@@ -55,7 +57,7 @@ public class XSPFWriter implements IPlaylistWriter
 	/**
 	 * Saves the list to disk.  Always writes in UTF-8.
 	 * @param list The list to persist to disk.
-	 * @param saveRelative Currently ignored due to lack of player support on Windows.
+	 * @param saveRelative 
 	 * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
 	 * @throws Exception
 	 */
@@ -122,20 +124,34 @@ public class XSPFWriter implements IPlaylistWriter
 				{
 					// replace existing entry with a new relative one
 					String relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _list.getFile().getAbsoluteFile().getCanonicalFile());
+					
+					/*
 					if (!relativePath.startsWith("." + Constants.FS))
 					{
 						relativePath = "." + Constants.FS + relativePath;
 					}
-
-					relativePath = "file:" + relativePath;
+					*/
 					
-					//repoint entry object to a new one?
-					return new Content(relativePath);
+					// repoint entry object to a new one?
+					UNCFile file = new UNCFile(relativePath);
+					entry.setFile(file);
+					
+					if (file.isInUNCFormat())
+					{
+						relativePath = "file:" + relativePath;
+					}
+					else
+					{
+						relativePath = "file:///" + relativePath;
+					}
+					
+					return new Content(relativePath.replace(" ", "%20"));
 				}
 				else
 				{
 					// Handle found files.
 					mediaURI = entry.getAbsoluteFile().toURI();
+					entry.setFile(entry.getAbsoluteFile());
 				}
 			}
 			else

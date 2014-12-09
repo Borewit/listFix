@@ -1653,7 +1653,33 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					else if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 3))
 					{
 						PlaylistEntry entry = _playlist.get(rowIx);
-						return (entry.isURL() ? entry.getURI().toString() : FilenameUtils.normalize(entry.getPath() + Constants.FS + entry.getFileName()));
+						if (entry.isURL())
+						{
+							// Show the URL
+							return entry.getURI().toString();
+						}
+						else if (entry.isRelative())
+						{
+							/*
+							Shows full relative path
+							if (!entry.getPath().isEmpty())
+							{
+								return entry.getPath() + entry.getFileName();
+							}
+							else
+							{
+								return "." + Constants.FS + entry.getFileName();
+							}
+							*/
+							
+							// Show the full absolute path of a relative entry
+							return FilenameUtils.normalize(entry.getAbsoluteFile().toString());
+						}
+						else
+						{
+							// Show the file location
+							return FilenameUtils.normalize(entry.getPath() + Constants.FS + entry.getFileName());
+						}
 					}
 				}
 				return super.getToolTipText(event);

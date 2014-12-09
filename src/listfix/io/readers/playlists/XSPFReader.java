@@ -27,8 +27,11 @@ import christophedelory.playlist.xspf.Track;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import listfix.io.Constants;
+import listfix.io.FileUtils;
 
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
@@ -134,11 +137,10 @@ public class XSPFReader implements IPlaylistReader
 				}
 				
 				try
-				{
-					String trackText = track.getStringContainers().get(0).getText();
-					if (isRelativeURI(trackText))
+				{					
+					if (FileUtils.IsURL(track.getStringContainers().get(0).getText()))
 					{
-						entriesList.add(new PlaylistEntry(new File(trackText.substring(trackText.indexOf("./"))), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+						entriesList.add(new PlaylistEntry(new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
 					}
 					else
 					{	
@@ -148,13 +150,23 @@ public class XSPFReader implements IPlaylistReader
 							trackFile = new File(uri.getSchemeSpecificPart());
 							if (trackFile != null)
 							{
-								entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+								if (trackFile.toString().startsWith(Constants.FS + Constants.FS) && !trackFile.toString().startsWith("\\\\"))
+								{
+									// This was a relative, non-UNC entry...
+									entriesList.add(new PlaylistEntry(new File(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+								}
+								else
+								{
+									// Regular entry...
+									entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+								}
 							}
 						}
 						catch (Exception e)
 						{
 							// if that didn't work, then we're probably dealing w/ a URL
-							entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+							// TODO: Is the above still true?
+							entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
 						}
 					}
 				}
@@ -203,10 +215,5 @@ public class XSPFReader implements IPlaylistReader
 			return track.getCreator();
 		}
 		return "";
-	}
-
-	private boolean isRelativeURI(String trackText)
-	{
-		return trackText.startsWith("file:.");
 	}
 }

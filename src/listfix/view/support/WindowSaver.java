@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -99,22 +100,25 @@ public class WindowSaver implements AWTEventListener
 	{
 		Properties settings = new Properties();
 		String name = frame.getName();
-		try
+		if ((new File(PROP_FILE)).exists())
 		{
-			settings.load(new FileInputStream(PROP_FILE));
-			int x = getInt(settings, name + ".x", 100);
-			int y = getInt(settings, name + ".y", 100);
-			int w = getInt(settings, name + ".w", 500);
-			int h = getInt(settings, name + ".h", 500);
-			frame.setLocation(x, y);
-			frame.setSize(new Dimension(w, h));
+			try
+			{
+				settings.load(new FileInputStream(PROP_FILE));
+				int x = getInt(settings, name + ".x", 100);
+				int y = getInt(settings, name + ".y", 100);
+				int w = getInt(settings, name + ".w", 500);
+				int h = getInt(settings, name + ".h", 500);
+				frame.setLocation(x, y);
+				frame.setSize(new Dimension(w, h));
+			}
+			catch (IOException ex)
+			{
+				_logger.info(ExStack.toString(ex));
+			}
+			saver.framemap.put(name, frame);
+			frame.validate();
 		}
-		catch (IOException ex)
-		{
-			_logger.info(ExStack.toString(ex));
-		}
-		saver.framemap.put(name, frame);
-		frame.validate();
 	}
 
 	/**
@@ -140,6 +144,9 @@ public class WindowSaver implements AWTEventListener
 	public void saveSettings()
 	{
 		Properties settings = new Properties();
+		
+		TODO: Delete??
+		/*
 		try
 		{
 			settings.load(new FileInputStream(PROP_FILE));
@@ -148,6 +155,7 @@ public class WindowSaver implements AWTEventListener
 		{
 			_logger.info(ExStack.toString(ex));
 		}
+		*/
 
 		Iterator it = saver.framemap.keySet().iterator();
 		while (it.hasNext())

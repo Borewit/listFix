@@ -44,8 +44,8 @@ public class StringExtensions
 	 */
 	public static List<String> splitCamelCase(String inputString)
 	{
-		List<String> result = new ArrayList<String>();
-		char[] chars = inputString.toCharArray();
+		List<String> result = new ArrayList<>();
+		char[] chars = inputString.toCharArray(); 
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < chars.length; i++)
 		{

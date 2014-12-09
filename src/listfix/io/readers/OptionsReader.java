@@ -51,80 +51,83 @@ public class OptionsReader
 	public static AppOptions read()
 	{
 		AppOptions options = new AppOptions();
-		try
+		if ((new File(Constants.OPTIONS_INI)).exists())
 		{
-			try (BufferedReader B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(Constants.OPTIONS_INI)), "UTF-8"), "UTF8")))
+			try
 			{
-				String line = B1.readLine();
-				// Read in app options, but only if the file contains them in this spot...
-				// skip first line, contains header
-				if (line != null && line.startsWith("[Options]"))
+				try (BufferedReader B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(Constants.OPTIONS_INI)), "UTF-8"), "UTF8")))
 				{
-					line = B1.readLine().trim();
-					while ((line != null) && (!line.startsWith("[")))
+					String line = B1.readLine();
+					// Read in app options, but only if the file contains them in this spot...
+					// skip first line, contains header
+					if (line != null && line.startsWith("[Options]"))
 					{
-						StringTokenizer tempTizer = new StringTokenizer(line, "=");
-						String optionName = tempTizer.nextToken();
-						String optionValue = tempTizer.nextToken();
-						if (optionName != null)
+						line = B1.readLine().trim();
+						while ((line != null) && (!line.startsWith("[")))
 						{
-							if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
+							StringTokenizer tempTizer = new StringTokenizer(line, "=");
+							String optionName = tempTizer.nextToken();
+							String optionValue = tempTizer.nextToken();
+							if (optionName != null)
 							{
-								options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)).booleanValue());
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
-							{
-								options.setMaxPlaylistHistoryEntries((new Integer(optionValue)).intValue());
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
-							{
-								options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)).booleanValue());
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
-							{
-								options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)).booleanValue());
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
-							{
-								options.setLookAndFeel(optionValue);
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
-							{
-								options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)).booleanValue());
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
-							{
-								options.setPlaylistsDirectory(optionValue);
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
-							{
-								Font temp = FontExtensions.deserialize(optionValue);
-								if (temp != null)
+								if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
 								{
-									options.setAppFont(temp);
+									options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)));
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
+								{
+									options.setMaxPlaylistHistoryEntries((new Integer(optionValue)));
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
+								{
+									options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)));
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
+								{
+									options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)));
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
+								{
+									options.setLookAndFeel(optionValue);
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
+								{
+									options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)));
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
+								{
+									options.setPlaylistsDirectory(optionValue);
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
+								{
+									Font temp = FontExtensions.deserialize(optionValue);
+									if (temp != null)
+									{
+										options.setAppFont(temp);
+									}
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
+								{
+									options.setMaxClosestResults((new Integer(optionValue)));
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.IGNORED_SMALL_WORDS))
+								{
+									options.setIgnoredSmallWords(optionValue);
+								}
+								else if (optionName.equalsIgnoreCase(AppOptions.CASE_INSENSITIVE_EXACT_MATCHING))
+								{
+									options.setCaseInsensitiveExactMatching((Boolean.valueOf(optionValue)));
 								}
 							}
-							else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
-							{
-								options.setMaxClosestResults((new Integer(optionValue)).intValue());
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.IGNORED_SMALL_WORDS))
-							{
-								options.setIgnoredSmallWords(optionValue);
-							}
-							else if (optionName.equalsIgnoreCase(AppOptions.CASE_INSENSITIVE_EXACT_MATCHING))
-							{
-								options.setCaseInsensitiveExactMatching((Boolean.valueOf(optionValue)).booleanValue());
-							}
+							line = B1.readLine();
 						}
-						line = B1.readLine();
 					}
 				}
 			}
-		}
-		catch (IOException | NumberFormatException ex)
-		{
-			_logger.error(ExStack.toString(ex));
+			catch (IOException | NumberFormatException ex)
+			{
+				_logger.error(ExStack.toString(ex));
+			}
 		}
 		return options;
 	}

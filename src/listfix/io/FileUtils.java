@@ -21,6 +21,7 @@
 package listfix.io;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -68,6 +69,26 @@ public class FileUtils
 			|| input.endsWith(".aiff") || input.endsWith(".au")
 			|| input.endsWith(".wmv")  || input.endsWith(".asf")
 			|| input.endsWith(".mpc"));
+	}
+	
+	public static boolean IsURL(String trackText)
+	{
+		try
+		{
+			if (trackText.startsWith("file:"))
+			{
+				return false;					
+			}
+			else
+			{
+				(new URL(trackText)).toURI();	
+				return true;
+			}
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
 	}
 
 	/**

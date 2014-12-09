@@ -57,15 +57,15 @@ import org.apache.log4j.Logger;
  */
 public class IniFileConverter
 {
-	private BufferedReader B1;
-	private BufferedReader B2;
-	private static String fname1 = Constants.HOME_DIR + Constants.FS + "dirLists.ini";
-	private static String fname2 = Constants.HOME_DIR + Constants.FS + "listFixHistory.ini";
+	private final BufferedReader B1;
+	private final BufferedReader B2;
+	private static final String fname1 = Constants.HOME_DIR + Constants.FS + "dirLists.ini";
+	private static final String fname2 = Constants.HOME_DIR + Constants.FS + "listFixHistory.ini";
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];
 	private String[] mediaLibraryFiles = new String[0];
-	private AppOptions options = new AppOptions();
+	private final AppOptions options = new AppOptions();
 
 	private static final Logger _logger = Logger.getLogger(IniFileConverter.class);
 
@@ -195,19 +195,19 @@ public class IniFileConverter
 				{
 					if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
 					{
-						options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)).booleanValue());
+						options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)));
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
 					{
-						options.setMaxPlaylistHistoryEntries((new Integer(optionValue)).intValue());
+						options.setMaxPlaylistHistoryEntries((new Integer(optionValue)));
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
 					{
-						options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)).booleanValue());
+						options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)));
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
 					{
-						options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)).booleanValue());
+						options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)));
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
 					{
@@ -215,7 +215,7 @@ public class IniFileConverter
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
 					{
-						options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)).booleanValue());
+						options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)));
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
 					{
@@ -231,7 +231,7 @@ public class IniFileConverter
 					}
 					else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
 					{
-						options.setMaxClosestResults((new Integer(optionValue)).intValue());
+						options.setMaxClosestResults((new Integer(optionValue)));
 					}					
 				}
 				line = B1.readLine();

@@ -338,7 +338,7 @@ public class M3UReader implements IPlaylistReader
 				}
 				if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + Constants.FS))
 				{
-					// This token is the closest thing we have to the notion of a 'drive' on any OS... make a file out of this and see if it has any files.
+					// This token is the closest thing we have to the notion of a 'drive' on any OS... make a File object out of this and see if it has any files.
 					File testFile = new File(tempPath);
 					if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
 					{

@@ -110,7 +110,11 @@ public class GUIDriver
 		catch (Exception e)
 		{
 			showMediaDirWindow = true;
-			_logger.error(ExStack.toString(e));
+			
+			// This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distrubte listfix
+			
+			// TODO: figure out how to do the above and uncomment this line!!
+			// _logger.error(ExStack.toString(e));
 		}
 	}
 

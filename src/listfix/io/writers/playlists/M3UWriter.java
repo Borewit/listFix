@@ -71,7 +71,6 @@ public class M3UWriter implements IPlaylistWriter
 					adapter.stepCompleted();
 				}
 				entry = entries.get(i);
-				entry.setPlaylist(listFile);
 				if (!entry.isURL())
 				{
 					if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
@@ -94,7 +93,7 @@ public class M3UWriter implements IPlaylistWriter
 					{
 						// replace existing entry with a new relative one
 						relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), listFile);
-						if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
+						if (!OperatingSystem.isWindows() && !relativePath.contains(Constants.FS))
 						{
 							relativePath = "." + Constants.FS + relativePath;
 						}

@@ -30,9 +30,11 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import listfix.controller.GUIDriver;
 
 import listfix.io.Constants;
 import listfix.io.FileLauncher;
+import listfix.io.UNCFile;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.io.writers.FileCopier;
@@ -78,10 +80,11 @@ public class Playlist
 	 */
 	public Playlist(List<PlaylistEntry> sublist) throws Exception
 	{
-		_utfFormat = true;
-		setEntries(sublist);
+		_utfFormat = true;		
 		_file = File.createTempFile("yay", ".m3u8");
 		_file.deleteOnExit();
+		
+		setEntries(sublist);
 
 		_type = PlaylistType.M3U;
 		_isModified = false;
@@ -100,10 +103,10 @@ public class Playlist
 	public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries)
 	{
 		_utfFormat = true;
-		setEntries(entries);
 		_file = listFile;
 		_type = type;
-		_isModified = false;
+		_isModified = false;		
+		setEntries(entries);
 		refreshStatus();
 	}
 
@@ -140,6 +143,7 @@ public class Playlist
 
 	private void init(File playlist, IProgressObserver observer) throws IOException
 	{
+		_file = playlist;
 		IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist);
 		if (observer != null)
 		{
@@ -158,7 +162,6 @@ public class Playlist
 			this.setEntries(playlistProcessor.readPlaylist());
 		}
 		_utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
-		_file = playlist;
 		_type = playlistProcessor.getPlaylistType();
 		if (_type == PlaylistType.PLS)
 		{
@@ -241,8 +244,9 @@ public class Playlist
 			{
 				entry.setFixed(false);
 			}
-			refreshStatusAndFirePlaylistModified();
 		}
+		
+		refreshStatus();
 	}
 
 	/**
@@ -339,7 +343,17 @@ public class Playlist
 	 */
 	public void setFile(File file)
 	{
-		_file = file;
+		// if we're in "use UNC" mode, flip the file to a UNC representation
+		if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+		{
+			_file = new File((new UNCFile(file)).getUNCPath());
+		}
+		else
+		{
+			_file = file;
+		}
+		
+		// TODO: Also do the opposite (flic UNC to mapped drive when option is unselected?)
 	}
 
 	/**
@@ -386,12 +400,6 @@ public class Playlist
 		}
 	}
 	
-	private void refreshStatusAndFirePlaylistModified()
-	{
-		refreshStatus();
-		firePlaylistModified();
-	}
-	
 	/**
 	 * 
 	 */
@@ -399,6 +407,11 @@ public class Playlist
 
 	private void setEntries(List<PlaylistEntry> aEntries)
 	{
+		for (PlaylistEntry entry : aEntries)
+		{
+			entry.setPlaylist(this);
+		}
+		
 		replaceEntryListContents(aEntries, _originalEntries);
 		replaceEntryListContents(aEntries, _entries);
 	}
@@ -620,7 +633,7 @@ public class Playlist
 			newEntry.markFixedIfFound();
 		}
 		_entries.set(index, newEntry);
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	/**
@@ -644,7 +657,7 @@ public class Playlist
 				ceiling++;
 			}
 		}
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	/**
@@ -657,7 +670,7 @@ public class Playlist
 		PlaylistEntry temp = _entries.get(initialPos);
 		_entries.remove(initialPos);
 		_entries.add(finalPos, temp);
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	/**
@@ -681,7 +694,7 @@ public class Playlist
 				floor--;
 			}
 		}
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	/**
@@ -693,7 +706,7 @@ public class Playlist
 	public int addAllAt(int i, List<PlaylistEntry> entries)
 	{
 		_entries.addAll(i, entries);
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 		return entries.size();
 	}
 
@@ -711,7 +724,7 @@ public class Playlist
 		if (newEntries != null)
 		{
 			_entries.addAll(newEntries);
-			refreshStatusAndFirePlaylistModified();
+			refreshStatus();
 			return newEntries.size();
 		}
 		else
@@ -735,7 +748,7 @@ public class Playlist
 		if (newEntries != null)
 		{
 			_entries.addAll(ix, newEntries);
-			refreshStatusAndFirePlaylistModified();
+			refreshStatus();
 			return newEntries.size();
 		}
 		else
@@ -786,7 +799,7 @@ public class Playlist
 	public void changeEntryFileName(int ix, String newName)
 	{
 		_entries.get(ix).setFileName(newName);
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	// returns positions of repaired rows
@@ -815,7 +828,7 @@ public class Playlist
 					if (entry.isFound())
 					{
 						fixed.add(ix);
-						refreshStatusAndFirePlaylistModified();
+						refreshStatus();
 					}
 				}
 				else if(entry.isFound() && !entry.isURL())
@@ -823,7 +836,7 @@ public class Playlist
 					if (entry.updatePathToMediaLibraryIfFoundOutside())
 					{
 						fixed.add(ix);
-						refreshStatusAndFirePlaylistModified();
+						refreshStatus();
 					}
 				}
 			}
@@ -871,7 +884,7 @@ public class Playlist
 
 		if (isModified)
 		{
-			refreshStatusAndFirePlaylistModified();
+			refreshStatus();
 		}
 	}
 
@@ -978,7 +991,7 @@ public class Playlist
 
 		if (!fixed.isEmpty())
 		{
-			refreshStatusAndFirePlaylistModified();
+			refreshStatus();
 		}
 		return fixed;
 	}
@@ -1005,7 +1018,7 @@ public class Playlist
 			int rowIx = indexes[ix];
 			_entries.remove(rowIx);
 		}
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	/**
@@ -1017,7 +1030,7 @@ public class Playlist
 	{
 		int result = _entries.indexOf(entry);
 		_entries.remove(entry);
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 		return result;
 	}
 
@@ -1044,7 +1057,7 @@ public class Playlist
 				Collections.reverse(_entries);
 				break;
 		}
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	private static class EntryComparator implements Comparator<PlaylistEntry>
@@ -1146,7 +1159,7 @@ public class Playlist
 		}
 		if (removed > 0)
 		{
-			refreshStatusAndFirePlaylistModified();
+			refreshStatus();
 		}
 		return removed;
 	}
@@ -1169,7 +1182,7 @@ public class Playlist
 		}
 		if (removed > 0)
 		{
-			refreshStatusAndFirePlaylistModified();
+			refreshStatus();
 		}
 		return removed;
 	}
@@ -1183,7 +1196,8 @@ public class Playlist
 	 */
 	public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws Exception
 	{
-		_file = destination;
+		// 2014.12.08 - JCaron - Need to make this assignment so we can determine relativity correctly when saving out entries.
+		setFile(destination);
 		_type = determinePlaylistTypeFromExtension(destination);
 		if (_type == PlaylistType.PLS)
 		{
@@ -1211,15 +1225,18 @@ public class Playlist
 			progress.setTotal(_entries.size());
 		}
 
-		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistwriter(_file);
+		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file);
 		writer.save(this, saveRelative, progress);
 		
 		resetInternalStateAfterSave(observer);
+		
+		// need to fire this so that the tab showing this playlist updates its text & status
+		firePlaylistModified();
 	}
 
 	private void quickSave() throws Exception
 	{
-		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistwriter(_file);
+		IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file);
 		writer.save(this, false, null);
 	}	
 	
@@ -1249,7 +1266,7 @@ public class Playlist
 		{
 			replaceEntryListContents(_originalEntries, _entries);
 		}
-		refreshStatusAndFirePlaylistModified();
+		refreshStatus();
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class PlaylistWriterFactory
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static IPlaylistWriter getPlaylistwriter(File inputFile) throws FileNotFoundException
+	public static IPlaylistWriter getPlaylistWriter(File inputFile) throws FileNotFoundException
 	{
 		PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
 		if (type == PlaylistType.M3U)
