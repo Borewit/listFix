@@ -27,12 +27,11 @@ import christophedelory.playlist.xspf.Track;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import listfix.io.Constants;
 import listfix.io.FileUtils;
-
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
@@ -145,28 +144,20 @@ public class XSPFReader implements IPlaylistReader
 					else
 					{	
 						uri = new URI(track.getStringContainers().get(0).getText());
-						try
+						
+						trackFile = new File(uri.getSchemeSpecificPart());
+						if (trackFile != null)
 						{
-							trackFile = new File(uri.getSchemeSpecificPart());
-							if (trackFile != null)
+							if (trackFile.toString().startsWith(Constants.FS + Constants.FS) && !trackFile.toString().startsWith("\\\\"))
 							{
-								if (trackFile.toString().startsWith(Constants.FS + Constants.FS) && !trackFile.toString().startsWith("\\\\"))
-								{
-									// This was a relative, non-UNC entry...
-									entriesList.add(new PlaylistEntry(new File(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
-								}
-								else
-								{
-									// Regular entry...
-									entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
-								}
+								// This was a relative, non-UNC entry...
+								entriesList.add(new PlaylistEntry(new File(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
 							}
-						}
-						catch (Exception e)
-						{
-							// if that didn't work, then we're probably dealing w/ a URL
-							// TODO: Is the above still true?
-							entriesList.add(new PlaylistEntry(uri, track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
+							else
+							{
+								// Regular entry...
+								entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+							}
 						}
 					}
 				}

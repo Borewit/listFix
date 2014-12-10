@@ -212,7 +212,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
 			List<LookAndFeelInfo> lafs = new ArrayList<>();
 			for (LookAndFeelInfo laf : plafs)
 			{
-				// TODO: Why is this commented out? 2014.03.14
 				if (!laf.getName().toLowerCase().contains("nimbus"))
 				{
 					lafs.add(laf);

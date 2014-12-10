@@ -1775,7 +1775,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			
 		}
 		
-		final DocumentComponent tempComp = CreateDocumentComponentForEditor(editor, path, title);
+		final DocumentComponent tempComp = createDocumentComponentForEditor(editor, path, title);
 		tempComp.setTooltip(list.getFile().getPath());
 		
 		_documentPane.openDocument(tempComp);
@@ -1795,7 +1795,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			}
 		);
 
-		// Update the list of open playlis
+		// Update the list of open playlists
 		_openPlaylists.add(list);		
 
 		// update title and status bar if list was modified during loading (due to fix on load option)
@@ -1811,7 +1811,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		}
 	}
 
-	private DocumentComponent CreateDocumentComponentForEditor(PlaylistEditCtrl editor, String path, String title)
+	private DocumentComponent createDocumentComponentForEditor(PlaylistEditCtrl editor, String path, String title)
 	{
 		ImageIcon icon;
 		icon = getIconForPlaylist(editor.getPlaylist());
@@ -2076,6 +2076,19 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				_guiDriver.getHistory().add(list.getFile().getPath());
 				(new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
 				updateRecentMenu();
+				
+				String path = list.getFile().getPath();
+				try
+				{
+					path = list.getFile().getCanonicalPath();
+				}
+				catch (IOException e)
+				{
+					
+				}
+				
+				_documentPane.renameDocument(_documentPane.getActiveDocument().getName(), path);
+				
 				return true;
 			}
 			catch (CancellationException e)
@@ -2698,7 +2711,7 @@ private void _newIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-
 		PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
 		editor.setPlaylist(_currentPlaylist);
 		String title = _currentPlaylist.getFilename();
-		final DocumentComponent tempComp = CreateDocumentComponentForEditor(editor, path, title);
+		final DocumentComponent tempComp = createDocumentComponentForEditor(editor, path, title);
 		_documentPane.openDocument(tempComp);
 		_documentPane.setActiveDocument(tempComp.getName());
 		

@@ -146,18 +146,6 @@ public class WindowSaver implements AWTEventListener
 	public void saveSettings()
 	{
 		Properties settings = new Properties();
-		
-		// TODO: Delete??
-		/*
-		try
-		{
-			settings.load(new FileInputStream(PROP_FILE));
-		}
-		catch (IOException ex)
-		{
-			_logger.info(ExStack.toString(ex));
-		}
-		*/
 
 		Iterator it = saver.framemap.keySet().iterator();
 		while (it.hasNext())
