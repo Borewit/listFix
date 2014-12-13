@@ -350,10 +350,8 @@ public class Playlist
 		}
 		else
 		{
-			_file = file;
+			_file = new File((new UNCFile(file)).getDrivePath());
 		}
-		
-		// TODO: Also do the opposite (flic UNC to mapped drive when option is unselected?)
 	}
 
 	/**

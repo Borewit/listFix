@@ -247,14 +247,18 @@ public class ZebraJTable extends javax.swing.JTable
             Component comp = renderer.getTableCellRendererComponent(this, val, false, false, rowIx, colIx);
             int width = comp.getPreferredSize().width;
             if (width > maxWidth)
+			{
                 maxWidth = width;
+			}
         }
-        // add 2 for default intercell spacing
-        maxWidth += 2;
+		
+        // add 6 for default intercell spacing
+        maxWidth += 6;
 		if (maxWidth < minWidth)
 		{
 			maxWidth = minWidth;
 		}
+		
         TableColumn col = getColumnModel().getColumn(colIx);
         col.setPreferredWidth(maxWidth);
         if (fixedWidth)
