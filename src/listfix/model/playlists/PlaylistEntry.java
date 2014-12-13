@@ -284,13 +284,15 @@ public class PlaylistEntry implements Cloneable
 		_fileName = input.getName();
 		_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 		_thisFile = input;
+		
 		// this parsing is insufficient when going from windows to linux... special handling is necessary.
-		if (!OperatingSystem.isWindows() && _path.isEmpty() && input.getName().indexOf(Constants.FS) < 0)
+		if (!OperatingSystem.isWindows() && _path.isEmpty() && !input.getName().contains(Constants.FS))
 		{
 			_fileName = input.getName().substring(input.getName().lastIndexOf("\\") + 1);
 			_path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
 			_thisFile = new File(_path, _fileName);
 		}
+		
 		_extInf = extra;
 		parseExtraInfo(extra);
 		if (skipExistsCheck())
@@ -579,7 +581,7 @@ public class PlaylistEntry implements Cloneable
 	{
 		String[] emptyPaths = new String[NonExistentDirectories.size()];
 		NonExistentDirectories.toArray(emptyPaths);
-		return isFound() || this.isURL() || ArrayFunctions.ContainsStringPrefixingAnotherString(emptyPaths, _path, false);
+		return isFound() || this.isURL() || ArrayFunctions.containsStringPrefixingAnotherString(emptyPaths, _path, false);
 	}
 
 	/**
@@ -830,7 +832,7 @@ public class PlaylistEntry implements Cloneable
 	public boolean updatePathToMediaLibraryIfFoundOutside()
 	{
 		if (_status == PlaylistEntryStatus.Found
-			&& !ArrayFunctions.ContainsStringPrefixingAnotherString(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
+			&& !ArrayFunctions.containsStringPrefixingAnotherString(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
 		{
 			return findNewLocationFromFileList(GUIDriver.getInstance().getMediaLibraryFileList());
 		}

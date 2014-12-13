@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import listfix.comparators.FileComparator;
+
+import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
 
 /**
  *
@@ -44,21 +45,18 @@ public class FileTypeSearch
 	{
 		if (directoryToSearch.exists())
 		{
-			String curPath = directoryToSearch.getPath();
-			File file = new File(curPath);
-
-			List<File> ol = new ArrayList<File>();
+			List<File> ol = new ArrayList<>();
 			File[] inodes = directoryToSearch.listFiles(filter);
 
 			if (inodes != null && inodes.length > 0)
 			{
                 ol.addAll(Arrays.asList(inodes));
-				Collections.sort(ol, new FileComparator());
+				Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
 				File f;
-				List<File> files = new ArrayList<File>();
-				for (int i = 0; i < ol.size(); i++)
+				List<File> files = new ArrayList<>();
+				for (File ol1 : ol)
 				{
-					f = ol.get(i);
+					f = ol1;
 					if (f.isDirectory())
 					{
 						files.addAll(findFiles(f, filter));

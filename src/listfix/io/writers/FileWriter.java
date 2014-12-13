@@ -115,9 +115,9 @@ public class FileWriter
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("[Recent Playlists]").append(Constants.BR);
 			String[] filenames = history.getFilenames();
-			for (int i = 0; i < filenames.length; i++)
+			for (String filename : filenames)
 			{
-				buffer.append(filenames[i]).append(Constants.BR);
+				buffer.append(filename).append(Constants.BR);
 			}
 			try (FileOutputStream outputStream = new FileOutputStream(Constants.HISTORY_INI))
 			{

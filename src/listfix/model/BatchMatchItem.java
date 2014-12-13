@@ -31,10 +31,11 @@ import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
 public class BatchMatchItem
 {
-	private int _entryIx;
+	private final int _entryIx;
+	private final PlaylistEntry _entry;
+    private final List<PotentialPlaylistEntryMatch> _matches;
+		
     private int _selectedIx;
-	private PlaylistEntry _entry;
-    private List<PotentialPlaylistEntryMatch> _matches;
 	
     /**
 	 *

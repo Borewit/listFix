@@ -512,7 +512,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						paths.add(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
 					}
 					
-					String serializedPaths = StringArrayListSerializer.Serialize(paths);					
+					String serializedPaths = StringArrayListSerializer.serialize(paths);					
 					return new StringSelection(serializedPaths);
 				}
 				catch (IOException ex)
@@ -646,7 +646,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 					{
 						// Magically delicious string coming from the playlist panel
 						String input = (String) data;
-						List<String> paths = StringArrayListSerializer.Deserialize(input);
+						List<String> paths = StringArrayListSerializer.deserialize(input);
 
 						// Turn this into a list of files, and reuse the processing code above
 						File tempFile;
@@ -2415,7 +2415,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				if (_guiDriver.getMediaDirs() != null)
 				{
 					// first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-					if (ArrayFunctions.ContainsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
+					if (ArrayFunctions.containsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
 					{
 						JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
 							"Reminder", JOptionPane.INFORMATION_MESSAGE);

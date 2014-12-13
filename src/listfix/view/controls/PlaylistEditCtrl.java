@@ -2002,7 +2002,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 								insertAt += ProcessDroppedPlaylist(f, insertAt);
 							}
 						}
-						else if (FileUtils.IsMediaFile(tempFile))
+						else if (FileUtils.isMediaFile(tempFile))
 						{
 							// addAt it to the playlist!
 							try
@@ -2112,7 +2112,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 							{
 								// In this case, it's a magically delicious string coming from the playlist panel
 								String input = (String) t.getTransferData(flavor);
-								List<String> paths = StringArrayListSerializer.Deserialize(input);
+								List<String> paths = StringArrayListSerializer.deserialize(input);
 								// Turn this into a list of files, and reuse the processing code above
 								List<File> files = new ArrayList<>();
 								for (String path : paths)
@@ -2164,7 +2164,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 							{
 								// In this case, it's a magically delicious string coming from the playlist panel
 								String input = (String) t.getTransferData(flavor);
-								List<String> paths = StringArrayListSerializer.Deserialize(input);
+								List<String> paths = StringArrayListSerializer.deserialize(input);
 								List<File> files = new ArrayList<>();
 								for (String path : paths)
 								{

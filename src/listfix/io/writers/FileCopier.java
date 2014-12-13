@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 public class FileCopier
 {
 	/** The block size to read in one shot. */
-	private static int blockSize = 1024;
+	private static final int blockSize = 1024;
 	private static final Logger _logger = Logger.getLogger(FileCopier.class);
 
 	/** Copies from source to destination.
@@ -55,7 +55,7 @@ public class FileCopier
 		{
 			in = new BufferedInputStream(src);
 			out = new BufferedOutputStream(dest);
-			int numRead = 0;
+			int numRead;
 			byte[] buf = new byte[blockSize];
 			while ((numRead = in.read(buf, 0, buf.length)) != -1)
 			{

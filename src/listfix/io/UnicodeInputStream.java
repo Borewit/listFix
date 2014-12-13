@@ -30,10 +30,10 @@ import java.io.PushbackInputStream;
  */
 public class UnicodeInputStream extends InputStream
 {
-	private PushbackInputStream internalIn;
+	private final PushbackInputStream internalIn;
 	private boolean isInited = false;
 	private int BOMOffset = -1;
-	private String defaultEnc;
+	private final String defaultEnc;
 	private String encoding;
 	
 	/**

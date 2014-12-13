@@ -187,7 +187,7 @@ public class ArrayFunctions
 	 * @param ignoreCase
 	 * @return
 	 */
-	public static boolean ContainsStringPrefixingAnotherString(String[] a, String b, boolean ignoreCase)
+	public static boolean containsStringPrefixingAnotherString(String[] a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
 		if (a != null && a.length > 0)
@@ -211,7 +211,7 @@ public class ArrayFunctions
 	 * @param ignoreCase
 	 * @return
 	 */
-	public static boolean ContainsStringPrefixingAnotherString(List<String> a, String b, boolean ignoreCase)
+	public static boolean containsStringPrefixingAnotherString(List<String> a, String b, boolean ignoreCase)
 	{
 		boolean result = false;
 		if (a != null && a.size() > 0)

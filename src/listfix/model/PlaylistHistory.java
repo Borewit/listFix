@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class PlaylistHistory
 {
-	private List<String> playlists = new ArrayList<String>();
+	private final List<String> playlists = new ArrayList<>();
 	private int limit = 0;
 
 	/** Creates a new instance of PlaylistHistory

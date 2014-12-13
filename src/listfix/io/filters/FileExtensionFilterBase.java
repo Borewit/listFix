@@ -32,7 +32,7 @@ import javax.swing.filechooser.FileFilter;
  */
 public abstract class FileExtensionFilterBase extends FileFilter
 {	
-    private Set<String> _extensions;
+    private final Set<String> _extensions;
 	
 	/**
 	 * 

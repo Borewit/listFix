@@ -21,6 +21,8 @@
 package listfix.io;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,7 @@ public class FileUtils
 	 * @param file 
 	 * @return 
 	 */
-	public static boolean IsMediaFile(File file)
+	public static boolean isMediaFile(File file)
 	{
 		String input = file.getName().toLowerCase();
 		return (input.endsWith(".mp3") || input.endsWith(".wma")
@@ -71,7 +73,7 @@ public class FileUtils
 			|| input.endsWith(".mpc"));
 	}
 	
-	public static boolean IsURL(String trackText)
+	public static boolean isURL(String trackText)
 	{
 		try
 		{
@@ -85,7 +87,7 @@ public class FileUtils
 				return true;
 			}
 		}
-		catch (Exception e)
+		catch (MalformedURLException | URISyntaxException e)
 		{
 			return false;
 		}
@@ -166,14 +168,14 @@ public class FileUtils
 			}
 
 			StringBuilder resultBuffer = new StringBuilder();
-			for (int i = 0; i < relativeToTokens.size(); i++)
+			for (String relativeToToken : relativeToTokens)
 			{
 				resultBuffer.append("..").append(Constants.FS);
 			}
 
-			for (int i = 0; i < fileTokens.size(); i++)
+			for (String fileToken : fileTokens)
 			{
-				resultBuffer.append(fileTokens.get(i)).append(Constants.FS);
+				resultBuffer.append(fileToken).append(Constants.FS);
 			}
 
 			resultBuffer.append(fileName);
@@ -219,16 +221,16 @@ public class FileUtils
 		if (dir.isDirectory())
 		{
 			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; i++)
+			for (File file : files)
 			{
-				if (files[i].isDirectory())
+				if (file.isDirectory())
 				{
-					deleteDirectory(files[i]);
-					files[i].delete();
+					deleteDirectory(file);
+					file.delete();
 				}
 				else
 				{
-					files[i].delete();
+					file.delete();
 				}
 			}
 			dir.delete();

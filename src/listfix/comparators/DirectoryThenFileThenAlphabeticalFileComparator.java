@@ -25,16 +25,17 @@ import java.io.File;
 /*
 ============================================================================
 = Author:   Jeremy Caron
-= File:     FileComparator.java
-= Purpose:  A poorly named class that sorts directories ahead of files,
-=           and then sorts files alphabetically (ignoring case).
+= File:     DirectoryThenFileThenAlphabeticalFileComparator.java
+= Purpose:  Sorts directories ahead of files, and then sorts files 
+=			alphabetically (ignoring case).
 ============================================================================
  */
+
 /**
  *
  * @author jcaron
  */
-public class FileComparator implements java.util.Comparator<File>
+public class DirectoryThenFileThenAlphabeticalFileComparator implements java.util.Comparator<File>
 {
 	/**
 	 *

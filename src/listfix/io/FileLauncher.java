@@ -50,11 +50,10 @@ public class FileLauncher
 			buffer.append("\"\n");
 			buffer.append("start \"\" %myvar%");
 
-			FileOutputStream outputStream = new FileOutputStream(tempFile);
-			Writer osw = new OutputStreamWriter(outputStream);
-			osw.write(buffer.toString());
-			osw.close();
-			outputStream.close();
+			try (FileOutputStream outputStream = new FileOutputStream(tempFile); Writer osw = new OutputStreamWriter(outputStream)) 
+			{
+				osw.write(buffer.toString());
+			}
 
 			String cmdLine = tempFile.toString();
 

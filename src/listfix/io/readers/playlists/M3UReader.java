@@ -284,7 +284,7 @@ public class M3UReader implements IPlaylistReader
 	{
 		StringTokenizer pathTokenizer = null;
 		StringBuilder path = new StringBuilder();
-		if (L2.indexOf("://") >= 0)
+		if (L2.contains("://"))
 		{
 			// do nothing, leave tokenizer null
 		}
@@ -347,8 +347,8 @@ public class M3UReader implements IPlaylistReader
 				}
 				else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1
 					&& !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken + Constants.FS)
-					&& !ArrayFunctions.ContainsStringPrefixingAnotherString(PlaylistEntry.ExistingDirectories, tempPath, true)
-					&& !ArrayFunctions.ContainsStringPrefixingAnotherString(PlaylistEntry.NonExistentDirectories, tempPath, true))
+					&& !ArrayFunctions.containsStringPrefixingAnotherString(PlaylistEntry.ExistingDirectories, tempPath, true)
+					&& !ArrayFunctions.containsStringPrefixingAnotherString(PlaylistEntry.NonExistentDirectories, tempPath, true))
 				{
 					// Handle UNC paths specially
 					File testFile = new File(tempPath);

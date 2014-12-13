@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class XSPFReader implements IPlaylistReader
 {
-	private File _listFile;
+	private final File _listFile;
 	private String _encoding;
 	
 	private static final PlaylistType type = PlaylistType.XSPF;
@@ -137,7 +137,7 @@ public class XSPFReader implements IPlaylistReader
 				
 				try
 				{					
-					if (FileUtils.IsURL(track.getStringContainers().get(0).getText()))
+					if (FileUtils.isURL(track.getStringContainers().get(0).getText()))
 					{
 						entriesList.add(new PlaylistEntry(new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
 					}

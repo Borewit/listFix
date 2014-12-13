@@ -194,11 +194,11 @@ public class Playlist
 		PlaylistEntry tempEntry;
 		File fileToCopy;
 		File dest;
-		for (int i = 0; i < entryIndexList.size(); i++)
+		for (Integer entryIndexList1 : entryIndexList)
 		{
 			if (!observer.getCancelled())
 			{
-				tempEntry = this.get(entryIndexList.get(i));
+				tempEntry = this.get(entryIndexList1);
 				if (!tempEntry.isURL())
 				{
 					fileToCopy = tempEntry.getAbsoluteFile();
@@ -419,9 +419,9 @@ public class Playlist
 	private void replaceEntryListContents(List<PlaylistEntry> src, List<PlaylistEntry> dest)
 	{
 		dest.clear();
-		for (int i = 0; i < src.size(); i++)
+		for (PlaylistEntry src1 : src)
 		{
-			dest.add((PlaylistEntry) src.get(i).clone());
+			dest.add((PlaylistEntry) src1.clone());
 		}
 	}
 

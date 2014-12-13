@@ -40,13 +40,13 @@ import listfix.model.AppOptions;
  */
 public class IniFileReader
 {
-	private String fname1;
-	private String fname2;
+	private final String fname1;
+	private final String fname2;
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];
 	private String[] mediaLibraryFiles = new String[0];
-	private AppOptions options;
+	private final AppOptions options;
 
 	/**
 	 * Constructs the file reader.

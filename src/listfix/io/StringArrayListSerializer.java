@@ -33,7 +33,7 @@ import java.util.ArrayList;
  */
 public class StringArrayListSerializer
 {
-	public static String Serialize(ArrayList<String> input) throws IOException
+	public static String serialize(ArrayList<String> input) throws IOException
 	{
 		String result;
 		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutputStream os = new ObjectOutputStream(bos))
@@ -44,9 +44,9 @@ public class StringArrayListSerializer
 		return result;
 	}
 	
-	public static ArrayList<String> Deserialize(String input) throws IOException, ClassNotFoundException
+	public static ArrayList<String> deserialize(String input) throws IOException, ClassNotFoundException
 	{
-		ArrayList<String> result = new ArrayList<>();
+		ArrayList<String> result;
 		try (ByteArrayInputStream bis = new ByteArrayInputStream(Base64Coder.decode(input)); ObjectInputStream oInputStream = new ObjectInputStream(bis))
 		{
 			result = (ArrayList<String>) oInputStream.readObject();

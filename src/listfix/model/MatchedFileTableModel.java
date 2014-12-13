@@ -46,7 +46,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	/**
 	 *
 	 */
-	public Integer sortCol = new Integer(1);
+	public Integer sortCol = 1;
 	/**
 	 *
 	 */
@@ -70,7 +70,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 	 *
 	 * @param input
 	 */
-	public void updateData(List<PotentialPlaylistEntryMatch> input)
+	public final void updateData(List<PotentialPlaylistEntryMatch> input)
 	{
 		int n = input.size();
 		String[][] tempData = new String[n][2];
@@ -165,13 +165,13 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 		String[] result = new String[2];
 		if (data.length > 0)
 		{
-			for (int i = 0; i < data.length; i++)
+			for (Object[] data1 : data)
 			{
-				for (int j = 0; j < data[i].length; j++)
+				for (int j = 0; j < data1.length; j++)
 				{
-					if (result[j] == null || (result[j].length() < ((String) data[i][j]).length()))
+					if (result[j] == null || (result[j].length() < ((String) data1[j]).length()))
 					{
-						result[j] = (String) data[i][j];
+						result[j] = (String) data1[j];
 					}
 				}
 			}

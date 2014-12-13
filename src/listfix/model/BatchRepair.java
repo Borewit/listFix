@@ -45,17 +45,17 @@ import listfix.view.support.ProgressAdapter;
 
 public class BatchRepair
 {	
+	// The wrappers around the playlists to be repaired.
+	private final List<BatchRepairItem> _items = new ArrayList<>();
+	
+	// The list of files in the media library to be considered during the repair.
+	private final String[] _mediaFiles;
+	
 	// The lowest common directory of all playlists being repaired.
 	private File _rootDirectory;	
 	
 	// The description of this batch repair, currently used in the title of the results dialog for this run.
 	private String _description;
-	
-	// The wrappers around the playlists to be repaired.
-	private List<BatchRepairItem> _items = new ArrayList<>();
-	
-	// The list of files in the media library to be considered during the repair.
-	private String[] _mediaFiles;
 	
 	/**
 	 *

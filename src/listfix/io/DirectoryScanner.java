@@ -45,12 +45,12 @@ public class DirectoryScanner
 	public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
 	{
 		this.reset();
-		for (int i = 0; i < baseDirs.length; i++)
+		for (String baseDir : baseDirs)
 		{
-			if (new File(baseDirs[i]).exists())
+			if (new File(baseDir).exists())
 			{
-				thisDirList.add(baseDirs[i]);
-				this.recursiveDir(baseDirs[i], task);
+				thisDirList.add(baseDir);
+				this.recursiveDir(baseDir, task);
 			}
 		}
 	}
@@ -71,14 +71,14 @@ public class DirectoryScanner
 			if (entryList != null)
 			{
 				File tempFile;
-				for (int i = 0; i < entryList.length; i++)
+				for (String entryList1 : entryList)
 				{
 					s.append(baseDir);
 					if (!baseDir.endsWith(Constants.FS))
 					{
 						s.append(Constants.FS);
 					}
-					s.append(entryList[i]);
+					s.append(entryList1);
 					tempFile = new File(s.toString());
 					if (tempFile.isDirectory())
 					{
@@ -86,7 +86,7 @@ public class DirectoryScanner
 					}
 					else
 					{
-						if (FileUtils.IsMediaFile(tempFile))
+						if (FileUtils.isMediaFile(tempFile))
 						{
 							fileList.add(s.toString());
 						}

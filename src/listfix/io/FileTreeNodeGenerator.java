@@ -25,10 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import listfix.comparators.FileComparator;
+import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
 import listfix.io.filters.PlaylistFileFilter;
 import listfix.view.support.PlaylistTreeNode;
 
@@ -64,13 +63,13 @@ public class FileTreeNodeGenerator
 			if (inodes != null && inodes.length > 0)
 			{
                 ol.addAll(Arrays.asList(inodes));
-				Collections.sort(ol, new FileComparator());
+				Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
 				File f;
 				List<File> files = new ArrayList<>();
 				// Make two passes, one for Dirs and one for Files. This is #1.
-				for (int i = 0; i < ol.size(); i++)
+				for (File ol1 : ol)
 				{
-					f = ol.get(i);
+					f = ol1;
 					if (f.isDirectory())
 					{
 						File[] tmp = f.listFiles(new PlaylistFileFilter());
@@ -85,9 +84,9 @@ public class FileTreeNodeGenerator
 					}
 				}
 				// Pass two: for files.
-				for (int fnum = 0; fnum < files.size(); fnum++)
+				for (File file1 : files)
 				{
-					curDir.add(new PlaylistTreeNode(new TreeNodeFile(files.get(fnum).getPath())));
+					curDir.add(new PlaylistTreeNode(new TreeNodeFile(file1.getPath())));
 				}
 				if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
 				{

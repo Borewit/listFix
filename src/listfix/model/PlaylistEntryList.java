@@ -34,7 +34,7 @@ import listfix.model.playlists.PlaylistEntry;
  */
 public class PlaylistEntryList implements Transferable
 {
-	private List<PlaylistEntry> _list;
+	private final List<PlaylistEntry> _list;
 
 	/**
 	 *

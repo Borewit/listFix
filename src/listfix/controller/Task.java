@@ -31,7 +31,7 @@ import listfix.view.support.IProgressObserver;
  */
 public abstract class Task extends Thread
 {
-	private List<IProgressObserver> observers;
+	private final List<IProgressObserver> observers;
 	private int progress = 0;
 
 	/**
@@ -83,7 +83,9 @@ public abstract class Task extends Thread
 		progress = percent;
 
         for (IProgressObserver observer : observers)
+		{
             observer.reportProgress(percent);
+		}
 	}
 
 	/**

@@ -172,7 +172,7 @@ public class PLSReader implements IPlaylistReader
 		else
 		{
 			// We have to perform FS conversion here...
-			if (file.indexOf(Constants.FS) < 0)
+			if (!file.contains(Constants.FS))
 			{
 				// if there are no FS instances in this string, look for the one from the other file system
 				if (OperatingSystem.isLinux() || OperatingSystem.isMac())

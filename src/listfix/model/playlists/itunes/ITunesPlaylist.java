@@ -21,8 +21,8 @@
 package listfix.model.playlists.itunes;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
+
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;

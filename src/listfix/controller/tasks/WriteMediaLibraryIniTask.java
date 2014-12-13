@@ -37,9 +37,9 @@ import org.apache.log4j.Logger;
  */
 public class WriteMediaLibraryIniTask extends listfix.controller.Task
 {
-	private String[] mediaDir;
-	private String[] mediaLibraryDirList;
-	private String[] mediaLibraryFileList;
+	private final String[] mediaDir;
+	private final String[] mediaLibraryDirList;
+	private final String[] mediaLibraryFileList;
 
 	private static final Logger _logger = Logger.getLogger(WriteMediaLibraryIniTask.class);
 
@@ -66,36 +66,38 @@ public class WriteMediaLibraryIniTask extends listfix.controller.Task
 			if (mediaDir != null)
 			{
 				buffer.append("[Media Directories]").append(Constants.BR);
-				for (int i = 0; i < mediaDir.length; i++)
+				for (String mediaDir1 : mediaDir)
 				{
-					buffer.append(mediaDir[i]).append(Constants.BR);
+					buffer.append(mediaDir1).append(Constants.BR);
 				}
 			}
 
 			if (mediaLibraryDirList != null)
 			{
 				buffer.append("[Media Library Directories]").append(Constants.BR);
-				for (int i = 0; i < mediaLibraryDirList.length; i++)
+				for (String mediaLibraryDirList1 : mediaLibraryDirList)
 				{
-					buffer.append(mediaLibraryDirList[i]).append(Constants.BR);
+					buffer.append(mediaLibraryDirList1).append(Constants.BR);
 				}
 			}
 
 			if (mediaLibraryDirList != null)
 			{
 				buffer.append("[Media Library Files]").append(Constants.BR);
-				for (int i = 0; i < mediaLibraryFileList.length; i++)
+				for (String mediaLibraryFileList1 : mediaLibraryFileList)
 				{
-					buffer.append(mediaLibraryFileList[i]).append(Constants.BR);
+					buffer.append(mediaLibraryFileList1).append(Constants.BR);
 				}
 			}
 
-			FileOutputStream outputStream = new FileOutputStream(Constants.MEDIA_LIBRARY_INI);
-			Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-			BufferedWriter output = new BufferedWriter(osw);
-			output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
-			output.close();
-			outputStream.close();
+			try (FileOutputStream outputStream = new FileOutputStream(Constants.MEDIA_LIBRARY_INI))
+			{
+				Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+				try (BufferedWriter output = new BufferedWriter(osw))
+				{
+					output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+				}
+			}
 		}
 		catch (IOException e)
 		{

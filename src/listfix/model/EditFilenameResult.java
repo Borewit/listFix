@@ -26,8 +26,8 @@ package listfix.model;
  */
 public class EditFilenameResult
 {
-	private int resultCode;
-	private String filename;
+	private final int resultCode;
+	private final String filename;
 
 	/**
 	 *
