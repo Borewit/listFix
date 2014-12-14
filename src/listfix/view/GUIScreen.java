@@ -111,6 +111,7 @@ import listfix.io.StringArrayListSerializer;
 import listfix.io.TreeNodeFile;
 import listfix.io.UNCFile;
 import listfix.io.WinampHelper;
+import listfix.io.filters.ExtensionFilter;
 import listfix.io.filters.PlaylistFileFilter;
 import listfix.io.readers.OptionsReader;
 import listfix.io.writers.FileWriter;
@@ -149,7 +150,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 {
 	private static final long _serialVersionUID = 7691786927987534889L;
 
-	private final JFileChooser _jM3UChooser= new JFileChooser();
+	private final JFileChooser _jOpenPlaylistFileChooser= new JFileChooser();
 	private final JFileChooser _jSaveFileChooser = new JFileChooser();
 	private final FolderChooser _jMediaDirChooser = new FolderChooser();
 	private final List<Playlist> _openPlaylists = new ArrayList<>();
@@ -527,10 +528,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
 	private void configureFileAndFolderChoosers()
 	{
-		_jM3UChooser.setDialogTitle("Choose Playlists...");
-		_jM3UChooser.setAcceptAllFileFilterUsed(false);
-		_jM3UChooser.setFileFilter(new PlaylistFileFilter());
-		_jM3UChooser.setMultiSelectionEnabled(true);
+		_jOpenPlaylistFileChooser.setDialogTitle("Choose Playlists...");
+		_jOpenPlaylistFileChooser.setAcceptAllFileFilterUsed(false);
+		_jOpenPlaylistFileChooser.setFileFilter(new PlaylistFileFilter());
+		_jOpenPlaylistFileChooser.setMultiSelectionEnabled(true);
 
 		_jMediaDirChooser.setDialogTitle("Specify a media directory...");
 		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
@@ -542,7 +543,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 		_jSaveFileChooser.setDialogTitle("Save File:");
 		_jSaveFileChooser.setAcceptAllFileFilterUsed(false);
 		_jSaveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		_jSaveFileChooser.setFileFilter(new PlaylistFileFilter());
+		_jSaveFileChooser.addChoosableFileFilter(new ExtensionFilter("m3u", "M3U Playlist (*.m3u)"));
+		_jSaveFileChooser.addChoosableFileFilter(new ExtensionFilter("m3u8", "M3U8 Playlist (*.m3u8)"));
+		_jSaveFileChooser.addChoosableFileFilter(new ExtensionFilter("pls", "PLS Playlist (*.pls)"));
+		_jSaveFileChooser.addChoosableFileFilter(new ExtensionFilter("wpl", "WPL Playlist (*.wpl)"));
+		_jSaveFileChooser.addChoosableFileFilter(new ExtensionFilter("xspf", "XSPF Playlist (*.xspf)"));
+		_jSaveFileChooser.addChoosableFileFilter(new ExtensionFilter("xml", "iTunes Playlist (*.xml)"));
 	}
 
 	/**
@@ -1627,12 +1633,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	{//GEN-HEADEREND:event_openIconButtonActionPerformed
 		if (_currentPlaylist != null)
 		{
-			_jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
+			_jOpenPlaylistFileChooser.setSelectedFile(_currentPlaylist.getFile());
 		}
-		int response = _jM3UChooser.showOpenDialog(this);
+		int response = _jOpenPlaylistFileChooser.showOpenDialog(this);
 		if (response == JFileChooser.APPROVE_OPTION)
 		{
-			File[] playlists = _jM3UChooser.getSelectedFiles();
+			File[] playlists = _jOpenPlaylistFileChooser.getSelectedFiles();
 			for (File file : playlists)
 			{
 				this.openPlaylist(file);
@@ -1962,7 +1968,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	private void updateAllComponentTreeUIs()
 	{
 		SwingUtilities.updateComponentTreeUI(this);
-		SwingUtilities.updateComponentTreeUI(_jM3UChooser);
+		SwingUtilities.updateComponentTreeUI(_jOpenPlaylistFileChooser);
 		SwingUtilities.updateComponentTreeUI(_jMediaDirChooser);
 		SwingUtilities.updateComponentTreeUI(_jSaveFileChooser);
 		SwingUtilities.updateComponentTreeUI(_playlistTreeRightClickMenu);
@@ -2032,24 +2038,20 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return false;
 					}
 				}
-
+				
+				String extension = ((ExtensionFilter) _jSaveFileChooser.getFileFilter()).getExtension();
+				
 				// make sure file has correct extension
 				String normalizedName = playlist.getName().trim().toLowerCase();
-				if (!Playlist.isPlaylist(playlist)
-					|| (!normalizedName.endsWith(".m3u") 
-						&& !normalizedName.endsWith(".m3u8") 
-						&& !normalizedName.endsWith(".pls") 
-						&& !normalizedName.endsWith(".wpl") 
-						&& !normalizedName.endsWith(".xspf")
-						&& !normalizedName.endsWith(".xml")))
+				if (!Playlist.isPlaylist(playlist) || (!normalizedName.endsWith(extension)))
 				{
-					if (list.isUtfFormat())
+					if (extension.equals("m3u") && list.isUtfFormat())
 					{
 						playlist = new File(playlist.getPath() + ".m3u8");
 					}
 					else
 					{
-						playlist = new File(playlist.getPath() + ".m3u");
+						playlist = new File(playlist.getPath() + "." + extension);
 					}
 				}
 
@@ -2675,12 +2677,12 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 {//GEN-HEADEREND:event__openIconButtonActionPerformed1
 	if (_currentPlaylist != null)
 	{
-		_jM3UChooser.setSelectedFile(_currentPlaylist.getFile());
+		_jOpenPlaylistFileChooser.setSelectedFile(_currentPlaylist.getFile());
 	}
-	int response = _jM3UChooser.showOpenDialog(this);
+	int response = _jOpenPlaylistFileChooser.showOpenDialog(this);
 	if (response == JFileChooser.APPROVE_OPTION)
 	{
-		File[] playlists = _jM3UChooser.getSelectedFiles();
+		File[] playlists = _jOpenPlaylistFileChooser.getSelectedFiles();
 		for (File file : playlists)
 		{
 			this.openPlaylist(file);
@@ -2688,7 +2690,7 @@ private void _openIconButtonActionPerformed1(java.awt.event.ActionEvent evt)//GE
 	}
 	else
 	{
-		_jM3UChooser.cancelSelection();
+		_jOpenPlaylistFileChooser.cancelSelection();
 	}
 }//GEN-LAST:event__openIconButtonActionPerformed1
 

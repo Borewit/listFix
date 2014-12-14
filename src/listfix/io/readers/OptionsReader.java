@@ -21,15 +21,15 @@
 package listfix.io.readers;
 
 import java.awt.Font;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.io.Constants;
-import listfix.io.UnicodeInputStream;
 import listfix.model.AppOptions;
 import listfix.util.ExStack;
 import listfix.view.support.FontExtensions;
@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Reads the core options file, turning it into an AppOptions object.
+ *
  * @author jcaron
  */
 public class OptionsReader
@@ -46,6 +47,7 @@ public class OptionsReader
 
 	/**
 	 * Performs the de-serialization of the app options back into memory.
+	 *
 	 * @return
 	 */
 	public static AppOptions read()
@@ -55,74 +57,75 @@ public class OptionsReader
 		{
 			try
 			{
-				try (BufferedReader B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(Constants.OPTIONS_INI)), "UTF-8"), "UTF8")))
+				List<String> lines = Files.readAllLines(Paths.get(Constants.OPTIONS_INI), StandardCharsets.UTF_8);
+				int i = 0;
+				String line = lines.get(i++);
+
+				// Read in app options, but only if the file contains them in this spot...
+				// skip first line, contains header
+				if (line != null && line.startsWith("[Options]"))
 				{
-					String line = B1.readLine();
-					// Read in app options, but only if the file contains them in this spot...
-					// skip first line, contains header
-					if (line != null && line.startsWith("[Options]"))
+					line = lines.get(i++).trim();
+					while ((line != null) && i < lines.size() && (!line.startsWith("[")))
 					{
-						line = B1.readLine().trim();
-						while ((line != null) && (!line.startsWith("[")))
+						StringTokenizer tempTizer = new StringTokenizer(line, "=");
+						String optionName = tempTizer.nextToken();
+						String optionValue = tempTizer.nextToken();
+						if (optionName != null)
 						{
-							StringTokenizer tempTizer = new StringTokenizer(line, "=");
-							String optionName = tempTizer.nextToken();
-							String optionValue = tempTizer.nextToken();
-							if (optionName != null)
+							if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
 							{
-								if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
+								options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)));
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
+							{
+								options.setMaxPlaylistHistoryEntries((new Integer(optionValue)));
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
+							{
+								options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)));
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
+							{
+								options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)));
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
+							{
+								options.setLookAndFeel(optionValue);
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
+							{
+								options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)));
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
+							{
+								options.setPlaylistsDirectory(optionValue);
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
+							{
+								Font temp = FontExtensions.deserialize(optionValue);
+								if (temp != null)
 								{
-									options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)));
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
-								{
-									options.setMaxPlaylistHistoryEntries((new Integer(optionValue)));
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
-								{
-									options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)));
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
-								{
-									options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)));
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
-								{
-									options.setLookAndFeel(optionValue);
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
-								{
-									options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)));
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
-								{
-									options.setPlaylistsDirectory(optionValue);
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
-								{
-									Font temp = FontExtensions.deserialize(optionValue);
-									if (temp != null)
-									{
-										options.setAppFont(temp);
-									}
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
-								{
-									options.setMaxClosestResults((new Integer(optionValue)));
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.IGNORED_SMALL_WORDS))
-								{
-									options.setIgnoredSmallWords(optionValue);
-								}
-								else if (optionName.equalsIgnoreCase(AppOptions.CASE_INSENSITIVE_EXACT_MATCHING))
-								{
-									options.setCaseInsensitiveExactMatching((Boolean.valueOf(optionValue)));
+									options.setAppFont(temp);
 								}
 							}
-							line = B1.readLine();
+							else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
+							{
+								options.setMaxClosestResults((new Integer(optionValue)));
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.IGNORED_SMALL_WORDS))
+							{
+								options.setIgnoredSmallWords(optionValue);
+							}
+							else if (optionName.equalsIgnoreCase(AppOptions.CASE_INSENSITIVE_EXACT_MATCHING))
+							{
+								options.setCaseInsensitiveExactMatching((Boolean.valueOf(optionValue)));
+							}
 						}
+						line = lines.get(i++);
 					}
 				}
+
 			}
 			catch (IOException | NumberFormatException ex)
 			{

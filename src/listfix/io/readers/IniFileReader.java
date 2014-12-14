@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
+ * Copyright (C) 2001-2012 Jeremy Caron
  * 
  * This file is part of listFix().
  *
@@ -20,18 +20,18 @@
 
 package listfix.io.readers;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import listfix.io.Constants;
 import listfix.io.UNCFile;
-import listfix.io.UnicodeInputStream;
 import listfix.model.AppOptions;
 
 /**
@@ -39,17 +39,18 @@ import listfix.model.AppOptions;
  * @author jcaron
  */
 public class IniFileReader
-{
+{	
 	private final String fname1;
 	private final String fname2;
+	private final AppOptions options;
+	
 	private String[] mediaDirs = new String[0];
 	private String[] history = new String[0];
 	private String[] mediaLibrary = new String[0];
 	private String[] mediaLibraryFiles = new String[0];
-	private final AppOptions options;
 
 	/**
-	 * Constructs the file reader.
+	 * Constructor.
 	 * @param opts An AppOptions configuration, needed to decide if the library should use UNC paths or not.
 	 * @throws FileNotFoundException
 	 * @throws UnsupportedEncodingException
@@ -78,59 +79,56 @@ public class IniFileReader
 		else if (in_data2.length() == 0)
 		{
 			throw new FileNotFoundException("File found, but was of zero size.");
-		}
+		}	
 	}
 
-	/**
-	 * Read the media directory and history files into memory.
-	 * @throws Exception
-	 */
-	public void readIni() throws Exception
+	public void readIni() throws IOException
 	{
-		try (BufferedReader B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(fname1)), "UTF-8"), "UTF8")); 
-			 BufferedReader B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(new File(fname2)), "UTF-8"), "UTF8")))
+		List<String> tempList = new ArrayList<>();
+		List<String> lines = Files.readAllLines(Paths.get(fname1), StandardCharsets.UTF_8);
+		
+		// Read in base media directories
+		// skip first line, contains header
+		int i = 1;
+		String line = lines.get(i++);
+		while ((line != null) && (!line.startsWith("[")))
 		{
-			List<String> tempList = new ArrayList<>();
-			String line;
-			B1.readLine();
-			line = B1.readLine();
-			while ((line != null) && (!line.startsWith("[")))
-			{
-				tempList.add(line);
-				line = B1.readLine();
-			}
-			mediaDirs = new String[tempList.size()];
-			tempList.toArray(mediaDirs);
-			tempList.clear();
-			line = B1.readLine();
-			while ((line != null) && (!line.startsWith("[")))
-			{
-				tempList.add(line);
-				line = B1.readLine();
-			}
-			mediaLibrary = new String[tempList.size()];
-			tempList.toArray(mediaLibrary);
-			tempList.clear();
-			line = B1.readLine();
-			while (line != null)
-			{
-				tempList.add(line);
-				line = B1.readLine();
-			}
-			mediaLibraryFiles = new String[tempList.size()];
-			tempList.toArray(mediaLibraryFiles);
-			tempList.clear();
-			B2.readLine();
-			line = B2.readLine();
-			while (line != null)
-			{
-				tempList.add(line);
-				line = B2.readLine();
-			}
-			history = new String[tempList.size()];
-			tempList.toArray(history);
-			tempList.clear();
+			tempList.add(line);
+			line = lines.get(i++);
 		}
+		mediaDirs = new String[tempList.size()];
+		tempList.toArray(mediaDirs);
+
+		tempList.clear();
+
+		// Read in media library directories
+		// skip first line, contains header
+		line = lines.get(i++);
+		while ((line != null) && (!line.startsWith("[")))
+		{
+			tempList.add(line);
+			line = lines.get(i++);
+		}
+		mediaLibrary = new String[tempList.size()];
+		tempList.toArray(mediaLibrary);
+		tempList.clear();
+
+		// Read in media library files
+		// skip first line, contains header
+		line = lines.get(i++);
+		while (line != null && i < lines.size())
+		{
+			tempList.add(line);
+			line = lines.get(i++);
+		}
+		mediaLibraryFiles = new String[tempList.size()];
+		tempList.toArray(mediaLibraryFiles);
+		tempList.clear();
+
+		// Read in history...
+		lines = Files.readAllLines(Paths.get(fname2), StandardCharsets.UTF_8);
+		history = new String[lines.size()];
+		lines.toArray(history);
 	}
 
 	/**

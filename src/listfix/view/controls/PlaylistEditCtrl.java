@@ -75,6 +75,7 @@ import listfix.io.FileUtils;
 import listfix.io.PlaylistScanner;
 import listfix.io.StringArrayListSerializer;
 import listfix.io.filters.AudioFileFilter;
+import listfix.io.filters.ExtensionFilter;
 import listfix.io.filters.PlaylistFileFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
@@ -569,7 +570,15 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		if (_playlist.isNew())
 		{
 			JFileChooser chooser = new JFileChooser();
-			chooser.addChoosableFileFilter(new PlaylistFileFilter());
+			
+			chooser.setAcceptAllFileFilterUsed(false);
+			chooser.addChoosableFileFilter(new ExtensionFilter("m3u", "M3U Playlist (*.m3u)"));
+			chooser.addChoosableFileFilter(new ExtensionFilter("m3u8", "M3U8 Playlist (*.m3u8)"));
+			chooser.addChoosableFileFilter(new ExtensionFilter("pls", "PLS Playlist (*.pls)"));
+			chooser.addChoosableFileFilter(new ExtensionFilter("wpl", "WPL Playlist (*.wpl)"));
+			chooser.addChoosableFileFilter(new ExtensionFilter("xspf", "XSPF Playlist (*.xspf)"));
+			chooser.addChoosableFileFilter(new ExtensionFilter("xml", "iTunes Playlist (*.xml)"));
+			
 			chooser.setSelectedFile(_playlist.getFile());
 			int rc = chooser.showSaveDialog(getParentFrame());
 			if (rc == JFileChooser.APPROVE_OPTION)
@@ -579,24 +588,34 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 					File playlist = chooser.getSelectedFile();
+					
+					// prompt for confirmation if the file already exists...
+					if (playlist.exists())
+					{
+						int result = JOptionPane.showConfirmDialog(this.getParent(), new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists Warning", JOptionPane.YES_NO_OPTION);
+						if (result == JOptionPane.NO_OPTION)
+						{
+							return;
+						}
+					}
+					
+					String extension = ((ExtensionFilter)chooser.getFileFilter()).getExtension();
 
 					// make sure file has correct extension
 					String normalizedName = playlist.getName().trim().toLowerCase();
-					if (!Playlist.isPlaylist(playlist)
-						|| (!normalizedName.endsWith(".m3u") && !normalizedName.endsWith(".m3u8") && !normalizedName.endsWith(".pls")))
+					if (!Playlist.isPlaylist(playlist) || (!normalizedName.endsWith(extension)))
 					{
-						if (_playlist.isUtfFormat())
+						if (extension.equals("m3u") && _playlist.isUtfFormat())
 						{
 							playlist = new File(playlist.getPath() + ".m3u8");
 						}
 						else
 						{
-							playlist = new File(playlist.getPath() + ".m3u");
+							playlist = new File(playlist.getPath() + "." + extension);
 						}
 					}
 
 					final File finalPlaylistFile = playlist;
-					String oldPath = _playlist.getFile().getCanonicalPath();
 					ProgressWorker worker = new ProgressWorker<Void, Void>()
 					{
 						@Override
@@ -607,6 +626,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 							return null;
 						}
 					};
+					
 					ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
 					pd.setVisible(true);
 
@@ -617,7 +637,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						((GUIScreen) getParentFrame()).updateCurrentTab(_playlist);
 					}
 				}
-				catch (IOException | InterruptedException | ExecutionException e)
+				catch (InterruptedException | ExecutionException e)
 				{
 					_logger.error(ExStack.toString(e));
 					
