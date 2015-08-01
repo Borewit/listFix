@@ -132,9 +132,18 @@ public class ITunesXMLReader implements IPlaylistReader
 	{
 		try
 		{
-			ITunesPlaylistEntry result = new ITunesPlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile, track);
-			// result.setTrackId(track.getTrackId());
-			return result;
+			if (track.getTrackType().equals(ITunesTrack.URL))
+			{
+				ITunesPlaylistEntry result = new ITunesPlaylistEntry(new URI(track.getLocation()), track);
+				// result.setTrackId(track.getTrackId());
+				return result;
+			}
+			else
+			{
+				ITunesPlaylistEntry result = new ITunesPlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile, track);
+				// result.setTrackId(track.getTrackId());
+				return result;
+			}
 		}
 		catch (URISyntaxException ex)
 		{

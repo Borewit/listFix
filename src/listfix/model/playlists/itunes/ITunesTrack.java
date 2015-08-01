@@ -31,7 +31,10 @@ import java.util.Hashtable;
  */
 public class ITunesTrack
 {
-	private Dict _trackDict;
+	private final Dict _trackDict;
+	
+	public static final String FILE = "File";
+	public static final String URL = "URL";
 	
 	/**
 	 * Constructor that takes a christophedelory.plist.Dict object.
@@ -85,6 +88,11 @@ public class ITunesTrack
 	public String getAlbumArtist()
 	{
 		return DictionaryParser.getKeyValueAsString(_trackDict, "Album Artist");
+	}
+	
+	public String getTrackType()
+	{
+		return DictionaryParser.getKeyValueAsString(_trackDict, "Track Type");
 	}
 
 	/**

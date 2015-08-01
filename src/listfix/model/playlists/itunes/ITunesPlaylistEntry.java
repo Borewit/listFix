@@ -21,7 +21,10 @@
 package listfix.model.playlists.itunes;
 
 import java.io.File;
+import java.net.URI;
+
 import listfix.model.playlists.PlaylistEntry;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -38,6 +41,12 @@ public class ITunesPlaylistEntry extends PlaylistEntry
 	public ITunesPlaylistEntry(File input, String title, long length, File list, ITunesTrack track)
 	{
 		super(input, title, length, list);
+		_track = track;
+	}
+	
+	public ITunesPlaylistEntry(URI input, ITunesTrack track)
+	{
+		super(input, "");
 		_track = track;
 	}
 
@@ -62,11 +71,6 @@ public class ITunesPlaylistEntry extends PlaylistEntry
 	@Override
 	public Object clone()
 	{
-		ITunesPlaylistEntry result = null;
-		if (!this.isURL())
-		{
-			result = new ITunesPlaylistEntry(this);
-		}
-		return result;
+		return new ITunesPlaylistEntry(this);
 	}
 }

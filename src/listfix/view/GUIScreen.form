@@ -43,8 +43,8 @@
         <MenuItem class="javax.swing.JMenuItem" name="_miDeletePlaylist">
           <Properties>
             <Property name="mnemonic" type="int" value="68"/>
-            <Property name="text" type="java.lang.String" value="Delete Select Playlists"/>
-            <Property name="toolTipText" type="java.lang.String" value="Delete Select Playlists"/>
+            <Property name="text" type="java.lang.String" value="Delete Selected"/>
+            <Property name="toolTipText" type="java.lang.String" value="Delete Selected Folders &amp; Playlists"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_miDeletePlaylistActionPerformed"/>
@@ -171,7 +171,7 @@
                   <Connection type="value" value="&apos;S&apos;" valueType="int"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Save All"/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="toolTipText" type="java.lang.String" value="Save All Open Playlists"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_saveAllMenuItemActionPerformed"/>
@@ -237,7 +237,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="112"/>
                 <Property name="text" type="java.lang.String" value="Options..."/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="toolTipText" type="java.lang.String" value="Opens the Options Screen"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_appOptionsMenuItemActionPerformed"/>
@@ -564,7 +564,7 @@
                     <Component class="javax.swing.JButton" name="_refreshMediaDirsButton">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Refresh"/>
-                        <Property name="toolTipText" type="java.lang.String" value="The contents of your media library are cached, refresh to pickup changes"/>
+                        <Property name="toolTipText" type="java.lang.String" value="The contents of your media library are cached; refresh to pickup changes"/>
                         <Property name="focusable" type="boolean" value="false"/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[2, 8, 2, 8]"/>
@@ -702,7 +702,7 @@
                     <Component class="javax.swing.JButton" name="_btnSetPlaylistsDir">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Set"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Choose a folder (recursively searched for playlists to be shown here)"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Opens the options screen where you can set your playlists directory "/>
                         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                           <Insets value="[2, 8, 2, 8]"/>
                         </Property>

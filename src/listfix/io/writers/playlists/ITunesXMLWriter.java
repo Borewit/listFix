@@ -59,7 +59,7 @@ public class ITunesXMLWriter implements IPlaylistWriter
 	{
 		Map<String, ITunesTrack> trackMap = new HashMap<>();		
 		
-		// Need to take each entry in the playlist and update the Dict in its corresponding ITunesTrack
+		// Need to take each entry in the playlist and update the Dict in its corresponding ITunesTrack to point to the proper location
 		// Add each ITunesTrack to a map
 		ITunesTrack tempTrack;
 		for (PlaylistEntry entry : list.getEntries())
@@ -91,6 +91,7 @@ public class ITunesXMLWriter implements IPlaylistWriter
 		}		
 		
 		ITunesPlaylist iList = (ITunesPlaylist)list;
+		iList.getLibrary().setTracks(trackMap);
 				
 		if (!adapter.getCancelled())
 		{

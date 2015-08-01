@@ -21,24 +21,21 @@
 package listfix.controller;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import listfix.exceptions.MediaDirNotFoundException;
-
 import listfix.io.writers.FileWriter;
 import listfix.io.IniFileConverter;
 import listfix.io.readers.IniFileReader;
 import listfix.io.readers.OptionsReader;
 import listfix.io.UNCFile;
-
 import listfix.model.AppOptions;
 import listfix.model.PlaylistHistory;
-
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
+
 import org.apache.log4j.Logger;
 
 /**

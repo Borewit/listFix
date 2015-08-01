@@ -666,7 +666,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
+				ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...", _playlist.getType() == PlaylistType.ITUNES || _playlist.getType() == PlaylistType.XSPF, false);
+				pd.setMessage("Please wait while your playlist is saved to disk.");
 				pd.setVisible(true);
 				worker.get();
 			}
@@ -1308,7 +1309,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 	private void _uiTableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__uiTableKeyPressed
 	{//GEN-HEADEREND:event__uiTableKeyPressed
 		int keyVal = evt.getKeyCode();
-		if (keyVal == KeyEvent.VK_DELETE)
+		if (keyVal == KeyEvent.VK_DELETE && _playlist.getType() != PlaylistType.ITUNES)
 		{
 			deleteSelectedRows();
 		}
@@ -1561,12 +1562,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		((PlaylistTableModel) _uiTable.getModel()).fireTableDataChanged();
 
 		boolean hasPlaylist = _playlist != null;
-		_btnAdd.setEnabled(hasPlaylist);
+		
+		_btnAdd.setEnabled(hasPlaylist && _playlist.getType() != PlaylistType.ITUNES);
 		_btnLocate.setEnabled(hasPlaylist);
 		_btnMagicFix.setEnabled(hasPlaylist);
-		_btnReorder.setEnabled(hasPlaylist && _playlist.size() > 1);
+		_btnReorder.setEnabled(hasPlaylist && _playlist.getType() != PlaylistType.ITUNES && _playlist.size() > 1);
 		_btnReload.setEnabled(hasPlaylist && _playlist.isModified());
-		_btnPlay.setEnabled(hasPlaylist);
+		_btnPlay.setEnabled(hasPlaylist && _playlist.getType() != PlaylistType.ITUNES);
 		_btnNextMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
 		_btnPrevMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
 		_btnSave.setEnabled(_playlist != null);
@@ -1580,6 +1582,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 		{
 			_playlist.addModifiedListener(listener);
 		}
+		
+		_uiTable.setDragEnabled(_playlist.getType() != PlaylistType.ITUNES);
 	}
 	
 	private void showWaitCursor(boolean isWaiting)
@@ -1747,15 +1751,15 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 				}
 
 				boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-				_btnDelete.setEnabled(hasSelected);
-				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
-				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-				_btnPlay.setEnabled(_playlist != null && ( _uiTable.getSelectedRow() < 0 || ( _uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry() ) ) );
+				_btnDelete.setEnabled(hasSelected && _playlist.getType() != PlaylistType.ITUNES);
+				_btnUp.setEnabled(_isSortedByFileIx && hasSelected && _playlist.getType() != PlaylistType.ITUNES && _uiTable.getSelectedRow() > 0);
+				_btnDown.setEnabled(_isSortedByFileIx && hasSelected && _playlist.getType() != PlaylistType.ITUNES && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+				_btnPlay.setEnabled(_playlist != null && _playlist.getType() != PlaylistType.ITUNES && ( _uiTable.getSelectedRow() < 0 || ( _uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry() ) ) );
 				_btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
 				_btnSave.setEnabled(_playlist != null);
 				_btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
 				_btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
-				_btnReorder.setEnabled(_playlist != null && _playlist.size() > 1);
+				_btnReorder.setEnabled(_playlist != null && _playlist.getType() != PlaylistType.ITUNES && _playlist.size() > 1);
 				_btnInvert.setEnabled(hasSelected);
 				if (_isSortedByFileIx)
 				{

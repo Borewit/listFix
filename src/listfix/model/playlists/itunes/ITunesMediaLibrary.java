@@ -24,6 +24,7 @@ import christophedelory.playlist.plist.PlistPlaylist;
 import christophedelory.plist.Array;
 import christophedelory.plist.Dict;
 import christophedelory.plist.Integer;
+import christophedelory.plist.Key;
 import christophedelory.plist.PlistObject;
 
 import java.util.ArrayList;
@@ -80,9 +81,8 @@ public class ITunesMediaLibrary
 			result.put(key.getValue(), track);
 		}
 		return result;
-	}
+	}	
 	
-	/**
 	public void setTracks(Map<String, ITunesTrack> trackMap)
 	{
 		Dict rootDict = ((Dict)_plist.getPlist().getPlistObject());
@@ -96,7 +96,6 @@ public class ITunesMediaLibrary
 			tracksDictionary.put(plistKey, trackMap.get(key).getTrackDict());
 		}
 	}
-	*/
 	
 	/**
 	 * Gets the Playlists section of an iTunes library/playlist file as a list of ITunesTrackList objects.

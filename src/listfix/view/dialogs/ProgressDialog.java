@@ -121,6 +121,11 @@ public class ProgressDialog extends javax.swing.JDialog
     {
         return _progressTitle;
     }
+	
+	public void setMessage(String message)
+	{
+		_progressMessage.setText(message);
+	}
     
     private void initWorker(ProgressWorker worker)
     {

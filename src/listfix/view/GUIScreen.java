@@ -89,6 +89,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -844,8 +845,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
 
         _miDeletePlaylist.setMnemonic('D');
-        _miDeletePlaylist.setText("Delete Select Playlists");
-        _miDeletePlaylist.setToolTipText("Delete Select Playlists");
+        _miDeletePlaylist.setText("Delete Selected");
+        _miDeletePlaylist.setToolTipText("Delete Selected Folders & Playlists");
         _miDeletePlaylist.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -946,7 +947,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _mediaLibraryButtonPanel.add(_removeMediaDirButton);
 
         _refreshMediaDirsButton.setText("Refresh");
-        _refreshMediaDirsButton.setToolTipText("The contents of your media library are cached, refresh to pickup changes");
+        _refreshMediaDirsButton.setToolTipText("The contents of your media library are cached; refresh to pickup changes");
         _refreshMediaDirsButton.setFocusable(false);
         _refreshMediaDirsButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _refreshMediaDirsButton.setMinimumSize(new java.awt.Dimension(71, 25));
@@ -1002,7 +1003,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _playlistsDirectoryButtonPanel.setName(""); // NOI18N
 
         _btnSetPlaylistsDir.setText("Set");
-        _btnSetPlaylistsDir.setToolTipText("Choose a folder (recursively searched for playlists to be shown here)");
+        _btnSetPlaylistsDir.setToolTipText("Opens the options screen where you can set your playlists directory ");
         _btnSetPlaylistsDir.setMargin(new java.awt.Insets(2, 8, 2, 8));
         _btnSetPlaylistsDir.addActionListener(new java.awt.event.ActionListener()
         {
@@ -1225,7 +1226,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _saveAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         _saveAllMenuItem.setMnemonic('S');
         _saveAllMenuItem.setText("Save All");
-        _saveAllMenuItem.setToolTipText("");
+        _saveAllMenuItem.setToolTipText("Save All Open Playlists");
         _saveAllMenuItem.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1284,7 +1285,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _appOptionsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
         _appOptionsMenuItem.setMnemonic('p');
         _appOptionsMenuItem.setText("Options...");
-        _appOptionsMenuItem.setToolTipText("");
+        _appOptionsMenuItem.setToolTipText("Opens the Options Screen");
         _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -1626,7 +1627,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			return;
 		}
 
-		handleSavePlaylistAs(_currentPlaylist);
+		handleSaveAs(_currentPlaylist);
 	}//GEN-LAST:event__saveAsMenuItemActionPerformed
 
 	private void openIconButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_openIconButtonActionPerformed
@@ -1984,7 +1985,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 	{
 		if (list.isNew())
 		{
-			handleSavePlaylistAs(list);
+			handleSaveAs(list);
 		}
 		else
 		{
@@ -2001,7 +2002,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false, false);
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", list.getType() == PlaylistType.ITUNES || list.getType() == PlaylistType.XSPF, false);
+				pd.setMessage("Please wait while your playlist is saved to disk.");
 				pd.setVisible(true);
 				worker.get();
 			}
@@ -2015,11 +2017,39 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
+	}	
+
+	private FileFilter getFileFilterForPlaylist(Playlist list)
+	{
+		switch(list.getType())
+		{
+			case ITUNES: 
+				return new ExtensionFilter("xml", "iTunes Playlist (*.xml)");
+			case M3U:
+				if (list.isUtfFormat() || list.getFile().getPath().endsWith("8"))
+				{
+					return new ExtensionFilter("m3u8", "M3U8 Playlist (*.m3u8)");
+				}
+				else
+				{
+					return new ExtensionFilter("m3u", "M3U Playlist (*.m3u)");
+				}
+			case PLS:
+				return new ExtensionFilter("pls", "PLS Playlist (*.pls)");
+			case WPL:
+				return new ExtensionFilter("wpl", "WPL Playlist (*.wpl)");
+			case XSPF:
+				return new ExtensionFilter("xspf", "XSPF Playlist (*.xspf)");
+			case UNKNOWN:
+				return new ExtensionFilter("m3u8", "M3U8 Playlist (*.m3u8)");
+		}
+		return new ExtensionFilter("m3u8", "M3U8 Playlist (*.m3u8)");
 	}
 
-	private boolean handleSavePlaylistAs(Playlist list)
+	private boolean handleSaveAs(Playlist list)
 	{
 		_jSaveFileChooser.setSelectedFile(list.getFile());
+		_jSaveFileChooser.setFileFilter(getFileFilterForPlaylist(list));
 		int rc = _jSaveFileChooser.showSaveDialog(this);
 		if (rc == JFileChooser.APPROVE_OPTION)
 		{
@@ -2040,6 +2070,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 				}
 				
 				String extension = ((ExtensionFilter) _jSaveFileChooser.getFileFilter()).getExtension();
+				
+				if (list.getType() != PlaylistType.ITUNES && extension.equals("xml"))
+				{					
+					JOptionPane.showMessageDialog(this, new JTransparentTextArea("listFix() can only save iTunes playlists as iTunes XML files.  Please save to M3U or M3U8, which can be imported directly into iTunes."));
+					return false;
+				}
 				
 				// make sure file has correct extension
 				String normalizedName = playlist.getName().trim().toLowerCase();
@@ -2067,7 +2103,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 						return null;
 					}
 				};
-				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", false, false);
+				
+				ProgressDialog pd = new ProgressDialog(this, true, worker, "Saving...", list.getType() == PlaylistType.ITUNES || list.getType() == PlaylistType.XSPF, false);
+				pd.setMessage("Please wait while your playlist is saved to disk.");
 				pd.setVisible(true);
 
 				worker.get();
@@ -2347,7 +2385,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 			}
 			else if (rc == 1)
 			{
-				return handleSavePlaylistAs(list);
+				return handleSaveAs(list);
 			}
 			else if (rc == 2)
 			{
