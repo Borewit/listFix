@@ -32,3 +32,17 @@ iTunes fans, see [Using listFix() to fix iTunes playlists](https://sourceforge.n
 ## Requirements
 * JRE 1.6 - no promises of compatibility for OS-specific features on Macs as I don't own one
 * UNC paths only supported on Windows (Linux users can smbmount a network drive and then use the mount point as a media directory)
+
+## Development
+
+### Build project
+In project folder, run:
+```shell
+./gradlew build
+```
+
+### Run application
+In project folder, run:
+```shell
+./gradlew run
+```
