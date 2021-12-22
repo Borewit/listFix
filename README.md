@@ -1,3 +1,4 @@
+[![CI](https://github.com/Borewit/listFix/actions/workflows/ci.yml/badge.svg)](https://github.com/Borewit/listFix/actions/workflows/ci.yml)
 
 # listFix() - Playlist Repair Done Right
 Have you ever spent some time making a playlist, only to have it break when you reorganize your files? listFix() is a Swing application that solves this problem by finding the lost or missing entries in your playlists automatically.  Tell it where you keep your media files, load in the playlist you want to fix, and hit the locate button.  The program will search your media library for the file and update the playlist accordingly when it finds a match.
@@ -32,3 +33,17 @@ iTunes fans, see [Using listFix() to fix iTunes playlists](https://sourceforge.n
 ## Requirements
 * JRE 1.6 - no promises of compatibility for OS-specific features on Macs as I don't own one
 * UNC paths only supported on Windows (Linux users can smbmount a network drive and then use the mount point as a media directory)
+
+## Development
+
+### Build project
+In project folder, run:
+```shell
+./gradlew build
+```
+
+### Run application
+In project folder, run:
+```shell
+./gradlew run
+```

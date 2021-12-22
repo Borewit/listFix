@@ -1,0 +1,61 @@
+/*
+ * User Manual available at https://docs.gradle.org/7.3.1/userguide/building_java_projects.html
+ */
+
+plugins {
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'application'
+    id 'java'
+    id 'idea'
+}
+
+version '2.3.0'
+
+sourceCompatibility = 7
+targetCompatibility = 7
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    // Use JUnit test framework.
+    testImplementation 'junit:junit:4.13.2'
+
+    implementation files('src/lib/net.mariottini.swing.jar')
+
+    // Provides christophedelory.playlist.*
+    implementation files('src/lib/lizzy.jar')
+
+		implementation files('src/lib/jide-components.jar')
+
+
+    implementation files('src/lib/jgoodies-common-1.8.0.jar')
+		implementation files('src/lib/jgoodies-looks-2.6.0.jar')
+
+     // This dependency is used by the application.
+    implementation 'com.google.guava:guava:30.1.1-jre'
+
+		// https://mvnrepository.com/artifact/net.janklab.opp/jide-oss
+    implementation 'net.janklab.opp:jide-oss:3.7.4'
+
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+    // https://mvnrepository.com/artifact/log4j/log4j
+    implementation 'log4j:log4j:1.2.6'
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'listfix.view.GUIScreen'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
