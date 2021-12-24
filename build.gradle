@@ -7,12 +7,17 @@ plugins {
     id 'application'
     id 'java'
     id 'idea'
+    id 'edu.sc.seis.launch4j' version '2.5.1'
 }
+
+apply plugin: "edu.sc.seis.launch4j"
 
 version '2.3.0'
 
 sourceCompatibility = 7
 targetCompatibility = 7
+
+project.mainClassName = 'listfix.view.GUIScreen'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -37,7 +42,7 @@ dependencies {
 		// https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
     implementation 'com.jgoodies:jgoodies-looks:2.7.0'
 
-     // This dependency is used by the application.
+    // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.1.1-jre'
 
 		// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
@@ -52,7 +57,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'listfix.view.GUIScreen'
+    mainClass = project.mainClassName
 }
 
 sourceSets {
@@ -65,3 +70,28 @@ sourceSets {
     				}
         }
 }
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+    setDuplicatesStrategy(DuplicatesStrategy.WARN)
+    baseName = "listFix"
+    archiveClassifier = "all"
+    from { configurations.compileClasspath.filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+// https://github.com/TheBoegl/gradle-launch4j
+launch4j {
+    headerType='gui'
+    icon = "${projectDir}/website/favicon.ico"
+    mainClassName = project.mainClassName
+    companyName = 'Borewit'
+    downloadUrl = 'https://github.com/Borewit/listFix/releases'
+    fileDescription = 'Repairs Missing Entries in Playlist Files'
+    supportUrl = 'https://github.com/Borewit/listFix/issues'
+    copyConfigurable = [] // Don't copy dependencies
+    jarTask = project.tasks.fatJar // Use fat jar
+}
+
