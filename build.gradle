@@ -28,23 +28,26 @@ dependencies {
     // Provides christophedelory.playlist.*
     implementation files('src/lib/lizzy.jar')
 
+		implementation files('src/lib/jide-common.jar')
 		implementation files('src/lib/jide-components.jar')
 
+		// https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
+		implementation 'com.jgoodies:jgoodies-common:1.8.0'
 
-    implementation files('src/lib/jgoodies-common-1.8.0.jar')
-		implementation files('src/lib/jgoodies-looks-2.6.0.jar')
+		// https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
+    implementation 'com.jgoodies:jgoodies-looks:2.7.0'
 
      // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.1.1-jre'
 
-		// https://mvnrepository.com/artifact/net.janklab.opp/jide-oss
-    implementation 'net.janklab.opp:jide-oss:3.7.4'
-
-    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+		// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     // https://mvnrepository.com/artifact/log4j/log4j
     implementation 'log4j:log4j:1.2.6'
+
+		// https://mvnrepository.com/artifact/commons-io/commons-io
+		implementation 'commons-io:commons-io:2.11.0'
 }
 
 application {
@@ -57,5 +60,8 @@ sourceSets {
         java {
             srcDirs = ['src']
         }
+        resources {
+						srcDirs = ['src/images']
+				}
     }
 }
