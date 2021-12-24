@@ -57,11 +57,11 @@ application {
 
 sourceSets {
     main {
-        java {
-            srcDirs = ['src']
+            java {
+                srcDirs = ['src/main/java']
+            }
+            resources {
+            	  srcDirs= ["src/main/resources"]
+    				}
         }
-        resources {
-						srcDirs = ['src/images']
-				}
-    }
 }
