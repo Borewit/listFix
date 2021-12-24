@@ -20,6 +20,8 @@
 /.settings
 # Gradle
 /.gradle
+# Gradle build folder
+/build
 # IntelliJ IDEA
 /.idea
 /*.iml
