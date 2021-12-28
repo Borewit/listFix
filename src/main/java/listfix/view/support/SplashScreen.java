@@ -43,7 +43,7 @@ public class SplashScreen extends JFrame
 	public SplashScreen(String imageResourcePath)
 	{
 		ClassLoader cl = this.getClass().getClassLoader();
-		ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
+        ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(new JLabel(image));
