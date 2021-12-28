@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'edu.sc.seis.launch4j' version '2.5.1'
+    id "com.gitlab.svg2ico" version "0.11" // https://gitlab.com/svg2ico/svg2ico-gradle-plugin
 }
 
 apply plugin: "edu.sc.seis.launch4j"
@@ -29,26 +30,26 @@ dependencies {
     // Provides christophedelory.playlist.*
     implementation files('src/lib/lizzy.jar')
 
-		implementation files('src/lib/jide-common.jar')
-		implementation files('src/lib/jide-components.jar')
+    implementation files('src/lib/jide-common.jar')
+    implementation files('src/lib/jide-components.jar')
 
-		// https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
-		implementation 'com.jgoodies:jgoodies-common:1.8.0'
+    // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
+    implementation 'com.jgoodies:jgoodies-common:1.8.0'
 
-		// https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
+    // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
     implementation 'com.jgoodies:jgoodies-looks:2.7.0'
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.1.1-jre'
 
-		// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     // https://mvnrepository.com/artifact/log4j/log4j
     implementation 'log4j:log4j:1.2.6'
 
-		// https://mvnrepository.com/artifact/commons-io/commons-io
-		implementation 'commons-io:commons-io:2.11.0'
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.11.0'
 }
 
 application {
@@ -76,6 +77,20 @@ task fatJar(type: Jar) {
     archiveClassifier = "all"
     from { configurations.compileClasspath.filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+tasks.register('makePngIcon', Svg2PngTask) {
+    source = new File('src/main/svg/listFix() icon.svg')
+    width = 64
+	  height = 64
+		destination = new File('src/main/resources/images/icon.png')
+}
+
+tasks.register('makeIcon', Svg2IcoTask) {
+    input {
+      source = new File('src/main/svg/listFix() icon.svg')
+    }
+	  destination = new File('website/favicon.ico')
 }
 
 // https://github.com/TheBoegl/gradle-launch4j
