@@ -79,7 +79,7 @@ public class OptionsReader
 							}
 							else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
 							{
-								options.setMaxPlaylistHistoryEntries((new Integer(optionValue)));
+								options.setMaxPlaylistHistoryEntries(Integer.parseInt(optionValue));
 							}
 							else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
 							{
@@ -111,7 +111,7 @@ public class OptionsReader
 							}
 							else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
 							{
-								options.setMaxClosestResults((new Integer(optionValue)));
+								options.setMaxClosestResults((Integer.parseInt(optionValue)));
 							}
 							else if (optionName.equalsIgnoreCase(AppOptions.IGNORED_SMALL_WORDS))
 							{
