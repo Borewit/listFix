@@ -114,11 +114,11 @@ public class FileNameTokenizer
 		{
 			if (array1Counts.containsKey(t))
 			{
-				array1Counts.put(t, new Integer(array1Counts.get(t).intValue() + 1));
+				array1Counts.put(t, array1Counts.get(t) + 1);
 			}
 			else
 			{
-				array1Counts.put(t, new Integer(1));
+				array1Counts.put(t, 1);
 			}
 		}
 
@@ -128,11 +128,11 @@ public class FileNameTokenizer
 			{
 				if (array2Counts.containsKey(t))
 				{
-					array2Counts.put(t, new Integer(array2Counts.get(t).intValue() + 1));
+					array2Counts.put(t, array2Counts.get(t) + 1);
 				}
 				else
 				{
-					array2Counts.put(t, new Integer(1));
+					array2Counts.put(t, 1);
 				}
 			}
 		}
@@ -141,19 +141,14 @@ public class FileNameTokenizer
 		String token;
 		if (array2Counts.keySet().size() > 0)
 		{
-			result = array2Counts.keySet().size() == 1 ? 1 : (int) Math.pow(3.0, (double) array2Counts.keySet().size());
-			Iterator<String> array2CountsIterator = array2Counts.keySet().iterator();
-			while (array2CountsIterator.hasNext())
-			{
-				token = array2CountsIterator.next();
-				int array1Count = array1Counts.get(token).intValue();
-				int array2Count = array2Counts.get(token).intValue();
-				if (array1Count < array2Count)
-				{
+			result = array2Counts.keySet().size() == 1 ? 1 : (int) Math.pow(3.0, array2Counts.keySet().size());
+			for (String s : array2Counts.keySet()) {
+				token = s;
+				int array1Count = array1Counts.get(token);
+				int array2Count = array2Counts.get(token);
+				if (array1Count < array2Count) {
 					result = result + ((token.length() - 1) * array1Count);
-				}
-				else
-				{
+				} else {
 					result = result + ((token.length() - 1) * array2Count);
 				}
 			}
