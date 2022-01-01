@@ -10,14 +10,16 @@ plugins {
 
     /* Generate Java code from XSD */
     id 'org.unbroken-dome.xjc' version '2.0.0'
+
+    id 'checkstyle'
 }
 
 apply plugin: "edu.sc.seis.launch4j"
 
 version '2.3.0'
 
-sourceCompatibility = 7
-targetCompatibility = 7
+sourceCompatibility = 8
+targetCompatibility = 8
 
 project.mainClassName = 'listfix.view.GUIScreen'
 
@@ -100,6 +102,10 @@ tasks.register('makeIcon', Svg2IcoTask) {
       source = new File('src/main/svg/listFix() icon.svg')
     }
 	  destination = new File('website/favicon.ico')
+}
+
+tasks.withType(Checkstyle) {
+    exclude 'listfix/model/playlists/winamp/generated/**.java'
 }
 
 // https://github.com/TheBoegl/gradle-launch4j

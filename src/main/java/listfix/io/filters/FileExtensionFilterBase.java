@@ -21,33 +21,36 @@ package listfix.io.filters;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.filechooser.FileFilter;
 
 /**
- * 
+ *
  * @author jcaron
  */
 public abstract class FileExtensionFilterBase extends FileFilter
-{	
-    protected Set<String> _extensions = new HashSet<>();
-	
-	/**
-	 * 
-	 * @param extensions
-	 */
-	protected FileExtensionFilterBase(Set<String> extensions)
+{
+    private TreeSet<String> _extensions = new TreeSet<>();
+
+    public String getFirstExtension() {
+      return this._extensions.first();
+    }
+
+  /**
+   *
+   * @param extensions
+   */
+  protected FileExtensionFilterBase(TreeSet<String> extensions)
     {
         _extensions = extensions;
     }
-	
-	/**
-	 * 
-	 * @param extension
-	 */
-	protected FileExtensionFilterBase(String extension)
+
+  /**
+   *
+   * @param extension
+   */
+  protected FileExtensionFilterBase(String extension)
     {
         _extensions.add(extension);
     }
@@ -56,9 +59,9 @@ public abstract class FileExtensionFilterBase extends FileFilter
     public boolean accept(File file)
     {
         if (file.isDirectory())
-		{
-			return true;
-		}
+    {
+      return true;
+    }
 
         String name = file.getName();
         int ix = name.lastIndexOf('.');
@@ -68,19 +71,18 @@ public abstract class FileExtensionFilterBase extends FileFilter
             return _extensions.contains(ext);
         }
         else
-		{
-			return false;
-		}
-    }
-
-	/**
-	 * 
-	 * @param extensions
-	 * @return
-	 */
-	protected static Set<String> createExtensionSet(String... extensions)
     {
-        Set<String> set = new HashSet<>(Arrays.asList(extensions));
-        return set;
+      return false;
     }
+  }
+
+  /**
+   *
+   * @param extensions
+   * @return
+   */
+  protected static TreeSet<String> createExtensionSet(String... extensions)
+  {
+    return new TreeSet<>(Arrays.asList(extensions));
+  }
 }

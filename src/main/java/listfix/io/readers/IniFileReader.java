@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2012 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -39,191 +39,191 @@ import listfix.model.AppOptions;
  * @author jcaron
  */
 public class IniFileReader
-{	
-	private final String fname1;
-	private final String fname2;
-	private final AppOptions options;
-	
-	private String[] mediaDirs = new String[0];
-	private String[] history = new String[0];
-	private String[] mediaLibrary = new String[0];
-	private String[] mediaLibraryFiles = new String[0];
+{
+  private final String fname1;
+  private final String fname2;
+  private final AppOptions options;
 
-	/**
-	 * Constructor.
-	 * @param opts An AppOptions configuration, needed to decide if the library should use UNC paths or not.
-	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
-	 */
-	public IniFileReader(AppOptions opts) throws FileNotFoundException, UnsupportedEncodingException
-	{
-		options = opts;
-		fname1 = Constants.MEDIA_LIBRARY_INI;
-		fname2 = Constants.HISTORY_INI;
-		
-		File in_data1 = new File(fname1);
-		if (!in_data1.exists())
-		{
-			throw new FileNotFoundException(in_data1.getPath());
-		}
-		else if (in_data1.length() == 0)
-		{
-			throw new FileNotFoundException("File found, but was of zero size.");
-		}
+  private String[] mediaDirs = new String[0];
+  private String[] history = new String[0];
+  private String[] mediaLibrary = new String[0];
+  private String[] mediaLibraryFiles = new String[0];
 
-		File in_data2 = new File(fname2);
-		if (!in_data2.exists())
-		{
-			throw new FileNotFoundException(in_data2.getPath());
-		}
-		else if (in_data2.length() == 0)
-		{
-			throw new FileNotFoundException("File found, but was of zero size.");
-		}	
-	}
+  /**
+   * Constructor.
+   * @param opts An AppOptions configuration, needed to decide if the library should use UNC paths or not.
+   * @throws FileNotFoundException
+   * @throws UnsupportedEncodingException
+   */
+  public IniFileReader(AppOptions opts) throws FileNotFoundException, UnsupportedEncodingException
+  {
+    options = opts;
+    fname1 = Constants.MEDIA_LIBRARY_INI;
+    fname2 = Constants.HISTORY_INI;
 
-	public void readIni() throws IOException
-	{
-		List<String> tempList = new ArrayList<>();
-		List<String> lines = Files.readAllLines(Paths.get(fname1), StandardCharsets.UTF_8);
-		
-		// Read in base media directories
-		// skip first line, contains header
-		int i = 1;
-		String line = lines.get(i++);
-		while ((line != null) && (!line.startsWith("[")))
-		{
-			tempList.add(line);
-			line = lines.get(i++);
-		}
-		mediaDirs = new String[tempList.size()];
-		tempList.toArray(mediaDirs);
+    File in_data1 = new File(fname1);
+    if (!in_data1.exists())
+    {
+      throw new FileNotFoundException(in_data1.getPath());
+    }
+    else if (in_data1.length() == 0)
+    {
+      throw new FileNotFoundException("File found, but was of zero size.");
+    }
 
-		tempList.clear();
+    File in_data2 = new File(fname2);
+    if (!in_data2.exists())
+    {
+      throw new FileNotFoundException(in_data2.getPath());
+    }
+    else if (in_data2.length() == 0)
+    {
+      throw new FileNotFoundException("File found, but was of zero size.");
+    }
+  }
 
-		// Read in media library directories
-		// skip first line, contains header
-		line = lines.get(i++);
-		while ((line != null) && (!line.startsWith("[")))
-		{
-			tempList.add(line);
-			line = lines.get(i++);
-		}
-		mediaLibrary = new String[tempList.size()];
-		tempList.toArray(mediaLibrary);
-		tempList.clear();
+  public void readIni() throws IOException
+  {
+    List<String> tempList = new ArrayList<>();
+    List<String> lines = Files.readAllLines(Paths.get(fname1), StandardCharsets.UTF_8);
 
-		// Read in media library files
-		// skip first line, contains header
-		line = lines.get(i++);
-		while (line != null && i < lines.size())
-		{
-			tempList.add(line);
-			line = lines.get(i++);
-		}
-		mediaLibraryFiles = new String[tempList.size()];
-		tempList.toArray(mediaLibraryFiles);
-		tempList.clear();
+    // Read in base media directories
+    // skip first line, contains header
+    int i = 1;
+    String line = lines.get(i++);
+    while ((line != null) && (!line.startsWith("[")))
+    {
+      tempList.add(line);
+      line = lines.get(i++);
+    }
+    mediaDirs = new String[tempList.size()];
+    tempList.toArray(mediaDirs);
 
-		// Read in history...
-		lines = Files.readAllLines(Paths.get(fname2), StandardCharsets.UTF_8);
-		history = new String[lines.size()];
-		lines.toArray(history);
-	}
+    tempList.clear();
 
-	/**
-	 * Get a list of paths to playlists that have been opened recently.
-	 * @return
-	 */
-	public String[] getHistory()
-	{
-		return history;
-	}
+    // Read in media library directories
+    // skip first line, contains header
+    line = lines.get(i++);
+    while ((line != null) && (!line.startsWith("[")))
+    {
+      tempList.add(line);
+      line = lines.get(i++);
+    }
+    mediaLibrary = new String[tempList.size()];
+    tempList.toArray(mediaLibrary);
+    tempList.clear();
 
-	/**
-	 * Get the root media directories the user has specified.
-	 * @return
-	 */
-	public String[] getMediaDirs()
-	{
-		if (options.getAlwaysUseUNCPaths())
-		{
-			String[] result = new String[mediaDirs.length];
-			for (int i = 0; i < result.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaDirs[i]);
-				if (file.onNetworkDrive())
-				{
-					result[i] = file.getUNCPath();
-				}
-				else
-				{
-					result[i] = mediaDirs[i];
-				}
-			}
-			return result;
-		}
-		else
-		{
-			return mediaDirs;
-		}
-	}
+    // Read in media library files
+    // skip first line, contains header
+    line = lines.get(i++);
+    while (line != null && i < lines.size())
+    {
+      tempList.add(line);
+      line = lines.get(i++);
+    }
+    mediaLibraryFiles = new String[tempList.size()];
+    tempList.toArray(mediaLibraryFiles);
+    tempList.clear();
 
-	/**
-	 * Get the cached list of all directories in the media library.
-	 * @return
-	 */
-	public String[] getMediaLibraryDirectories()
-	{
-		if (options.getAlwaysUseUNCPaths())
-		{
-			String[] result = new String[mediaLibrary.length];
-			for (int i = 0; i < result.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibrary[i]);
-				if (file.onNetworkDrive())
-				{
-					result[i] = file.getUNCPath();
-				}
-				else
-				{
-					result[i] = mediaLibrary[i];
-				}
-			}
-			return result;
-		}
-		else
-		{
-			return mediaLibrary;
-		}
-	}
+    // Read in history...
+    lines = Files.readAllLines(Paths.get(fname2), StandardCharsets.UTF_8);
+    history = new String[lines.size()];
+    lines.toArray(history);
+  }
 
-	/**
-	 * Get the cached list of all files in the media library.
-	 * @return
-	 */
-	public String[] getMediaLibraryFiles()
-	{
-		if (options.getAlwaysUseUNCPaths())
-		{
-			String[] result = new String[mediaLibraryFiles.length];
-			for (int i = 0; i < result.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibraryFiles[i]);
-				if (file.onNetworkDrive())
-				{
-					result[i] = file.getUNCPath();
-				}
-				else
-				{
-					result[i] = mediaLibraryFiles[i];
-				}
-			}
-			return result;
-		}
-		else
-		{
-			return mediaLibraryFiles;
-		}
-	}
+  /**
+   * Get a list of paths to playlists that have been opened recently.
+   * @return
+   */
+  public String[] getHistory()
+  {
+    return history;
+  }
+
+  /**
+   * Get the root media directories the user has specified.
+   * @return
+   */
+  public String[] getMediaDirs()
+  {
+    if (options.getAlwaysUseUNCPaths())
+    {
+      String[] result = new String[mediaDirs.length];
+      for (int i = 0; i < result.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaDirs[i]);
+        if (file.onNetworkDrive())
+        {
+          result[i] = file.getUNCPath();
+        }
+        else
+        {
+          result[i] = mediaDirs[i];
+        }
+      }
+      return result;
+    }
+    else
+    {
+      return mediaDirs;
+    }
+  }
+
+  /**
+   * Get the cached list of all directories in the media library.
+   * @return
+   */
+  public String[] getMediaLibraryDirectories()
+  {
+    if (options.getAlwaysUseUNCPaths())
+    {
+      String[] result = new String[mediaLibrary.length];
+      for (int i = 0; i < result.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibrary[i]);
+        if (file.onNetworkDrive())
+        {
+          result[i] = file.getUNCPath();
+        }
+        else
+        {
+          result[i] = mediaLibrary[i];
+        }
+      }
+      return result;
+    }
+    else
+    {
+      return mediaLibrary;
+    }
+  }
+
+  /**
+   * Get the cached list of all files in the media library.
+   * @return
+   */
+  public String[] getMediaLibraryFiles()
+  {
+    if (options.getAlwaysUseUNCPaths())
+    {
+      String[] result = new String[mediaLibraryFiles.length];
+      for (int i = 0; i < result.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibraryFiles[i]);
+        if (file.onNetworkDrive())
+        {
+          result[i] = file.getUNCPath();
+        }
+        else
+        {
+          result[i] = mediaLibraryFiles[i];
+        }
+      }
+      return result;
+    }
+    else
+    {
+      return mediaLibraryFiles;
+    }
+  }
 }

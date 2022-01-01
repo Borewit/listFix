@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -26,23 +26,22 @@ package listfix.exceptions;
  */
 public class MediaDirNotFoundException extends java.lang.Exception
 {
-	private static final long serialVersionUID = 1879470857635321053L;
+  private static final long serialVersionUID = 1879470857635321053L;
 
-	/**
-	 *
-	 */
-	public MediaDirNotFoundException()
-	{
-		super();
-	}
+  /**
+   *
+   */
+  public MediaDirNotFoundException()
+  {
+    super();
+  }
 
-	/**
-	 *
-	 * @param s
-	 */
-	public MediaDirNotFoundException(String s)
-	{
-		super(s);
-	}
+  /**
+   *
+   * @param s
+   */
+  public MediaDirNotFoundException(String s)
+  {
+    super(s);
+  }
 }
-    

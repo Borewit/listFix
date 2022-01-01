@@ -1,0 +1,22 @@
+###############################
+# Git Line Endings            #
+###############################
+
+# Set default behaviour to automatically normalize line endings.
+* text=auto
+
+# Force batch scripts to always use CRLF line endings so that if a repo is accessed
+# in Windows via a file share from Linux, the scripts will work.
+*.bat text eol=crlf
+
+*.gradle text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+*.css text eol=lf
+
+# Force bash scripts to always use LF line endings so that if a repo is accessed
+# in Unix via a file share from Windows, the scripts will work.
+*.sh text eol=lf

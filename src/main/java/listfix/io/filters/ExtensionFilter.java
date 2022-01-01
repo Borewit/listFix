@@ -21,8 +21,6 @@
 package listfix.io.filters;
 
 import java.io.FileFilter;
-import java.util.Arrays;
-import java.util.Set;
 
 /**
  * A FileFilter that accepts our currently supported playlist types, and directories.
@@ -30,34 +28,34 @@ import java.util.Set;
  */
 public class ExtensionFilter extends FileExtensionFilterBase implements FileFilter
 {
-	private String _description;
-	
-	/**
-	 * 
-	 * @param extension
-	 * @param description
-	 */
-	public ExtensionFilter(String extension, String description)
-    {		
-        super(extension);
-		_description = description;
-    }
+  private String _description;
 
-    @Override
-    public String getDescription()
-    {
-        return _description;
-    }
+  /**
+   *
+   * @param extension
+   * @param description
+   */
+  public ExtensionFilter(String extension, String description)
+  {
+    super(extension);
+    _description = description;
+  }
 
-	@Override
-	public String toString()
-	{
-		return getDescription();
-	}
-	
-	public String getExtension()
-	{
-		return (String) Arrays.asList(_extensions.toArray()).get(0);
-	}
+  @Override
+  public String getDescription()
+  {
+      return _description;
+  }
+
+  @Override
+  public String toString()
+  {
+    return getDescription();
+  }
+
+  public String getExtension()
+  {
+    return super.getFirstExtension();
+  }
 }
 

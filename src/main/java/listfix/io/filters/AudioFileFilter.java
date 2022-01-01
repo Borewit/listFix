@@ -19,18 +19,18 @@
 
 package listfix.io.filters;
 
-import java.util.Set;
+import java.util.TreeSet;
 
 /**
- * 
+ *
  * @author jcaron
  */
 public class AudioFileFilter extends FileExtensionFilterBase
 {
-	/**
-	 * 
-	 */
-	public AudioFileFilter()
+  /**
+   *
+   */
+  public AudioFileFilter()
     {
         super(_extensions);
     }
@@ -40,18 +40,18 @@ public class AudioFileFilter extends FileExtensionFilterBase
     {
         return "Audio Files and Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf, *.xml, *.mp3, *.flac, *.aac, *.ogg, *.aiff, *.au, *.wma)";
     }
-    
-    private static final Set<String> _extensions;
+
+    private static final TreeSet<String> _extensions;
 
     static
     {
         _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml", "mp3", "flac", "aac", "ogg", "aiff", "au", "wma");
     }
 
-	@Override
-	// Fixes display in linux
-	public String toString()
-	{
-		return getDescription();
-	}
+  @Override
+  // Fixes display in linux
+  public String toString()
+  {
+    return getDescription();
+  }
 }

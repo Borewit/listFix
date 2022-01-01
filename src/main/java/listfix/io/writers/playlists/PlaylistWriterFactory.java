@@ -31,38 +31,38 @@ import listfix.model.enums.PlaylistType;
  */
 public class PlaylistWriterFactory
 {
-	/**
-	 *
-	 * @param inputFile
-	 * @return
-	 * @throws FileNotFoundException
-	 */
-	public static IPlaylistWriter getPlaylistWriter(File inputFile) throws FileNotFoundException
-	{
-		PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
-		if (type == PlaylistType.M3U)
-		{
-			return new M3UWriter();
-		}
-		else if (type == PlaylistType.PLS)
-		{
-			return new PLSWriter();
-		}
-		else if (type == PlaylistType.XSPF)
-		{
-			return new XSPFWriter();
-		}
-		else if (type == PlaylistType.WPL)
-		{
-			return new WPLWriter();
-		}
-		else if (type == PlaylistType.ITUNES)
-		{
-			return new ITunesXMLWriter();
-		}
-		else
-		{
-			return null;
-		}
-	}
+  /**
+   *
+   * @param inputFile
+   * @return
+   * @throws FileNotFoundException
+   */
+  public static IPlaylistWriter getPlaylistWriter(File inputFile) throws FileNotFoundException
+  {
+    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
+    if (type == PlaylistType.M3U)
+    {
+      return new M3UWriter();
+    }
+    else if (type == PlaylistType.PLS)
+    {
+      return new PLSWriter();
+    }
+    else if (type == PlaylistType.XSPF)
+    {
+      return new XSPFWriter();
+    }
+    else if (type == PlaylistType.WPL)
+    {
+      return new WPLWriter();
+    }
+    else if (type == PlaylistType.ITUNES)
+    {
+      return new ITunesXMLWriter();
+    }
+    else
+    {
+      return null;
+    }
+  }
 }

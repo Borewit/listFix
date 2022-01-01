@@ -34,36 +34,36 @@ import listfix.view.support.IProgressObserver;
  */
 public interface IPlaylistReader
 {
-	/**
-	 * 
-	 * @return
-	 */
-	public String getEncoding();
-	
-	/**
-	 * 
-	 * @param encoding
-	 */
-	public void setEncoding(String encoding);
+  /**
+   *
+   * @return
+   */
+  String getEncoding();
 
-	/**
-	 * 
-	 * @return
-	 */
-	public PlaylistType getPlaylistType();
+  /**
+   *
+   * @param encoding
+   */
+  void setEncoding(String encoding);
 
-	/**
-	 * 
-	 * @param input
-	 * @return
-	 * @throws IOException
-	 */
-	List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
-	
-	/**
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	List<PlaylistEntry> readPlaylist() throws IOException;
+  /**
+   *
+   * @return
+   */
+  PlaylistType getPlaylistType();
+
+  /**
+   *
+   * @param input
+   * @return
+   * @throws IOException
+   */
+  List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
+
+  /**
+   *
+   * @return
+   * @throws IOException
+   */
+  List<PlaylistEntry> readPlaylist() throws IOException;
 }

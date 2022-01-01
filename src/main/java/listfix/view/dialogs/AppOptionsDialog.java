@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -58,258 +58,258 @@ import org.apache.log4j.Logger;
  */
 public class AppOptionsDialog extends javax.swing.JDialog
 {
-	/**
-	 *
-	 */
-	public static final int OK = 0;
-	/**
-	 *
-	 */
-	public static final int CANCEL = 1;
-	
-	private static final long serialVersionUID = 3409894354485158935L;
-	private static final Logger _logger = Logger.getLogger(AppOptionsDialog.class);	
-	public static final String TEXT_FIELD_TRAILING_SPACER = "     ";
-	private final FolderChooser _jMediaDirChooser = new FolderChooser();	
-	private int _resultCode;
-	private String _fileName;
-	private AppOptions _options = null;
-	private Font _chosenFont = null;
-	private LookAndFeelInfo[] _installedLookAndFeelInfos = null;
+  /**
+   *
+   */
+  public static final int OK = 0;
+  /**
+   *
+   */
+  public static final int CANCEL = 1;
 
-	private void ApplyOperatingSystemBasedVisibility()
-	{
-		if (!OperatingSystem.isWindows())
-		{
-			_pnlUseUnc.setVisible(false);
-		}
-		else if (OperatingSystem.isWindows())
-		{
-			_pnlDisableCaseSensitivity.setVisible(false);
-		}
-	}
+  private static final long serialVersionUID = 3409894354485158935L;
+  private static final Logger _logger = Logger.getLogger(AppOptionsDialog.class);
+  public static final String TEXT_FIELD_TRAILING_SPACER = "     ";
+  private final FolderChooser _jMediaDirChooser = new FolderChooser();
+  private int _resultCode;
+  private String _fileName;
+  private AppOptions _options = null;
+  private Font _chosenFont = null;
+  private LookAndFeelInfo[] _installedLookAndFeelInfos = null;
 
-	private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
-	{
-		private final List<Integer> intList = new ArrayList<>();
-		Object _selected;
+  private void ApplyOperatingSystemBasedVisibility()
+  {
+    if (!OperatingSystem.isWindows())
+    {
+      _pnlUseUnc.setVisible(false);
+    }
+    else if (OperatingSystem.isWindows())
+    {
+      _pnlDisableCaseSensitivity.setVisible(false);
+    }
+  }
 
-		public IntegerRangeComboBoxModel(int i, int i0)
-		{
-			for (int j = i; j <= i0; j++)
-			{
-				intList.add(j);
-			}
-		}
+  private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
+  {
+    private final List<Integer> intList = new ArrayList<>();
+    Object _selected;
 
-		@Override
-		public void setSelectedItem(Object anItem)
-		{
-			_selected = anItem;
-		}
+    IntegerRangeComboBoxModel(int i, int i0)
+    {
+      for (int j = i; j <= i0; j++)
+      {
+        intList.add(j);
+      }
+    }
 
-		@Override
-		public Object getSelectedItem()
-		{
-			return _selected;
-		}
+    @Override
+    public void setSelectedItem(Object anItem)
+    {
+      _selected = anItem;
+    }
 
-		@Override
-		public int getSize()
-		{
-			return intList.size();
-		}
+    @Override
+    public Object getSelectedItem()
+    {
+      return _selected;
+    }
 
-		@Override
-		public Object getElementAt(int index)
-		{
-			return intList.get(index);
-		}
-	}
+    @Override
+    public int getSize()
+    {
+      return intList.size();
+    }
 
-	/** Creates new form EditFilenameDialog
-	 * @param parent
-	 * @param title
-	 * @param modal 
-	 * @param opts  
-	 */
-	public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts)
-	{
-		super(parent, title, modal);
-		if (opts == null)
-		{
-			_options = new AppOptions();
-		}
-		else
-		{
-			_options = opts;
-		}
-		initComponents();
-		_chosenFont = _options.getAppFont();
-		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
-		ApplyOperatingSystemBasedVisibility();
-		initPlaylistDirectoryFolderChooser();
-	}
+    @Override
+    public Object getElementAt(int index)
+    {
+      return intList.get(index);
+    }
+  }
 
-	private void initPlaylistDirectoryFolderChooser()
-	{
-		_jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
-		_jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-		_jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
-		_jMediaDirChooser.setRecentListVisible(false);
-		_jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
-		_jMediaDirChooser.setPreferredSize(new Dimension(400, 500));                
-	}
+  /** Creates new form EditFilenameDialog
+   * @param parent
+   * @param title
+   * @param modal
+   * @param opts
+   */
+  public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts)
+  {
+    super(parent, title, modal);
+    if (opts == null)
+    {
+      _options = new AppOptions();
+    }
+    else
+    {
+      _options = opts;
+    }
+    initComponents();
+    _chosenFont = _options.getAppFont();
+    _fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
+    ApplyOperatingSystemBasedVisibility();
+    initPlaylistDirectoryFolderChooser();
+  }
 
-	/**
-	 *
-	 */
-	public AppOptionsDialog()
-	{
-	}
+  private void initPlaylistDirectoryFolderChooser()
+  {
+    _jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
+    _jMediaDirChooser.setAcceptAllFileFilterUsed(false);
+    _jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
+    _jMediaDirChooser.setRecentListVisible(false);
+    _jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
+    _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getFileName()
-	{
-		return _fileName;
-	}
+  /**
+   *
+   */
+  public AppOptionsDialog()
+  {
+  }
 
-	/**
-	 *
-	 * @param x
-	 */
-	public void setFileName(String x)
-	{
-		_fileName = x;
-	}
+  /**
+   *
+   * @return
+   */
+  public String getFileName()
+  {
+    return _fileName;
+  }
 
-	/**
-	 *
-	 * @param i
-	 */
-	public void setResultCode(int i)
-	{
-		_resultCode = i;
-	}
+  /**
+   *
+   * @param x
+   */
+  public void setFileName(String x)
+  {
+    _fileName = x;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getResultCode()
-	{
-		return _resultCode;
-	}	
+  /**
+   *
+   * @param i
+   */
+  public void setResultCode(int i)
+  {
+    _resultCode = i;
+  }
 
-	private LookAndFeelInfo[] getInstalledLookAndFeels()
-	{
-		if (_installedLookAndFeelInfos == null)
-		{			
-			LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
-			List<LookAndFeelInfo> lafs = new ArrayList<>();
-			for (LookAndFeelInfo laf : plafs)
-			{
-				if (!laf.getName().toLowerCase().contains("nimbus"))
-				{
-					lafs.add(laf);
-				}
-			}
+  /**
+   *
+   * @return
+   */
+  public int getResultCode()
+  {
+    return _resultCode;
+  }
 
-			// "Install" the L&Fs we have internally added.
-			if (OperatingSystem.isWindows())
-			{
-				lafs.add(new LookAndFeelInfo("Windows (Plastic)", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName()));
-			}
-			lafs.add(new LookAndFeelInfo("Plastic - Default", com.jgoodies.looks.plastic.PlasticLookAndFeel.class.getName()));
-			lafs.add(new LookAndFeelInfo("Plastic - DarkStar", com.jgoodies.looks.plastic.theme.DarkStar.class.getName()));
-			lafs.add(new LookAndFeelInfo("Plastic - SkyBlue", com.jgoodies.looks.plastic.theme.SkyBlue.class.getName()));
-			lafs.add(new LookAndFeelInfo("Plastic3D", com.jgoodies.looks.plastic.Plastic3DLookAndFeel.class.getName()));
-			lafs.add(new LookAndFeelInfo("PlasticXP", com.jgoodies.looks.plastic.PlasticXPLookAndFeel.class.getName()));
-			
-			_installedLookAndFeelInfos = lafs.toArray(new LookAndFeelInfo[0]);
-		}
-		return _installedLookAndFeelInfos;
-	}
+  private LookAndFeelInfo[] getInstalledLookAndFeels()
+  {
+    if (_installedLookAndFeelInfos == null)
+    {
+      LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
+      List<LookAndFeelInfo> lafs = new ArrayList<>();
+      for (LookAndFeelInfo laf : plafs)
+      {
+        if (!laf.getName().toLowerCase().contains("nimbus"))
+        {
+          lafs.add(laf);
+        }
+      }
 
-	private DefaultComboBoxModel getLookAndFeelMenuItems()
-	{
-		LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
+      // "Install" the L&Fs we have internally added.
+      if (OperatingSystem.isWindows())
+      {
+        lafs.add(new LookAndFeelInfo("Windows (Plastic)", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName()));
+      }
+      lafs.add(new LookAndFeelInfo("Plastic - Default", com.jgoodies.looks.plastic.PlasticLookAndFeel.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic - DarkStar", com.jgoodies.looks.plastic.theme.DarkStar.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic - SkyBlue", com.jgoodies.looks.plastic.theme.SkyBlue.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic3D", com.jgoodies.looks.plastic.Plastic3DLookAndFeel.class.getName()));
+      lafs.add(new LookAndFeelInfo("PlasticXP", com.jgoodies.looks.plastic.PlasticXPLookAndFeel.class.getName()));
 
-		List<String> model = new ArrayList<>();
-		for (LookAndFeelInfo plaf : plafs)
-		{
-			model.add(plaf.getName());
-		}
-		return new DefaultComboBoxModel(model.toArray(new String[0]));
-	}
+      _installedLookAndFeelInfos = lafs.toArray(new LookAndFeelInfo[0]);
+    }
+    return _installedLookAndFeelInfos;
+  }
 
-	private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
-	{
-		UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
-		if (index < plafs.length)
-		{
-			return plafs[index];
-		}
-		return plafs[0];
-	}
+  private DefaultComboBoxModel getLookAndFeelMenuItems()
+  {
+    LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
 
-	private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
-	{
-		UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
-		for (LookAndFeelInfo plaf : plafs)
-		{
-			if (name.equals(plaf.getClassName()))
-			{
-				return plaf;
-			}
-		}
-		return plafs[0];
-	}
-	
-	/**
-	 *
-	 * @return
-	 */
-	public AppOptions showDialog()
-	{
-		this.center();
-		this.setVisible(true);
-		if (this.getResultCode() == OK)
-		{
-			_options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
-			_options.setMaxPlaylistHistoryEntries(((Integer) recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())));
-			_options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
-			_options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
-			_options.setLookAndFeel(getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
-			_options.setAlwaysUseUNCPaths(alwaysUseUNCPathsCheckBox.isSelected());
-			_options.setPlaylistsDirectory(playlistDirectoryTextField.getText().trim());
-			_options.setAppFont(_chosenFont);
-			_options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())));
-			_options.setIgnoredSmallWords(_smallWordsTxtField.getText().trim());
-			_options.setCaseInsensitiveExactMatching(_cbxCaseSensitivity.isSelected());
-		}
-		return _options;
-	}
+    List<String> model = new ArrayList<>();
+    for (LookAndFeelInfo plaf : plafs)
+    {
+      model.add(plaf.getName());
+    }
+    return new DefaultComboBoxModel(model.toArray(new String[0]));
+  }
 
-	private void center()
-	{
-		Point parentLocation = this.getParent().getLocationOnScreen();
-		double x = parentLocation.getX();
-		double y = parentLocation.getY();
-		int width = this.getParent().getWidth();
-		int height = this.getParent().getHeight();
+  private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
+  {
+    UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
+    if (index < plafs.length)
+    {
+      return plafs[index];
+    }
+    return plafs[0];
+  }
 
-		this.setLocation((int) x + (width - this.getPreferredSize().width) / 2, (int) y + (height - this.getPreferredSize().height) / 2);
-	}
+  private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
+  {
+    UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
+    for (LookAndFeelInfo plaf : plafs)
+    {
+      if (name.equals(plaf.getClassName()))
+      {
+        return plaf;
+      }
+    }
+    return plafs[0];
+  }
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
+  /**
+   *
+   * @return
+   */
+  public AppOptions showDialog()
+  {
+    this.center();
+    this.setVisible(true);
+    if (this.getResultCode() == OK)
+    {
+      _options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
+      _options.setMaxPlaylistHistoryEntries(((Integer) recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())));
+      _options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
+      _options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
+      _options.setLookAndFeel(getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
+      _options.setAlwaysUseUNCPaths(alwaysUseUNCPathsCheckBox.isSelected());
+      _options.setPlaylistsDirectory(playlistDirectoryTextField.getText().trim());
+      _options.setAppFont(_chosenFont);
+      _options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())));
+      _options.setIgnoredSmallWords(_smallWordsTxtField.getText().trim());
+      _options.setCaseInsensitiveExactMatching(_cbxCaseSensitivity.isSelected());
+    }
+    return _options;
+  }
+
+  private void center()
+  {
+    Point parentLocation = this.getParent().getLocationOnScreen();
+    double x = parentLocation.getX();
+    double y = parentLocation.getY();
+    int width = this.getParent().getWidth();
+    int height = this.getParent().getHeight();
+
+    this.setLocation((int) x + (width - this.getPreferredSize().width) / 2, (int) y + (height - this.getPreferredSize().height) / 2);
+  }
+
+  /** This method is called from within the constructor to
+   * initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is
+   * always regenerated by the Form Editor.
+   */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
@@ -662,60 +662,60 @@ public class AppOptionsDialog extends javax.swing.JDialog
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-		setVisible(false);
-		dispose();
-		setResultCode(CANCEL);
+    setVisible(false);
+    dispose();
+    setResultCode(CANCEL);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-		setVisible(false);
-		dispose();
-		setResultCode(OK);
+    setVisible(false);
+    dispose();
+    setResultCode(OK);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-	/** Closes the dialog */
+  /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
-		setVisible(false);
-		dispose();
+    setVisible(false);
+    dispose();
     }//GEN-LAST:event_closeDialog
 
-	private void playlistDirectoryBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playlistDirectoryBrowseButtonActionPerformed
-		if (_options.getPlaylistsDirectory() != null && _options.getPlaylistsDirectory().length() > 0)
-		{
-			_jMediaDirChooser.setCurrentDirectory(new File(_options.getPlaylistsDirectory()));
-			_jMediaDirChooser.setSelectedFolder(new File(_options.getPlaylistsDirectory()));
-		}
-		int response = _jMediaDirChooser.showOpenDialog(this);
-		if (response == JFileChooser.APPROVE_OPTION)
-		{
-			try
-			{
-				String path = _jMediaDirChooser.getSelectedFile().getPath();
-				if (new File(path).exists())
-				{
-					playlistDirectoryTextField.setText(path + TEXT_FIELD_TRAILING_SPACER);
-				}
-				else
-				{
-					throw new FileNotFoundException();
-				}
-			}
-			catch (FileNotFoundException e)
-			{
-				JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
-				_logger.info(ExStack.toString(e));
-			}
-		}
-	}//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed
+  private void playlistDirectoryBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playlistDirectoryBrowseButtonActionPerformed
+    if (_options.getPlaylistsDirectory() != null && _options.getPlaylistsDirectory().length() > 0)
+    {
+      _jMediaDirChooser.setCurrentDirectory(new File(_options.getPlaylistsDirectory()));
+      _jMediaDirChooser.setSelectedFolder(new File(_options.getPlaylistsDirectory()));
+    }
+    int response = _jMediaDirChooser.showOpenDialog(this);
+    if (response == JFileChooser.APPROVE_OPTION)
+    {
+      try
+      {
+        String path = _jMediaDirChooser.getSelectedFile().getPath();
+        if (new File(path).exists())
+        {
+          playlistDirectoryTextField.setText(path + TEXT_FIELD_TRAILING_SPACER);
+        }
+        else
+        {
+          throw new FileNotFoundException();
+        }
+      }
+      catch (FileNotFoundException e)
+      {
+        JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
+        _logger.info(ExStack.toString(e));
+      }
+    }
+  }//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed
 
-	private void _changeFontButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__changeFontButtonActionPerformed
-	{//GEN-HEADEREND:event__changeFontButtonActionPerformed
-		JFontChooser jfc = new JFontChooser();
-		jfc.setSelectedFont(_chosenFont);
-		jfc.showDialog(this);
-		_chosenFont = jfc.getSelectedFont();
-		_fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
-	}//GEN-LAST:event__changeFontButtonActionPerformed
+  private void _changeFontButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__changeFontButtonActionPerformed
+  {//GEN-HEADEREND:event__changeFontButtonActionPerformed
+    JFontChooser jfc = new JFontChooser();
+    jfc.setSelectedFont(_chosenFont);
+    jfc.showDialog(this);
+    _chosenFont = jfc.getSelectedFont();
+    _fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
+  }//GEN-LAST:event__changeFontButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox _cbxCaseSensitivity;

@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -23,43 +23,43 @@ package listfix.model.playlists;
 import java.io.File;
 
 /**
- * Serves to model a closest match on a single playlist entry.  
+ * Serves to model a closest match on a single playlist entry.
  * @author jcaron
  */
 
 public class PotentialPlaylistEntryMatch
 {
-	private PlaylistEntry thisEntry = null;
-	private int _score = 0;
+  private PlaylistEntry thisEntry = null;
+  private int _score = 0;
 
-	/**
-	 *
-	 * @param file
-	 * @param score
-	 * @param list
-	 */
-	public PotentialPlaylistEntryMatch(File file, int score, File list)
-	{
-		thisEntry = new PlaylistEntry(file, "", list);
-		thisEntry.setFixed(true);
-		_score = score;
-	}
+  /**
+   *
+   * @param file
+   * @param score
+   * @param list
+   */
+  public PotentialPlaylistEntryMatch(File file, int score, File list)
+  {
+    thisEntry = new PlaylistEntry(file, "", list);
+    thisEntry.setFixed(true);
+    _score = score;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getScore()
-	{
-		return _score;
-	}
+  /**
+   *
+   * @return
+   */
+  public int getScore()
+  {
+    return _score;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public PlaylistEntry getPlaylistFile()
-	{
-		return thisEntry;
-	}
+  /**
+   *
+   * @return
+   */
+  public PlaylistEntry getPlaylistFile()
+  {
+    return thisEntry;
+  }
 }
