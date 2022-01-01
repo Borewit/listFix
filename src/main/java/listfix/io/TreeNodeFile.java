@@ -1,8 +1,8 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
- * This file is part of listFix(). 
+ *
+ * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,22 +26,22 @@ package listfix.io;
  */
 public class TreeNodeFile extends java.io.File
 {
-	/**
-	 *
-	 * @param filename
-	 */
-	public TreeNodeFile(String filename)
-	{
-		super(filename);
-	}
+  /**
+   *
+   * @param filename
+   */
+  public TreeNodeFile(String filename)
+  {
+    super(filename);
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public String toString()
-	{
-		return this.getName();
-	}
+  /**
+   *
+   * @return
+   */
+  @Override
+  public String toString()
+  {
+    return this.getName();
+  }
 }

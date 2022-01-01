@@ -32,124 +32,124 @@ import listfix.util.FileNameTokenizer;
 
 public class BatchRepairItem
 {
-	private String _path;
-	private String _displayName;
-	private Playlist _playlist;
-	private File _playlistFile;
-	private List<BatchMatchItem> _closestMatches;
+  private String _path;
+  private String _displayName;
+  private Playlist _playlist;
+  private File _playlistFile;
+  private List<BatchMatchItem> _closestMatches;
 
-	/**
-	 *
-	 * @param file
-	 */
-	public BatchRepairItem(File file)
-	{
-		_path = file.getPath();
-		_displayName = file.getName();
-		_playlistFile = file;
-		if (Playlist.isPlaylist(file))
-		{
-			_displayName = (new FileNameTokenizer()).removeExtensionFromFileName(_displayName);
-		}
-	}
+  /**
+   *
+   * @param file
+   */
+  public BatchRepairItem(File file)
+  {
+    _path = file.getPath();
+    _displayName = file.getName();
+    _playlistFile = file;
+    if (Playlist.isPlaylist(file))
+    {
+      _displayName = (new FileNameTokenizer()).removeExtensionFromFileName(_displayName);
+    }
+  }
 
-	/**
-	 *
-	 * @param list
-	 */
-	public BatchRepairItem(Playlist list)
-	{
-		_playlist = list;
-		_path = list.getFile().getPath();
-		_displayName = (new FileNameTokenizer()).removeExtensionFromFileName(list.getFile().getName());
-		_playlistFile = list.getFile();
-	}
+  /**
+   *
+   * @param list
+   */
+  public BatchRepairItem(Playlist list)
+  {
+    _playlist = list;
+    _path = list.getFile().getPath();
+    _displayName = (new FileNameTokenizer()).removeExtensionFromFileName(list.getFile().getName());
+    _playlistFile = list.getFile();
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getPath()
-	{
-		return _path;
-	}
+  /**
+   *
+   * @return
+   */
+  public String getPath()
+  {
+    return _path;
+  }
 
-	/**
-	 *
-	 * @param path
-	 */
-	public void setPath(String path)
-	{
-		this._path = path;
-	}
+  /**
+   *
+   * @param path
+   */
+  public void setPath(String path)
+  {
+    this._path = path;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getDisplayName()
-	{
-		return _displayName;
-	}
+  /**
+   *
+   * @return
+   */
+  public String getDisplayName()
+  {
+    return _displayName;
+  }
 
-	/**
-	 *
-	 * @param displayName
-	 */
-	public void setDisplayName(String displayName)
-	{
-		this._displayName = displayName;
-	}
+  /**
+   *
+   * @param displayName
+   */
+  public void setDisplayName(String displayName)
+  {
+    this._displayName = displayName;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Playlist getPlaylist()
-	{
-		return _playlist;
-	}
+  /**
+   *
+   * @return
+   */
+  public Playlist getPlaylist()
+  {
+    return _playlist;
+  }
 
-	/**
-	 *
-	 * @param playlist
-	 */
-	public void setPlaylist(Playlist playlist)
-	{
-		this._playlist = playlist;
-	}
+  /**
+   *
+   * @param playlist
+   */
+  public void setPlaylist(Playlist playlist)
+  {
+    this._playlist = playlist;
+  }
 
-	/**
-	 * @return the _playlistFile
-	 */
-	public File getPlaylistFile()
-	{
-		return _playlistFile;
-	}
+  /**
+   * @return the _playlistFile
+   */
+  public File getPlaylistFile()
+  {
+    return _playlistFile;
+  }
 
-	/**
-	 * @param playlistFile the _playlistFile to set
-	 */
-	public void setPlaylistFile(File playlistFile)
-	{
-		this._playlistFile = playlistFile;
-	}
+  /**
+   * @param playlistFile the _playlistFile to set
+   */
+  public void setPlaylistFile(File playlistFile)
+  {
+    this._playlistFile = playlistFile;
+  }
 
-	 /**
-	  * 
-	  * @param findClosestMatches
-	  */
-	void setClosestMatches(List<BatchMatchItem> findClosestMatches)
-	{
-		_closestMatches = findClosestMatches;
-	}
+   /**
+    *
+    * @param findClosestMatches
+    */
+  void setClosestMatches(List<BatchMatchItem> findClosestMatches)
+  {
+    _closestMatches = findClosestMatches;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public List<BatchMatchItem> getClosestMatches()
-	{
-		return _closestMatches;
-	}
+  /**
+   *
+   * @return
+   */
+  public List<BatchMatchItem> getClosestMatches()
+  {
+    return _closestMatches;
+  }
 }

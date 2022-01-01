@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -34,115 +34,115 @@ import java.util.List;
  */
 public class PlaylistHistory
 {
-	private final List<String> playlists = new ArrayList<>();
-	private int limit = 0;
+  private final List<String> playlists = new ArrayList<>();
+  private int limit = 0;
 
-	/** Creates a new instance of PlaylistHistory
-	 * @param x 
-	 */
-	public PlaylistHistory(int x)
-	{
-		limit = x;
-	}
+  /** Creates a new instance of PlaylistHistory
+   * @param x
+   */
+  public PlaylistHistory(int x)
+  {
+    limit = x;
+  }
 
-	/**
-	 *
-	 * @param maxPlaylistHistoryEntries
-	 */
-	public void setCapacity(int maxPlaylistHistoryEntries)
-	{
-		limit = maxPlaylistHistoryEntries;
-		if (limit < playlists.size())
-		{
+  /**
+   *
+   * @param maxPlaylistHistoryEntries
+   */
+  public void setCapacity(int maxPlaylistHistoryEntries)
+  {
+    limit = maxPlaylistHistoryEntries;
+    if (limit < playlists.size())
+    {
             ((ArrayList)playlists).subList(limit, playlists.size()).clear();
-		}
-	}
+    }
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	protected int getLimit() // added to assist testing
-	{
-		return limit;
-	}
+  /**
+   *
+   * @return
+   */
+  protected int getLimit() // added to assist testing
+  {
+    return limit;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	protected List<String> getPlaylists() // added to assist testing
-	{
-		return playlists;
-	}
+  /**
+   *
+   * @return
+   */
+  protected List<String> getPlaylists() // added to assist testing
+  {
+    return playlists;
+  }
 
-	/**
-	 *
-	 * @param input
-	 */
-	public void initHistory(String[] input)
-	{
-		int i = 0;
-		while (i < input.length && i < limit)
-		{
-			File testFile = new File(input[i]);
-			if (testFile.exists())
-			{
-				playlists.add(input[i]);
-			}
-			i++;
-		}
-	}
+  /**
+   *
+   * @param input
+   */
+  public void initHistory(String[] input)
+  {
+    int i = 0;
+    while (i < input.length && i < limit)
+    {
+      File testFile = new File(input[i]);
+      if (testFile.exists())
+      {
+        playlists.add(input[i]);
+      }
+      i++;
+    }
+  }
 
-	/**
-	 *
-	 * @param filename
-	 */
-	public void add(String filename)
-	{
-		File testFile = new File(filename);
-		if (testFile.exists())
-		{
-			int index = playlists.indexOf(filename);
-			if (index > -1)
-			{
-				String temp = playlists.remove(index);
-				playlists.add(0, temp);
-			}
-			else
-			{
-				if (playlists.size() < limit)
-				{
-					playlists.add(0, filename);
-				}
-				else
-				{
-					playlists.remove(limit - 1);
-					playlists.add(0, filename);
-				}
-			}
-		}
-	}
+  /**
+   *
+   * @param filename
+   */
+  public void add(String filename)
+  {
+    File testFile = new File(filename);
+    if (testFile.exists())
+    {
+      int index = playlists.indexOf(filename);
+      if (index > -1)
+      {
+        String temp = playlists.remove(index);
+        playlists.add(0, temp);
+      }
+      else
+      {
+        if (playlists.size() < limit)
+        {
+          playlists.add(0, filename);
+        }
+        else
+        {
+          playlists.remove(limit - 1);
+          playlists.add(0, filename);
+        }
+      }
+    }
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getFilenames()
-	{
-		String[] result = new String[playlists.size()];
-		for (int i = 0; i < playlists.size(); i++)
-		{
-			result[i] = (String) playlists.get(i);
-		}
-		return result;
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getFilenames()
+  {
+    String[] result = new String[playlists.size()];
+    for (int i = 0; i < playlists.size(); i++)
+    {
+      result[i] = (String) playlists.get(i);
+    }
+    return result;
+  }
 
-	/**
-	 *
-	 */
-	public void clearHistory()
-	{
-		playlists.clear();
-	}
+  /**
+   *
+   */
+  public void clearHistory()
+  {
+    playlists.clear();
+  }
 }

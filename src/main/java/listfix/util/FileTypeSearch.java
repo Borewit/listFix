@@ -35,42 +35,42 @@ import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
  */
 public class FileTypeSearch
 {
-	/**
-	 *
-	 * @param directoryToSearch
-	 * @param filter
-	 * @return
-	 */
-	public List<File> findFiles(File directoryToSearch, FileFilter filter)
-	{
-		if (directoryToSearch.exists())
-		{
-			List<File> ol = new ArrayList<>();
-			File[] inodes = directoryToSearch.listFiles(filter);
+  /**
+   *
+   * @param directoryToSearch
+   * @param filter
+   * @return
+   */
+  public List<File> findFiles(File directoryToSearch, FileFilter filter)
+  {
+    if (directoryToSearch.exists())
+    {
+      List<File> ol = new ArrayList<>();
+      File[] inodes = directoryToSearch.listFiles(filter);
 
-			if (inodes != null && inodes.length > 0)
-			{
+      if (inodes != null && inodes.length > 0)
+      {
                 ol.addAll(Arrays.asList(inodes));
-				Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
-				File f;
-				List<File> files = new ArrayList<>();
-				for (File ol1 : ol)
-				{
-					f = ol1;
-					if (f.isDirectory())
-					{
-						files.addAll(findFiles(f, filter));
-					}
-					else
-					{
-						files.add(f);
-					}
-				}
+        Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
+        File f;
+        List<File> files = new ArrayList<>();
+        for (File ol1 : ol)
+        {
+          f = ol1;
+          if (f.isDirectory())
+          {
+            files.addAll(findFiles(f, filter));
+          }
+          else
+          {
+            files.add(f);
+          }
+        }
 
-				return files;
-			}
-			return null;
-		}
-		return null;
-	}
+        return files;
+      }
+      return null;
+    }
+    return null;
+  }
 }

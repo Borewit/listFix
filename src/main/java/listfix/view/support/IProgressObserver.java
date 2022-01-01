@@ -1,6 +1,6 @@
 /*
  * listFix() - Fix Broken Playlists!
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -26,22 +26,22 @@ package listfix.view.support;
  */
 public interface IProgressObserver<T>
 {
-	/**
-	 *
-	 * @param progress
-	 */
-	public void reportProgress(int progress);
-	
+  /**
+   *
+   * @param progress
+   */
+  void reportProgress(int progress);
+
     /**
-	 *
-	 * @param progress
-	 * @param state
-	 */
-	public void reportProgress(int progress, T state);
-	
-	/**
-	 *
-	 * @return
-	 */
-	public boolean getCancelled();
+   *
+   * @param progress
+   * @param state
+   */
+  void reportProgress(int progress, T state);
+
+  /**
+   *
+   * @return
+   */
+  boolean getCancelled();
 }

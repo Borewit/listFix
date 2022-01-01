@@ -27,22 +27,22 @@ package listfix.view.support;
 public interface IDualProgressObserver<T>
 {
     /**
-	 *
-	 * @param percentComplete
-	 * @param state
-	 */
-	void reportTaskProgress(int percentComplete, T state);
-	
+   *
+   * @param percentComplete
+   * @param state
+   */
+  void reportTaskProgress(int percentComplete, T state);
+
     /**
-	 *
-	 * @param percentComplete
-	 * @param state
-	 */
-	void reportOverallProgress(int percentComplete, T state);
-	
-	/**
-	 *
-	 * @return
-	 */
-	public boolean getCancelled();
+   *
+   * @param percentComplete
+   * @param state
+   */
+  void reportOverallProgress(int percentComplete, T state);
+
+  /**
+   *
+   * @return
+   */
+  boolean getCancelled();
 }

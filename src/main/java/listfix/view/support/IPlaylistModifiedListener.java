@@ -28,8 +28,8 @@ import listfix.model.playlists.Playlist;
 public interface IPlaylistModifiedListener
 {
     /**
-	 *
-	 * @param list
-	 */
-	void playlistModified(Playlist list);
+   *
+   * @param list
+   */
+  void playlistModified(Playlist list);
 }

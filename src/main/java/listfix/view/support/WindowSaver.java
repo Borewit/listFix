@@ -1,19 +1,19 @@
 /*
  *  listFix() - Fix Broken Playlists!
  *  Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  *  This file is part of listFix().
- * 
+ *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
  *  as published by the Free Software Foundation; either version 2
  *  of the License, or (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
@@ -44,127 +44,127 @@ import org.apache.log4j.Logger;
  *
  * @author jcaron
  */
-public class WindowSaver implements AWTEventListener
+public final class WindowSaver implements AWTEventListener
 {
-	private static final String PROP_FILE = Constants.DATA_DIR + "position.ini";
-	private static WindowSaver saver;
-	private Map framemap;
-	private static final Logger _logger = Logger.getLogger(WindowSaver.class);
+  private static final String PROP_FILE = Constants.DATA_DIR + "position.ini";
+  private static WindowSaver saver;
+  private Map framemap;
+  private static final Logger _logger = Logger.getLogger(WindowSaver.class);
 
-	private WindowSaver()
-	{
-		framemap = new HashMap();
-	}
+  private WindowSaver()
+  {
+    framemap = new HashMap();
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public static WindowSaver getInstance()
-	{
-		if (saver == null)
-		{
-			saver = new WindowSaver();
-		}
-		return saver;
-	}
+  /**
+   *
+   * @return
+   */
+  public static WindowSaver getInstance()
+  {
+    if (saver == null)
+    {
+      saver = new WindowSaver();
+    }
+    return saver;
+  }
 
-	/**
-	 *
-	 * @param evt
-	 */
-	@Override
-	public void eventDispatched(AWTEvent evt)
-	{
-		try
-		{
-			if (evt.getID() == WindowEvent.WINDOW_OPENED)
-			{
-				ComponentEvent cev = (ComponentEvent) evt;
-				if (cev.getComponent() instanceof JFrame)
-				{
-					JFrame frame = (JFrame) cev.getComponent();
-					loadSettings(frame);
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			_logger.warn(ExStack.toString(ex));
-		}
-	}
+  /**
+   *
+   * @param evt
+   */
+  @Override
+  public void eventDispatched(AWTEvent evt)
+  {
+    try
+    {
+      if (evt.getID() == WindowEvent.WINDOW_OPENED)
+      {
+        ComponentEvent cev = (ComponentEvent) evt;
+        if (cev.getComponent() instanceof JFrame)
+        {
+          JFrame frame = (JFrame) cev.getComponent();
+          loadSettings(frame);
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      _logger.warn(ExStack.toString(ex));
+    }
+  }
 
-	/**
-	 *
-	 * @param frame
-	 */
-	public void loadSettings(JFrame frame)
-	{
-		Properties settings = new Properties();
-		String name = frame.getName();
-		if ((new File(PROP_FILE)).exists())
-		{
-			try
-			{
-				settings.load(new FileInputStream(PROP_FILE));
-				int x = getInt(settings, name + ".x", 100);
-				int y = getInt(settings, name + ".y", 100);
-				int w = getInt(settings, name + ".w", 500);
-				int h = getInt(settings, name + ".h", 500);
-				frame.setLocation(x, y);
-				frame.setSize(new Dimension(w, h));
-			}
-			catch (IOException ex)
-			{
-				_logger.info(ExStack.toString(ex));
-			}
-			saver.framemap.put(name, frame);
-			frame.validate();
-		}
-	}
+  /**
+   *
+   * @param frame
+   */
+  public void loadSettings(JFrame frame)
+  {
+    Properties settings = new Properties();
+    String name = frame.getName();
+    if ((new File(PROP_FILE)).exists())
+    {
+      try
+      {
+        settings.load(new FileInputStream(PROP_FILE));
+        int x = getInt(settings, name + ".x", 100);
+        int y = getInt(settings, name + ".y", 100);
+        int w = getInt(settings, name + ".w", 500);
+        int h = getInt(settings, name + ".h", 500);
+        frame.setLocation(x, y);
+        frame.setSize(new Dimension(w, h));
+      }
+      catch (IOException ex)
+      {
+        _logger.info(ExStack.toString(ex));
+      }
+      saver.framemap.put(name, frame);
+      frame.validate();
+    }
+  }
 
-	/**
-	 *
-	 * @param props
-	 * @param name
-	 * @param value
-	 * @return
-	 */
-	public int getInt(Properties props, String name, int value)
-	{
-		String v = props.getProperty(name);
-		if (v == null)
-		{
-			return value;
-		}
-		return Integer.parseInt(v);
-	}
+  /**
+   *
+   * @param props
+   * @param name
+   * @param value
+   * @return
+   */
+  public int getInt(Properties props, String name, int value)
+  {
+    String v = props.getProperty(name);
+    if (v == null)
+    {
+      return value;
+    }
+    return Integer.parseInt(v);
+  }
 
-	/**
-	 *
-	 */
-	public void saveSettings()
-	{
-		Properties settings = new Properties();
+  /**
+   *
+   */
+  public void saveSettings()
+  {
+    Properties settings = new Properties();
 
-		Iterator it = saver.framemap.keySet().iterator();
-		while (it.hasNext())
-		{
-			String name = (String) it.next();
-			JFrame frame = (JFrame) saver.framemap.get(name);
-			settings.setProperty(name + ".x", "" + frame.getX());
-			settings.setProperty(name + ".y", "" + frame.getY());
-			settings.setProperty(name + ".w", "" + frame.getWidth());
-			settings.setProperty(name + ".h", "" + frame.getHeight());
-		}
-		try
-		{
-			settings.store(new FileOutputStream(PROP_FILE), null);
-		}
-		catch (IOException ex)
-		{
-			_logger.error(ExStack.toString(ex));
-		}
-	}
+    Iterator it = saver.framemap.keySet().iterator();
+    while (it.hasNext())
+    {
+      String name = (String) it.next();
+      JFrame frame = (JFrame) saver.framemap.get(name);
+      settings.setProperty(name + ".x", "" + frame.getX());
+      settings.setProperty(name + ".y", "" + frame.getY());
+      settings.setProperty(name + ".w", "" + frame.getWidth());
+      settings.setProperty(name + ".h", "" + frame.getHeight());
+    }
+    try
+    {
+      settings.store(new FileOutputStream(PROP_FILE), null);
+    }
+    catch (IOException ex)
+    {
+      _logger.error(ExStack.toString(ex));
+    }
+  }
 
 }

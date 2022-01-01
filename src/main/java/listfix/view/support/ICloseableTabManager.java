@@ -28,26 +28,26 @@ import com.jidesoft.document.DocumentComponent;
 public interface ICloseableTabManager
 {
     /**
-	 *
-	 * @param ctrl
-	 * @return
-	 */
-	boolean tryCloseTab(DocumentComponent ctrl);
+   *
+   * @param ctrl
+   * @return
+   */
+  boolean tryCloseTab(DocumentComponent ctrl);
 
-	/**
-	 *
-	 * @return
-	 */
-	boolean tryCloseAllTabs();
+  /**
+   *
+   * @return
+   */
+  boolean tryCloseAllTabs();
 
-	/**
-	 *
-	 * @param ctrl
-	 */
-	void closeAllOtherTabs(DocumentComponent ctrl);
+  /**
+   *
+   * @param ctrl
+   */
+  void closeAllOtherTabs(DocumentComponent ctrl);
 
-	/**
-	 *
-	 */
-	void repairAllTabs();
+  /**
+   *
+   */
+  void repairAllTabs();
 }

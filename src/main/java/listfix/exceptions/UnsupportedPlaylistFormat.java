@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -34,21 +34,20 @@ package listfix.exceptions;
  */
 public class UnsupportedPlaylistFormat extends java.lang.Exception
 {
-	/**
-	 *
-	 */
-	public UnsupportedPlaylistFormat()
-	{
-		super();
-	}
+  /**
+   *
+   */
+  public UnsupportedPlaylistFormat()
+  {
+    super();
+  }
 
-	/**
-	 *
-	 * @param s
-	 */
-	public UnsupportedPlaylistFormat(String s)
-	{
-		super(s);
-	}
+  /**
+   *
+   * @param s
+   */
+  public UnsupportedPlaylistFormat(String s)
+  {
+    super(s);
+  }
 }
-    

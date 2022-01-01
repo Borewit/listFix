@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -26,8 +26,8 @@ import java.io.File;
 ============================================================================
 = Author:   Jeremy Caron
 = File:     DirectoryThenFileThenAlphabeticalFileComparator.java
-= Purpose:  Sorts directories ahead of files, and then sorts files 
-=			alphabetically (ignoring case).
+= Purpose:  Sorts directories ahead of files, and then sorts files
+=      alphabetically (ignoring case).
 ============================================================================
  */
 
@@ -37,27 +37,27 @@ import java.io.File;
  */
 public class DirectoryThenFileThenAlphabeticalFileComparator implements java.util.Comparator<File>
 {
-	/**
-	 *
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	@Override
-	public int compare(File a, File b)
-	{
-		if (!a.isDirectory() && b.isDirectory())
-		{
-			return 1;
-		}
-		else if (a.isDirectory() && !b.isDirectory())
-		{
-			return -1;
-		}
-		else
-		{
-			// both Files are files or both are directories
-			return a.getName().compareToIgnoreCase(b.getName());
-		}
-	}
+  /**
+   *
+   * @param a
+   * @param b
+   * @return
+   */
+  @Override
+  public int compare(File a, File b)
+  {
+    if (!a.isDirectory() && b.isDirectory())
+    {
+      return 1;
+    }
+    else if (a.isDirectory() && !b.isDirectory())
+    {
+      return -1;
+    }
+    else
+    {
+      // both Files are files or both are directories
+      return a.getName().compareToIgnoreCase(b.getName());
+    }
+  }
 }

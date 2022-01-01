@@ -34,39 +34,39 @@ import javax.swing.WindowConstants;
  */
 public class SplashScreen extends JFrame
 {
-	private JLabel statusBar;
+  private JLabel statusBar;
 
-	/**
-	 *
-	 * @param imageResourcePath
-	 */
-	public SplashScreen(String imageResourcePath)
-	{
-		ClassLoader cl = this.getClass().getClassLoader();
+  /**
+   *
+   * @param imageResourcePath
+   */
+  public SplashScreen(String imageResourcePath)
+  {
+    ClassLoader cl = this.getClass().getClassLoader();
         ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(new JLabel(image));
+    getContentPane().setLayout(new BorderLayout());
+    getContentPane().add(new JLabel(image));
 
-		statusBar = new JLabel(" ");
-		statusBar.setBorder(BorderFactory.createBevelBorder(1));
-		getContentPane().add(statusBar, BorderLayout.SOUTH);
+    statusBar = new JLabel(" ");
+    statusBar.setBorder(BorderFactory.createBevelBorder(1));
+    getContentPane().add(statusBar, BorderLayout.SOUTH);
 
-		setUndecorated(true);
-		pack();
+    setUndecorated(true);
+    pack();
 
-		DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-		setBounds(dm.getWidth() / 2 - getWidth() / 2, dm.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
+    DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+    setBounds(dm.getWidth() / 2 - getWidth() / 2, dm.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
 
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-	}
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+  }
 
-	/**
-	 *
-	 * @param text
-	 */
-	public void setStatusBar(String text)
-	{
-		statusBar.setText(text);
-	}
+  /**
+   *
+   * @param text
+   */
+  public void setStatusBar(String text)
+  {
+    statusBar.setText(text);
+  }
 }

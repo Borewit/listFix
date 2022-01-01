@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -37,78 +37,78 @@ import listfix.view.support.PlaylistTreeNode;
  */
 public class FileTreeNodeGenerator
 {
-	/** Add nodes from under "dir" into curTop. Highly recursive.
-	 * @param curTop 
-	 * @param dir
-	 * @return  
-	 */
-	public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, File dir)
-	{
-		if (dir.exists())
-		{
-			String curPath = dir.getPath();
-			TreeNodeFile file = new TreeNodeFile(curPath);
-			PlaylistTreeNode curDir = new PlaylistTreeNode(file);
-			// curDir.setUserObject(file);
+  /** Add nodes from under "dir" into curTop. Highly recursive.
+   * @param curTop
+   * @param dir
+   * @return
+   */
+  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, File dir)
+  {
+    if (dir.exists())
+    {
+      String curPath = dir.getPath();
+      TreeNodeFile file = new TreeNodeFile(curPath);
+      PlaylistTreeNode curDir = new PlaylistTreeNode(file);
+      // curDir.setUserObject(file);
 
-			// if we're creating the root node here, use a regular file to get the full path to show.
-			if (curTop == null)
-			{
-				curDir.setUserObject(new File(curPath));
-			}
+      // if we're creating the root node here, use a regular file to get the full path to show.
+      if (curTop == null)
+      {
+        curDir.setUserObject(new File(curPath));
+      }
 
-			List<File> ol = new ArrayList<>();
-			File[] inodes = dir.listFiles(new PlaylistFileFilter());
+      List<File> ol = new ArrayList<>();
+      File[] inodes = dir.listFiles(new PlaylistFileFilter());
 
-			if (inodes != null && inodes.length > 0)
-			{
+      if (inodes != null && inodes.length > 0)
+      {
                 ol.addAll(Arrays.asList(inodes));
-				Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
-				File f;
-				List<File> files = new ArrayList<>();
-				// Make two passes, one for Dirs and one for Files. This is #1.
-				for (File ol1 : ol)
-				{
-					f = ol1;
-					if (f.isDirectory())
-					{
-						File[] tmp = f.listFiles(new PlaylistFileFilter());
-						if (tmp != null && tmp.length > 0)
-						{
-							addNodes(curDir, f);
-						}
-					}
-					else
-					{
-						files.add(f);
-					}
-				}
-				// Pass two: for files.
-				for (File file1 : files)
-				{
-					curDir.add(new PlaylistTreeNode(new TreeNodeFile(file1.getPath())));
-				}
-				if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
-				{
-					if (curTop != null)
-					{
-						curTop.add(curDir);
-					}
-				}
-				return curDir;
-			}
-			return null;
-		}
-		return null;
-	}
+        Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
+        File f;
+        List<File> files = new ArrayList<>();
+        // Make two passes, one for Dirs and one for Files. This is #1.
+        for (File ol1 : ol)
+        {
+          f = ol1;
+          if (f.isDirectory())
+          {
+            File[] tmp = f.listFiles(new PlaylistFileFilter());
+            if (tmp != null && tmp.length > 0)
+            {
+              addNodes(curDir, f);
+            }
+          }
+          else
+          {
+            files.add(f);
+          }
+        }
+        // Pass two: for files.
+        for (File file1 : files)
+        {
+          curDir.add(new PlaylistTreeNode(new TreeNodeFile(file1.getPath())));
+        }
+        if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
+        {
+          if (curTop != null)
+          {
+            curTop.add(curDir);
+          }
+        }
+        return curDir;
+      }
+      return null;
+    }
+    return null;
+  }
 
-	/**
-	 *
-	 * @param node
-	 * @return
-	 */
-	public static String TreePathToFileSystemPath(TreePath node)
-	{
-		return ((File) ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject()).getPath();
-	}
+  /**
+   *
+   * @param node
+   * @return
+   */
+  public static String TreePathToFileSystemPath(TreePath node)
+  {
+    return ((File) ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject()).getPath();
+  }
 }
