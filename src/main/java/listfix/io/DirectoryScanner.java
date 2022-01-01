@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -33,120 +33,120 @@ import listfix.view.support.ProgressWorker;
 
 public class DirectoryScanner
 {
-	private List<String> thisDirList;
-	private List<String> thisFileList;
-	private int recursiveCount = 0;
+  private List<String> thisDirList;
+  private List<String> thisFileList;
+  private int recursiveCount = 0;
 
-	/**
-	 *
-	 * @param baseDirs
-	 * @param task
-	 */
-	public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
-	{
-		this.reset();
-		for (String baseDir : baseDirs)
-		{
-			if (new File(baseDir).exists())
-			{
-				thisDirList.add(baseDir);
-				this.recursiveDir(baseDir, task);
-			}
-		}
-	}
+  /**
+   *
+   * @param baseDirs
+   * @param task
+   */
+  public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
+  {
+    this.reset();
+    for (String baseDir : baseDirs)
+    {
+      if (new File(baseDir).exists())
+      {
+        thisDirList.add(baseDir);
+        this.recursiveDir(baseDir, task);
+      }
+    }
+  }
 
-	private void recursiveDir(String baseDir, ProgressWorker task)
-	{
-		recursiveCount++;
-		if (!task.getCancelled())
-		{
-			task.setMessage("<html><body>Scanning Directory #" + recursiveCount + "<BR>" + (baseDir.length() < 70 ? baseDir : baseDir.substring(0, 70) + "...") + "</body></html>");
+  private void recursiveDir(String baseDir, ProgressWorker task)
+  {
+    recursiveCount++;
+    if (!task.getCancelled())
+    {
+      task.setMessage("<html><body>Scanning Directory #" + recursiveCount + "<BR>" + (baseDir.length() < 70 ? baseDir : baseDir.substring(0, 70) + "...") + "</body></html>");
 
-			File mediaDir = new File(baseDir);
-			String[] entryList = mediaDir.list();
-			List<String> fileList = new ArrayList<>();
-			List<String> dirList = new ArrayList<>();
-			StringBuilder s = new StringBuilder();
+      File mediaDir = new File(baseDir);
+      String[] entryList = mediaDir.list();
+      List<String> fileList = new ArrayList<>();
+      List<String> dirList = new ArrayList<>();
+      StringBuilder s = new StringBuilder();
 
-			if (entryList != null)
-			{
-				File tempFile;
-				for (String entryList1 : entryList)
-				{
-					s.append(baseDir);
-					if (!baseDir.endsWith(Constants.FS))
-					{
-						s.append(Constants.FS);
-					}
-					s.append(entryList1);
-					tempFile = new File(s.toString());
-					if (tempFile.isDirectory())
-					{
-						dirList.add(s.toString());
-					}
-					else
-					{
-						if (FileUtils.isMediaFile(tempFile))
-						{
-							fileList.add(s.toString());
-						}
-					}
-					s.setLength(0);
-				}
-			}
+      if (entryList != null)
+      {
+        File tempFile;
+        for (String entryList1 : entryList)
+        {
+          s.append(baseDir);
+          if (!baseDir.endsWith(Constants.FS))
+          {
+            s.append(Constants.FS);
+          }
+          s.append(entryList1);
+          tempFile = new File(s.toString());
+          if (tempFile.isDirectory())
+          {
+            dirList.add(s.toString());
+          }
+          else
+          {
+            if (FileUtils.isMediaFile(tempFile))
+            {
+              fileList.add(s.toString());
+            }
+          }
+          s.setLength(0);
+        }
+      }
 
-			Collections.sort(fileList);
-			Collections.sort(dirList);
+      Collections.sort(fileList);
+      Collections.sort(dirList);
 
-			for (String file : fileList)
-			{
-				thisFileList.add(file);
-			}
+      for (String file : fileList)
+      {
+        thisFileList.add(file);
+      }
 
-			for (String dir : dirList)
-			{
-				thisDirList.add(dir);
-				recursiveDir(dir, task);
-			}
+      for (String dir : dirList)
+      {
+        thisDirList.add(dir);
+        recursiveDir(dir, task);
+      }
 
-			fileList.clear();
-			dirList.clear();
-		}
-		else
-		{
-			return;
-		}
-	}
+      fileList.clear();
+      dirList.clear();
+    }
+    else
+    {
+      return;
+    }
+  }
 
-	/**
-	 *
-	 */
-	public void reset()
-	{
-		recursiveCount = 0;
-		thisDirList = new ArrayList<>();
-		thisFileList = new ArrayList<>();
-	}
+  /**
+   *
+   */
+  public void reset()
+  {
+    recursiveCount = 0;
+    thisDirList = new ArrayList<>();
+    thisFileList = new ArrayList<>();
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getFileList()
-	{
-		String[] result = new String[thisFileList.size()];
-		thisFileList.toArray(result);
-		return result;
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getFileList()
+  {
+    String[] result = new String[thisFileList.size()];
+    thisFileList.toArray(result);
+    return result;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getDirectoryList()
-	{
-		String[] result = new String[thisDirList.size()];
-		thisDirList.toArray(result);
-		return result;
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getDirectoryList()
+  {
+    String[] result = new String[thisDirList.size()];
+    thisDirList.toArray(result);
+    return result;
+  }
 }

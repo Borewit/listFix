@@ -32,38 +32,38 @@ import listfix.model.enums.PlaylistType;
  */
 public class PlaylistReaderFactory
 {
-	/**
-	 * 
-	 * @param inputFile
-	 * @return
-	 * @throws FileNotFoundException
-	 */
-	public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
-	{
-		PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
-		if (type == PlaylistType.M3U)
-		{
-			return new M3UReader(inputFile);
-		}
-		else if (type == PlaylistType.PLS)
-		{
-			return new PLSReader(inputFile);
-		}
-		else if (type == PlaylistType.XSPF)
-		{
-			return new XSPFReader(inputFile);
-		}
-		else if (type == PlaylistType.WPL)
-		{
-			return new WPLReader(inputFile);
-		}
-		else if (type == PlaylistType.ITUNES)
-		{
-			return new ITunesXMLReader(inputFile);
-		}
-		else
-		{
-			return null;
-		}
-	}
+  /**
+   *
+   * @param inputFile
+   * @return
+   * @throws FileNotFoundException
+   */
+  public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
+  {
+    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
+    if (type == PlaylistType.M3U)
+    {
+      return new M3UReader(inputFile);
+    }
+    else if (type == PlaylistType.PLS)
+    {
+      return new PLSReader(inputFile);
+    }
+    else if (type == PlaylistType.XSPF)
+    {
+      return new XSPFReader(inputFile);
+    }
+    else if (type == PlaylistType.WPL)
+    {
+      return new WPLReader(inputFile);
+    }
+    else if (type == PlaylistType.ITUNES)
+    {
+      return new ITunesXMLReader(inputFile);
+    }
+    else
+    {
+      return null;
+    }
+  }
 }

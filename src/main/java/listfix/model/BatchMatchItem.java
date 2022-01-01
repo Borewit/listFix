@@ -31,19 +31,19 @@ import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
 public class BatchMatchItem
 {
-	private final int _entryIx;
-	private final PlaylistEntry _entry;
+  private final int _entryIx;
+  private final PlaylistEntry _entry;
     private final List<PotentialPlaylistEntryMatch> _matches;
-		
+
     private int _selectedIx;
-	
+
     /**
-	 *
-	 * @param ix
-	 * @param entry
-	 * @param matches
-	 */
-	public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
+   *
+   * @param ix
+   * @param entry
+   * @param matches
+   */
+  public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
     {
         _entryIx = ix;
         _entry = entry;
@@ -51,63 +51,63 @@ public class BatchMatchItem
     }
 
     /**
-	 *
-	 * @return
-	 */
-	public int getEntryIx()
+   *
+   * @return
+   */
+  public int getEntryIx()
     {
         return _entryIx;
     }
 
     /**
-	 *
-	 * @return
-	 */
-	public PlaylistEntry getEntry()
+   *
+   * @return
+   */
+  public PlaylistEntry getEntry()
     {
         return _entry;
-    }    
+    }
 
     /**
-	 *
-	 * @return
-	 */
-	public List<PotentialPlaylistEntryMatch> getMatches()
+   *
+   * @return
+   */
+  public List<PotentialPlaylistEntryMatch> getMatches()
     {
         return _matches;
     }
 
     /**
-	 *
-	 * @return
-	 */
-	public int getSelectedIx()
+   *
+   * @return
+   */
+  public int getSelectedIx()
     {
         return _selectedIx;
     }
-	
+
     /**
-	 *
-	 * @param ix
-	 */
-	public void setSelectedIx(int ix)
+   *
+   * @param ix
+   */
+  public void setSelectedIx(int ix)
     {
         _selectedIx = ix;
     }
 
     /**
-	 *
-	 * @return
-	 */
-	public PotentialPlaylistEntryMatch getSelectedMatch()
+   *
+   * @return
+   */
+  public PotentialPlaylistEntryMatch getSelectedMatch()
     {
         if (_selectedIx >= 0)
-		{
+    {
             return _matches.get(_selectedIx);
-		}
+    }
         else
-		{
+    {
             return null;
-		}
+    }
     }
 }

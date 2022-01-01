@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -26,35 +26,35 @@ package listfix.model;
  */
 public class EditFilenameResult
 {
-	private final int resultCode;
-	private final String filename;
+  private final int resultCode;
+  private final String filename;
 
-	/**
-	 *
-	 * @param a
-	 * @param b
-	 */
-	public EditFilenameResult(int a, String b)
-	{
-		resultCode = a;
-		filename = b;
-	}
+  /**
+   *
+   * @param a
+   * @param b
+   */
+  public EditFilenameResult(int a, String b)
+  {
+    resultCode = a;
+    filename = b;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getFileName()
-	{
-		return filename;
-	}
+  /**
+   *
+   * @return
+   */
+  public String getFileName()
+  {
+    return filename;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getResultCode()
-	{
-		return resultCode;
-	}
+  /**
+   *
+   * @return
+   */
+  public int getResultCode()
+  {
+    return resultCode;
+  }
 }

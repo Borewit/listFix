@@ -31,65 +31,65 @@ import javax.swing.SwingWorker;
  */
 public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements IProgressObserver<V>
 {
-	private String _message = "";
+  private String _message = "";
 
-	/**
-	 *
-	 * @param progress
-	 */
-	public void reportProgress(int progress)
-	{
-		setProgress(progress);
-	}
+  /**
+   *
+   * @param progress
+   */
+  public void reportProgress(int progress)
+  {
+    setProgress(progress);
+  }
 
-	/**
-	 *
-	 * @param progress
-	 * @param state
-	 */
-	public void reportProgress(int progress, V state)
-	{
-		setProgress(progress);
-		if (state != null)
-		{
-			publish(state);
-		}
-	}
+  /**
+   *
+   * @param progress
+   * @param state
+   */
+  public void reportProgress(int progress, V state)
+  {
+    setProgress(progress);
+    if (state != null)
+    {
+      publish(state);
+    }
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean getCancelled()
-	{
-		return this.isCancelled();
-	}
+  /**
+   *
+   * @return
+   */
+  public boolean getCancelled()
+  {
+    return this.isCancelled();
+  }
 
-	/**
-	 *
-	 * @param message
-	 */
-	public void setMessage(String message)
-	{
-		if (message.equals(_message))
-		{
-			return;
-		}
+  /**
+   *
+   * @param message
+   */
+  public void setMessage(String message)
+  {
+    if (message.equals(_message))
+    {
+      return;
+    }
 
-		String oldMessage = _message;
-		_message = message;
-		if (getPropertyChangeSupport().hasListeners("message"))
-		{
-			firePropertyChange("message", oldMessage, _message);
-		}
-	}
+    String oldMessage = _message;
+    _message = message;
+    if (getPropertyChangeSupport().hasListeners("message"))
+    {
+      firePropertyChange("message", oldMessage, _message);
+    }
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getMessage()
-	{
-		return _message;
-	}
+  /**
+   *
+   * @return
+   */
+  public String getMessage()
+  {
+    return _message;
+  }
 }

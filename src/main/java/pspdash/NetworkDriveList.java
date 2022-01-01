@@ -41,387 +41,380 @@ import org.apache.log4j.Logger;
  */
 public class NetworkDriveList
 {
-	private volatile boolean successful = false;
-	private Map networkDrives = new TreeMap();
-	private volatile Process subprocess = null;
-	private static final Logger _logger = Logger.getLogger(NetworkDriveList.class);
+  private volatile boolean successful = false;
+  private Map networkDrives = new TreeMap();
+  private volatile Process subprocess = null;
+  private static final Logger _logger = Logger.getLogger(NetworkDriveList.class);
 
-	/** Get a list of network drives.
-	 * Uses a default maximum delay of 3 seconds.
-	 */
-	public NetworkDriveList()
-	{
-		this(3000);
-	}
+  /** Get a list of network drives.
+   * Uses a default maximum delay of 3 seconds.
+   */
+  public NetworkDriveList()
+  {
+    this(3000);
+  }
 
-	/** Get a list of network drives.
-	 * @param maxDelay the maximum number of milliseconds to spend
-	 *    creating the drive list.  If the operation takes longer than
-	 *    this, the resulting drive list will be empty, and
-	 *    wasSuccessful() will return false.
-	 */
-	public NetworkDriveList(int maxDelay)
-	{
-		if (OperatingSystem.isWindows())
-		{
-			Thread t = new Thread()
-			{
-				@Override
-				public void run()
-				{
-					getList();
-				}
-			};
-			t.setDaemon(true);
-			t.start();
-			try
-			{
-				t.join(maxDelay);
-			}
-			catch (InterruptedException ie)
-			{
-				_logger.info(ExStack.toString(ie));
-			}
-			if (successful == false)
-			{
-				synchronized (this)
-				{
-					subprocess.destroy();
-					subprocess = null;
-				}
-			}
-		}
-	}
+  /** Get a list of network drives.
+   * @param maxDelay the maximum number of milliseconds to spend
+   *    creating the drive list.  If the operation takes longer than
+   *    this, the resulting drive list will be empty, and
+   *    wasSuccessful() will return false.
+   */
+  public NetworkDriveList(int maxDelay)
+  {
+    if (OperatingSystem.isWindows())
+    {
+      Thread t = new Thread(this::getList);
+      t.setDaemon(true);
+      t.start();
+      try
+      {
+        t.join(maxDelay);
+      }
+      catch (InterruptedException ie)
+      {
+        _logger.info(ExStack.toString(ie));
+      }
+      if (!successful)
+      {
+        synchronized (this)
+        {
+          subprocess.destroy();
+          subprocess = null;
+        }
+      }
+    }
+  }
 
-	private void getList()
-	{
-		try
-		{
-			listMappedDrives();
-			listSharedDrives();
-			successful = true;
-		}
-		catch (Exception e)
-		{
-			_logger.info(ExStack.toString(e));
-		}
-	}
+  private void getList()
+  {
+    try
+    {
+      listMappedDrives();
+      listSharedDrives();
+      successful = true;
+    }
+    catch (Exception e)
+    {
+      _logger.info(ExStack.toString(e));
+    }
+  }
 
-	/** Find the drives mapped on the current system, and add them to the
-	 * list.
-	 */
-	private void listMappedDrives() throws Exception
-	{
-		synchronized (this)
-		{
-			subprocess = Runtime.getRuntime().exec("net use");
-		}
-		BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
-		String line;
-		boolean sawHeader = false;
-		while ((line = in.readLine()) != null)
-		{
-			if (!sawHeader && line.startsWith("-----"))
-			{
-				sawHeader = true;
-			}
-			else if (sawHeader)
-			{
-				int pos = line.indexOf(':');
-				if (pos < 2)
-				{
-					continue;
-				}
-				if (" \t".indexOf(line.charAt(pos - 2)) == -1)
-				{
-					continue;
-				}
-				String driveLetter = line.substring(pos - 1, pos);
-				driveLetter = driveLetter.toUpperCase();
-				pos = line.indexOf('\\', pos);
-				if (pos == -1)
-				{
-					continue;
-				}
-				line = line.substring(pos);
-				pos = line.indexOf('\t');
-				if (pos != -1)
-				{
-					line = line.substring(0, pos);
-				}
-				pos = line.indexOf(' ');
-				if (pos != -1)
-				{
-					line = line.substring(0, pos);
-				}
-				String drivePath = getDrivePath(driveLetter);
-				networkDrives.put(drivePath, line);
-			}
-		}
-		subprocess.waitFor();
-	}
+  /** Find the drives mapped on the current system, and add them to the
+   * list.
+   */
+  private void listMappedDrives() throws Exception
+  {
+    synchronized (this)
+    {
+      subprocess = Runtime.getRuntime().exec("net use");
+    }
+    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    String line;
+    boolean sawHeader = false;
+    while ((line = in.readLine()) != null)
+    {
+      if (!sawHeader && line.startsWith("-----"))
+      {
+        sawHeader = true;
+      }
+      else if (sawHeader)
+      {
+        int pos = line.indexOf(':');
+        if (pos < 2)
+        {
+          continue;
+        }
+        if (" \t".indexOf(line.charAt(pos - 2)) == -1)
+        {
+          continue;
+        }
+        String driveLetter = line.substring(pos - 1, pos);
+        driveLetter = driveLetter.toUpperCase();
+        pos = line.indexOf('\\', pos);
+        if (pos == -1)
+        {
+          continue;
+        }
+        line = line.substring(pos);
+        pos = line.indexOf('\t');
+        if (pos != -1)
+        {
+          line = line.substring(0, pos);
+        }
+        pos = line.indexOf(' ');
+        if (pos != -1)
+        {
+          line = line.substring(0, pos);
+        }
+        String drivePath = getDrivePath(driveLetter);
+        networkDrives.put(drivePath, line);
+      }
+    }
+    subprocess.waitFor();
+  }
 
-	/** Find the local directories which are shared as networked drives,
-	 * and add them to the list.
-	 */
-	private void listSharedDrives() throws Exception
-	{
-		synchronized (this)
-		{
-			subprocess = Runtime.getRuntime().exec("net config workstation");
-		}
-		BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
-		String line;
-		String computerName = null;
-		while ((line = in.readLine()) != null)
-		{
-			if (computerName != null)
-			{
-				continue;
-			}
-			int pos = line.indexOf("\\\\");
-			if (pos != -1)
-			{
-				computerName = line.substring(pos).trim();
-			}
-		}
-		if (computerName == null)
-		{
-			return;
-		}
+  /** Find the local directories which are shared as networked drives,
+   * and add them to the list.
+   */
+  private void listSharedDrives() throws Exception
+  {
+    synchronized (this)
+    {
+      subprocess = Runtime.getRuntime().exec("net config workstation");
+    }
+    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    String line;
+    String computerName = null;
+    while ((line = in.readLine()) != null)
+    {
+      if (computerName != null)
+      {
+        continue;
+      }
+      int pos = line.indexOf("\\\\");
+      if (pos != -1)
+      {
+        computerName = line.substring(pos).trim();
+      }
+    }
+    if (computerName == null)
+    {
+      return;
+    }
 
 
-		synchronized (this)
-		{
-			subprocess = Runtime.getRuntime().exec("net share");
-		}
-		in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
-		boolean sawHeader = false;
-		String lastLine = "";
-		while ((line = in.readLine()) != null)
-		{
-			if (!sawHeader && line.startsWith("-----"))
-			{
-				sawHeader = true;
-			}
-			else if (sawHeader)
-			{
-				int pos = line.indexOf(':');
-				if (pos < 2 || " \t".indexOf(line.charAt(pos - 2)) == -1)
-				{
-					lastLine = line;
-					continue;
-				}
-				String shareName = line.substring(0, pos - 1).trim();
-				if (shareName.length() == 0)
-				{
-					shareName = lastLine.trim();
-				}
-				if (shareName.endsWith("$"))
-				{
-					continue;
-				}  // don't include the "default" shares
+    synchronized (this)
+    {
+      subprocess = Runtime.getRuntime().exec("net share");
+    }
+    in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    boolean sawHeader = false;
+    String lastLine = "";
+    while ((line = in.readLine()) != null)
+    {
+      if (!sawHeader && line.startsWith("-----"))
+      {
+        sawHeader = true;
+      }
+      else if (sawHeader)
+      {
+        int pos = line.indexOf(':');
+        if (pos < 2 || " \t".indexOf(line.charAt(pos - 2)) == -1)
+        {
+          lastLine = line;
+          continue;
+        }
+        String shareName = line.substring(0, pos - 1).trim();
+        if (shareName.length() == 0)
+        {
+          shareName = lastLine.trim();
+        }
+        if (shareName.endsWith("$"))
+        {
+          continue;
+        }  // don't include the "default" shares
 
-				String resourceName = line.substring(pos - 1);
-				pos = resourceName.indexOf('\t');
-				if (pos != -1)
-				{
-					resourceName = resourceName.substring(0, pos);
-				}
-				pos = resourceName.indexOf("  ");
-				if (pos != -1)
-				{
-					resourceName = resourceName.substring(0, pos);
-				}
-				resourceName = resourceName.trim();
+        String resourceName = line.substring(pos - 1);
+        pos = resourceName.indexOf('\t');
+        if (pos != -1)
+        {
+          resourceName = resourceName.substring(0, pos);
+        }
+        pos = resourceName.indexOf("  ");
+        if (pos != -1)
+        {
+          resourceName = resourceName.substring(0, pos);
+        }
+        resourceName = resourceName.trim();
 
-				if (shareName.length() == 0 || resourceName.length() == 0)
-				{
-					lastLine = line;
-					continue;
-				}
-				else
-				{
-					shareName = computerName + "\\" + shareName;
-					if (!resourceName.endsWith("\\"))
-					{
-						resourceName = resourceName + "\\";
-					}
-					networkDrives.put(resourceName, shareName);
-				}
-			}
-		}
-	}
+        if (shareName.length() == 0 || resourceName.length() == 0)
+        {
+          lastLine = line;
+          continue;
+        }
+        else
+        {
+          shareName = computerName + "\\" + shareName;
+          if (!resourceName.endsWith("\\"))
+          {
+            resourceName = resourceName + "\\";
+          }
+          networkDrives.put(resourceName, shareName);
+        }
+      }
+    }
+  }
 
-	/** Return true if this object was able to successfully compile a list
-	 * of network drives.
-	 *
-	 * On Windows systems, this will return false if the operation took
-	 * too long and was abandoned.
-	 *
-	 * On non-Windows systems, this will always return false.
-	 * 
-	 * @return 
-	 */
-	public boolean wasSuccessful()
-	{
-		return successful;
-	}
+  /** Return true if this object was able to successfully compile a list
+   * of network drives.
+   *
+   * On Windows systems, this will return false if the operation took
+   * too long and was abandoned.
+   *
+   * On non-Windows systems, this will always return false.
+   *
+   * @return
+   */
+  public boolean wasSuccessful()
+  {
+    return successful;
+  }
 
-	/** Returns true if the given drive letter names a network drive.
-	 *
-	 * If wasSuccessful() returns false, this will generally return false.
-	 * 
-	 * @param driveLetter 
-	 * @return 
-	 */
-	public boolean isNetworkDrive(String driveLetter)
-	{
-		if (driveLetter == null)
-		{
-			return false;
-		}
-		String drivePath = getDrivePath(driveLetter);
-		return networkDrives.containsKey(drivePath);
-	}
+  /** Returns true if the given drive letter names a network drive.
+   *
+   * If wasSuccessful() returns false, this will generally return false.
+   *
+   * @param driveLetter
+   * @return
+   */
+  public boolean isNetworkDrive(String driveLetter)
+  {
+    if (driveLetter == null)
+    {
+      return false;
+    }
+    String drivePath = getDrivePath(driveLetter);
+    return networkDrives.containsKey(drivePath);
+  }
 
-	/** Returns true if the given file is on a network drive.
-	 *
-	 * If wasSuccessful() returns false, this will generally return false.
-	 * 
-	 * @param filename 
-	 * @return 
-	 */
-	public boolean onNetworkDrive(String filename)
-	{
-		if (filename.startsWith("\\\\"))
-		{
-			return true;
-		}
-		return (toUNCName(filename) != null);
-	}
+  /** Returns true if the given file is on a network drive.
+   *
+   * If wasSuccessful() returns false, this will generally return false.
+   *
+   * @param filename
+   * @return
+   */
+  public boolean onNetworkDrive(String filename)
+  {
+    if (filename.startsWith("\\\\"))
+    {
+      return true;
+    }
+    return (toUNCName(filename) != null);
+  }
 
-	/** Get the UNC name associated with a particular drive letter.
-	 * If isNetworkDrive() returns false for this drive letter,
-	 * returns null.
-	 * 
-	 * @param driveLetter 
-	 * @return 
-	 */
-	public String getUNCName(String driveLetter)
-	{
-		driveLetter = getDriveLetter(driveLetter);
-		if (driveLetter == null)
-		{
-			return null;
-		}
-		String drivePath = getDrivePath(driveLetter);
-		return (String) networkDrives.get(drivePath);
-	}
+  /** Get the UNC name associated with a particular drive letter.
+   * If isNetworkDrive() returns false for this drive letter,
+   * returns null.
+   *
+   * @param driveLetter
+   * @return
+   */
+  public String getUNCName(String driveLetter)
+  {
+    driveLetter = getDriveLetter(driveLetter);
+    if (driveLetter == null)
+    {
+      return null;
+    }
+    String drivePath = getDrivePath(driveLetter);
+    return (String) networkDrives.get(drivePath);
+  }
 
-	/** Convert the given filename (in drive letter format) to an UNC name.
-	 * @param filename 
-	 * @return an UNC name, or null if the filename could not be translated.
-	 */
-	public String toUNCName(String filename)
-	{
-		if (!successful)
-		{
-			return null;
-		}
-		if (filename == null || filename.startsWith("\\\\"))
-		{
-			return filename;
-		}
+  /** Convert the given filename (in drive letter format) to an UNC name.
+   * @param filename
+   * @return an UNC name, or null if the filename could not be translated.
+   */
+  public String toUNCName(String filename)
+  {
+    if (!successful)
+    {
+      return null;
+    }
+    if (filename == null || filename.startsWith("\\\\"))
+    {
+      return filename;
+    }
 
-		Iterator i = networkDrives.entrySet().iterator();
-		while (i.hasNext())
-		{
-			Map.Entry e = (Map.Entry) i.next();
-			String resPrefix = (String) e.getKey();
-			String uncPrefix = (String) e.getValue();
+    Iterator i = networkDrives.entrySet().iterator();
+    while (i.hasNext())
+    {
+      Map.Entry e = (Map.Entry) i.next();
+      String resPrefix = (String) e.getKey();
+      String uncPrefix = (String) e.getValue();
 
-			if (filename.regionMatches(true, 0, resPrefix, 0, resPrefix.length()))
-			{
-				if (uncPrefix.endsWith("\\"))
-				{
-					uncPrefix = uncPrefix.substring(0, uncPrefix.length() - 1);
-				}
-				filename = filename.substring(resPrefix.length() - 1);
-				return uncPrefix + filename;
-			}
-		}
+      if (filename.regionMatches(true, 0, resPrefix, 0, resPrefix.length()))
+      {
+        if (uncPrefix.endsWith("\\"))
+        {
+          uncPrefix = uncPrefix.substring(0, uncPrefix.length() - 1);
+        }
+        filename = filename.substring(resPrefix.length() - 1);
+        return uncPrefix + filename;
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	/** Convert the given filename (in UNC format) to a drive letter format
-	 * name.
-	 * @param uncName 
-	 * @return a filename beginning with a drive letter, or null if
-	 * the filename could not be translated.
-	 */
-	public String fromUNCName(String uncName)
-	{
-		if (!successful)
-		{
-			return null;
-		}
-		if (uncName == null || !uncName.startsWith("\\\\"))
-		{
-			return null;
-		}
+  /** Convert the given filename (in UNC format) to a drive letter format
+   * name.
+   * @param uncName
+   * @return a filename beginning with a drive letter, or null if
+   * the filename could not be translated.
+   */
+  public String fromUNCName(String uncName)
+  {
+    if (!successful)
+    {
+      return null;
+    }
+    if (uncName == null || !uncName.startsWith("\\\\"))
+    {
+      return null;
+    }
 
-		Iterator i = networkDrives.entrySet().iterator();
-		while (i.hasNext())
-		{
-			Map.Entry e = (Map.Entry) i.next();
-			String resPrefix = (String) e.getKey();
-			String uncPrefix = (String) e.getValue();
-			if (!uncPrefix.endsWith("\\"))
-			{
-				uncPrefix = uncPrefix + "\\";
-			}
+    Iterator i = networkDrives.entrySet().iterator();
+    while (i.hasNext())
+    {
+      Map.Entry e = (Map.Entry) i.next();
+      String resPrefix = (String) e.getKey();
+      String uncPrefix = (String) e.getValue();
+      if (!uncPrefix.endsWith("\\"))
+      {
+        uncPrefix = uncPrefix + "\\";
+      }
 
-			if (uncName.regionMatches(true, 0, uncPrefix, 0, uncPrefix.length()))
-			{
-				uncName = uncName.substring(uncPrefix.length());
-				return resPrefix + uncName;
-			}
-		}
+      if (uncName.regionMatches(true, 0, uncPrefix, 0, uncPrefix.length()))
+      {
+        uncName = uncName.substring(uncPrefix.length());
+        return resPrefix + uncName;
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	/** Extract the drive letter from a filename */
-	private String getDriveLetter(String filename)
-	{
-		if (filename == null)
-		{
-			return null;
-		}
+  /** Extract the drive letter from a filename */
+  private String getDriveLetter(String filename)
+  {
+    if (filename == null)
+    {
+      return null;
+    }
 
-		// is it already a drive letter?
-		if (filename.length() == 1
-			&& "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(filename.charAt(0)) != -1)
-		{
-			return filename;
-		}
+    // is it already a drive letter?
+    if (filename.length() == 1
+      && "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(filename.charAt(0)) != -1)
+    {
+      return filename;
+    }
 
-		if (filename.length() < 2)
-		{
-			return null;
-		}
-		if (filename.charAt(1) != ':')
-		{
-			return null;
-		}
-		return filename.substring(0, 1).toUpperCase();
-	}
+    if (filename.length() < 2)
+    {
+      return null;
+    }
+    if (filename.charAt(1) != ':')
+    {
+      return null;
+    }
+    return filename.substring(0, 1).toUpperCase();
+  }
 
-	/** Get the filename path corresponding to a drive letter */
-	private String getDrivePath(String driveLetter)
-	{
-		return driveLetter.toUpperCase() + ":\\";
-	}
+  /** Get the filename path corresponding to a drive letter */
+  private String getDrivePath(String driveLetter)
+  {
+    return driveLetter.toUpperCase() + ":\\";
+  }
 }

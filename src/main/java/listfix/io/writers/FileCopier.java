@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -34,59 +34,59 @@ import org.apache.log4j.Logger;
 /** Copies a source file to the destination file. */
 public class FileCopier
 {
-	/** The block size to read in one shot. */
-	private static final int blockSize = 1024;
-	private static final Logger _logger = Logger.getLogger(FileCopier.class);
+  /** The block size to read in one shot. */
+  private static final int blockSize = 1024;
+  private static final Logger _logger = Logger.getLogger(FileCopier.class);
 
-	/** Copies from source to destination.
-	 * @param input The source file.
-	 * @param output The destination file.
-	 * @exception IOException
-	 */
-	public static void copy(File input, File output) throws IOException
-	{
-		FileInputStream src = new FileInputStream(input);
-		FileOutputStream dest = new FileOutputStream(output);
+  /** Copies from source to destination.
+   * @param input The source file.
+   * @param output The destination file.
+   * @exception IOException
+   */
+  public static void copy(File input, File output) throws IOException
+  {
+    FileInputStream src = new FileInputStream(input);
+    FileOutputStream dest = new FileOutputStream(output);
 
-		BufferedInputStream in = null;
-		BufferedOutputStream out = null;
+    BufferedInputStream in = null;
+    BufferedOutputStream out = null;
 
-		try
-		{
-			in = new BufferedInputStream(src);
-			out = new BufferedOutputStream(dest);
-			int numRead;
-			byte[] buf = new byte[blockSize];
-			while ((numRead = in.read(buf, 0, buf.length)) != -1)
-			{
-				out.write(buf, 0, numRead);
-			}
-		}
-		finally
-		{
-			try
-			{
-				if (in != null)
-				{
-					in.close();
-				}
-				if (out != null)
-				{
-					out.close();
-				}
-				if (src != null)
-				{
-					src.close();
-				}
-				if (dest != null)
-				{
-					dest.close();
-				}
-			}
-			catch (Exception ex)
-			{
-				_logger.error(ExStack.toString(ex));
-			}
-		}
-	}
-}     
+    try
+    {
+      in = new BufferedInputStream(src);
+      out = new BufferedOutputStream(dest);
+      int numRead;
+      byte[] buf = new byte[blockSize];
+      while ((numRead = in.read(buf, 0, buf.length)) != -1)
+      {
+        out.write(buf, 0, numRead);
+      }
+    }
+    finally
+    {
+      try
+      {
+        if (in != null)
+        {
+          in.close();
+        }
+        if (out != null)
+        {
+          out.close();
+        }
+        if (src != null)
+        {
+          src.close();
+        }
+        if (dest != null)
+        {
+          dest.close();
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.error(ExStack.toString(ex));
+      }
+    }
+  }
+}

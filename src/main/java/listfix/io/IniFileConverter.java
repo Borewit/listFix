@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -57,315 +57,315 @@ import org.apache.log4j.Logger;
  */
 public class IniFileConverter
 {
-	private final BufferedReader B1;
-	private final BufferedReader B2;
-	private static final String fname1 = Constants.HOME_DIR + Constants.FS + "dirLists.ini";
-	private static final String fname2 = Constants.HOME_DIR + Constants.FS + "listFixHistory.ini";
-	private String[] mediaDirs = new String[0];
-	private String[] history = new String[0];
-	private String[] mediaLibrary = new String[0];
-	private String[] mediaLibraryFiles = new String[0];
-	private final AppOptions options = new AppOptions();
+  private final BufferedReader B1;
+  private final BufferedReader B2;
+  private static final String fname1 = Constants.HOME_DIR + Constants.FS + "dirLists.ini";
+  private static final String fname2 = Constants.HOME_DIR + Constants.FS + "listFixHistory.ini";
+  private String[] mediaDirs = new String[0];
+  private String[] history = new String[0];
+  private String[] mediaLibrary = new String[0];
+  private String[] mediaLibraryFiles = new String[0];
+  private final AppOptions options = new AppOptions();
 
-	private static final Logger _logger = Logger.getLogger(IniFileConverter.class);
+  private static final Logger _logger = Logger.getLogger(IniFileConverter.class);
 
-	/**
-	 *
-	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
-	 */
-	public IniFileConverter() throws FileNotFoundException, UnsupportedEncodingException
-	{
-		File in_data1 = new File(fname1);
-		if (!in_data1.exists())
-		{
-			throw new FileNotFoundException(in_data1.getPath());
-		}
-		else if (in_data1.length() == 0)
-		{
-			throw new FileNotFoundException("File found, but was of zero size.");
-		}
+  /**
+   *
+   * @throws FileNotFoundException
+   * @throws UnsupportedEncodingException
+   */
+  public IniFileConverter() throws FileNotFoundException, UnsupportedEncodingException
+  {
+    File in_data1 = new File(fname1);
+    if (!in_data1.exists())
+    {
+      throw new FileNotFoundException(in_data1.getPath());
+    }
+    else if (in_data1.length() == 0)
+    {
+      throw new FileNotFoundException("File found, but was of zero size.");
+    }
 
-		// converting these files to UTF-8, need to handle the old format for the conversion...
-		String encoding = UnicodeUtils.getEncoding(in_data1);
-		if (encoding.equals("UTF-8"))
-		{
-			B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));
-		}
-		else
-		{
-			B1 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data1)));
-		}
+    // converting these files to UTF-8, need to handle the old format for the conversion...
+    String encoding = UnicodeUtils.getEncoding(in_data1);
+    if (encoding.equals("UTF-8"))
+    {
+      B1 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data1), "UTF-8"), "UTF8"));
+    }
+    else
+    {
+      B1 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data1)));
+    }
 
-		File in_data2 = new File(fname2);
-		if (!in_data2.exists())
-		{
-			throw new FileNotFoundException(in_data2.getPath());
-		}
-		else if (in_data2.length() == 0)
-		{
-			throw new FileNotFoundException("File found, but was of zero size.");
-		}
+    File in_data2 = new File(fname2);
+    if (!in_data2.exists())
+    {
+      throw new FileNotFoundException(in_data2.getPath());
+    }
+    else if (in_data2.length() == 0)
+    {
+      throw new FileNotFoundException("File found, but was of zero size.");
+    }
 
-		encoding = UnicodeUtils.getEncoding(in_data2);
-		if (encoding.equals("UTF-8"))
-		{
-			B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
-		}
-		else
-		{
-			B2 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data2)));
-		}
-	}	
-	
-	/**
-	 * 
-	 * @return True if both of the old files exist and the new option files don't
-	 */
-	public static boolean conversionRequired()
-	{
-		return (new File(fname1)).exists() && (new File(fname2)).exists() && !(new File(Constants.OPTIONS_INI)).exists() && !(new File(Constants.MEDIA_LIBRARY_INI)).exists();
-	}
+    encoding = UnicodeUtils.getEncoding(in_data2);
+    if (encoding.equals("UTF-8"))
+    {
+      B2 = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in_data2), "UTF-8"), "UTF8"));
+    }
+    else
+    {
+      B2 = new BufferedReader(new InputStreamReader(new FileInputStream(in_data2)));
+    }
+  }
 
-	/**
-	 *
-	 */
-	public void convert()
-	{
-		try
-		{
-			readIni();
-		}
-		catch (Exception e)
-		{
-			_logger.warn("Error reading ini files in for conversion: " + ExStack.toString(e));
-			return;
-		}
-		WriteMediaLibraryIniTask task = new WriteMediaLibraryIniTask(getMediaDirs(), getMediaLibrary(), getMediaLibraryFiles());
-		task.run();
-		OptionsWriter.write(options);
-		PlaylistHistory tempHistory = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
-		tempHistory.initHistory(getHistory());
-		(new FileWriter()).writeMruPlaylists(tempHistory);
-		try
-		{
-			closeFile();
-		}
-		catch (IOException ex)
-		{
-			_logger.error(ExStack.toString(ex));
-		}
-		(new File(fname1)).delete();
-		(new File(fname2)).delete();
-	}
+  /**
+   *
+   * @return True if both of the old files exist and the new option files don't
+   */
+  public static boolean conversionRequired()
+  {
+    return (new File(fname1)).exists() && (new File(fname2)).exists() && !(new File(Constants.OPTIONS_INI)).exists() && !(new File(Constants.MEDIA_LIBRARY_INI)).exists();
+  }
 
-	private AppOptions getAppOptions()
-	{
-		return options;
-	}
+  /**
+   *
+   */
+  public void convert()
+  {
+    try
+    {
+      readIni();
+    }
+    catch (Exception e)
+    {
+      _logger.warn("Error reading ini files in for conversion: " + ExStack.toString(e));
+      return;
+    }
+    WriteMediaLibraryIniTask task = new WriteMediaLibraryIniTask(getMediaDirs(), getMediaLibrary(), getMediaLibraryFiles());
+    task.run();
+    OptionsWriter.write(options);
+    PlaylistHistory tempHistory = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
+    tempHistory.initHistory(getHistory());
+    (new FileWriter()).writeMruPlaylists(tempHistory);
+    try
+    {
+      closeFile();
+    }
+    catch (IOException ex)
+    {
+      _logger.error(ExStack.toString(ex));
+    }
+    (new File(fname1)).delete();
+    (new File(fname2)).delete();
+  }
 
-	private void readIni() throws Exception
-	{
-		List<String> tempList = new ArrayList<>();
-		// Read in base media directories
-		// skip first line, contains header
-		B1.readLine();
-		String line = B1.readLine();
-		while ((line != null) && (!line.startsWith("[")))
-		{
-			tempList.add(line);
-			line = B1.readLine();
-		}
-		mediaDirs = new String[tempList.size()];
-		tempList.toArray(mediaDirs);
+  private AppOptions getAppOptions()
+  {
+    return options;
+  }
 
-		tempList.clear();
+  private void readIni() throws Exception
+  {
+    List<String> tempList = new ArrayList<>();
+    // Read in base media directories
+    // skip first line, contains header
+    B1.readLine();
+    String line = B1.readLine();
+    while ((line != null) && (!line.startsWith("[")))
+    {
+      tempList.add(line);
+      line = B1.readLine();
+    }
+    mediaDirs = new String[tempList.size()];
+    tempList.toArray(mediaDirs);
 
-		// Read in app options, but only if the file contains them in this spot...
-		// skip first line, contains header
-		if (line != null && line.startsWith("[Options]"))
-		{
-			line = B1.readLine().trim();
-			while ((line != null) && (!line.startsWith("[")))
-			{
-				StringTokenizer tempTizer = new StringTokenizer(line, "=");
-				String optionName = tempTizer.nextToken();
-				String optionValue = tempTizer.nextToken();
-				if (optionName != null)
-				{
-					if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
-					{
-						options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)));
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
-					{
-						options.setMaxPlaylistHistoryEntries((Integer.parseInt(optionValue)));
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
-					{
-						options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)));
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
-					{
-						options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)));
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
-					{
-						options.setLookAndFeel(optionValue);
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
-					{
-						options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)));
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
-					{
-						options.setPlaylistsDirectory(optionValue);
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
-					{
-						Font temp = FontExtensions.deserialize(optionValue);
-						if (temp != null)
-						{
-							options.setAppFont(temp);
-						}
-					}
-					else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
-					{
-						options.setMaxClosestResults((Integer.parseInt(optionValue)));
-					}					
-				}
-				line = B1.readLine();
-			}
-		}
+    tempList.clear();
 
-		// Read in media library directories
-		// skip first line, contains header
-		line = B1.readLine();
-		while ((line != null) && (!line.startsWith("[")))
-		{
-			tempList.add(line);
-			line = B1.readLine();
-		}
-		mediaLibrary = new String[tempList.size()];
-		tempList.toArray(mediaLibrary);
-		tempList.clear();
+    // Read in app options, but only if the file contains them in this spot...
+    // skip first line, contains header
+    if (line != null && line.startsWith("[Options]"))
+    {
+      line = B1.readLine().trim();
+      while ((line != null) && (!line.startsWith("[")))
+      {
+        StringTokenizer tempTizer = new StringTokenizer(line, "=");
+        String optionName = tempTizer.nextToken();
+        String optionValue = tempTizer.nextToken();
+        if (optionName != null)
+        {
+          if (optionName.equalsIgnoreCase(AppOptions.AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD))
+          {
+            options.setAutoLocateEntriesOnPlaylistLoad((Boolean.valueOf(optionValue)));
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.MAX_PLAYLIST_HISTORY_SIZE))
+          {
+            options.setMaxPlaylistHistoryEntries((Integer.parseInt(optionValue)));
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.SAVE_RELATIVE_REFERENCES))
+          {
+            options.setSavePlaylistsWithRelativePaths((Boolean.valueOf(optionValue)));
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD))
+          {
+            options.setAutoRefreshMediaLibraryOnStartup((Boolean.valueOf(optionValue)));
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.LOOK_AND_FEEL))
+          {
+            options.setLookAndFeel(optionValue);
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.ALWAYS_USE_UNC_PATHS))
+          {
+            options.setAlwaysUseUNCPaths((Boolean.valueOf(optionValue)));
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.PLAYLISTS_DIRECTORY))
+          {
+            options.setPlaylistsDirectory(optionValue);
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.APP_FONT))
+          {
+            Font temp = FontExtensions.deserialize(optionValue);
+            if (temp != null)
+            {
+              options.setAppFont(temp);
+            }
+          }
+          else if (optionName.equalsIgnoreCase(AppOptions.MAX_CLOSEST_RESULTS))
+          {
+            options.setMaxClosestResults((Integer.parseInt(optionValue)));
+          }
+        }
+        line = B1.readLine();
+      }
+    }
 
-		// Read in media library files
-		// skip first line, contains header
-		line = B1.readLine();
-		while (line != null)
-		{
-			tempList.add(line);
-			line = B1.readLine();
-		}
-		mediaLibraryFiles = new String[tempList.size()];
-		tempList.toArray(mediaLibraryFiles);
-		tempList.clear();
+    // Read in media library directories
+    // skip first line, contains header
+    line = B1.readLine();
+    while ((line != null) && (!line.startsWith("[")))
+    {
+      tempList.add(line);
+      line = B1.readLine();
+    }
+    mediaLibrary = new String[tempList.size()];
+    tempList.toArray(mediaLibrary);
+    tempList.clear();
 
-		// Read in history...
-		B2.readLine();
-		line = B2.readLine();
-		while (line != null)
-		{
-			tempList.add(line);
-			line = B2.readLine();
-		}
-		history = new String[tempList.size()];
-		tempList.toArray(history);
-		tempList.clear();
-	}
+    // Read in media library files
+    // skip first line, contains header
+    line = B1.readLine();
+    while (line != null)
+    {
+      tempList.add(line);
+      line = B1.readLine();
+    }
+    mediaLibraryFiles = new String[tempList.size()];
+    tempList.toArray(mediaLibraryFiles);
+    tempList.clear();
 
-	private void closeFile() throws IOException
-	{
-		B1.close();
-		B2.close();
-	}
+    // Read in history...
+    B2.readLine();
+    line = B2.readLine();
+    while (line != null)
+    {
+      tempList.add(line);
+      line = B2.readLine();
+    }
+    history = new String[tempList.size()];
+    tempList.toArray(history);
+    tempList.clear();
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getHistory()
-	{
-		return history;
-	}
+  private void closeFile() throws IOException
+  {
+    B1.close();
+    B2.close();
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getMediaDirs()
-	{
-		if (options.getAlwaysUseUNCPaths())
-		{
-			String[] result = new String[mediaDirs.length];
-			for (int i = 0; i < result.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaDirs[i]);
-				if (file.onNetworkDrive())
-				{
-					result[i] = file.getUNCPath();
-				}
-				else
-				{
-					result[i] = mediaDirs[i];
-				}
-			}
-			return result;
-		}
-		else
-		{
-			return mediaDirs;
-		}
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getHistory()
+  {
+    return history;
+  }
 
-	private String[] getMediaLibrary()
-	{
-		if (options.getAlwaysUseUNCPaths())
-		{
-			String[] result = new String[mediaLibrary.length];
-			for (int i = 0; i < result.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibrary[i]);
-				if (file.onNetworkDrive())
-				{
-					result[i] = file.getUNCPath();
-				}
-				else
-				{
-					result[i] = mediaLibrary[i];
-				}
-			}
-			return result;
-		}
-		else
-		{
-			return mediaLibrary;
-		}
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getMediaDirs()
+  {
+    if (options.getAlwaysUseUNCPaths())
+    {
+      String[] result = new String[mediaDirs.length];
+      for (int i = 0; i < result.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaDirs[i]);
+        if (file.onNetworkDrive())
+        {
+          result[i] = file.getUNCPath();
+        }
+        else
+        {
+          result[i] = mediaDirs[i];
+        }
+      }
+      return result;
+    }
+    else
+    {
+      return mediaDirs;
+    }
+  }
 
-	private String[] getMediaLibraryFiles()
-	{
-		if (options.getAlwaysUseUNCPaths())
-		{
-			String[] result = new String[mediaLibraryFiles.length];
-			for (int i = 0; i < result.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibraryFiles[i]);
-				if (file.onNetworkDrive())
-				{
-					result[i] = file.getUNCPath();
-				}
-				else
-				{
-					result[i] = mediaLibraryFiles[i];
-				}
-			}
-			return result;
-		}
-		else
-		{
-			return mediaLibraryFiles;
-		}
-	}
+  private String[] getMediaLibrary()
+  {
+    if (options.getAlwaysUseUNCPaths())
+    {
+      String[] result = new String[mediaLibrary.length];
+      for (int i = 0; i < result.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibrary[i]);
+        if (file.onNetworkDrive())
+        {
+          result[i] = file.getUNCPath();
+        }
+        else
+        {
+          result[i] = mediaLibrary[i];
+        }
+      }
+      return result;
+    }
+    else
+    {
+      return mediaLibrary;
+    }
+  }
+
+  private String[] getMediaLibraryFiles()
+  {
+    if (options.getAlwaysUseUNCPaths())
+    {
+      String[] result = new String[mediaLibraryFiles.length];
+      for (int i = 0; i < result.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibraryFiles[i]);
+        if (file.onNetworkDrive())
+        {
+          result[i] = file.getUNCPath();
+        }
+        else
+        {
+          result[i] = mediaLibraryFiles[i];
+        }
+      }
+      return result;
+    }
+    else
+    {
+      return mediaLibraryFiles;
+    }
+  }
 }

@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -28,23 +28,23 @@ import listfix.model.playlists.PotentialPlaylistEntryMatch;
  */
 public class MatchedPlaylistEntryComparator implements java.util.Comparator<PotentialPlaylistEntryMatch>
 {
-	/**
-	 *
-	 * @param aa
-	 * @param bb
-	 * @return
-	 */
-	@Override
-	public int compare(PotentialPlaylistEntryMatch aa, PotentialPlaylistEntryMatch bb)
-	{
-		if (aa.getScore() < bb.getScore())
-		{
-			return 1;
-		}
-		else if (aa.getScore() == bb.getScore())
-		{
-			return 0;
-		}
-		return -1;
-	}
+  /**
+   *
+   * @param aa
+   * @param bb
+   * @return
+   */
+  @Override
+  public int compare(PotentialPlaylistEntryMatch aa, PotentialPlaylistEntryMatch bb)
+  {
+    if (aa.getScore() < bb.getScore())
+    {
+      return 1;
+    }
+    else if (aa.getScore() == bb.getScore())
+    {
+      return 0;
+    }
+    return -1;
+  }
 }

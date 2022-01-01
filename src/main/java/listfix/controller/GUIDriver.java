@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -42,368 +42,368 @@ import org.apache.log4j.Logger;
  *
  * @author jcaron
  */
-public class GUIDriver
+public final class GUIDriver
 {
-	private boolean showMediaDirWindow = false;
-	private String[] mediaDir = null;
-	private String[] mediaLibraryDirectoryList = null;
-	private String[] mediaLibraryFileList = null;
-	private AppOptions options = new AppOptions();
-	private PlaylistHistory history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
-	
-	/**
-	 *
-	 */
-	public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
-	
-	private static final Logger _logger = Logger.getLogger(GUIDriver.class);
-	private static GUIDriver _instance;
+  private boolean showMediaDirWindow = false;
+  private String[] mediaDir = null;
+  private String[] mediaLibraryDirectoryList = null;
+  private String[] mediaLibraryFileList = null;
+  private AppOptions options = new AppOptions();
+  private PlaylistHistory history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
 
-	/**
-	 *
-	 * @return
-	 */
-	public static GUIDriver getInstance()
-	{
-		if (_instance == null)
-		{
-			_instance = new GUIDriver();
-		}
-		return _instance;
-	}
+  /**
+   *
+   */
+  public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
 
-	private GUIDriver()
-	{
-		try
-		{
-			if (IniFileConverter.conversionRequired())
-			{
-				(new IniFileConverter()).convert();
-			}
-			(new FileWriter()).writeDefaultIniFilesIfNeeded();
-			
-			options = OptionsReader.read();
-			IniFileReader initReader = new IniFileReader(options);
-			initReader.readIni();
-			mediaDir = initReader.getMediaDirs();
-			history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
-			history.initHistory(initReader.getHistory());
-			mediaLibraryDirectoryList = initReader.getMediaLibraryDirectories();
-			mediaLibraryFileList = initReader.getMediaLibraryFiles();
+  private static final Logger _logger = Logger.getLogger(GUIDriver.class);
+  private static GUIDriver _instance;
 
-			for (String dir : mediaDir)
-			{
-				if (!new File(dir).exists())
-				{
-					this.removeMediaDir(dir);
-				}
-			}
+  /**
+   *
+   * @return
+   */
+  public static GUIDriver getInstance()
+  {
+    if (_instance == null)
+    {
+      _instance = new GUIDriver();
+    }
+    return _instance;
+  }
 
-			if (!hasAddedMediaDirectory())
-			{
-				showMediaDirWindow = true;
-			}
-		}
-		catch (Exception e)
-		{
-			showMediaDirWindow = true;
-			
-			// This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distrubte listfix			
-			 _logger.error(ExStack.toString(e));
-		}
-	}
+  private GUIDriver()
+  {
+    try
+    {
+      if (IniFileConverter.conversionRequired())
+      {
+        (new IniFileConverter()).convert();
+      }
+      (new FileWriter()).writeDefaultIniFilesIfNeeded();
 
-	/**
-	 *
-	 * @return
-	 */
-	public AppOptions getAppOptions()
-	{
-		return options;
-	}
+      options = OptionsReader.read();
+      IniFileReader initReader = new IniFileReader(options);
+      initReader.readIni();
+      mediaDir = initReader.getMediaDirs();
+      history = new PlaylistHistory(options.getMaxPlaylistHistoryEntries());
+      history.initHistory(initReader.getHistory());
+      mediaLibraryDirectoryList = initReader.getMediaLibraryDirectories();
+      mediaLibraryFileList = initReader.getMediaLibraryFiles();
 
-	/**
-	 *
-	 * @param opts
-	 */
-	public void setAppOptions(AppOptions opts)
-	{
-		options = opts;
-	}
+      for (String dir : mediaDir)
+      {
+        if (!new File(dir).exists())
+        {
+          this.removeMediaDir(dir);
+        }
+      }
 
-	/**
-	 *
-	 * @return
-	 */
-	public final boolean hasAddedMediaDirectory()
-	{
-		return mediaDir.length != 0;
-	}
+      if (!hasAddedMediaDirectory())
+      {
+        showMediaDirWindow = true;
+      }
+    }
+    catch (Exception e)
+    {
+      showMediaDirWindow = true;
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getMediaDirs()
-	{
-		if (mediaDir.length > 0)
-		{
-			return mediaDir;
-		}
-		return new String[] {"Please Add A Media Directory..."};
-	}
+      // This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distrubte listfix
+       _logger.error(ExStack.toString(e));
+    }
+  }
 
-	/**
-	 *
-	 * @param value
-	 */
-	public void setMediaDirs(String[] value)
-	{
-		mediaDir = value;
-	}
+  /**
+   *
+   * @return
+   */
+  public AppOptions getAppOptions()
+  {
+    return options;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getMediaLibraryDirectoryList()
-	{
-		return mediaLibraryDirectoryList;
-	}
+  /**
+   *
+   * @param opts
+   */
+  public void setAppOptions(AppOptions opts)
+  {
+    options = opts;
+  }
 
-	/**
-	 *
-	 * @param value
-	 */
-	public void setMediaLibraryDirectoryList(String[] value)
-	{
-		mediaLibraryDirectoryList = value;
-	}
+  /**
+   *
+   * @return
+   */
+  public boolean hasAddedMediaDirectory()
+  {
+    return mediaDir.length != 0;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getMediaLibraryFileList()
-	{
-		return mediaLibraryFileList;
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getMediaDirs()
+  {
+    if (mediaDir.length > 0)
+    {
+      return mediaDir;
+    }
+    return new String[] {"Please Add A Media Directory..."};
+  }
 
-	/**
-	 *
-	 * @param value
-	 */
-	public void setMediaLibraryFileList(String[] value)
-	{
-		mediaLibraryFileList = value;
-	}
+  /**
+   *
+   * @param value
+   */
+  public void setMediaDirs(String[] value)
+  {
+    mediaDir = value;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean getShowMediaDirWindow()
-	{
-		return showMediaDirWindow;
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getMediaLibraryDirectoryList()
+  {
+    return mediaLibraryDirectoryList;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public PlaylistHistory getHistory()
-	{
-		return history;
-	}
+  /**
+   *
+   * @param value
+   */
+  public void setMediaLibraryDirectoryList(String[] value)
+  {
+    mediaLibraryDirectoryList = value;
+  }
 
-	/**
-	 *
-	 */
-	public void clearM3UHistory()
-	{
-		history.clearHistory();
-		(new FileWriter()).writeMruPlaylists(history);
-	}
+  /**
+   *
+   * @return
+   */
+  public String[] getMediaLibraryFileList()
+  {
+    return mediaLibraryFileList;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String[] getRecentM3Us()
-	{
-		return history.getFilenames();
-	}
+  /**
+   *
+   * @param value
+   */
+  public void setMediaLibraryFileList(String[] value)
+  {
+    mediaLibraryFileList = value;
+  }
 
-	/**
-	 *
-	 * @param dir
-	 * @return
-	 * @throws MediaDirNotFoundException
-	 */
-	public final String[] removeMediaDir(String dir) throws MediaDirNotFoundException
-	{
-		boolean found = false;
-		int i = 0;
-		int length = mediaDir.length;
-		if (mediaDir.length == 1)
-		{
-			while ((i < length) && (found != true))
-			{
-				if (mediaDir[i].equals(dir))
-				{
-					mediaDir = ArrayFunctions.removeItem(mediaDir, i);
-					found = true;
-				}
-				else
-				{
-					i++;
-				}
-			}
-			if (found)
-			{
-				mediaLibraryDirectoryList = new String[0];
-				mediaLibraryFileList = new String[0];
-				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
-			}
-			else
-			{
-				throw new MediaDirNotFoundException(dir + " was not in the media directory list.");
-			}
-			return mediaDir;
-		}
-		else
-		{
-			while ((i < length) && (found != true))
-			{
-				if (mediaDir[i].equals(dir))
-				{
-					mediaDir = ArrayFunctions.removeItem(mediaDir, i);
-					found = true;
-				}
-				else
-				{
-					i++;
-				}
-			}
-			if (found)
-			{
-				List<String> mldVector = new ArrayList<>(Arrays.asList(mediaLibraryDirectoryList));
-				List<String> toRemove = new ArrayList<>();
-				for (String toTest : mldVector)
-				{
-					if (toTest.startsWith(dir))
-					{
-						toRemove.add(toTest);
-					}
-				}
-				mldVector.removeAll(toRemove);
-				mediaLibraryDirectoryList = mldVector.toArray(new String[mldVector.size()]);
-				
-				// Clear this out for the next run.
-				toRemove.clear();
+  /**
+   *
+   * @return
+   */
+  public boolean getShowMediaDirWindow()
+  {
+    return showMediaDirWindow;
+  }
 
-				List<String> mlfVector = new ArrayList<>(Arrays.asList(mediaLibraryFileList));
-				for (String toTest : mlfVector)
-				{
-					if (toTest.startsWith(dir))
-					{
-						toRemove.add(toTest);
-					}
-				}
-				mlfVector.removeAll(toRemove);
-				mediaLibraryFileList = mlfVector.toArray(new String[mlfVector.size()]);
-				(new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
-			}
-			else
-			{
-				throw new MediaDirNotFoundException(dir + " was not in the media directory list.");
-			}
-			return mediaDir;
-		}
-	}
+  /**
+   *
+   * @return
+   */
+  public PlaylistHistory getHistory()
+  {
+    return history;
+  }
 
-	/**
-	 *
-	 */
-	public void switchMediaLibraryToUNCPaths()
-	{
-		if (mediaDir != null)
-		{
-			for (int i = 0; i < mediaDir.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaDir[i]);
-				if (file.onNetworkDrive())
-				{
-					mediaDir[i] = file.getUNCPath();
-				}
-			}
-		}
+  /**
+   *
+   */
+  public void clearM3UHistory()
+  {
+    history.clearHistory();
+    (new FileWriter()).writeMruPlaylists(history);
+  }
 
-		if (mediaLibraryDirectoryList != null)
-		{
-			for (int i = 0; i < mediaLibraryDirectoryList.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibraryDirectoryList[i]);
-				if (file.onNetworkDrive())
-				{
-					mediaLibraryDirectoryList[i] = file.getUNCPath();
-				}
-			}
-		}
+  /**
+   *
+   * @return
+   */
+  public String[] getRecentM3Us()
+  {
+    return history.getFilenames();
+  }
 
-		if (mediaLibraryFileList != null)
-		{
-			for (int i = 0; i < mediaLibraryFileList.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibraryFileList[i]);
-				if (file.onNetworkDrive())
-				{
-					mediaLibraryFileList[i] = file.getUNCPath();
-				}
-			}
-		}
-	}
+  /**
+   *
+   * @param dir
+   * @return
+   * @throws MediaDirNotFoundException
+   */
+  public String[] removeMediaDir(String dir) throws MediaDirNotFoundException
+  {
+    boolean found = false;
+    int i = 0;
+    int length = mediaDir.length;
+    if (mediaDir.length == 1)
+    {
+      while ((i < length) && (!found))
+      {
+        if (mediaDir[i].equals(dir))
+        {
+          mediaDir = ArrayFunctions.removeItem(mediaDir, i);
+          found = true;
+        }
+        else
+        {
+          i++;
+        }
+      }
+      if (found)
+      {
+        mediaLibraryDirectoryList = new String[0];
+        mediaLibraryFileList = new String[0];
+        (new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+      }
+      else
+      {
+        throw new MediaDirNotFoundException(dir + " was not in the media directory list.");
+      }
+      return mediaDir;
+    }
+    else
+    {
+      while ((i < length) && (!found))
+      {
+        if (mediaDir[i].equals(dir))
+        {
+          mediaDir = ArrayFunctions.removeItem(mediaDir, i);
+          found = true;
+        }
+        else
+        {
+          i++;
+        }
+      }
+      if (found)
+      {
+        List<String> mldVector = new ArrayList<>(Arrays.asList(mediaLibraryDirectoryList));
+        List<String> toRemove = new ArrayList<>();
+        for (String toTest : mldVector)
+        {
+          if (toTest.startsWith(dir))
+          {
+            toRemove.add(toTest);
+          }
+        }
+        mldVector.removeAll(toRemove);
+        mediaLibraryDirectoryList = mldVector.toArray(new String[mldVector.size()]);
 
-	/**
-	 *
-	 */
-	public void switchMediaLibraryToMappedDrives()
-	{
-		if (mediaDir != null)
-		{
-			for (int i = 0; i < mediaDir.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaDir[i]);
-				if (file.onNetworkDrive())
-				{
-					mediaDir[i] = file.getDrivePath();
-				}
-			}
-		}
+        // Clear this out for the next run.
+        toRemove.clear();
 
-		if (mediaLibraryDirectoryList != null)
-		{
-			for (int i = 0; i < mediaLibraryDirectoryList.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibraryDirectoryList[i]);
-				if (file.onNetworkDrive())
-				{
-					mediaLibraryDirectoryList[i] = file.getDrivePath();
-				}
-			}
-		}
+        List<String> mlfVector = new ArrayList<>(Arrays.asList(mediaLibraryFileList));
+        for (String toTest : mlfVector)
+        {
+          if (toTest.startsWith(dir))
+          {
+            toRemove.add(toTest);
+          }
+        }
+        mlfVector.removeAll(toRemove);
+        mediaLibraryFileList = mlfVector.toArray(new String[mlfVector.size()]);
+        (new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+      }
+      else
+      {
+        throw new MediaDirNotFoundException(dir + " was not in the media directory list.");
+      }
+      return mediaDir;
+    }
+  }
 
-		if (mediaLibraryFileList != null)
-		{
-			for (int i = 0; i < mediaLibraryFileList.length; i++)
-			{
-				UNCFile file = new UNCFile(mediaLibraryFileList[i]);
-				if (file.onNetworkDrive())
-				{
-					mediaLibraryFileList[i] = file.getDrivePath();
-				}
+  /**
+   *
+   */
+  public void switchMediaLibraryToUNCPaths()
+  {
+    if (mediaDir != null)
+    {
+      for (int i = 0; i < mediaDir.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaDir[i]);
+        if (file.onNetworkDrive())
+        {
+          mediaDir[i] = file.getUNCPath();
+        }
+      }
+    }
 
-			}
-		}
-	}
+    if (mediaLibraryDirectoryList != null)
+    {
+      for (int i = 0; i < mediaLibraryDirectoryList.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibraryDirectoryList[i]);
+        if (file.onNetworkDrive())
+        {
+          mediaLibraryDirectoryList[i] = file.getUNCPath();
+        }
+      }
+    }
+
+    if (mediaLibraryFileList != null)
+    {
+      for (int i = 0; i < mediaLibraryFileList.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibraryFileList[i]);
+        if (file.onNetworkDrive())
+        {
+          mediaLibraryFileList[i] = file.getUNCPath();
+        }
+      }
+    }
+  }
+
+  /**
+   *
+   */
+  public void switchMediaLibraryToMappedDrives()
+  {
+    if (mediaDir != null)
+    {
+      for (int i = 0; i < mediaDir.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaDir[i]);
+        if (file.onNetworkDrive())
+        {
+          mediaDir[i] = file.getDrivePath();
+        }
+      }
+    }
+
+    if (mediaLibraryDirectoryList != null)
+    {
+      for (int i = 0; i < mediaLibraryDirectoryList.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibraryDirectoryList[i]);
+        if (file.onNetworkDrive())
+        {
+          mediaLibraryDirectoryList[i] = file.getDrivePath();
+        }
+      }
+    }
+
+    if (mediaLibraryFileList != null)
+    {
+      for (int i = 0; i < mediaLibraryFileList.length; i++)
+      {
+        UNCFile file = new UNCFile(mediaLibraryFileList[i]);
+        if (file.onNetworkDrive())
+        {
+          mediaLibraryFileList[i] = file.getDrivePath();
+        }
+
+      }
+    }
+  }
 }

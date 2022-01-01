@@ -1,7 +1,7 @@
 /*
  * listFix() - Fix Broken Playlists!
  * Copyright (C) 2001-2014 Jeremy Caron
- * 
+ *
  * This file is part of listFix().
  *
  * This program is free software; you can redistribute it and/or
@@ -31,69 +31,69 @@ import listfix.view.support.IProgressObserver;
  */
 public abstract class Task extends Thread
 {
-	private final List<IProgressObserver> observers;
-	private int progress = 0;
+  private final List<IProgressObserver> observers;
+  private int progress = 0;
 
-	/**
-	 *
-	 */
-	public Task()
-	{
-		observers = new ArrayList<>();
-	}
+  /**
+   *
+   */
+  public Task()
+  {
+    observers = new ArrayList<>();
+  }
 
-	/**
-	 *
-	 */
-	@Override
-	public abstract void run();
+  /**
+   *
+   */
+  @Override
+  public abstract void run();
 
-	/**
-	 *
-	 * @param observer
-	 */
-	public final void addProgressObserver(IProgressObserver observer)
-	{
-		observers.add(observer);
-	}
+  /**
+   *
+   * @param observer
+   */
+  public final void addProgressObserver(IProgressObserver observer)
+  {
+    observers.add(observer);
+  }
 
-	/**
-	 *
-	 * @param observer
-	 */
-	public final void removeProgressObserver(IProgressObserver observer)
-	{
-		observers.remove(observer);
-	}
+  /**
+   *
+   * @param observer
+   */
+  public final void removeProgressObserver(IProgressObserver observer)
+  {
+    observers.remove(observer);
+  }
 
-	/**
-	 *
-	 * @param percent
-	 */
-	public final void notifyObservers(int percent)
-	{
-		if (percent < 0)
-		{
-			percent = 0;
-		}
-		else if (percent > 100)
-		{
-			percent = 100;
-		}
-		progress = percent;
+  /**
+   *
+   * @param percent
+   */
+  public final void notifyObservers(int percent)
+  {
+    if (percent < 0)
+    {
+      percent = 0;
+    }
+    else if (percent > 100)
+    {
+      percent = 100;
+    }
+    progress = percent;
 
         for (IProgressObserver observer : observers)
-		{
+    {
             observer.reportProgress(percent);
-		}
-	}
+    }
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getProgress()
-	{
-		return progress;
-	}
+  /**
+   *
+   * @return
+   */
+  public int getProgress()
+  {
+    return progress;
+  }
 }

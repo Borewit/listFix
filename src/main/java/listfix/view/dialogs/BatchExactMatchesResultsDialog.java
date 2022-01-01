@@ -20,7 +20,6 @@
 package listfix.view.dialogs;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -48,135 +47,135 @@ import org.apache.log4j.Logger;
  */
 public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 {
-	private boolean _userCancelled = false;
-	private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
+  private boolean _userCancelled = false;
+  private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
 
-	/** Creates new form BatchExactMatchesResultsDialog
-	 * @param parent 
-	 * @param batch
-	 * @param modal  
-	 */
-	public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
-	{
-		super(parent, batch.getDescription(), modal);
-		//super(parent, modal);
-		_batch = batch;
-		initComponents();
-		getRootPane().setDefaultButton(_btnSave);
-		_txtBackup.setText(_batch.getDefaultBackupName());
+  /** Creates new form BatchExactMatchesResultsDialog
+   * @param parent
+   * @param batch
+   * @param modal
+   */
+  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
+  {
+    super(parent, batch.getDescription(), modal);
+    //super(parent, modal);
+    _batch = batch;
+    initComponents();
+    getRootPane().setDefaultButton(_btnSave);
+    _txtBackup.setText(_batch.getDefaultBackupName());
 
-		// load and repair lists
-		final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Exact Matches...", "Please wait...", "Overall Progress:");
-		DualProgressWorker dpw = new DualProgressWorker<Void, String>()
-		{
-			@Override
-			protected void process(List<ProgressItem<String>> chunks)
-			{
-				ProgressItem<String> titem = new ProgressItem<String>(true, -1, null);
-				ProgressItem<String> oitem = new ProgressItem<String>(false, -1, null);
-				getEffectiveItems(chunks, titem, oitem);
+    // load and repair lists
+    final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Exact Matches...", "Please wait...", "Overall Progress:");
+    DualProgressWorker dpw = new DualProgressWorker<Void, String>()
+    {
+      @Override
+      protected void process(List<ProgressItem<String>> chunks)
+      {
+        ProgressItem<String> titem = new ProgressItem<String>(true, -1, null);
+        ProgressItem<String> oitem = new ProgressItem<String>(false, -1, null);
+        getEffectiveItems(chunks, titem, oitem);
 
-				if (titem.percentComplete >= 0)
-				{
-					pd.getTaskProgressBar().setValue(titem.percentComplete);
-				}
-				if (titem.state != null)
-				{
-					pd.getTaskLabel().setText(titem.state);
-				}
-				if (oitem.percentComplete >= 0)
-				{
-					pd.getOverallProgressBar().setValue(oitem.percentComplete);
-				}
-				if (oitem.state != null)
-				{
-					pd.getOverallLabel().setText(oitem.state);
-				}
-			}
+        if (titem.percentComplete >= 0)
+        {
+          pd.getTaskProgressBar().setValue(titem.percentComplete);
+        }
+        if (titem.state != null)
+        {
+          pd.getTaskLabel().setText(titem.state);
+        }
+        if (oitem.percentComplete >= 0)
+        {
+          pd.getOverallProgressBar().setValue(oitem.percentComplete);
+        }
+        if (oitem.state != null)
+        {
+          pd.getOverallLabel().setText(oitem.state);
+        }
+      }
 
-			@Override
-			protected Void doInBackground() throws Exception
-			{
-				_batch.performExactMatchRepair(this);
-				return null;
-			}
-		};
-		pd.show(dpw);
+      @Override
+      protected Void doInBackground() throws Exception
+      {
+        _batch.performExactMatchRepair(this);
+        return null;
+      }
+    };
+    pd.show(dpw);
 
-		if (!dpw.getCancelled())
-		{
-			ListSelectionModel lsm = _pnlList.getSelectionModel();
-			lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			lsm.addListSelectionListener(new ListSelectionListener()
-			{
-				@Override
-				public void valueChanged(ListSelectionEvent e)
-				{
-					if (e.getValueIsAdjusting())
-					{
-						return;
-					}
-					updateSelectedPlaylist();
-				}
-			});
-			_pnlList.initPlaylistsList();
+    if (!dpw.getCancelled())
+    {
+      ListSelectionModel lsm = _pnlList.getSelectionModel();
+      lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      lsm.addListSelectionListener(new ListSelectionListener()
+      {
+        @Override
+        public void valueChanged(ListSelectionEvent e)
+        {
+          if (e.getValueIsAdjusting())
+          {
+            return;
+          }
+          updateSelectedPlaylist();
+        }
+      });
+      _pnlList.initPlaylistsList();
 
-			for (BatchRepairItem item : _batch.getItems())
-			{
-				item.getPlaylist().addModifiedListener(listener);
-			}
+      for (BatchRepairItem item : _batch.getItems())
+      {
+        item.getPlaylist().addModifiedListener(listener);
+      }
 
-			String listCountTxt;
-			if (_batch.getItems().size() == 1)
-			{
-				listCountTxt = "1 playlist";
-			}
-			else
-			{
-				listCountTxt = String.format("%d playlists", _batch.getItems().size());
-			}
-			_pnlList.setText(listCountTxt);
-		}
-		else
-		{
-			_userCancelled = true;
-		}
-	}
+      String listCountTxt;
+      if (_batch.getItems().size() == 1)
+      {
+        listCountTxt = "1 playlist";
+      }
+      else
+      {
+        listCountTxt = String.format("%d playlists", _batch.getItems().size());
+      }
+      _pnlList.setText(listCountTxt);
+    }
+    else
+    {
+      _userCancelled = true;
+    }
+  }
 
-	private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
-	{
-		@Override
-		public void playlistModified(Playlist list)
-		{
-			onPlaylistModified(list);
-		}
-	};
+  private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+  {
+    @Override
+    public void playlistModified(Playlist list)
+    {
+      onPlaylistModified(list);
+    }
+  };
 
-	private void onPlaylistModified(Playlist list)
-	{
-		_pnlList.playlistModified(list);
-	}
+  private void onPlaylistModified(Playlist list)
+  {
+    _pnlList.playlistModified(list);
+  }
 
-	private void updateSelectedPlaylist()
-	{
-		// Keep the table anchored left...
-		_pnlList.anchorLeft();
-		int selIx = _pnlList.getSelectedModelRow();
-		if (selIx >= 0)
-		{
-			BatchRepairItem item = _batch.getItem(selIx);
-			playlistEditCtrl1.setPlaylist(item.getPlaylist());
-		}
-	}
+  private void updateSelectedPlaylist()
+  {
+    // Keep the table anchored left...
+    _pnlList.anchorLeft();
+    int selIx = _pnlList.getSelectedModelRow();
+    if (selIx >= 0)
+    {
+      BatchRepairItem item = _batch.getItem(selIx);
+      playlistEditCtrl1.setPlaylist(item.getPlaylist());
+    }
+  }
 
-	BatchRepair _batch;
+  private BatchRepair _batch;
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+  /** This method is called from within the constructor to
+   * initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is
+   * always regenerated by the Form Editor.
+   */
+  @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -288,98 +287,98 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 
     private void onBtnBrowseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnBrowseActionPerformed
     {//GEN-HEADEREND:event_onBtnBrowseActionPerformed
-		JFileChooser dlg = new JFileChooser();
-		if (!_txtBackup.getText().isEmpty())
-		{
-			dlg.setSelectedFile(new File(_txtBackup.getText()));
-		}
-		if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-		{
-			_txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
-		}
+    JFileChooser dlg = new JFileChooser();
+    if (!_txtBackup.getText().isEmpty())
+    {
+      dlg.setSelectedFile(new File(_txtBackup.getText()));
+    }
+    if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+    {
+      _txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
+    }
     }//GEN-LAST:event_onBtnBrowseActionPerformed
 
     private void onBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnSaveActionPerformed
     {//GEN-HEADEREND:event_onBtnSaveActionPerformed
-		ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
-		{
-			@Override
-			protected Void doInBackground() throws Exception
-			{
-				boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-				_batch.save(saveRelative, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
-				return null;
-			}
-		};
-		ProgressDialog pd = new ProgressDialog(null, true, worker, "Saving playlists...");
-		pd.setVisible(true);
+    ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+    {
+      @Override
+      protected Void doInBackground() throws Exception
+      {
+        boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+        _batch.save(saveRelative, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
+        return null;
+      }
+    };
+    ProgressDialog pd = new ProgressDialog(null, true, worker, "Saving playlists...");
+    pd.setVisible(true);
 
-		try
-		{
-			worker.get();
-		}
-		catch (InterruptedException ex)
-		{
-			// ignore, these happen when people cancel - should not be logged either.
-		}
-		catch (ExecutionException eex)
-		{
-			Throwable ex = eex.getCause();
-			String msg = "An error occurred while saving: " + ex.getMessage();
-			JOptionPane.showMessageDialog(BatchExactMatchesResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
-			_logger.error(ExStack.toString(eex));
-			return;
-		}
+    try
+    {
+      worker.get();
+    }
+    catch (InterruptedException ex)
+    {
+      // ignore, these happen when people cancel - should not be logged either.
+    }
+    catch (ExecutionException eex)
+    {
+      Throwable ex = eex.getCause();
+      String msg = "An error occurred while saving: " + ex.getMessage();
+      JOptionPane.showMessageDialog(BatchExactMatchesResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
+      _logger.error(ExStack.toString(eex));
+      return;
+    }
 
-		setVisible(false);
+    setVisible(false);
     }//GEN-LAST:event_onBtnSaveActionPerformed
 
     private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
     {//GEN-HEADEREND:event_onBtnCancelActionPerformed
-		_userCancelled = true;
-		setVisible(false);
+    _userCancelled = true;
+    setVisible(false);
     }//GEN-LAST:event_onBtnCancelActionPerformed
 
     private void onChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_onChkBackupItemStateChanged
     {//GEN-HEADEREND:event_onChkBackupItemStateChanged
-		boolean isChecked = _chkBackup.isSelected();
-		_txtBackup.setEnabled(isChecked);
-		_btnBrowse.setEnabled(isChecked);
-		if (isChecked)
-		{
-			_txtBackup.selectAll();
-			_txtBackup.requestFocusInWindow();
-		}
+    boolean isChecked = _chkBackup.isSelected();
+    _txtBackup.setEnabled(isChecked);
+    _btnBrowse.setEnabled(isChecked);
+    if (isChecked)
+    {
+      _txtBackup.selectAll();
+      _txtBackup.requestFocusInWindow();
+    }
     }//GEN-LAST:event_onChkBackupItemStateChanged
 
-	private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
-	{//GEN-HEADEREND:event_formWindowClosing
-		_userCancelled = true;
-	}//GEN-LAST:event_formWindowClosing
+  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  {//GEN-HEADEREND:event_formWindowClosing
+    _userCancelled = true;
+  }//GEN-LAST:event_formWindowClosing
 
-	/**
-	 * @return the _userCancelled
-	 */
-	public boolean isUserCancelled()
-	{
-		return getUserCancelled();
-	}
+  /**
+   * @return the _userCancelled
+   */
+  public boolean isUserCancelled()
+  {
+    return getUserCancelled();
+  }
 
-	/**
-	 * @param userCancelled the _userCancelled to set
-	 */
-	public void setUserCancelled(boolean userCancelled)
-	{
-		this._userCancelled = userCancelled;
-	}
+  /**
+   * @param userCancelled the _userCancelled to set
+   */
+  public void setUserCancelled(boolean userCancelled)
+  {
+    this._userCancelled = userCancelled;
+  }
 
-	/**
-	 * @return the _userCancelled
-	 */
-	public boolean getUserCancelled()
-	{
-		return _userCancelled;
-	}
+  /**
+   * @return the _userCancelled
+   */
+  public boolean getUserCancelled()
+  {
+    return _userCancelled;
+  }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel _backupPanel;
     private javax.swing.JButton _btnBrowse;

@@ -21,7 +21,7 @@
 package listfix.io.filters;
 
 import java.io.FileFilter;
-import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A FileFilter that accepts our currently supported playlist types, and directories.
@@ -29,31 +29,31 @@ import java.util.Set;
  */
 public class PlaylistFileFilter extends FileExtensionFilterBase implements FileFilter
 {
-    private static final Set<String> _extensions;
+  private static final TreeSet<String> _extensions;
 
-    static
-    {
-        _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml");
-    }
-	
-	/**
-	 * 
-	 */
-	public PlaylistFileFilter()
-    {
-        super(_extensions);
-    }
+  static
+  {
+    _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml");
+  }
 
-    @Override
-    public String getDescription()
-    {
-        return "Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf, *.xml)";
-    }
+  /**
+   *
+   */
+  public PlaylistFileFilter()
+  {
+      super(_extensions);
+  }
 
-	@Override
-	public String toString()
-	{
-		return getDescription();
-	}
+  @Override
+  public String getDescription()
+  {
+      return "Playlists (*.m3u, *.m3u8, *.pls, *.wpl, *.xspf, *.xml)";
+  }
+
+  @Override
+  public String toString()
+  {
+    return getDescription();
+  }
 }
 

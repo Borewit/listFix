@@ -30,57 +30,57 @@ import javax.swing.SwingWorker;
  * @param <T>
  * @param <V>
  */
-public abstract class DualProgressWorker<T,V> extends SwingWorker<T,DualProgressWorker.ProgressItem<V>> implements IDualProgressObserver<V>
+public abstract class DualProgressWorker<T, V> extends SwingWorker<T, DualProgressWorker.ProgressItem<V>> implements IDualProgressObserver<V>
 {
     /**
-	 *
-	 * @param chunks
-	 */
-	@Override
+   *
+   * @param chunks
+   */
+  @Override
     protected abstract void process(List<ProgressItem<V>> chunks);
 
     /**
-	 *
-	 * @param percentComplete
-	 * @param state
-	 */
-	public void reportTaskProgress(int percentComplete, V state)
+   *
+   * @param percentComplete
+   * @param state
+   */
+  public void reportTaskProgress(int percentComplete, V state)
     {
         publish(new ProgressItem(true, percentComplete, state));
     }
 
     /**
-	 *
-	 * @param percentComplete
-	 * @param state
-	 */
-	public void reportOverallProgress(int percentComplete, V state)
+   *
+   * @param percentComplete
+   * @param state
+   */
+  public void reportOverallProgress(int percentComplete, V state)
     {
         publish(new ProgressItem(false, percentComplete, state));
     }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean getCancelled()
-	{
-		return this.isCancelled();
-	}
+  /**
+   *
+   * @return
+   */
+  public boolean getCancelled()
+  {
+    return this.isCancelled();
+  }
 
     /**
-	 *
-	 * @param <V>
-	 */
-	protected static class ProgressItem<V>
+   *
+   * @param <V>
+   */
+  protected static class ProgressItem<V>
     {
         /**
-		 *
-		 * @param isTask
-		 * @param percentComplete
-		 * @param state
-		 */
-		public ProgressItem(boolean isTask, int percentComplete, V state)
+     *
+     * @param isTask
+     * @param percentComplete
+     * @param state
+     */
+    public ProgressItem(boolean isTask, int percentComplete, V state)
         {
             this.isTask = isTask;
             this.percentComplete = percentComplete;
@@ -88,26 +88,26 @@ public abstract class DualProgressWorker<T,V> extends SwingWorker<T,DualProgress
         }
 
         /**
-		 *
-		 */
-		public boolean isTask;
+     *
+     */
+    public boolean isTask;
         /**
-		 *
-		 */
-		public int percentComplete;
+     *
+     */
+    public int percentComplete;
         /**
-		 *
-		 */
-		public V state;
+     *
+     */
+    public V state;
     }
 
     /**
-	 *
-	 * @param items
-	 * @param titem
-	 * @param oitem
-	 */
-	protected void getEffectiveItems(List<ProgressItem<V>> items, ProgressItem<V> titem, ProgressItem<V> oitem)
+   *
+   * @param items
+   * @param titem
+   * @param oitem
+   */
+  protected void getEffectiveItems(List<ProgressItem<V>> items, ProgressItem<V> titem, ProgressItem<V> oitem)
     {
         titem.percentComplete = -1;
         titem.state = null;

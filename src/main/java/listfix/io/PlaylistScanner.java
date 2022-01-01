@@ -40,17 +40,17 @@ import listfix.io.filters.PlaylistFileFilter;
  */
 public class PlaylistScanner
 {
-	/**
-	 *
-	 * @param directory
-	 * @return
-	 */
-	public static List<File> getAllPlaylists(File directory)
-	{
-		List<File> result = new ArrayList<>();
-		if (directory.exists() && directory.isDirectory())
-		{
-			File[] inodes = directory.listFiles(new PlaylistFileFilter());
+  /**
+   *
+   * @param directory
+   * @return
+   */
+  public static List<File> getAllPlaylists(File directory)
+  {
+    List<File> result = new ArrayList<>();
+    if (directory.exists() && directory.isDirectory())
+    {
+      File[] inodes = directory.listFiles(new PlaylistFileFilter());
             if (inodes != null)
             {
                 for (File inode : inodes)
@@ -65,7 +65,7 @@ public class PlaylistScanner
                     }
                 }
             }
-		}
-		return result;
-	}
+    }
+    return result;
+  }
 }
