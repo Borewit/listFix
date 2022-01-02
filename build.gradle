@@ -4,7 +4,12 @@ plugins {
     id 'java'
     id 'idea'
     id 'edu.sc.seis.launch4j' version '2.5.1'
-    id "com.gitlab.svg2ico" version "0.11" // https://gitlab.com/svg2ico/svg2ico-gradle-plugin
+
+    /* https://gitlab.com/svg2ico/svg2ico-gradle-plugin */
+    id "com.gitlab.svg2ico" version "0.11"
+
+    /* Generate Java code from XSD */
+    id 'org.unbroken-dome.xjc' version '2.0.0'
 }
 
 apply plugin: "edu.sc.seis.launch4j"
@@ -60,12 +65,16 @@ application {
 sourceSets {
     main {
             java {
-                srcDirs = ['src/main/java']
+                srcDirs = ['src/main/java', 'build/generated/sources/xjc/java/main']
             }
             resources {
-            	  srcDirs= ["src/main/resources"]
+            	  srcDirs= ['src/main/resources']
     				}
         }
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn xjcGenerate
 }
 
 task fatJar(type: Jar) {
