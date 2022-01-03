@@ -5,6 +5,9 @@ plugins {
     id 'idea'
     id 'edu.sc.seis.launch4j' version '2.5.1'
 
+    /* https://github.com/openjfx/javafx-gradle-plugin */
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+
     /* https://gitlab.com/svg2ico/svg2ico-gradle-plugin */
     id "com.gitlab.svg2ico" version "0.11"
 
@@ -14,12 +17,18 @@ plugins {
     id 'checkstyle'
 }
 
-apply plugin: "edu.sc.seis.launch4j"
+apply plugin: 'edu.sc.seis.launch4j'
 
 version '2.4.0'
 
 sourceCompatibility = 8
-targetCompatibility = 8
+targetCompatibility = 16
+
+javafx {
+    version = '17.0.1'
+    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.swing']
+    configuration = 'implementation'
+}
 
 project.mainClassName = 'listfix.view.GUIScreen'
 
@@ -128,3 +137,6 @@ launch4j {
     jarTask = project.tasks.fatJar // Use fat jar
 }
 
+applicationDefaultJvmArgs = ['--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED',
+                             '--add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED'
+                            ]
