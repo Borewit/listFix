@@ -1,3 +1,12 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'io.github.fvarrui:javapackager:1.6.2'
+	}
+}
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
@@ -18,6 +27,7 @@ plugins {
 }
 
 apply plugin: 'edu.sc.seis.launch4j'
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 version '2.3.0'
 
@@ -128,6 +138,20 @@ launch4j {
     supportUrl = 'https://github.com/Borewit/listFix/issues'
     copyConfigurable = [] // Don't copy dependencies
     jarTask = project.tasks.fatJar // Use fat jar
+}
+
+task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: fatJar) {
+	// mandatory
+	mainClass = project.mainClassName
+	runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
+	// optional
+	bundleJre = true
+	generateInstaller = true
+	administratorRequired = false
+	platform = 'windows'
+	licenseFile = file('LICENSE.txt')
+  runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
+	copyDependencies = false
 }
 
 applicationDefaultJvmArgs = ['--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED',
