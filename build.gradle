@@ -1,10 +1,24 @@
 buildscript {
 	repositories {
 		mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
 	}
 	dependencies {
-		classpath 'io.github.fvarrui:javapackager:1.6.2'
+		
+        classpath 'io.github.fvarrui:javapackager:1.6.2'
+        
+        /* https://gitlab.com/svg2ico/svg2ico-gradle-plugin */        
+        classpath ('gradle.plugin.com.gitlab.svg2ico:svg2ico-gradle-plugin:0.11') {
+            exclude module: 'commons-io'
+        }
+
 	}
+    // force to use commons-io:2.11.0 instead of svg2ico-gradle-plugin transitive commons-io (which not includes org.apache.commons.io.FileUtils.copyInputStreamToFile method)
+    configurations.classpath {
+        resolutionStrategy {
+            force 'commons-io:commons-io:2.11.0'
+        }
+    }
 }
 
 plugins {
@@ -12,13 +26,10 @@ plugins {
     id 'application'
     id 'java'
     id 'idea'
-    id 'edu.sc.seis.launch4j' version '2.5.1'
+    //id 'edu.sc.seis.launch4j' version '2.5.1' // included by javapackager
 
     /* https://github.com/openjfx/javafx-gradle-plugin */
     id 'org.openjfx.javafxplugin' version '0.0.10'
-
-    /* https://gitlab.com/svg2ico/svg2ico-gradle-plugin */
-    id "com.gitlab.svg2ico" version "0.11"
 
     /* Generate Java code from XSD */
     id 'org.unbroken-dome.xjc' version '2.0.0'
@@ -26,13 +37,14 @@ plugins {
     id 'checkstyle'
 }
 
-apply plugin: 'edu.sc.seis.launch4j'
+//apply plugin: 'edu.sc.seis.launch4j' // redundant! as "id 'edu.sc.seis.launch4j' version '2.5.1'" already applies the plugin
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
+apply plugin: 'com.gitlab.svg2ico'
 
 version '2.3.0'
 
 sourceCompatibility = 8
-targetCompatibility = 16
+targetCompatibility = 15
 
 javafx {
     version = '17.0.1'
@@ -118,9 +130,9 @@ tasks.register('makePngIcon', Svg2PngTask) {
 
 tasks.register('makeIcon', Svg2IcoTask) {
     input {
-      source = new File('src/main/svg/listFix() icon.svg')
+        source = file('src/main/svg/listFix() icon.svg')
     }
-	  destination = new File('website/favicon.ico')
+    destination = file('website/favicon.ico')
 }
 
 tasks.withType(Checkstyle) {
@@ -128,6 +140,9 @@ tasks.withType(Checkstyle) {
 }
 
 // https://github.com/TheBoegl/gradle-launch4j
+/*
+// Task commented due to: Could not set unknown property 'jarTask' for extension 'launch4j' of type edu.sc.seis.launch4j.Launch4jPluginExtension.
+// javapackager does all this stuff!!
 launch4j {
     headerType='gui'
     icon = "${projectDir}/website/favicon.ico"
@@ -139,8 +154,9 @@ launch4j {
     copyConfigurable = [] // Don't copy dependencies
     jarTask = project.tasks.fatJar // Use fat jar
 }
+*/
 
-task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: fatJar) {
+task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: [ makeIcon, fatJar ]) {
 	// mandatory
 	mainClass = project.mainClassName
 	runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
@@ -150,8 +166,16 @@ task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, depen
 	administratorRequired = false
 	platform = 'windows'
 	licenseFile = file('LICENSE.txt')
-  runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
 	copyDependencies = false
+	customizedJre = false
+    winConfig {
+        headerType = 'gui'
+        icoFile = file("${projectDir}/website/favicon.ico")
+    }
+    description = 'Repairs Missing Entries in Playlist Files'
+    organizationName = 'Borewit'
+    organizationUrl = 'https://github.com/Borewit'
+    url = 'https://github.com/Borewit/listFix'
 }
 
 applicationDefaultJvmArgs = ['--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED',
