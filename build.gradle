@@ -26,7 +26,6 @@ plugins {
     id 'application'
     id 'java'
     id 'idea'
-    //id 'edu.sc.seis.launch4j' version '2.5.1' // included by javapackager
 
     /* https://github.com/openjfx/javafx-gradle-plugin */
     id 'org.openjfx.javafxplugin' version '0.0.10'
@@ -37,7 +36,6 @@ plugins {
     id 'checkstyle'
 }
 
-//apply plugin: 'edu.sc.seis.launch4j' // redundant! as "id 'edu.sc.seis.launch4j' version '2.5.1'" already applies the plugin
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
 apply plugin: 'com.gitlab.svg2ico'
 
@@ -145,23 +143,6 @@ tasks.register('makeIcon', Svg2IcoTask) {
 tasks.withType(Checkstyle) {
     exclude 'listfix/model/playlists/winamp/generated/**.java'
 }
-
-// https://github.com/TheBoegl/gradle-launch4j
-/*
-// Task commented due to: Could not set unknown property 'jarTask' for extension 'launch4j' of type edu.sc.seis.launch4j.Launch4jPluginExtension.
-// javapackager does all this stuff!!
-launch4j {
-    headerType='gui'
-    icon = "${projectDir}/website/favicon.ico"
-    mainClassName = project.mainClassName
-    companyName = 'Borewit'
-    downloadUrl = 'https://github.com/Borewit/listFix/releases'
-    fileDescription = 'Repairs Missing Entries in Playlist Files'
-    supportUrl = 'https://github.com/Borewit/listFix/issues'
-    copyConfigurable = [] // Don't copy dependencies
-    jarTask = project.tasks.fatJar // Use fat jar
-}
-*/
 
 task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: [ makeIcon, fatJar ]) {
 	// mandatory
