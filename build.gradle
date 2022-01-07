@@ -16,7 +16,7 @@ plugins {
 
 apply plugin: "edu.sc.seis.launch4j"
 
-version '2.3.0'
+version '2.4.0'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -95,6 +95,13 @@ tasks.register('makePngIcon', Svg2PngTask) {
     width = 64
 	  height = 64
 		destination = new File('src/main/resources/images/icon.png')
+}
+
+tasks.register('makeSplashScreen', Svg2PngTask) {
+    source = new File('src/main/svg/listFix() logo.svg')
+    width = 400
+    height = 160
+	  destination = new File('src/main/resources/images/listfixSplashScreen.png')
 }
 
 tasks.register('makeIcon', Svg2IcoTask) {
