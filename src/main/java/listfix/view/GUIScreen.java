@@ -147,13 +147,15 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private final List<Playlist> _openPlaylists = new ArrayList<>();
   private final Image applicationIcon =  new javax.swing.ImageIcon(getClass().getResource("/images/icon.png")).getImage();
-  private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.jpg");
+  private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.png");
 
   private GUIDriver _guiDriver = null;
   private Playlist _currentPlaylist;
   private IPlaylistModifiedListener _playlistListener;
 
   private static final Logger _logger = Logger.getLogger(GUIScreen.class);
+
+  private final String applicationVersion = "2.4.0";
 
   /**
    * Creates new form GUIScreen
@@ -863,7 +865,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _playlistTreeRightClickMenu.add(_miRenameSelectedItem);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-    setTitle("listFix( ) - v2.3.0");
+    setTitle("listFix( ) - v" + applicationVersion);
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     setIconImage(this.applicationIcon);
     setMinimumSize(new java.awt.Dimension(600, 149));
@@ -2564,7 +2566,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void _aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt)
   {
-    JOptionPane.showMessageDialog(this, "listFix( ) v2.3.0\n\nBrought To You By: " +
+    JOptionPane.showMessageDialog(this, "listFix( ) v" + applicationVersion + "\n\nBrought To You By: " +
         "\n          Borewit" +
         "\n          Jeremy Caron (firewyre) " +
         "\n          Kennedy Akala (kennedyakala)" +
