@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import listfix.io.writers.IFilePathOptions;
 import listfix.model.playlists.itunes.ITunesMediaLibrary;
 import listfix.model.playlists.itunes.ITunesTrack;
 import listfix.model.playlists.Playlist;
@@ -65,7 +66,26 @@ public class PlaylistOpener
         Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
       }
       ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-      Playlist myList = convertToListFixPlaylist(list, toOpen);
+      Playlist myList = convertToListFixPlaylist(list, toOpen, new IFilePathOptions()
+      {
+        @Override
+        public boolean getAlwaysUseUNCPaths()
+        {
+          return false;
+        }
+
+        @Override
+        public boolean getSavePlaylistsWithRelativePaths()
+        {
+          return false;
+        }
+
+        @Override
+        public String getIgnoredSmallWords()
+        {
+          return "";
+        }
+      });
       myList.getEntries();
     }
     catch (IOException ex)
@@ -74,7 +94,7 @@ public class PlaylistOpener
     }
   }
 
-  private static Playlist convertToListFixPlaylist(ITunesMediaLibrary list, File listFile)
+  private static Playlist convertToListFixPlaylist(ITunesMediaLibrary list, File listFile, IFilePathOptions filePathOptions)
   {
     List<PlaylistEntry> newList = new ArrayList<>();
     Map<String, ITunesTrack> tracks = list.getTracks();
@@ -93,7 +113,7 @@ public class PlaylistOpener
     }
     try
     {
-      return new ITunesPlaylist(listFile, newList, list);
+      return new ITunesPlaylist(listFile, newList, list, filePathOptions);
     }
     catch (Exception ex)
     {

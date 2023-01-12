@@ -61,6 +61,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -90,6 +91,8 @@ import javax.swing.tree.TreePath;
 
 import javax.xml.bind.JAXBException;
 
+import listfix.config.ApplicationOptionsConfiguration;
+import listfix.config.MediaLibraryConfiguration;
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
 
@@ -106,11 +109,8 @@ import listfix.io.UNCFile;
 import listfix.io.WinampHelper;
 import listfix.io.filters.ExtensionFilter;
 import listfix.io.filters.PlaylistFileFilter;
-import listfix.io.readers.OptionsReader;
-import listfix.io.writers.FileWriter;
-import listfix.io.writers.OptionsWriter;
 
-import listfix.model.AppOptions;
+import listfix.json.JsonAppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.PlaylistHistory;
@@ -136,7 +136,6 @@ import listfix.view.support.WindowSaver;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author jcaron
  */
 public final class GUIScreen extends JFrame implements DropTargetListener
@@ -147,7 +146,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private final JFileChooser _jSaveFileChooser = new JFileChooser();
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private final List<Playlist> _openPlaylists = new ArrayList<>();
-  private final Image applicationIcon =  new javax.swing.ImageIcon(getClass().getResource("/images/icon.png")).getImage();
+  private final Image applicationIcon = new javax.swing.ImageIcon(getClass().getResource("/images/icon.png")).getImage();
   private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.png");
 
   private GUIDriver _guiDriver = null;
@@ -165,7 +164,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   {
     splashScreen.setIconImage(applicationIcon);
 
-        preInitComponents();
+    preInitComponents();
 
     // Netbeans-generated form init code
     initComponents();
@@ -184,19 +183,24 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     splashScreen.setStatusBar("Initializing UI...");
   }
 
+  private JsonAppOptions getApplicationConfig() {
+    return this._guiDriver.getApplicationConfiguration().getConfig();
+  }
+
   /**
    * All UI components have been instantiated at this point.
    */
   private void postInitComponents()
   {
     // Set the user-selected font and look & feel
-    setApplicationFont(_guiDriver.getAppOptions().getAppFont());
-    this.setLookAndFeel(_guiDriver.getAppOptions().getLookAndFeel());
+    final JsonAppOptions appConfig = this.getApplicationConfig();
+    setApplicationFont(appConfig.getAppFont());
+    this.setLookAndFeel(appConfig.getLookAndFeel());
 
     configureFileAndFolderChoosers();
 
     // Warn the user if no media directories have been defined, and set the
-    if (_guiDriver.getShowMediaDirWindow())
+    if (this._guiDriver.getShowMediaDirWindow())
     {
       JOptionPane.showMessageDialog(
         this,
@@ -550,7 +554,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param dtde
    */
   @Override
@@ -560,7 +563,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param dte
    */
   @Override
@@ -570,7 +572,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param dtde
    */
   @Override
@@ -580,7 +581,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param dtde
    */
   @Override
@@ -590,7 +590,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param dtde
    */
   @Override
@@ -619,7 +618,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
               if (list1 instanceof File)
               {
                 tempFile = (File) list1;
-                if (Playlist.isPlaylist(tempFile))
+                if (Playlist.isPlaylist(tempFile, this.getOptions()))
                 {
                   openPlaylist(tempFile);
                 }
@@ -657,7 +656,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             for (String path : paths)
             {
               tempFile = new File(path);
-              if (Playlist.isPlaylist(tempFile))
+              if (Playlist.isPlaylist(tempFile, this.getOptions()))
               {
                 openPlaylist(tempFile);
               }
@@ -687,27 +686,28 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @return
    */
-  public AppOptions getOptions()
+  public JsonAppOptions getOptions()
   {
-    return _guiDriver.getAppOptions();
+    return this._guiDriver.getApplicationConfiguration().getConfig();
   }
 
   private void fireOptionsPopup()
   {
-    String oldPlaylistsDirectory = _guiDriver.getAppOptions().getPlaylistsDirectory();
-    AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, _guiDriver.getAppOptions());
-    AppOptions options = optDialog.showDialog();
+    final ApplicationOptionsConfiguration applicationConfiguration = this._guiDriver.getApplicationConfiguration();
+    final String oldPlaylistsDirectory = applicationConfiguration.getConfig().getPlaylistsDirectory();
+    AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, applicationConfiguration.getConfig());
+    JsonAppOptions options = optDialog.showDialog();
     if (optDialog.getResultCode() == AppOptionsDialog.OK)
     {
       this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       _guiDriver.setAppOptions(options);
       _guiDriver.getHistory().setCapacity(options.getMaxPlaylistHistoryEntries());
+      final MediaLibraryConfiguration mediaLibraryConfiguration = _guiDriver.getMediaLibrarConfiguration();
       if (options.getAlwaysUseUNCPaths())
       {
-        _guiDriver.switchMediaLibraryToUNCPaths();
+        mediaLibraryConfiguration.switchMediaLibraryToUNCPaths();
         _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
       }
       else
@@ -715,10 +715,17 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         _guiDriver.switchMediaLibraryToMappedDrives();
         _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
       }
-      OptionsWriter.write(options);
+      try
+      {
+        applicationConfiguration.write();
+      }
+      catch (IOException e)
+      {
+        _logger.error(ExStack.toString(e));
+      }
       if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
       {
-        _playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory()))));
+        _playlistDirectoryTree.setModel(new DefaultTreeModel(FileTreeNodeGenerator.addNodes(null, new File(applicationConfiguration.getConfig().getPlaylistsDirectory()))));
       }
       updateRecentMenu();
       setApplicationFont(options.getAppFont());
@@ -727,7 +734,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
   }
 
-  /** This method is called from within the constructor to initialize the form.
+  /**
+   * This method is called from within the constructor to initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is
    * always regenerated by the Form Editor.
    */
@@ -752,10 +760,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _removeMediaDirButton = new javax.swing.JButton();
     _refreshMediaDirsButton = new javax.swing.JButton();
     _mediaLibraryScrollPane = new javax.swing.JScrollPane();
-    _lstMediaLibraryDirs = new javax.swing.JList(new String[] {"Please Add A Media Directory..."});
+    _lstMediaLibraryDirs = new javax.swing.JList(new String[]{"Please Add A Media Directory..."});
     _playlistDirectoryPanel = new javax.swing.JPanel();
     _treeScrollPane = new javax.swing.JScrollPane();
-    _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
+    _playlistDirectoryTree = new javax.swing.JTree(FileTreeNodeGenerator.addNodes(null, new File(getApplicationConfig().getPlaylistsDirectory())));
     _playlistsDirectoryButtonPanel = new javax.swing.JPanel();
     _btnSetPlaylistsDir = new javax.swing.JButton();
     _btnRefresh = new javax.swing.JButton();
@@ -1449,9 +1457,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     br.setDescription("Closest Matches Search");
     for (File file : files)
     {
-      br.add(new BatchRepairItem(file));
+      br.add(new BatchRepairItem(file, this.getOptions()));
     }
-    MultiListBatchClosestMatchResultsDialog dlg = new MultiListBatchClosestMatchResultsDialog(this, true, br);
+    MultiListBatchClosestMatchResultsDialog dlg = new MultiListBatchClosestMatchResultsDialog(this, true, br, this.getOptions());
     if (!dlg.getUserCancelled())
     {
       if (br.isEmpty())
@@ -1491,9 +1499,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     br.setDescription("Exact Matches Search");
     for (File file : files)
     {
-      br.add(new BatchRepairItem(file));
+      br.add(new BatchRepairItem(file, this.getOptions()));
     }
-    BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
+    BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br, this.getOptions());
     if (!dlg.getUserCancelled())
     {
       if (br.isEmpty())
@@ -1615,7 +1623,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void _clearHistoryMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__clearHistoryMenuItemActionPerformed
   {//GEN-HEADEREND:event__clearHistoryMenuItemActionPerformed
-    _guiDriver.clearM3UHistory();
+    try
+    {
+      _guiDriver.clearM3UHistory();
+    }
+    catch (IOException e)
+    {
+      _logger.error(ExStack.toString(e));
+    }
     updateRecentMenu();
   }//GEN-LAST:event__clearHistoryMenuItemActionPerformed
 
@@ -1688,8 +1703,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       return;
     }
 
-    final String[] libraryFiles;
-    if (_guiDriver.getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
+    final Collection<String> libraryFiles;
+    if (getApplicationConfig().getAutoLocateEntriesOnPlaylistLoad())
     {
       libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
     }
@@ -1701,7 +1716,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     DocumentComponent tempComp = _documentPane.getDocument(path);
     if (tempComp == null)
     {
-      PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file);
+      PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file, this.getOptions());
 
       ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
       {
@@ -1709,7 +1724,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         protected Playlist doInBackground() throws Exception
         {
           this.setMessage("Please wait while your playlist is opened and analyzed.");
-          Playlist list = PlaylistFactory.getPlaylist(file, this);
+          Playlist list = PlaylistFactory.getPlaylist(file, this, GUIScreen.this.getOptions());
           if (libraryFiles != null)
           {
             list.repair(libraryFiles, this);
@@ -1734,7 +1749,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
             _logger.error(ExStack.toString(ex));
 
             JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
-                "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+              "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
             return;
           }
 
@@ -1743,7 +1758,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           // update playlist history
           PlaylistHistory history = _guiDriver.getHistory();
           history.add(path);
-          (new FileWriter()).writeMruPlaylists(history);
+          try
+          {
+            history.write();
+          }
+          catch (IOException e)
+          {
+            _logger.error(ExStack.toString(e));
+          }
 
           updateRecentMenu();
         }
@@ -1909,7 +1931,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param list
    */
   public void updateCurrentTab(Playlist list)
@@ -1924,12 +1945,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     try
     {
       history.add(list.getFile().getCanonicalPath());
+      history.write();
     }
     catch (IOException ex)
     {
       _logger.warn(ExStack.toString(ex));
     }
-    (new FileWriter()).writeMruPlaylists(history);
 
     updateRecentMenu();
   }
@@ -1977,7 +1998,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private Playlist getPlaylistFromDocumentComponent(DocumentComponent ctrl)
   {
-    return ((PlaylistEditCtrl)ctrl.getComponent()).getPlaylist();
+    return ((PlaylistEditCtrl) ctrl.getComponent()).getPlaylist();
   }
 
   private void handlePlaylistSave(final Playlist list) throws HeadlessException
@@ -1991,12 +2012,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       try
       {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        ProgressWorker worker = new ProgressWorker<Void, Void>()
+        ProgressWorker<Void, String> worker = new ProgressWorker<>()
         {
           @Override
           protected Void doInBackground() throws Exception
           {
-            boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+            boolean saveRelative = GUIDriver.getInstance().getOptions().getSavePlaylistsWithRelativePaths();
             list.save(saveRelative, this);
             return null;
           }
@@ -2020,7 +2041,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private FileFilter getFileFilterForPlaylist(Playlist list)
   {
-    switch(list.getType())
+    switch (list.getType())
     {
       case ITUNES:
         return new ExtensionFilter("xml", "iTunes Playlist (*.xml)");
@@ -2078,7 +2099,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
         // make sure file has correct extension
         String normalizedName = playlist.getName().trim().toLowerCase();
-        if (!Playlist.isPlaylist(playlist) || (!normalizedName.endsWith(extension)))
+        if (!Playlist.isPlaylist(playlist, this.getOptions()) || (!normalizedName.endsWith(extension)))
         {
           if (extension.equals("m3u") && list.isUtfFormat())
           {
@@ -2092,13 +2113,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
         final File finalPlaylistFile = playlist;
         final Playlist finalList = list;
-        ProgressWorker worker = new ProgressWorker<Void, Void>()
+        ProgressWorker<Void, String> worker = new ProgressWorker<>()
         {
           @Override
           protected Void doInBackground() throws Exception
           {
-            boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-            finalList.saveAs(finalPlaylistFile, saveRelative, this);
+            finalList.saveAs(finalPlaylistFile, this);
             return null;
           }
         };
@@ -2112,8 +2132,16 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         updatePlaylistDirectoryPanel();
 
         // update playlist history
-        _guiDriver.getHistory().add(list.getFile().getPath());
-        (new FileWriter()).writeMruPlaylists(_guiDriver.getHistory());
+        PlaylistHistory history = _guiDriver.getHistory();
+        history.add(list.getFile().getPath());
+        try
+        {
+          history.write();
+        }
+        catch (IOException e)
+        {
+
+        }
         updateRecentMenu();
 
         String path = list.getFile().getPath();
@@ -2184,7 +2212,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void currentTabChanged()
   {
-    Playlist list = _documentPane.getActiveDocument() != null ? ((PlaylistEditCtrl)_documentPane.getActiveDocument().getComponent()).getPlaylist() : null;
+    Playlist list = _documentPane.getActiveDocument() != null ? ((PlaylistEditCtrl) _documentPane.getActiveDocument().getComponent()).getPlaylist() : null;
     if (list == _currentPlaylist)
     {
       return;
@@ -2252,7 +2280,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @return
    */
   public boolean tryCloseAllTabs()
@@ -2274,7 +2301,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     DocumentComponent comp = _documentPane.getActiveDocument();
     do
     {
-      PlaylistEditCtrl ctrl = (PlaylistEditCtrl)comp.getComponent();
+      PlaylistEditCtrl ctrl = (PlaylistEditCtrl) comp.getComponent();
       if (ctrl != null)
       {
         _documentPane.setActiveDocument(comp.getName());
@@ -2327,7 +2354,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param ctrl
    * @return
    */
@@ -2341,20 +2367,20 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     if (list.isModified())
     {
       Object[] options =
-      {
-        "Save", "Save As", "Don't Save", "Cancel"
-      };
+        {
+          "Save", "Save As", "Don't Save", "Cancel"
+        };
       int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("The playlist \"" + list.getFilename() + "\" has been modified. Do you want to save the changes?"), "Confirm Close",
         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 
       if (rc == 0)
       {
-        ProgressWorker<Boolean, Void> worker = new ProgressWorker<Boolean, Void>()
+        ProgressWorker<Boolean, String> worker = new ProgressWorker<>()
         {
           @Override
           protected Boolean doInBackground() throws Exception
           {
-            boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
+            boolean saveRelative = GUIDriver.getInstance().getOptions().getSavePlaylistsWithRelativePaths();
             list.save(saveRelative, this);
             return true;
           }
@@ -2415,9 +2441,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       if (list.isModified())
       {
         Object[] options =
-        {
-          "Discard Changes and Exit", "Cancel"
-        };
+          {
+            "Discard Changes and Exit", "Cancel"
+          };
         int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("You have unsaved changes. Do you really want to discard these changes and exit?"), "Confirm Close",
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         if (rc == JOptionPane.NO_OPTION)
@@ -2443,7 +2469,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       try
       {
         UNCFile mediaDir = new UNCFile(_jMediaDirChooser.getSelectedFile());
-        if (_guiDriver.getAppOptions().getAlwaysUseUNCPaths())
+        if (getApplicationConfig().getAlwaysUseUNCPaths())
         {
           if (mediaDir.onNetworkDrive())
           {
@@ -2451,34 +2477,32 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           }
         }
         final String dir = mediaDir.getPath();
-        if (_guiDriver.getMediaDirs() != null)
+
+        // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
+        if (ArrayFunctions.containsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
         {
-          // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-          if (ArrayFunctions.containsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
+          JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
+            "Reminder", JOptionPane.INFORMATION_MESSAGE);
+          return;
+        }
+        else
+        {
+          // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
+          String[] dirsToCheck = _guiDriver.getMediaDirs();
+          for (int i = 0; i < dirsToCheck.length; i++)
           {
-            JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
-              "Reminder", JOptionPane.INFORMATION_MESSAGE);
-            return;
-          }
-          else
-          {
-            // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
-            String[] dirsToCheck = _guiDriver.getMediaDirs();
-            for (int i = 0; i < dirsToCheck.length; i++)
+            int matchCount = 0;
+            if (dirsToCheck[i].startsWith(dir))
             {
-              int matchCount = 0;
-              if (dirsToCheck[i].startsWith(dir))
+              // Only showing the message the first time we find this condition...
+              if (matchCount == 0)
               {
-                // Only showing the message the first time we find this condition...
-                if (matchCount == 0)
-                {
-                  JOptionPane.showMessageDialog(this,
-                    new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
-                    "Reminder", JOptionPane.INFORMATION_MESSAGE);
-                }
-                removeMediaDirByIndex(evt, i);
-                matchCount++;
+                JOptionPane.showMessageDialog(this,
+                  new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
+                  "Reminder", JOptionPane.INFORMATION_MESSAGE);
               }
+              removeMediaDirByIndex(evt, i);
+              matchCount++;
             }
           }
         }
@@ -2532,7 +2556,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       {
         if (!selection.equals("Please Add A Media Directory..."))
         {
-          _guiDriver.removeMediaDir(selection);
+          _guiDriver.getMediaLibrarConfiguration().removeMediaDir(selection);
           _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
         }
       }
@@ -2552,8 +2576,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try
     {
-
-      _lstMediaLibraryDirs.setListData(_guiDriver.removeMediaDir((String) _lstMediaLibraryDirs.getModel().getElementAt(index)));
+      _guiDriver.getMediaLibrarConfiguration().removeMediaDir((String) _lstMediaLibraryDirs.getModel().getElementAt(index));
+      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     catch (MediaDirNotFoundException e)
@@ -2573,7 +2597,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         "\n          Kennedy Akala (kennedyakala)" +
         "\n          John Peterson (johnpeterson)" +
         "\n\nProject home: https://github.com/Borewit/listFix",
-        "About", JOptionPane.INFORMATION_MESSAGE);
+      "About", JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void _exitMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__exitMenuItemActionPerformed
@@ -2581,7 +2605,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     confirmCloseApp();
   }//GEN-LAST:event__exitMenuItemActionPerformed
 
-  /** Exit the Application */
+  /**
+   * Exit the Application
+   */
   private void exitForm(java.awt.event.WindowEvent evt)//GEN-FIRST:event_exitForm
   {//GEN-HEADEREND:event_exitForm
     confirmCloseApp();
@@ -2636,19 +2662,21 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     BrowserLauncher.launch("https://github.com/Borewit/listFix");
   }//GEN-LAST:event__helpMenuItemActionPerformed
 
-  private void _updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__updateCheckMenuItemActionPerformed
+  private void _updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt)
+  {//GEN-FIRST:event__updateCheckMenuItemActionPerformed
     BrowserLauncher.launch("https://github.com/Borewit/listFix");
   }//GEN-LAST:event__updateCheckMenuItemActionPerformed
 
-  private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
-    final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibraryFileList());
+  private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt)
+  {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
+    final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibraryFileList(), this.getOptions());
     if (br == null || br.isEmpty())
     {
       JOptionPane.showMessageDialog(this, new JTransparentTextArea("Could not find any WinAmp Media Library playlists"));
       return;
     }
 
-    BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br);
+    BatchExactMatchesResultsDialog dlg = new BatchExactMatchesResultsDialog(this, true, br, this.getOptions());
     if (!dlg.getUserCancelled())
     {
       if (br.isEmpty())
@@ -2696,10 +2724,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       br.setDescription("Exact Matches Search");
       for (File file : files)
       {
-        br.add(new BatchRepairItem(file));
+        br.add(new BatchRepairItem(file, this.getOptions()));
       }
 
-      BatchExactMatchesResultsDialog repairDlg = new BatchExactMatchesResultsDialog(this, true, br);
+      BatchExactMatchesResultsDialog repairDlg = new BatchExactMatchesResultsDialog(this, true, br, this.getOptions());
       if (!repairDlg.getUserCancelled())
       {
         if (br.isEmpty())
@@ -2751,7 +2779,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   {//GEN-HEADEREND:event__newIconButtonActionPerformed
     try
     {
-      _currentPlaylist = new Playlist();
+      _currentPlaylist = new Playlist(this.getOptions());
       String path = _currentPlaylist.getFile().getCanonicalPath();
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
@@ -2785,9 +2813,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       _logger.error(ExStack.toString(ex));
       JOptionPane.showMessageDialog(this,
-                      new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.", ex.getCause())),
-                      "New Playlist Error",
-                      JOptionPane.ERROR_MESSAGE);
+        new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.", ex.getCause())),
+        "New Playlist Error",
+        JOptionPane.ERROR_MESSAGE);
     }
 
   }//GEN-LAST:event__newIconButtonActionPerformed
@@ -2918,32 +2946,31 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
   }//GEN-LAST:event__playlistDirectoryTreeKeyPressed
 
-    private void _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
-    {//GEN-HEADEREND:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
-        runExactMatchOnAllTabs();
-    }//GEN-LAST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+  private void _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+  {//GEN-HEADEREND:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+    runExactMatchOnAllTabs();
+  }//GEN-LAST:event__miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
 
-    private void _saveAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveAllMenuItemActionPerformed
-    {//GEN-HEADEREND:event__saveAllMenuItemActionPerformed
-        for (int i = 0; i < _documentPane.getDocumentCount(); i++)
+  private void _saveAllMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__saveAllMenuItemActionPerformed
+  {//GEN-HEADEREND:event__saveAllMenuItemActionPerformed
+    for (int i = 0; i < _documentPane.getDocumentCount(); i++)
     {
       Playlist list = getPlaylistFromDocumentComponent(_documentPane.getDocumentAt(i));
       handlePlaylistSave(list);
     }
-    }//GEN-LAST:event__saveAllMenuItemActionPerformed
+  }//GEN-LAST:event__saveAllMenuItemActionPerformed
 
-    private void _miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
-    {//GEN-HEADEREND:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
-        runClosestMatchOnAllTabs();
-    }//GEN-LAST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+  private void _miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+  {//GEN-HEADEREND:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
+    runClosestMatchOnAllTabs();
+  }//GEN-LAST:event__miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed
 
-    private void _miReloadAllActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miReloadAllActionPerformed
-    {//GEN-HEADEREND:event__miReloadAllActionPerformed
-        reloadAllTabs();
-    }//GEN-LAST:event__miReloadAllActionPerformed
+  private void _miReloadAllActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miReloadAllActionPerformed
+  {//GEN-HEADEREND:event__miReloadAllActionPerformed
+    reloadAllTabs();
+  }//GEN-LAST:event__miReloadAllActionPerformed
 
   /**
-   *
    * @param font
    */
   public void setApplicationFont(Font font)
@@ -2964,7 +2991,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   }
 
   /**
-   *
    * @param font
    */
   public static void InitApplicationFont(Font font)
@@ -3004,7 +3030,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       Enumeration treeStateEnum = saveExpansionState(_playlistDirectoryTree);
-      ((DefaultTreeModel) _playlistDirectoryTree.getModel()).setRoot(FileTreeNodeGenerator.addNodes(null, new File(_guiDriver.getAppOptions().getPlaylistsDirectory())));
+      ((DefaultTreeModel) _playlistDirectoryTree.getModel()).setRoot(FileTreeNodeGenerator.addNodes(null, new File(this.getOptions().getPlaylistsDirectory())));
       addPlaylistPanelModelListener();
       loadExpansionState(_playlistDirectoryTree, treeStateEnum);
       this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -3080,7 +3106,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       _documentPane.setTabbedPaneCustomizer(createTabCustomizer());
       updateAllComponentTreeUIs();
     }
-    catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+    catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+           UnsupportedLookAndFeelException ex)
     {
       _logger.error(ExStack.toString(ex));
     }
@@ -3089,10 +3116,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args)
+  public static void main(String[] args) throws IOException
   {
     com.jidesoft.utils.Lm.verifyLicense("Jeremy Caron", "listFix()", "AMu.5dFy1Fuos0hs:l2.GQ9AzUy2GgB2");
-    AppOptions tempOptions = OptionsReader.read();
+    JsonAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
     InitApplicationFont(tempOptions.getAppFont());
     GUIScreen mainWindow = new GUIScreen();
 

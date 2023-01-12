@@ -62,7 +62,7 @@ gitVersioning.apply {
     }
 }
 
-sourceCompatibility = 8
+sourceCompatibility = 15
 targetCompatibility = 15
 
 javafx {
@@ -90,6 +90,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:23.0.0'
+
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
 
@@ -122,6 +124,9 @@ dependencies {
     // Used to read the version number from the manifest
     // https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests/1.2.1
     implementation 'com.jcabi:jcabi-manifests:1.2.1'
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
 }
 
 application {

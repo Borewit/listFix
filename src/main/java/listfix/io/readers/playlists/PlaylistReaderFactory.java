@@ -23,6 +23,7 @@ package listfix.io.readers.playlists;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import listfix.io.writers.IFilePathOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.enums.PlaylistType;
 
@@ -38,9 +39,9 @@ public class PlaylistReaderFactory
    * @return
    * @throws FileNotFoundException
    */
-  public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
+  public static IPlaylistReader getPlaylistReader(File inputFile, IFilePathOptions filePathOptions) throws FileNotFoundException
   {
-    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
+    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile, filePathOptions);
     if (type == PlaylistType.M3U)
     {
       return new M3UReader(inputFile);

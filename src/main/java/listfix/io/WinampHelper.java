@@ -1,19 +1,19 @@
 
 /**
  * listFix() - Fix Broken Playlists!
- *
+ * <p>
  * This file is part of listFix().
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
@@ -21,6 +21,7 @@ package listfix.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -28,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import listfix.io.writers.FileCopier;
+import listfix.io.writers.IFilePathOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.winamp.generated.Playlist;
@@ -41,6 +43,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Provides convenience methods for interacting w/ the Winamp Media Library and determining if Winamp is installed.
+ *
  * @author jcaron
  */
 public class WinampHelper
@@ -71,11 +74,12 @@ public class WinampHelper
 
   /**
    * Generates an exact match batch repair for the cryptically named playlists in Winamp.
+   *
    * @param mediaFiles
    * @return A BatchRepair instance
    * @see BatchRepair
    */
-  public static BatchRepair getWinampBatchRepair(String[] mediaFiles)
+  public static BatchRepair getWinampBatchRepair(Collection<String> mediaFiles, IFilePathOptions filePathOptions)
   {
     try
     {
@@ -84,7 +88,7 @@ public class WinampHelper
       List<listfix.model.playlists.winamp.generated.Playlist> winLists = getWinampPlaylists();
       for (listfix.model.playlists.winamp.generated.Playlist list : winLists)
       {
-        br.add(new BatchRepairItem(new File(WINAMP_PATH + list.getFilename())));
+        br.add(new BatchRepairItem(new File(WINAMP_PATH + list.getFilename()), filePathOptions));
       }
       return br;
     }
@@ -96,7 +100,6 @@ public class WinampHelper
   }
 
   /**
-   *
    * @param destDir
    * @param observer
    * @throws JAXBException
@@ -121,13 +124,12 @@ public class WinampHelper
     for (Playlist list : winLists)
     {
       FileCopier.copy(new File(WINAMP_PATH + list.getFilename()),
-        new File(destDir.getPath() + System.getProperty("file.separator") + FileUtils.replaceInvalidWindowsFileSystemCharsWithChar(list.getTitle(), '_') + ".m3u8"));
+          new File(destDir.getPath() + System.getProperty("file.separator") + FileUtils.replaceInvalidWindowsFileSystemCharsWithChar(list.getTitle(), '_') + ".m3u8"));
       progress.stepCompleted();
     }
   }
 
   /**
-   *
    * @return
    */
   public static boolean isWinampInstalled()

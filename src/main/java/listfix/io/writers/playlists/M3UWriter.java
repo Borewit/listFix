@@ -33,6 +33,7 @@ import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
+import listfix.io.writers.IFilePathOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
@@ -45,6 +46,12 @@ import listfix.view.support.ProgressAdapter;
  */
 public class M3UWriter implements IPlaylistWriter
 {
+  private IFilePathOptions options;
+
+  public M3UWriter(IFilePathOptions options) {
+    this.options = options;
+  }
+
   /**
    * Saves the list to disk.  If the list's filename ends in m3u8, will save in M3U8 format.  Otherwise saves in M3U format.
    * @param list The list to persist to disk.
@@ -79,7 +86,7 @@ public class M3UWriter implements IPlaylistWriter
             File absolute = entry.getAbsoluteFile().getCanonicalFile();
 
             // Switch to UNC representation if selected in the options
-            if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+            if (GUIDriver.getInstance().getOptions().getAlwaysUseUNCPaths())
             {
               UNCFile temp = new UNCFile(absolute);
               absolute = new File(temp.getUNCPath());
@@ -104,7 +111,7 @@ public class M3UWriter implements IPlaylistWriter
             if (temp.isAbsolute())
             {
               // Switch to UNC representation if selected in the options
-              if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+              if (GUIDriver.getInstance().getOptions().getAlwaysUseUNCPaths())
               {
                 UNCFile uncd = new UNCFile(temp);
                 temp = new File(uncd.getUNCPath());

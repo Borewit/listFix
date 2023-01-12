@@ -18,20 +18,24 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.model;
+package listfix.json;
 
 import java.awt.Font;
 import java.io.File;
 import javax.swing.UIManager;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import listfix.io.Constants;
+import listfix.io.readers.JsonFontDeserializer;
+import listfix.io.writers.IFilePathOptions;
+import listfix.io.writers.JsonFontSerializer;
 import listfix.util.OperatingSystem;
 
 /**
- *
  * @author jcaron
  */
-public class AppOptions
+public class JsonAppOptions implements IFilePathOptions
 {
   private static final String EMPTY_STRING = "None Selected";
 
@@ -43,26 +47,14 @@ public class AppOptions
   private int maxPlaylistHistoryEntries = 5;
   private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
   private String playlistsDirectory = EMPTY_STRING;
+  @JsonSerialize(using = JsonFontSerializer.class)
+  @JsonDeserialize(using = JsonFontDeserializer.class)
   private Font appFont = new Font("SansSerif", 0, 11);
   private int maxClosestResults = 20;
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
 
-  // Define option constants
-  public static final String SAVE_RELATIVE_REFERENCES = "SAVE_RELATIVE_REFERENCES";
-  public static final String AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD = "AUTO_FIND_ENTRIES_ON_PLAYLIST_LOAD";
-  public static final String MAX_PLAYLIST_HISTORY_SIZE = "MAX_PLAYLIST_HISTORY_SIZE";
-  public static final String AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD = "AUTO_REFRESH_MEDIA_LIBRARY_ON_LOAD";
-  public static final String LOOK_AND_FEEL = "LOOK_AND_FEEL";
-  public static final String ALWAYS_USE_UNC_PATHS = "ALWAYS_USE_UNC_PATHS";
-  public static final String PLAYLISTS_DIRECTORY = "PLAYLISTS_DIRECTORY";
-  public static final String APP_FONT = "APP_FONT";
-  public static final String MAX_CLOSEST_RESULTS = "MAX_CLOSEST_RESULTS";
-  public static final String IGNORED_SMALL_WORDS = "IGNORED_SMALL_WORDS";
-  public static final String CASE_INSENSITIVE_EXACT_MATCHING =  "CASE_INSENSITIVE_EXACT_MATCHING";
-
   /**
-   *
    * @return
    */
   public boolean getAutoLocateEntriesOnPlaylistLoad()
@@ -71,7 +63,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param autoLocateEntriesOnPlaylistLoad
    */
   public void setAutoLocateEntriesOnPlaylistLoad(boolean autoLocateEntriesOnPlaylistLoad)
@@ -80,7 +71,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @return
    */
   public int getMaxPlaylistHistoryEntries()
@@ -89,7 +79,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param lookAndFeel
    */
   public void setLookAndFeel(String lookAndFeel)
@@ -98,7 +87,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @return
    */
   public String getLookAndFeel()
@@ -107,7 +95,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param maxPlaylistHistoryEntries
    */
   public void setMaxPlaylistHistoryEntries(int maxPlaylistHistoryEntries)
@@ -116,7 +103,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param autoRefreshMediaLibraryOnStartup
    */
   public void setAutoRefreshMediaLibraryOnStartup(boolean autoRefreshMediaLibraryOnStartup)
@@ -125,7 +111,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @return
    */
   public boolean getAutoRefreshMediaLibraryOnStartup()
@@ -134,7 +119,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @return
    */
   public boolean getSavePlaylistsWithRelativePaths()
@@ -143,7 +127,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param savePlaylistsWithRelativePaths
    */
   public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths)
@@ -152,7 +135,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @return
    */
   public boolean getAlwaysUseUNCPaths()
@@ -161,7 +143,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param alwaysUseUNCPaths
    */
   public void setAlwaysUseUNCPaths(boolean alwaysUseUNCPaths)
@@ -170,7 +151,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @return
    */
   public String getPlaylistsDirectory()
@@ -179,7 +159,6 @@ public class AppOptions
   }
 
   /**
-   *
    * @param playlistsDirectory
    */
   public void setPlaylistsDirectory(String playlistsDirectory)

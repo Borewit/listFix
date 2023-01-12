@@ -31,11 +31,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
-import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
+import listfix.io.writers.IFilePathOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
@@ -47,6 +47,12 @@ import listfix.view.support.ProgressAdapter;
  */
 public class WPLWriter implements IPlaylistWriter
 {
+  private IFilePathOptions options;
+
+  public WPLWriter(IFilePathOptions options) {
+    this.options = options;
+  }
+
   /**
    * Saves the list to disk.  Always writes in UTF-8.
    * @param list The list to persist to disk.
@@ -81,7 +87,7 @@ public class WPLWriter implements IPlaylistWriter
             File absolute = entry.getAbsoluteFile().getCanonicalFile();
 
             // Switch to UNC representation if selected in the options
-            if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+            if (this.options.getAlwaysUseUNCPaths())
             {
               UNCFile temp = new UNCFile(absolute);
               absolute = new File(temp.getUNCPath());
@@ -106,7 +112,7 @@ public class WPLWriter implements IPlaylistWriter
               if (temp.isAbsolute())
               {
                 // Switch to UNC representation if selected in the options
-                if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+                if (this.options.getAlwaysUseUNCPaths())
                 {
                   UNCFile uncd = new UNCFile(temp);
                   temp = new File(uncd.getUNCPath());

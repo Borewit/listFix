@@ -29,10 +29,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
-import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
+import listfix.io.writers.IFilePathOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
@@ -45,6 +45,13 @@ import listfix.view.support.ProgressAdapter;
  */
 public class PLSWriter implements IPlaylistWriter
 {
+
+  private IFilePathOptions options;
+
+  public PLSWriter(IFilePathOptions options) {
+    this.options = options;
+  }
+
   /**
    * Saves the list to disk.
    * @param list The list to persist to disk.
@@ -78,7 +85,7 @@ public class PLSWriter implements IPlaylistWriter
             File absolute = entry.getAbsoluteFile().getCanonicalFile();
 
             // Switch to UNC representation if selected in the options
-            if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+            if (this.options.getAlwaysUseUNCPaths())
             {
               UNCFile temp = new UNCFile(absolute);
               absolute = new File(temp.getUNCPath());
@@ -91,7 +98,7 @@ public class PLSWriter implements IPlaylistWriter
           {
             // replace existing entry with a new relative one
             String relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), listFile);
-            if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
+            if (!OperatingSystem.isWindows() && !relativePath.contains(Constants.FS))
             {
               relativePath = "." + Constants.FS + relativePath;
             }
@@ -102,7 +109,7 @@ public class PLSWriter implements IPlaylistWriter
             if (temp.isAbsolute())
             {
               // Switch to UNC representation if selected in the options
-              if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+              if (this.options.getAlwaysUseUNCPaths())
               {
                 UNCFile uncd = new UNCFile(temp);
                 temp = new File(uncd.getUNCPath());

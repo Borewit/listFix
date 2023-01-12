@@ -23,13 +23,8 @@ package listfix.model.playlists;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import listfix.controller.GUIDriver;
 
 import listfix.io.Constants;
@@ -38,6 +33,7 @@ import listfix.io.UNCFile;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.io.writers.FileCopier;
+import listfix.io.writers.IFilePathOptions;
 import listfix.io.writers.playlists.IPlaylistWriter;
 import listfix.io.writers.playlists.PlaylistWriterFactory;
 import listfix.model.BatchMatchItem;
@@ -48,10 +44,10 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
+import listfix.view.support.ProgressWorker;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author jcaron
  */
 public class Playlist
@@ -72,14 +68,17 @@ public class Playlist
   private boolean _isNew;
   private static final Logger _logger = Logger.getLogger(Playlist.class);
 
+  private final IFilePathOptions filePathOptions;
+
   /**
    * This constructor creates a temp-file backed playlist from a list of entries, only intended to be used for playback.
    *
    * @param sublist
    * @throws Exception
    */
-  public Playlist(List<PlaylistEntry> sublist) throws Exception
+  public Playlist(List<PlaylistEntry> sublist, IFilePathOptions filePathOptions) throws Exception
   {
+    this.filePathOptions = filePathOptions;
     _utfFormat = true;
     _file = File.createTempFile("yay", ".m3u8");
     _file.deleteOnExit();
@@ -92,6 +91,11 @@ public class Playlist
     quickSave();
   }
 
+  protected final IFilePathOptions getFilePathOptions()
+  {
+    return this.filePathOptions;
+  }
+
   /**
    * Initializes a playlist with an externally created set of entries.
    * Currently used when reading playlists with external code.
@@ -100,8 +104,9 @@ public class Playlist
    * @param type
    * @param entries
    */
-  public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries)
+  public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries, IFilePathOptions filePathOptions)
   {
+    this.filePathOptions = filePathOptions;
     _utfFormat = true;
     _file = listFile;
     _type = type;
@@ -117,8 +122,9 @@ public class Playlist
    * @param observer
    * @throws IOException
    */
-  public Playlist(File playlist, IProgressObserver observer) throws IOException
+  public Playlist(File playlist, IProgressObserver observer, IFilePathOptions filePathOptions) throws IOException
   {
+    this.filePathOptions = filePathOptions;
     init(playlist, observer);
   }
 
@@ -129,8 +135,9 @@ public class Playlist
    *
    * @throws IOException
    */
-  public Playlist() throws IOException
+  public Playlist(IFilePathOptions filePathOptions) throws IOException
   {
+    this.filePathOptions = filePathOptions;
     NEW_LIST_COUNT++;
     _file = new File(HOME_DIR + FS + "Untitled-" + NEW_LIST_COUNT + ".m3u8");
     _file.deleteOnExit();
@@ -141,10 +148,10 @@ public class Playlist
     refreshStatus();
   }
 
-  private void init(File playlist, IProgressObserver observer) throws IOException
+  private void init(File playlist, IProgressObserver<Void> observer) throws IOException
   {
     _file = playlist;
-    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist);
+    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist, filePathOptions);
     if (observer != null)
     {
       List<PlaylistEntry> tempEntries = playlistProcessor.readPlaylist(observer);
@@ -173,7 +180,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public List<PlaylistEntry> getEntries()
@@ -182,7 +188,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param entryIndexList
    * @param destinationDirectory
    * @param observer
@@ -226,7 +231,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param observer
    */
   protected void resetInternalStateAfterSave(IProgressObserver observer)
@@ -281,7 +285,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param rows
    * @return
    * @throws Exception
@@ -293,11 +296,10 @@ public class Playlist
     {
       tempList.add(_entries.get(i));
     }
-    return new Playlist(tempList);
+    return new Playlist(tempList, this.filePathOptions);
   }
 
   /**
-   *
    * @param rows
    * @return
    * @throws IOException
@@ -329,7 +331,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public File getFile()
@@ -338,13 +339,12 @@ public class Playlist
   }
 
   /**
-   *
    * @param file
    */
   public void setFile(File file)
   {
     // if we're in "use UNC" mode, flip the file to a UNC representation
-    if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+    if (GUIDriver.getInstance().getOptions().getAlwaysUseUNCPaths())
     {
       _file = new File((new UNCFile(file)).getUNCPath());
     }
@@ -355,7 +355,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param listener
    */
   public void addModifiedListener(IPlaylistModifiedListener listener)
@@ -370,7 +369,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param listener
    */
   public void removeModifiedListener(IPlaylistModifiedListener listener)
@@ -379,7 +377,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public List<IPlaylistModifiedListener> getModifiedListeners()
@@ -421,7 +418,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public int size()
@@ -516,7 +512,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public int getFixedCount()
@@ -525,7 +520,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public int getUrlCount()
@@ -534,7 +528,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public int getMissingCount()
@@ -543,7 +536,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public boolean isModified()
@@ -552,7 +544,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public String getFilename()
@@ -565,7 +556,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public boolean isEmpty()
@@ -589,7 +579,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public boolean isUtfFormat()
@@ -598,7 +587,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param utfFormat
    */
   public void setUtfFormat(boolean utfFormat)
@@ -607,7 +595,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public boolean isNew()
@@ -616,7 +603,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param index
    * @param newEntry
    */
@@ -632,7 +618,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param indexes
    */
   public void moveUp(int[] indexes)
@@ -656,7 +641,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param initialPos
    * @param finalPos
    */
@@ -669,7 +653,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param indexes
    */
   public void moveDown(int[] indexes)
@@ -693,7 +676,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param i
    * @param entries
    * @return
@@ -706,7 +688,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param files
    * @param observer
    * @return
@@ -729,7 +710,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param ix
    * @param files
    * @param observer
@@ -737,7 +717,7 @@ public class Playlist
    * @throws FileNotFoundException
    * @throws IOException
    */
-  public int addAt(int ix, File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+  public int addAt(int ix, File[] files, IProgressObserver<String> observer) throws IOException
   {
     List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
     if (newEntries != null)
@@ -752,7 +732,7 @@ public class Playlist
     }
   }
 
-  private List<PlaylistEntry> getEntriesForFiles(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+  private List<PlaylistEntry> getEntriesForFiles(File[] files, IProgressObserver<String> observer) throws IOException
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(files.length);
@@ -762,10 +742,10 @@ public class Playlist
     {
       if (observer == null || !observer.getCancelled())
       {
-        if (Playlist.isPlaylist(file))
+        if (Playlist.isPlaylist(file, this.filePathOptions))
         {
           // playlist file
-          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file);
+          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file, this.filePathOptions);
           ents.addAll(reader.readPlaylist(progress));
         }
         else
@@ -789,7 +769,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param ix
    * @param newName
    */
@@ -800,13 +779,13 @@ public class Playlist
   }
 
   // returns positions of repaired rows
+
   /**
-   *
    * @param librayFiles
    * @param observer
    * @return
    */
-  public List<Integer> repair(String[] librayFiles, IProgressObserver observer)
+  public List<Integer> repair(Collection<String> librayFiles, IProgressObserver observer)
   {
     ProgressAdapter progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
@@ -847,12 +826,12 @@ public class Playlist
   }
 
   // similar to repair, but doesn't return repaired row information
+
   /**
-   *
    * @param fileList
    * @param observer
    */
-  public void batchRepair(String[] fileList, IProgressObserver observer)
+  public void batchRepair(Collection<String> fileList, IProgressObserver observer)
   {
     ProgressAdapter progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
@@ -886,14 +865,13 @@ public class Playlist
   }
 
   /**
-   *
    * @param libraryFiles
    * @param observer
    * @return
    */
-  public List<BatchMatchItem> findClosestMatches(String[] libraryFiles, IProgressObserver observer)
+  public List<BatchMatchItem> findClosestMatches(Collection<String> libraryFiles, IProgressObserver<String> observer)
   {
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
 
     List<BatchMatchItem> fixed = new ArrayList<>();
@@ -907,7 +885,7 @@ public class Playlist
         entry = _entries.get(ix);
         if (!entry.isURL() && !entry.isFound())
         {
-          matches = entry.findClosestMatches(libraryFiles, null);
+          matches = entry.findClosestMatches(libraryFiles, null, this.filePathOptions);
           if (!matches.isEmpty())
           {
             fixed.add(new BatchMatchItem(ix, entry, matches));
@@ -924,13 +902,12 @@ public class Playlist
   }
 
   /**
-   *
    * @param rowList
    * @param libraryFiles
    * @param observer
    * @return
    */
-  public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, String[] libraryFiles, IProgressObserver observer)
+  public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, Collection<String> libraryFiles, ProgressWorker<List<BatchMatchItem>, String> observer)
   {
     ProgressAdapter progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
@@ -946,7 +923,7 @@ public class Playlist
         entry = _entries.get(ix);
         if (!entry.isURL() && !entry.isFound())
         {
-          matches = entry.findClosestMatches(libraryFiles, null);
+          matches = entry.findClosestMatches(libraryFiles, null, this.filePathOptions);
           if (!matches.isEmpty())
           {
             fixed.add(new BatchMatchItem(ix, entry, matches));
@@ -963,7 +940,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param items
    * @return
    */
@@ -994,7 +970,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param index
    * @return
    */
@@ -1004,7 +979,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param indexes
    */
   public void remove(int[] indexes)
@@ -1019,7 +993,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param entry
    * @return
    */
@@ -1032,7 +1005,6 @@ public class Playlist
   }
 
   /**
-   *
    * @param sortIx
    * @param isDescending
    */
@@ -1064,6 +1036,7 @@ public class Playlist
       _sortIx = sortIx;
       _isDescending = isDescending;
     }
+
     private final SortIx _sortIx;
     private final boolean _isDescending;
 
@@ -1131,7 +1104,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public int removeDuplicates()
@@ -1162,7 +1134,6 @@ public class Playlist
   }
 
   /**
-   *
    * @return
    */
   public int removeMissing()
@@ -1185,17 +1156,15 @@ public class Playlist
   }
 
   /**
-   *
    * @param destination
-   * @param saveRelative
    * @param observer
    * @throws Exception
    */
-  public void saveAs(File destination, boolean saveRelative, IProgressObserver observer) throws Exception
+  public void saveAs(File destination, IProgressObserver<String> observer) throws Exception
   {
     // 2014.12.08 - JCaron - Need to make this assignment so we can determine relativity correctly when saving out entries.
     setFile(destination);
-    _type = determinePlaylistTypeFromExtension(destination);
+    _type = determinePlaylistTypeFromExtension(destination, this.filePathOptions);
     if (_type == PlaylistType.PLS)
     {
       // apparently winamp shits itself if PLS files are saved in UTF-8 (who knew...)
@@ -1203,26 +1172,25 @@ public class Playlist
       // when we don't save as UTF-8 anyway, I'm removing this restriction
       // _utfFormat = false;
     }
-    save(saveRelative, observer);
+    save(this.filePathOptions.getSavePlaylistsWithRelativePaths(), observer);
   }
 
   /**
-   *
    * @param saveRelative
    * @param observer
    * @throws Exception
    */
-  public final void save(boolean saveRelative, IProgressObserver observer) throws Exception
+  public final void save(boolean saveRelative, IProgressObserver<String> observer) throws Exception
   {
     // avoid resetting total if part of batch operation
     boolean hasTotal = observer instanceof ProgressAdapter;
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     if (!hasTotal)
     {
       progress.setTotal(_entries.size());
     }
 
-    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file);
+    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.filePathOptions);
     writer.save(this, saveRelative, progress);
 
     resetInternalStateAfterSave(observer);
@@ -1233,12 +1201,11 @@ public class Playlist
 
   private void quickSave() throws Exception
   {
-    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file);
+    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, GUIDriver.getInstance().getOptions());
     writer.save(this, false, null);
   }
 
   /**
-   *
    * @param observer
    * @throws IOException
    */
@@ -1267,25 +1234,23 @@ public class Playlist
   }
 
   /**
-   *
    * @param input
    * @return
    */
-  public static boolean isPlaylist(File input)
+  public static boolean isPlaylist(File input, IFilePathOptions filePathOptions)
   {
-    return determinePlaylistTypeFromExtension(input) != PlaylistType.UNKNOWN;
+    return determinePlaylistTypeFromExtension(input, filePathOptions) != PlaylistType.UNKNOWN;
   }
 
   /**
-   *
    * @param input
    * @return
    */
-  public static PlaylistType determinePlaylistTypeFromExtension(File input)
+  public static PlaylistType determinePlaylistTypeFromExtension(File input, IFilePathOptions filePathOptions)
   {
     if (input != null)
     {
-      String lowerCaseExtension = (new FileNameTokenizer()).getExtensionFromFileName(input.getName()).toLowerCase();
+      String lowerCaseExtension = (new FileNameTokenizer(filePathOptions)).getExtensionFromFileName(input.getName()).toLowerCase();
       switch (lowerCaseExtension)
       {
         case "m3u":

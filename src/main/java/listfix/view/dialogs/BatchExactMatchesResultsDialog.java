@@ -28,7 +28,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import listfix.controller.GUIDriver;
+import listfix.json.JsonAppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
@@ -50,14 +50,17 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
   private boolean _userCancelled = false;
   private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
 
+  private JsonAppOptions appOptions;
+
   /** Creates new form BatchExactMatchesResultsDialog
    * @param parent
    * @param batch
    * @param modal
    */
-  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch)
+  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch, JsonAppOptions appOptions)
   {
     super(parent, batch.getDescription(), modal);
+    this.appOptions = appOptions;
     //super(parent, modal);
     _batch = batch;
     initComponents();
@@ -96,7 +99,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
       @Override
       protected Void doInBackground() throws Exception
       {
-        _batch.performExactMatchRepair(this);
+        _batch.performExactMatchRepair(this, BatchExactMatchesResultsDialog.this.appOptions);
         return null;
       }
     };
@@ -300,13 +303,12 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 
     private void onBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnSaveActionPerformed
     {//GEN-HEADEREND:event_onBtnSaveActionPerformed
-    ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+    ProgressWorker<Void, String> worker = new ProgressWorker<>()
     {
       @Override
       protected Void doInBackground() throws Exception
       {
-        boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-        _batch.save(saveRelative, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
+        _batch.save(BatchExactMatchesResultsDialog.this.appOptions, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
         return null;
       }
     };
