@@ -2632,11 +2632,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void _helpMenuItemActionPerformed(java.awt.event.ActionEvent evt)
   {//GEN-FIRST:event__helpMenuItemActionPerformed
-    BrowserLauncher.launch("http://apps.sourceforge.net/mediawiki/listfix/index.php?title=Main_Page");
+    BrowserLauncher.launch("https://github.com/Borewit/listFix");
   }//GEN-LAST:event__helpMenuItemActionPerformed
 
   private void _updateCheckMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__updateCheckMenuItemActionPerformed
-    BrowserLauncher.launch("http://sourceforge.net/projects/listfix/");
+    BrowserLauncher.launch("https://github.com/Borewit/listFix");
   }//GEN-LAST:event__updateCheckMenuItemActionPerformed
 
   private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
