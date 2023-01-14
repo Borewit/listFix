@@ -38,12 +38,29 @@ plugins {
     id 'org.unbroken-dome.xjc' version '2.0.0'
 
     id 'checkstyle'
+
+    // https://github.com/qoomon/gradle-git-versioning-plugin
+    id 'me.qoomon.git-versioning' version '6.3.6'
 }
 
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
 apply plugin: 'com.gitlab.svg2ico'
 
-version '2.4.0'
+gitVersioning.apply {
+    refs {
+        considerTagsOnBranches = true
+        tag('v(?<version>.*)') {
+            version = '${ref.version}'
+        }
+        branch('.+') {
+            version = '${describe.tag.version}-${describe.distance}'
+        }
+    }
+
+    rev {
+        version = '${commit}'
+    }
+}
 
 sourceCompatibility = 8
 targetCompatibility = 15
