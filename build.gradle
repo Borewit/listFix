@@ -1,19 +1,22 @@
+//for Ant filter
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
-	repositories {
-		mavenCentral()
+    repositories {
+        mavenCentral()
         maven { url 'https://plugins.gradle.org/m2/' }
-	}
-	dependencies {
-		
+    }
+    dependencies {
+
         // https://github.com/fvarrui/JavaPackager
         classpath 'io.github.fvarrui:javapackager:1.6.7'
-        
-        /* https://gitlab.com/svg2ico/svg2ico-gradle-plugin */        
-        classpath ('gradle.plugin.com.gitlab.svg2ico:svg2ico-gradle-plugin:0.11') {
+
+        // https://gitlab.com/svg2ico/svg2ico-gradle-plugin
+        classpath('gradle.plugin.com.gitlab.svg2ico:svg2ico-gradle-plugin:0.11') {
             exclude module: 'commons-io'
         }
 
-	}
+    }
     // force to use commons-io:2.11.0 instead of svg2ico-gradle-plugin transitive commons-io (which not includes org.apache.commons.io.FileUtils.copyInputStreamToFile method)
     configurations.classpath {
         resolutionStrategy {
@@ -53,6 +56,14 @@ javafx {
 
 project.mainClassName = 'listfix.view.GUIScreen'
 
+def manifestAttributes = [
+    'Implementation-Title'  : project.applicationName,
+    'Implementation-Version': project.version,
+    'Implementation-Vendor' : 'Borewit',
+    'SCM-Repository'        : 'https://github.com/Borewit/listFix',
+    'Main-Class'            : project.mainClassName
+]
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -87,6 +98,10 @@ dependencies {
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation 'commons-io:commons-io:2.11.0'
+
+    // Used to read the version number from the manifest
+    // https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests/1.2.1
+    implementation 'com.jcabi:jcabi-manifests:1.2.1'
 }
 
 application {
@@ -94,69 +109,86 @@ application {
     mainClass = project.mainClassName
 }
 
-sourceSets {
-    main {
-            java {
-                srcDirs = ['src/main/java', 'build/generated/sources/xjc/java/main']
-            }
-            resources {
-            	  srcDirs= ['src/main/resources']
-    				}
-        }
+jar {
+    manifest {
+        attributes(manifestAttributes)
+    }
 }
 
-tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn xjcGenerate
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated/sources/xjc/java/main']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
 }
 
 task fatJar(type: Jar) {
+    group = 'distribution'
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes(manifestAttributes)
     }
     setDuplicatesStrategy(DuplicatesStrategy.WARN)
-    baseName = "listFix"
-    archiveClassifier = "all"
-    from { configurations.compileClasspath.filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
+    archiveBaseName = 'listFix'
+    archiveClassifier = 'all'
+    from { configurations.compileClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
-tasks.register('makePngIcon', Svg2PngTask) {
+task makePngIcon(type: Svg2PngTask) {
+    group = 'graphics'
     source = new File('src/main/svg/listFix() icon.svg')
     width = 64
-	  height = 64
-		destination = new File('src/main/resources/images/icon.png')
+    height = 64
+    destination = new File('src/main/resources/images/icon.png')
 }
 
-tasks.register('makeSplashScreen', Svg2PngTask) {
-    source = new File('src/main/svg/listFix() logo.svg')
+task generateSplashScreenWithVersion(type: Copy) {
+    group = 'graphics'
+    from 'src/main/svg/listFix() logo.svg'
+    into "$buildDir/generated-src"
+    filter(ReplaceTokens, tokens: [VERSION: project.version])
+}
+
+task makeSplashScreen(type: Svg2PngTask, dependsOn: generateSplashScreenWithVersion) {
+    group = 'graphics'
+    source = new File("$buildDir/generated-src/listFix() logo.svg")
     width = 400
     height = 160
-	  destination = new File('src/main/resources/images/listfixSplashScreen.png')
+    destination = new File('src/main/resources/images/listfixSplashScreen.png')
 }
 
-tasks.register('makeIcon', Svg2IcoTask) {
+task makeIcon (type: Svg2IcoTask) {
+    group = 'graphics'
     input {
         source = file('src/main/svg/listFix() icon.svg')
     }
     destination = file('website/favicon.ico')
 }
 
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn xjcGenerate
+}
+
 tasks.withType(Checkstyle) {
     exclude 'listfix/model/playlists/winamp/generated/**.java'
 }
 
-task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: [ makeIcon, fatJar ]) {
-	// mandatory
-	mainClass = project.mainClassName
-	runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
-	// optional
-	bundleJre = true
-	generateInstaller = true
-	administratorRequired = false
-	platform = 'windows'
-	licenseFile = file('LICENSE.txt')
-	copyDependencies = false
-	customizedJre = false
+task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: [makeIcon, fatJar]) {
+    // mandatory
+    mainClass = project.mainClassName
+    runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
+    // optional
+    bundleJre = true
+    generateInstaller = true
+    administratorRequired = false
+    platform = 'windows'
+    licenseFile = file('LICENSE.txt')
+    copyDependencies = false
+    customizedJre = false
     winConfig {
         headerType = 'gui'
         icoFile = file("${projectDir}/website/favicon.ico")
@@ -169,4 +201,4 @@ task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, depen
 
 applicationDefaultJvmArgs = ['--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED',
                              '--add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED'
-                            ]
+]

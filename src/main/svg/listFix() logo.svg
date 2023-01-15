@@ -90,6 +90,6 @@
        x="104"
        y="78"
        id="text160412"
-       style="stroke-width:2">version 2.4.0</text>
+       style="stroke-width:2">version @VERSION@</text>
   </g>
 </svg>
