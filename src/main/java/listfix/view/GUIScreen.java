@@ -20,6 +20,7 @@
 
 package listfix.view;
 
+import com.jcabi.manifests.Manifests;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DarkStar;
 import com.jgoodies.looks.plastic.theme.LightGray;
@@ -155,7 +156,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private static final Logger _logger = Logger.getLogger(GUIScreen.class);
 
-  private final String applicationVersion = "2.4.0";
+  private final String applicationVersion = Manifests.read("Implementation-Version");
 
   /**
    * Creates new form GUIScreen
