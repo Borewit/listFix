@@ -90,12 +90,16 @@ public class IniFileReader
     // Read in base media directories
     // skip first line, contains header
     int i = 1;
-    String line = lines.get(i++);
-    while ((line != null) && (!line.startsWith("[")))
+    while (i < lines.size())
     {
+      String line = lines.get(i++);
+      if (line.startsWith("[")) {
+        ++i;
+        break;
+      }
       tempList.add(line);
-      line = lines.get(i++);
     }
+
     mediaDirs = new String[tempList.size()];
     tempList.toArray(mediaDirs);
 
@@ -103,11 +107,14 @@ public class IniFileReader
 
     // Read in media library directories
     // skip first line, contains header
-    line = lines.get(i++);
-    while ((line != null) && (!line.startsWith("[")))
+    while (i < lines.size())
     {
+      String line = lines.get(i++);
+      if (line.startsWith("[")) {
+        ++i;
+        break;
+      }
       tempList.add(line);
-      line = lines.get(i++);
     }
     mediaLibrary = new String[tempList.size()];
     tempList.toArray(mediaLibrary);
@@ -115,11 +122,10 @@ public class IniFileReader
 
     // Read in media library files
     // skip first line, contains header
-    line = lines.get(i++);
-    while (line != null && i < lines.size())
+    while (i < lines.size())
     {
+      String line = lines.get(i++);
       tempList.add(line);
-      line = lines.get(i++);
     }
     mediaLibraryFiles = new String[tempList.size()];
     tempList.toArray(mediaLibraryFiles);
