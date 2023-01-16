@@ -82,6 +82,18 @@ public class IniFileReader
     }
   }
 
+  private static int readIniEntries(int lineNr, List<String> tempList, List<String> lines) {
+    while (lineNr < lines.size())
+    {
+      String line = lines.get(lineNr++);
+      if (line.startsWith("[")) {
+        break;
+      }
+      tempList.add(line);
+    }
+    return lineNr;
+  }
+
   public void readIni() throws IOException
   {
     List<String> tempList = new ArrayList<>();
@@ -89,17 +101,7 @@ public class IniFileReader
 
     // Read in base media directories
     // skip first line, contains header
-    int i = 1;
-    while (i < lines.size())
-    {
-      String line = lines.get(i++);
-      if (line.startsWith("[")) {
-        ++i;
-        break;
-      }
-      tempList.add(line);
-    }
-
+    int lineNr = readIniEntries(1, tempList, lines);
     mediaDirs = new String[tempList.size()];
     tempList.toArray(mediaDirs);
 
@@ -107,26 +109,15 @@ public class IniFileReader
 
     // Read in media library directories
     // skip first line, contains header
-    while (i < lines.size())
-    {
-      String line = lines.get(i++);
-      if (line.startsWith("[")) {
-        ++i;
-        break;
-      }
-      tempList.add(line);
-    }
+    lineNr = readIniEntries(lineNr, tempList, lines);
     mediaLibrary = new String[tempList.size()];
     tempList.toArray(mediaLibrary);
     tempList.clear();
 
     // Read in media library files
     // skip first line, contains header
-    while (i < lines.size())
-    {
-      String line = lines.get(i++);
-      tempList.add(line);
-    }
+    readIniEntries(lineNr, tempList, lines);
+
     mediaLibraryFiles = new String[tempList.size()];
     tempList.toArray(mediaLibraryFiles);
     tempList.clear();
