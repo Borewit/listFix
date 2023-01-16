@@ -32,7 +32,6 @@ iTunes fans, see [Using listFix() to fix iTunes playlists](https://sourceforge.n
 * Extract Winamp media library playlists to a new location, with their actual names!
 
 ## Requirements
-* JRE 1.6 - no promises of compatibility for OS-specific features on Macs as I don't own one
 * UNC paths only supported on Windows (Linux users can smbmount a network drive and then use the mount point as a media directory)
 
 ## Development
