@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import listfix.comparators.MatchedPlaylistEntryComparator;
+import listfix.config.IMediaLibrary;
 import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
@@ -812,11 +813,11 @@ public class PlaylistEntry implements Cloneable
   /**
    * @return
    */
-  public boolean updatePathToMediaLibraryIfFoundOutside()
+  public boolean updatePathToMediaLibraryIfFoundOutside(IMediaLibrary dirLists)
   {
-    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(GUIDriver.getInstance().getMediaDirs(), _path, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
+    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), _path, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
     {
-      return findNewLocationFromFileList(GUIDriver.getInstance().getMediaLibraryFileList());
+      return findNewLocationFromFileList(dirLists.getNestedMediaFiles());
     }
     return false;
   }

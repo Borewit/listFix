@@ -29,6 +29,7 @@ package listfix.util;
 ============================================================================
  */
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -223,6 +224,20 @@ public class ArrayFunctions
           result = true;
           break;
         }
+      }
+    }
+    return result;
+  }
+
+  public static boolean containsStringPrefixingAnotherString(Collection<String> a, String b, boolean ignoreCase)
+  {
+    boolean result = false;
+    for (String a1 : a)
+    {
+      if (ignoreCase ? b.toLowerCase().startsWith(a1.toLowerCase()) : b.startsWith(a1))
+      {
+        result = true;
+        break;
       }
     }
     return result;

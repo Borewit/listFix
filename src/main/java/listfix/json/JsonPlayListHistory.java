@@ -13,9 +13,4 @@ public class JsonPlayListHistory
   {
     return this.recentPlaylists;
   }
-
-  public void setRecentPlaylists(List<String> recentPlaylists)
-  {
-    this.recentPlaylists = recentPlaylists;
-  }
 }

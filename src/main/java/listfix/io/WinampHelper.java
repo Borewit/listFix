@@ -21,13 +21,13 @@ package listfix.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import listfix.config.IMediaLibrary;
 import listfix.io.writers.FileCopier;
 import listfix.io.writers.IFilePathOptions;
 import listfix.model.BatchRepair;
@@ -79,7 +79,7 @@ public class WinampHelper
    * @return A BatchRepair instance
    * @see BatchRepair
    */
-  public static BatchRepair getWinampBatchRepair(Collection<String> mediaFiles, IFilePathOptions filePathOptions)
+  public static BatchRepair getWinampBatchRepair(IMediaLibrary mediaFiles, IFilePathOptions filePathOptions)
   {
     try
     {

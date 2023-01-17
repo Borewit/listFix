@@ -65,7 +65,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import listfix.controller.GUIDriver;
+import listfix.config.IMediaLibrary;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.PlaylistScanner;
@@ -109,6 +109,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private int currentlySelectedRow = 0;
   private Playlist _playlist;
 
+  private GUIScreen mainWindow;
+
   private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
   {
     @Override
@@ -126,19 +128,24 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     SwingUtilities.updateComponentTreeUI(this);
   }
 
-  protected listfix.json.JsonAppOptions getOptions() {
-    return GUIDriver.getInstance().getOptions();
-  }
-
   /**
    *
    */
   public PlaylistEditCtrl(GUIScreen mainWindow)
   {
+    this.mainWindow = mainWindow;
     initComponents();
     initPlaylistTable(mainWindow);
     initFolderChooser();
     SwingUtilities.updateComponentTreeUI(this);
+  }
+
+  protected listfix.json.JsonAppOptions getOptions() {
+    return this.mainWindow.getOptions();
+  }
+
+  private IMediaLibrary getMediaLibrary() {
+    return this.mainWindow.getMediaLibrary();
   }
 
   private void onPlaylistModified(Playlist list)
@@ -160,10 +167,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     chooser.setAcceptAllFileFilterUsed(false);
     chooser.addChoosableFileFilter(new AudioFileFilter());
     chooser.setMultiSelectionEnabled(true);
-    if (GUIDriver.getInstance().hasAddedMediaDirectory())
-    {
-      chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
-    }
+    this.getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
     if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
     {
       File[] tempFileList = chooser.getSelectedFiles();
@@ -284,13 +288,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   public void locateMissingFiles()
   {
-    final Collection<String> libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
     ProgressWorker worker = new ProgressWorker<List<Integer>, Void>()
     {
       @Override
       protected List<Integer> doInBackground()
       {
-        return _playlist.repair(libraryFiles, this);
+        return _playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
       }
 
       @Override
@@ -394,7 +397,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   private void findClosestMatches()
   {
-    final Collection<String> libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+    final Collection<String> libraryFiles = this.getMediaLibrary().getNestedMediaFiles();
     ProgressWorker<List<BatchMatchItem>, String> worker = new ProgressWorker<>()
     {
       @Override
@@ -450,7 +453,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   public void bulkFindClosestMatches()
   {
-    final Collection<String> libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
+    final Collection<String> libraryFiles = mainWindow.getMediaLibrary().getNestedMediaFiles();
     ProgressWorker<List<BatchMatchItem>, String> worker = new ProgressWorker<>()
     {
       @Override
@@ -515,9 +518,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       {
         chooser.setCurrentDirectory(deepest);
       }
-      else if (GUIDriver.getInstance().hasAddedMediaDirectory())
+      else
       {
-        chooser.setCurrentDirectory(new File(GUIDriver.getInstance().getMediaDirs()[0]));
+        this.mainWindow.getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
       }
 
       if (!entry.isURL())
@@ -2064,23 +2067,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       {
         final Collection<String> libraryFiles;
         final int currentInsertPoint = insertAt;
-        if (PlaylistEditCtrl.this.getOptions().getAutoLocateEntriesOnPlaylistLoad())
-        {
-          libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-        }
-        else
-        {
-          libraryFiles = null;
-        }
+
         ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
         {
           @Override
           protected Playlist doInBackground() throws Exception
           {
             Playlist list = PlaylistFactory.getPlaylist(tempFile, this, PlaylistEditCtrl.this.getOptions());
-            if (libraryFiles != null)
+            if (PlaylistEditCtrl.this.getOptions().getAutoLocateEntriesOnPlaylistLoad())
             {
-              list.repair(libraryFiles, this);
+              list.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
             }
             return list;
           }

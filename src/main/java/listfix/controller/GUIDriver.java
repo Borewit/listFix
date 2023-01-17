@@ -22,9 +22,9 @@ package listfix.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 
 import listfix.config.ApplicationOptionsConfiguration;
+import listfix.config.IMediaLibrary;
 import listfix.config.MediaLibraryConfiguration;
 import listfix.json.JsonAppOptions;
 import listfix.model.PlaylistHistory;
@@ -74,13 +74,11 @@ public final class GUIDriver
 
       mediaLibraryConfiguration.cleanNonExistingMediaDirectories();
 
-      if (!hasAddedMediaDirectory()) {
-        showMediaDirWindow = true;
-      }
+      showMediaDirWindow = this.getMediaLibrary().getNestedDirectories().isEmpty();
     } catch (Exception e) {
       showMediaDirWindow = true;
 
-      // This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distrubte listfix
+      // This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distribute listFix()
       _logger.error(ExStack.toString(e));
     }
   }
@@ -109,21 +107,17 @@ public final class GUIDriver
   /**
    * @return
    */
-  public boolean hasAddedMediaDirectory()
-  {
-    return !this.mediaLibraryConfiguration.getConfig().getMediaDirs().isEmpty();
-  }
+//  public boolean hasAddedMediaDirectory()
+//  {
+//    return !this.mediaLibraryConfiguration.getConfig().getMediaDirs().isEmpty();
+//  }
 
   /**
    * @return
    */
-  public String[] getMediaDirs()
+  public IMediaLibrary getMediaLibrary()
   {
-    Set<String> mediaDir = this.mediaLibraryConfiguration.getConfig().getMediaDirs();
-    if (mediaDir.isEmpty()) {
-      return new String[]{"Please Add A Media Directory..."};
-    }
-    return mediaDir.toArray(new String[0]);
+    return this.mediaLibraryConfiguration.getConfig();
   }
 
   public MediaLibraryConfiguration getMediaLibrarConfiguration()
@@ -134,17 +128,17 @@ public final class GUIDriver
   /**
    * @return
    */
-  public Set<String> getMediaLibraryFileList()
-  {
-    return this.mediaLibraryConfiguration.getConfig().getMediaLibraryFiles();
-  }
+//  public Set<String> getMediaLibraryFileList()
+//  {
+//    return this.mediaLibraryConfiguration.getConfig().getMediaLibraryFiles();
+//  }
 
   /**
    * @return
    */
   public boolean getShowMediaDirWindow()
   {
-    return showMediaDirWindow;
+    return this.showMediaDirWindow;
   }
 
   /**

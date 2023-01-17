@@ -60,9 +60,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -92,6 +90,7 @@ import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
 
 import listfix.config.ApplicationOptionsConfiguration;
+import listfix.config.IMediaLibrary;
 import listfix.config.MediaLibraryConfiguration;
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
@@ -133,6 +132,7 @@ import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 /**
@@ -183,7 +183,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     splashScreen.setStatusBar("Initializing UI...");
   }
 
-  private JsonAppOptions getApplicationConfig() {
+  private JsonAppOptions getApplicationConfig()
+  {
     return this._guiDriver.getApplicationConfiguration().getConfig();
   }
 
@@ -210,7 +211,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     else
     {
-      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
     }
 
     updateMediaDirButtons();
@@ -693,6 +694,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     return this._guiDriver.getApplicationConfiguration().getConfig();
   }
 
+  public IMediaLibrary getMediaLibrary()
+  {
+    return this._guiDriver.getMediaLibrary();
+  }
+
   private void fireOptionsPopup()
   {
     final ApplicationOptionsConfiguration applicationConfiguration = this._guiDriver.getApplicationConfiguration();
@@ -708,12 +714,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       if (options.getAlwaysUseUNCPaths())
       {
         mediaLibraryConfiguration.switchMediaLibraryToUNCPaths();
-        _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+        _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
       }
       else
       {
         _guiDriver.switchMediaLibraryToMappedDrives();
-        _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+        _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
       }
       try
       {
@@ -1453,7 +1459,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       return;
     }
-    BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), files.get(0));
+    BatchRepair br = new BatchRepair(_guiDriver.getMediaLibrary(), files.get(0));
     br.setDescription("Closest Matches Search");
     for (File file : files)
     {
@@ -1495,7 +1501,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       return;
     }
-    BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), files.get(0));
+    BatchRepair br = new BatchRepair(_guiDriver.getMediaLibrary(), files.get(0));
     br.setDescription("Exact Matches Search");
     for (File file : files)
     {
@@ -1703,16 +1709,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       return;
     }
 
-    final Collection<String> libraryFiles;
-    if (getApplicationConfig().getAutoLocateEntriesOnPlaylistLoad())
-    {
-      libraryFiles = GUIDriver.getInstance().getMediaLibraryFileList();
-    }
-    else
-    {
-      libraryFiles = null;
-    }
-
     DocumentComponent tempComp = _documentPane.getDocument(path);
     if (tempComp == null)
     {
@@ -1725,9 +1721,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         {
           this.setMessage("Please wait while your playlist is opened and analyzed.");
           Playlist list = PlaylistFactory.getPlaylist(file, this, GUIScreen.this.getOptions());
-          if (libraryFiles != null)
+          if (getApplicationConfig().getAutoLocateEntriesOnPlaylistLoad())
           {
-            list.repair(libraryFiles, this);
+            list.repair(GUIScreen.this.getMediaLibrary(), this);
           }
           return list;
         }
@@ -2479,7 +2475,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         final String dir = mediaDir.getPath();
 
         // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-        if (ArrayFunctions.containsStringPrefixingAnotherString(_guiDriver.getMediaDirs(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
+        if (ArrayFunctions.containsStringPrefixingAnotherString(_guiDriver.getMediaLibrary().getDirectories(), dir, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
         {
           JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
             "Reminder", JOptionPane.INFORMATION_MESSAGE);
@@ -2488,11 +2484,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         else
         {
           // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
-          String[] dirsToCheck = _guiDriver.getMediaDirs();
-          for (int i = 0; i < dirsToCheck.length; i++)
+          int matchCount = 0;
+          for (String dirToCheck : _guiDriver.getMediaLibrary().getDirectories())
           {
-            int matchCount = 0;
-            if (dirsToCheck[i].startsWith(dir))
+            if (dirToCheck.startsWith(dir))
             {
               // Only showing the message the first time we find this condition...
               if (matchCount == 0)
@@ -2501,7 +2496,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
                   new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
                   "Reminder", JOptionPane.INFORMATION_MESSAGE);
               }
-              removeMediaDirByIndex(evt, i);
+              removeMediaDir(dirToCheck);
               matchCount++;
             }
           }
@@ -2523,7 +2518,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         try
         {
           worker.get();
-          _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+          _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
         }
         catch (InterruptedException | CancellationException ex)
         {
@@ -2557,7 +2552,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         if (!selection.equals("Please Add A Media Directory..."))
         {
           _guiDriver.getMediaLibrarConfiguration().removeMediaDir(selection);
-          _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+          _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
         }
       }
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -2571,13 +2566,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     updateMediaDirButtons();
   }//GEN-LAST:event__removeMediaDirButtonActionPerformed
 
-  private void removeMediaDirByIndex(java.awt.event.ActionEvent evt, int index)
+  private void removeMediaDir(String mediaDirectory)
   {
     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try
     {
-      _guiDriver.getMediaLibrarConfiguration().removeMediaDir((String) _lstMediaLibraryDirs.getModel().getElementAt(index));
-      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+      _guiDriver.getMediaLibrarConfiguration().removeMediaDir(mediaDirectory);
+      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     catch (MediaDirNotFoundException e)
@@ -2636,7 +2631,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     try
     {
       worker.get();
-      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaDirs());
+      _lstMediaLibraryDirs.setListData(_guiDriver.getMediaLibrary().getDirectories().toArray());
     }
     catch (InterruptedException | CancellationException ex)
     {
@@ -2669,7 +2664,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void _batchRepairWinampMenuItemActionPerformed(java.awt.event.ActionEvent evt)
   {//GEN-FIRST:event__batchRepairWinampMenuItemActionPerformed
-    final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibraryFileList(), this.getOptions());
+    final BatchRepair br = WinampHelper.getWinampBatchRepair(_guiDriver.getMediaLibrary(), this.getOptions());
     if (br == null || br.isEmpty())
     {
       JOptionPane.showMessageDialog(this, new JTransparentTextArea("Could not find any WinAmp Media Library playlists"));
@@ -2720,7 +2715,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
 
       File rootDir = dlg.getCurrentDirectory();
-      BatchRepair br = new BatchRepair(_guiDriver.getMediaLibraryFileList(), rootDir);
+      BatchRepair br = new BatchRepair(_guiDriver.getMediaLibrary(), rootDir);
       br.setDescription("Exact Matches Search");
       for (File file : files)
       {
@@ -3118,7 +3113,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public static void main(String[] args) throws IOException
   {
+    BasicConfigurator.configure();
+
     com.jidesoft.utils.Lm.verifyLicense("Jeremy Caron", "listFix()", "AMu.5dFy1Fuos0hs:l2.GQ9AzUy2GgB2");
+
     JsonAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
     InitApplicationFont(tempOptions.getAppFont());
     GUIScreen mainWindow = new GUIScreen();

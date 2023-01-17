@@ -26,12 +26,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import listfix.config.IMediaLibrary;
 import listfix.io.writers.IFilePathOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
@@ -52,7 +52,7 @@ public class BatchRepair
   private final List<BatchRepairItem> _items = new ArrayList<>();
 
   // The list of files in the media library to be considered during the repair.
-  private final Collection<String> _mediaFiles;
+  private final IMediaLibrary mediaLibrary;
 
   // The lowest common directory of all playlists being repaired.
   private File _rootDirectory;
@@ -61,12 +61,12 @@ public class BatchRepair
   private String _description;
 
   /**
-   * @param mediaFiles
+   * @param mediaLibrary Media library to be considered during the repair
    * @param rootDirectory
    */
-  public BatchRepair(Collection<String> mediaFiles, File rootDirectory)
+  public BatchRepair(IMediaLibrary mediaLibrary, File rootDirectory)
   {
-    _mediaFiles = mediaFiles;
+    this.mediaLibrary = mediaLibrary;
     _rootDirectory = rootDirectory;
     if (!rootDirectory.isDirectory())
     {
@@ -183,7 +183,7 @@ public class BatchRepair
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
-          list.batchRepair(_mediaFiles, progress.getTask());
+          list.batchRepair(this.mediaLibrary, progress.getTask());
         }
         else
         {
@@ -241,7 +241,7 @@ public class BatchRepair
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
-          item.setClosestMatches(list.findClosestMatches(_mediaFiles, progress.getTask()));
+          item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), progress.getTask()));
         }
         else
         {

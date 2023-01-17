@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
+import listfix.config.IMediaLibrary;
 import listfix.controller.GUIDriver;
 
 import listfix.io.Constants;
@@ -781,11 +782,11 @@ public class Playlist
   // returns positions of repaired rows
 
   /**
-   * @param librayFiles
-   * @param observer
+   * @param mediaLibrary Media library used to reference existing media files
+   * @param observer Progress observer
    * @return
    */
-  public List<Integer> repair(Collection<String> librayFiles, IProgressObserver observer)
+  public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver observer)
   {
     ProgressAdapter progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
@@ -800,7 +801,7 @@ public class Playlist
         PlaylistEntry entry = _entries.get(ix);
         if (!entry.isFound() && !entry.isURL())
         {
-          entry.findNewLocationFromFileList(librayFiles);
+          entry.findNewLocationFromFileList(mediaLibrary.getNestedMediaFiles());
           if (entry.isFound())
           {
             fixed.add(ix);
@@ -809,7 +810,7 @@ public class Playlist
         }
         else if (entry.isFound() && !entry.isURL())
         {
-          if (entry.updatePathToMediaLibraryIfFoundOutside())
+          if (entry.updatePathToMediaLibraryIfFoundOutside(mediaLibrary))
           {
             fixed.add(ix);
             refreshStatus();
@@ -825,15 +826,22 @@ public class Playlist
     return fixed;
   }
 
-  // similar to repair, but doesn't return repaired row information
+  /**
+   * @param dirLists Media library used for repair
+   * @param observer Progress observer
+   */
+  public void batchRepair(IMediaLibrary dirLists, IProgressObserver<String> observer) {
+    this.batchRepair(dirLists.getNestedMediaFiles(), dirLists, observer);
+  }
 
   /**
-   * @param fileList
-   * @param observer
+   * Similar to repair, but doesn't return repaired row information
+   * @param fileList Media library used for repair
+   * @param observer Progress observer
    */
-  public void batchRepair(Collection<String> fileList, IProgressObserver observer)
+  public void batchRepair(Collection<String> fileList, IMediaLibrary dirLists, IProgressObserver<String> observer)
   {
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
 
     boolean isModified = false;
@@ -851,7 +859,7 @@ public class Playlist
       }
       else if (entry.isFound() && !entry.isURL())
       {
-        if (entry.updatePathToMediaLibraryIfFoundOutside())
+        if (entry.updatePathToMediaLibraryIfFoundOutside(dirLists))
         {
           isModified = true;
         }

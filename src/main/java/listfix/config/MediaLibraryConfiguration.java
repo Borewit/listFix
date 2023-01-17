@@ -3,23 +3,23 @@ package listfix.config;
 import listfix.controller.tasks.WriteMediaLibraryIniTask;
 import listfix.exceptions.MediaDirNotFoundException;
 import listfix.io.UNCFile;
-import listfix.json.JsonDirLists;
+import listfix.json.JsonMediaLibrary;
 
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static listfix.io.Constants.DATA_DIR;
 
 /**
  * @author Borewit
  */
-public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonDirLists>
+public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonMediaLibrary>
 {
-  private static final String path_json_dirLists = DATA_DIR + "dirLists.json";
+  private static final String path_json_dirLists = DATA_DIR + "mediaLibrary.json";
 
   public MediaLibraryConfiguration()
   {
@@ -29,13 +29,13 @@ public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonDirList
   @Override
   public void read() throws IOException
   {
-    this.jsonPojo = readJson(this.jsonFile, JsonDirLists.class);
+    this.jsonPojo = readJson(this.jsonFile, JsonMediaLibrary.class);
   }
 
   @Override
   public void initPojo()
   {
-    this.jsonPojo = new JsonDirLists();
+    this.jsonPojo = new JsonMediaLibrary();
   }
 
   public static MediaLibraryConfiguration load() throws IOException
@@ -47,7 +47,7 @@ public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonDirList
 
   private void clearMediaLibraryDirectoryList()
   {
-    this.jsonPojo.getMediaLibraryDirectories().clear();
+    this.jsonPojo.getNestedDirectories().clear();
   }
 
   /**
@@ -57,22 +57,22 @@ public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonDirList
    */
   public void removeMediaDir(String dir) throws MediaDirNotFoundException
   {
-    final Set<String> mediaDir = this.jsonPojo.getMediaDirs();
+    final Set<String> mediaDir = this.jsonPojo.getDirectories();
     final boolean found = mediaDir.remove(dir);
 
     if (found)
     {
       if (mediaDir.isEmpty())
       {
-        this.jsonPojo.getMediaLibraryDirectories().clear();
-        this.jsonPojo.getMediaLibraryFiles().clear();
+        this.jsonPojo.getNestedDirectories().clear();
+        this.jsonPojo.getNestedMediaFiles().clear();
       }
       else
       {
         // Remove folders starting with dir
-        this.jsonPojo.setMediaDirs(this.jsonPojo.getMediaLibraryDirectories().stream().filter(libDir -> libDir.startsWith(dir)).collect(Collectors.toSet()));
+        this.jsonPojo.getNestedDirectories().removeIf(mediaLibDir -> mediaLibDir.startsWith(dir));
         // Remove files starting with dir
-        this.jsonPojo.setMediaLibraryFiles(this.jsonPojo.getMediaLibraryFiles().stream().filter(libDir -> libDir.startsWith(dir)).collect(Collectors.toSet()));
+        this.jsonPojo.getNestedMediaFiles().removeIf(mediaLibDir -> mediaLibDir.startsWith(dir));
       }
       this.writeOnBackground();
     }
@@ -84,7 +84,7 @@ public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonDirList
 
   public void cleanNonExistingMediaDirectories() throws MediaDirNotFoundException
   {
-    for (String dir : new ArrayList<>(this.jsonPojo.getMediaDirs()))
+    for (String dir : new ArrayList<>(this.jsonPojo.getDirectories()))
     {
       if (!new File(dir).exists())
       {
@@ -93,19 +93,24 @@ public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonDirList
     }
   }
 
-  private static Set<String> normalizeFileSetToUNC(Set<String> input)
+  private static void normalizeFileSetToUNC(Set<String> paths)
   {
-    return input.stream().map(path -> {
+    Iterator<String> i = paths.iterator();
+    paths.clear();
+
+    while (i.hasNext())
+    {
+      String path = i.next();
       UNCFile file = new UNCFile(path);
-      return file.onNetworkDrive() ? file.getUNCPath() : path;
-    }).collect(Collectors.toSet());
+      paths.add(file.onNetworkDrive() ? file.getUNCPath() : path);
+    }
   }
 
   public void switchMediaLibraryToUNCPaths()
   {
-    this.getConfig().setMediaLibraryFiles(normalizeFileSetToUNC(this.getConfig().getMediaLibraryFiles()));
-    this.getConfig().setMediaLibraryDirectories(normalizeFileSetToUNC(this.getConfig().getMediaLibraryDirectories()));
-    this.getConfig().setMediaLibraryFiles(normalizeFileSetToUNC(this.getConfig().getMediaLibraryFiles()));
+    normalizeFileSetToUNC(this.getConfig().getNestedMediaFiles());
+    normalizeFileSetToUNC(this.getConfig().getNestedDirectories());
+    normalizeFileSetToUNC(this.getConfig().getNestedMediaFiles());
   }
 
   /**
