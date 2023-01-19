@@ -32,7 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import listfix.config.IMediaLibrary;
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
 import listfix.view.support.DualProgressAdapter;
@@ -150,7 +150,7 @@ public class BatchRepair
    * @param observer The progress observer for this operation.
    * @throws IOException
    */
-  public void performExactMatchRepair(IDualProgressObserver<String> observer, IFilePathOptions filePathOptions)
+  public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlayListOptions filePathOptions)
   {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
     progress.getOverall().setTotal(_items.size() * 2);
@@ -208,7 +208,7 @@ public class BatchRepair
    *
    * @param observer The progress observer for this operation.
    */
-  public void performClosestMatchRepair(IDualProgressObserver<String> observer, IFilePathOptions filePathOptions)
+  public void performClosestMatchRepair(IDualProgressObserver<String> observer, IPlayListOptions filePathOptions)
   {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
     progress.getOverall().setTotal(_items.size() * 2);
@@ -284,7 +284,7 @@ public class BatchRepair
    * @param observer             The progress observer for this operation.
    * @throws Exception
    */
-  public void save(IFilePathOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
+  public void save(IPlayListOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 

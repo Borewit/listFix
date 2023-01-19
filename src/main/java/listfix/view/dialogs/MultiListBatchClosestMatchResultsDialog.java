@@ -36,7 +36,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
@@ -62,7 +62,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   private boolean _userAccepted = false;
   private static final Logger _logger = Logger.getLogger(MultiListBatchClosestMatchResultsDialog.class);
 
-  private IFilePathOptions filePathOptions;
+  private IPlayListOptions filePathOptions;
 
   /**
    * Creates new form MultiListBatchClosestMatchResultsDialog
@@ -70,7 +70,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
    * @param parent
    * @param modal
    */
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IFilePathOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IPlayListOptions filePathOptions)
   {
     super(parent, modal);
     this.filePathOptions = filePathOptions;
@@ -82,7 +82,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
    * @param modal
    * @param br
    */
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IFilePathOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlayListOptions filePathOptions)
   {
     super(parent, br.getDescription(), modal);
     _batch = br;

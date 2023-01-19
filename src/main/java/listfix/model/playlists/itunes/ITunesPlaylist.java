@@ -23,7 +23,7 @@ package listfix.model.playlists.itunes;
 import java.io.File;
 import java.util.List;
 
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
@@ -36,9 +36,9 @@ public class ITunesPlaylist extends Playlist
 {
   private final ITunesMediaLibrary _library;
 
-  public ITunesPlaylist(File listFile, List<PlaylistEntry> entries, ITunesMediaLibrary library, IFilePathOptions filePathOptions)
+  public ITunesPlaylist(File listFile, List<PlaylistEntry> entries, ITunesMediaLibrary library, IPlayListOptions filePathOptions)
   {
-    super(listFile, PlaylistType.ITUNES, entries, filePathOptions);
+    super(filePathOptions, listFile, PlaylistType.ITUNES, entries);
     _library = library;
   }
 

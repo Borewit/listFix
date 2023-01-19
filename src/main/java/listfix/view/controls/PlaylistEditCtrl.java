@@ -66,10 +66,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import listfix.config.IMediaLibrary;
-import listfix.io.Constants;
-import listfix.io.FileUtils;
-import listfix.io.PlaylistScanner;
-import listfix.io.StringArrayListSerializer;
+import listfix.io.*;
 import listfix.io.filters.AudioFileFilter;
 import listfix.io.filters.ExtensionFilter;
 import listfix.model.BatchMatchItem;
@@ -140,7 +137,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     SwingUtilities.updateComponentTreeUI(this);
   }
 
-  protected listfix.json.JsonAppOptions getOptions() {
+  protected IPlayListOptions getPlaylistOptions() {
     return this.mainWindow.getOptions();
   }
 
@@ -532,12 +529,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         File file = chooser.getSelectedFile();
 
         // make sure the replacement file is not a playlist
-        if (Playlist.isPlaylist(file, PlaylistEditCtrl.this.getOptions()))
+        if (Playlist.isPlaylist(file, PlaylistEditCtrl.this.getPlaylistOptions()))
         {
           JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("You cannot replace a file with a playlist file. Use \"Add File\" instead."), "Replace File Error", JOptionPane.ERROR_MESSAGE);
           return;
         }
-        PlaylistEntry newEntry = new PlaylistEntry(file, null, _playlist.getFile());
+        PlaylistEntry newEntry = new PlaylistEntry(this.getPlaylistOptions(), file, null, _playlist.getFile());
         _playlist.replace(rowIx, newEntry);
         getTableModel().fireTableRowsUpdated(rowIx, rowIx);
       }
@@ -605,7 +602,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
           // make sure file has correct extension
           String normalizedName = playlist.getName().trim().toLowerCase();
-          if (!Playlist.isPlaylist(playlist, this.getOptions()) || (!normalizedName.endsWith(extension)))
+          if (!Playlist.isPlaylist(playlist, this.getPlaylistOptions()) || (!normalizedName.endsWith(extension)))
           {
             if (extension.equals("m3u") && _playlist.isUtfFormat())
             {
@@ -623,7 +620,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             @Override
             protected Void doInBackground() throws Exception
             {
-              boolean saveRelative = PlaylistEditCtrl.this.getOptions().getSavePlaylistsWithRelativePaths();
+              boolean saveRelative = PlaylistEditCtrl.this.getPlaylistOptions().getSavePlaylistsWithRelativePaths();
               _playlist.saveAs(finalPlaylistFile, this);
               return null;
             }
@@ -663,7 +660,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           @Override
           protected Void doInBackground() throws Exception
           {
-            boolean saveRelative = PlaylistEditCtrl.this.getOptions().getSavePlaylistsWithRelativePaths();
+            boolean saveRelative = PlaylistEditCtrl.this.getPlaylistOptions().getSavePlaylistsWithRelativePaths();
             _playlist.save(saveRelative, this);
             return null;
           }
@@ -1485,7 +1482,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       try
       {
         // Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
-        Playlist sublist = new Playlist(this.getOptions());
+        Playlist sublist = new Playlist(this.getPlaylistOptions());
         sublist.addAllAt(0, _playlist.getSublist(rows).getEntries());
         ((GUIScreen) getParentFrame()).openNewTabForPlaylist(sublist);
       }
@@ -2011,7 +2008,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           final File tempFile = (File) list1;
           if (tempFile instanceof File)
           {
-            if (Playlist.isPlaylist(tempFile, PlaylistEditCtrl.this.getOptions()))
+            if (Playlist.isPlaylist(tempFile, PlaylistEditCtrl.this.getPlaylistOptions()))
             {
               insertAt += ProcessDroppedPlaylist(tempFile, insertAt);
             }
@@ -2047,7 +2044,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           final File tempFile = (File) list1;
           if (tempFile instanceof File)
           {
-            if (Playlist.isPlaylist(tempFile, PlaylistEditCtrl.this.getOptions()))
+            if (Playlist.isPlaylist(tempFile, PlaylistEditCtrl.this.getPlaylistOptions()))
             {
               parent.openPlaylist(tempFile);
             }
@@ -2073,8 +2070,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           @Override
           protected Playlist doInBackground() throws Exception
           {
-            Playlist list = PlaylistFactory.getPlaylist(tempFile, this, PlaylistEditCtrl.this.getOptions());
-            if (PlaylistEditCtrl.this.getOptions().getAutoLocateEntriesOnPlaylistLoad())
+            Playlist list = PlaylistFactory.getPlaylist(tempFile, this, PlaylistEditCtrl.this.getPlaylistOptions());
+            if (PlaylistEditCtrl.this.mainWindow.getOptions().getAutoLocateEntriesOnPlaylistLoad())
             {
               list.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
             }

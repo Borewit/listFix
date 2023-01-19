@@ -23,7 +23,7 @@ package listfix.io.writers.playlists;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.enums.PlaylistType;
 
@@ -39,28 +39,28 @@ public class PlaylistWriterFactory
    * @return
    * @throws FileNotFoundException
    */
-  public static IPlaylistWriter getPlaylistWriter(File inputFile, IFilePathOptions filePathOptions) throws FileNotFoundException
+  public static IPlaylistWriter getPlaylistWriter(File inputFile, IPlayListOptions playListOptions) throws FileNotFoundException
   {
-    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile, filePathOptions);
+    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile, playListOptions);
     if (type == PlaylistType.M3U)
     {
-      return new M3UWriter(filePathOptions);
+      return new M3UWriter(playListOptions);
     }
     else if (type == PlaylistType.PLS)
     {
-      return new PLSWriter(filePathOptions);
+      return new PLSWriter(playListOptions);
     }
     else if (type == PlaylistType.XSPF)
     {
-      return new XSPFWriter();
+      return new XSPFWriter(playListOptions);
     }
     else if (type == PlaylistType.WPL)
     {
-      return new WPLWriter(filePathOptions);
+      return new WPLWriter(playListOptions);
     }
     else if (type == PlaylistType.ITUNES)
     {
-      return new ITunesXMLWriter();
+      return new ITunesXMLWriter(playListOptions);
     }
     else
     {

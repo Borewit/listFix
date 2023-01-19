@@ -26,16 +26,17 @@ import javax.swing.UIManager;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import listfix.config.IAppOptions;
 import listfix.io.Constants;
 import listfix.io.readers.JsonFontDeserializer;
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.io.writers.JsonFontSerializer;
 import listfix.util.OperatingSystem;
 
 /**
  * @author jcaron
  */
-public class JsonAppOptions implements IFilePathOptions
+public class JsonAppOptions implements IPlayListOptions, IAppOptions
 {
   private static final String EMPTY_STRING = "None Selected";
 

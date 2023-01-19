@@ -20,6 +20,8 @@
 
 package listfix.model.playlists;
 
+import listfix.io.IPlayListOptions;
+
 import java.io.File;
 
 /**
@@ -38,9 +40,9 @@ public class PotentialPlaylistEntryMatch
    * @param score
    * @param list
    */
-  public PotentialPlaylistEntryMatch(File file, int score, File list)
+  public PotentialPlaylistEntryMatch(IPlayListOptions appOptions, File file, int score, File list)
   {
-    thisEntry = new PlaylistEntry(file, "", list);
+    thisEntry = new PlaylistEntry(appOptions, file, "", list);
     thisEntry.setFixed(true);
     _score = score;
   }

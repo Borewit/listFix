@@ -9,7 +9,7 @@ import static listfix.io.Constants.DATA_DIR;
 /**
  * @author Borewit
  */
-public class PlaylistHistoryConfiguration extends ApplicationConfigFile<JsonPlayListHistory>
+public class PlaylistHistoryConfiguration extends JsonConfigFile<JsonPlayListHistory>
 {
 
   private static final String path_json_history = DATA_DIR + "history.json";

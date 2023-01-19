@@ -22,7 +22,7 @@ package listfix.model;
 import java.io.File;
 import java.util.List;
 
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.util.FileNameTokenizer;
 
@@ -43,7 +43,7 @@ public class BatchRepairItem
    *
    * @param file
    */
-  public BatchRepairItem(File file, IFilePathOptions filePathOptions)
+  public BatchRepairItem(File file, IPlayListOptions filePathOptions)
   {
     _path = file.getPath();
     _displayName = file.getName();
@@ -58,7 +58,7 @@ public class BatchRepairItem
    *
    * @param list
    */
-  public BatchRepairItem(Playlist list, IFilePathOptions filePathOptions)
+  public BatchRepairItem(Playlist list, IPlayListOptions filePathOptions)
   {
     _playlist = list;
     _path = list.getFile().getPath();

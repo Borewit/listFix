@@ -20,7 +20,7 @@
 
 package listfix.util;
 
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 
 import java.util.*;
 
@@ -33,7 +33,7 @@ public class FileNameTokenizer
   private static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";
   public List<String> ignoreList = new ArrayList<>();
 
-  public FileNameTokenizer(IFilePathOptions filePathOptions)
+  public FileNameTokenizer(IPlayListOptions filePathOptions)
   {
     StringTokenizer tokenMaker = new StringTokenizer(filePathOptions.getIgnoredSmallWords(), " ,;|");
     while (tokenMaker.hasMoreTokens())

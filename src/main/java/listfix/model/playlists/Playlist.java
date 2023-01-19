@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.*;
 
 import listfix.config.IMediaLibrary;
-import listfix.controller.GUIDriver;
 
 import listfix.io.Constants;
 import listfix.io.FileLauncher;
@@ -34,7 +33,7 @@ import listfix.io.UNCFile;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
 import listfix.io.writers.FileCopier;
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.io.writers.playlists.IPlaylistWriter;
 import listfix.io.writers.playlists.PlaylistWriterFactory;
 import listfix.model.BatchMatchItem;
@@ -69,7 +68,7 @@ public class Playlist
   private boolean _isNew;
   private static final Logger _logger = Logger.getLogger(Playlist.class);
 
-  private final IFilePathOptions filePathOptions;
+  private final IPlayListOptions playListOptions;
 
   /**
    * This constructor creates a temp-file backed playlist from a list of entries, only intended to be used for playback.
@@ -77,9 +76,9 @@ public class Playlist
    * @param sublist
    * @throws Exception
    */
-  public Playlist(List<PlaylistEntry> sublist, IFilePathOptions filePathOptions) throws Exception
+  public Playlist(IPlayListOptions playListOptions, List<PlaylistEntry> sublist) throws Exception
   {
-    this.filePathOptions = filePathOptions;
+    this.playListOptions = playListOptions;
     _utfFormat = true;
     _file = File.createTempFile("yay", ".m3u8");
     _file.deleteOnExit();
@@ -92,11 +91,6 @@ public class Playlist
     quickSave();
   }
 
-  protected final IFilePathOptions getFilePathOptions()
-  {
-    return this.filePathOptions;
-  }
-
   /**
    * Initializes a playlist with an externally created set of entries.
    * Currently used when reading playlists with external code.
@@ -105,9 +99,9 @@ public class Playlist
    * @param type
    * @param entries
    */
-  public Playlist(File listFile, PlaylistType type, List<PlaylistEntry> entries, IFilePathOptions filePathOptions)
+  public Playlist(IPlayListOptions playListOptions, File listFile, PlaylistType type, List<PlaylistEntry> entries)
   {
-    this.filePathOptions = filePathOptions;
+    this.playListOptions = playListOptions;
     _utfFormat = true;
     _file = listFile;
     _type = type;
@@ -123,9 +117,9 @@ public class Playlist
    * @param observer
    * @throws IOException
    */
-  public Playlist(File playlist, IProgressObserver observer, IFilePathOptions filePathOptions) throws IOException
+  public Playlist(IPlayListOptions playListOptions, File playlist, IProgressObserver observer) throws IOException
   {
-    this.filePathOptions = filePathOptions;
+    this.playListOptions = playListOptions;
     init(playlist, observer);
   }
 
@@ -136,9 +130,9 @@ public class Playlist
    *
    * @throws IOException
    */
-  public Playlist(IFilePathOptions filePathOptions) throws IOException
+  public Playlist(IPlayListOptions playListOptions) throws IOException
   {
-    this.filePathOptions = filePathOptions;
+    this.playListOptions = playListOptions;
     NEW_LIST_COUNT++;
     _file = new File(HOME_DIR + FS + "Untitled-" + NEW_LIST_COUNT + ".m3u8");
     _file.deleteOnExit();
@@ -149,10 +143,15 @@ public class Playlist
     refreshStatus();
   }
 
+  protected final IPlayListOptions getPlayListOptions()
+  {
+    return this.playListOptions;
+  }
+
   private void init(File playlist, IProgressObserver<Void> observer) throws IOException
   {
     _file = playlist;
-    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist, filePathOptions);
+    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist, playListOptions);
     if (observer != null)
     {
       List<PlaylistEntry> tempEntries = playlistProcessor.readPlaylist(observer);
@@ -297,7 +296,7 @@ public class Playlist
     {
       tempList.add(_entries.get(i));
     }
-    return new Playlist(tempList, this.filePathOptions);
+    return new Playlist(this.playListOptions, tempList);
   }
 
   /**
@@ -344,15 +343,10 @@ public class Playlist
    */
   public void setFile(File file)
   {
+    UNCFile uncFile = new UNCFile(file);
     // if we're in "use UNC" mode, flip the file to a UNC representation
-    if (GUIDriver.getInstance().getOptions().getAlwaysUseUNCPaths())
-    {
-      _file = new File((new UNCFile(file)).getUNCPath());
-    }
-    else
-    {
-      _file = new File((new UNCFile(file)).getDrivePath());
-    }
+    String fileName = this.playListOptions.getAlwaysUseUNCPaths() ? uncFile.getUNCPath() : uncFile.getDrivePath();
+    this._file = new File(fileName);
   }
 
   /**
@@ -743,16 +737,16 @@ public class Playlist
     {
       if (observer == null || !observer.getCancelled())
       {
-        if (Playlist.isPlaylist(file, this.filePathOptions))
+        if (Playlist.isPlaylist(file, this.playListOptions))
         {
           // playlist file
-          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file, this.filePathOptions);
+          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file, this.playListOptions);
           ents.addAll(reader.readPlaylist(progress));
         }
         else
         {
           // regular file
-          ents.add(new PlaylistEntry(file, null, _file));
+          ents.add(new PlaylistEntry(this.playListOptions, file, null, _file));
         }
       }
       else
@@ -893,7 +887,7 @@ public class Playlist
         entry = _entries.get(ix);
         if (!entry.isURL() && !entry.isFound())
         {
-          matches = entry.findClosestMatches(libraryFiles, null, this.filePathOptions);
+          matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
           if (!matches.isEmpty())
           {
             fixed.add(new BatchMatchItem(ix, entry, matches));
@@ -931,7 +925,7 @@ public class Playlist
         entry = _entries.get(ix);
         if (!entry.isURL() && !entry.isFound())
         {
-          matches = entry.findClosestMatches(libraryFiles, null, this.filePathOptions);
+          matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
           if (!matches.isEmpty())
           {
             fixed.add(new BatchMatchItem(ix, entry, matches));
@@ -1172,7 +1166,7 @@ public class Playlist
   {
     // 2014.12.08 - JCaron - Need to make this assignment so we can determine relativity correctly when saving out entries.
     setFile(destination);
-    _type = determinePlaylistTypeFromExtension(destination, this.filePathOptions);
+    _type = determinePlaylistTypeFromExtension(destination, this.playListOptions);
     if (_type == PlaylistType.PLS)
     {
       // apparently winamp shits itself if PLS files are saved in UTF-8 (who knew...)
@@ -1180,7 +1174,7 @@ public class Playlist
       // when we don't save as UTF-8 anyway, I'm removing this restriction
       // _utfFormat = false;
     }
-    save(this.filePathOptions.getSavePlaylistsWithRelativePaths(), observer);
+    save(this.playListOptions.getSavePlaylistsWithRelativePaths(), observer);
   }
 
   /**
@@ -1198,7 +1192,7 @@ public class Playlist
       progress.setTotal(_entries.size());
     }
 
-    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.filePathOptions);
+    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.playListOptions);
     writer.save(this, saveRelative, progress);
 
     resetInternalStateAfterSave(observer);
@@ -1209,7 +1203,7 @@ public class Playlist
 
   private void quickSave() throws Exception
   {
-    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, GUIDriver.getInstance().getOptions());
+    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.playListOptions);
     writer.save(this, false, null);
   }
 
@@ -1245,7 +1239,7 @@ public class Playlist
    * @param input
    * @return
    */
-  public static boolean isPlaylist(File input, IFilePathOptions filePathOptions)
+  public static boolean isPlaylist(File input, IPlayListOptions filePathOptions)
   {
     return determinePlaylistTypeFromExtension(input, filePathOptions) != PlaylistType.UNKNOWN;
   }
@@ -1254,7 +1248,7 @@ public class Playlist
    * @param input
    * @return
    */
-  public static PlaylistType determinePlaylistTypeFromExtension(File input, IFilePathOptions filePathOptions)
+  public static PlaylistType determinePlaylistTypeFromExtension(File input, IPlayListOptions filePathOptions)
   {
     if (input != null)
     {

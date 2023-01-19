@@ -28,7 +28,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import listfix.json.JsonAppOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
@@ -50,17 +50,17 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
   private boolean _userCancelled = false;
   private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
 
-  private JsonAppOptions appOptions;
+  private IPlayListOptions playListOptions;
 
   /** Creates new form BatchExactMatchesResultsDialog
    * @param parent
    * @param batch
    * @param modal
    */
-  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch, JsonAppOptions appOptions)
+  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch, IPlayListOptions playListOptions)
   {
     super(parent, batch.getDescription(), modal);
-    this.appOptions = appOptions;
+    this.playListOptions = playListOptions;
     //super(parent, modal);
     _batch = batch;
     initComponents();
@@ -99,7 +99,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
       @Override
       protected Void doInBackground() throws Exception
       {
-        _batch.performExactMatchRepair(this, BatchExactMatchesResultsDialog.this.appOptions);
+        _batch.performExactMatchRepair(this, BatchExactMatchesResultsDialog.this.playListOptions);
         return null;
       }
     };
@@ -308,7 +308,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
       @Override
       protected Void doInBackground() throws Exception
       {
-        _batch.save(BatchExactMatchesResultsDialog.this.appOptions, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
+        _batch.save(BatchExactMatchesResultsDialog.this.playListOptions, false, _chkBackup.isSelected(), _txtBackup.getText(), this);
         return null;
       }
     };

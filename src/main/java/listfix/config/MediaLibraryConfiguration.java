@@ -17,7 +17,7 @@ import static listfix.io.Constants.DATA_DIR;
 /**
  * @author Borewit
  */
-public class MediaLibraryConfiguration extends ApplicationConfigFile<JsonMediaLibrary>
+public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
 {
   private static final String path_json_dirLists = DATA_DIR + "mediaLibrary.json";
 

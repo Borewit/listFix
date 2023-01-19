@@ -7,14 +7,14 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class ApplicationConfigFile<T>
+public abstract class JsonConfigFile<T>
 {
-  public static final Logger _logger = Logger.getLogger(ApplicationConfigFile.class);
+  public static final Logger _logger = Logger.getLogger(JsonConfigFile.class);
 
   protected final File jsonFile;
   protected T jsonPojo = null;
 
-  public ApplicationConfigFile(String filename)
+  public JsonConfigFile(String filename)
   {
     this.jsonFile = new File(filename);
   }

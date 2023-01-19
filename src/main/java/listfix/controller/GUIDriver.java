@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 import listfix.config.ApplicationOptionsConfiguration;
+import listfix.config.IAppOptions;
 import listfix.config.IMediaLibrary;
 import listfix.config.MediaLibraryConfiguration;
 import listfix.json.JsonAppOptions;
@@ -52,9 +53,9 @@ public final class GUIDriver
   private static GUIDriver _instance;
 
   /**
-   * @return
+   * Thread safe access to singleton
    */
-  public static GUIDriver getInstance()
+  public static synchronized GUIDriver getInstance()
   {
     if (_instance == null) {
       _instance = new GUIDriver();
@@ -91,7 +92,7 @@ public final class GUIDriver
     return this.applicationOptionsConfiguration;
   }
 
-  public JsonAppOptions getOptions()
+  public IAppOptions getAppOptions()
   {
     return this.applicationOptionsConfiguration.getConfig();
   }

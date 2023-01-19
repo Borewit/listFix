@@ -36,5 +36,5 @@ public interface IPlaylistWriter
    * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
    * @throws Exception
    */
-  void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception;
+  void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception;
 }

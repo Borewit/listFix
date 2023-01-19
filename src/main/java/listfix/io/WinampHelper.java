@@ -29,7 +29,6 @@ import javax.xml.bind.Unmarshaller;
 
 import listfix.config.IMediaLibrary;
 import listfix.io.writers.FileCopier;
-import listfix.io.writers.IFilePathOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.winamp.generated.Playlist;
@@ -79,7 +78,7 @@ public class WinampHelper
    * @return A BatchRepair instance
    * @see BatchRepair
    */
-  public static BatchRepair getWinampBatchRepair(IMediaLibrary mediaFiles, IFilePathOptions filePathOptions)
+  public static BatchRepair getWinampBatchRepair(IMediaLibrary mediaFiles, IPlayListOptions filePathOptions)
   {
     try
     {

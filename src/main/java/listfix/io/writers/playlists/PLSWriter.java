@@ -32,7 +32,7 @@ import java.util.List;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
@@ -43,13 +43,11 @@ import listfix.view.support.ProgressAdapter;
  * A playlist writer capable of saving to PLS format.
  * @author jcaron
  */
-public class PLSWriter implements IPlaylistWriter
+public class PLSWriter extends PlaylistWriter
 {
 
-  private IFilePathOptions options;
-
-  public PLSWriter(IFilePathOptions options) {
-    this.options = options;
+  public PLSWriter(IPlayListOptions options) {
+    super(options);
   }
 
   /**
@@ -60,7 +58,7 @@ public class PLSWriter implements IPlaylistWriter
    * @throws IOException
    */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException
+  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws IOException
   {
     boolean track = adapter != null;
     List<PlaylistEntry> entries = list.getEntries();
@@ -85,13 +83,13 @@ public class PLSWriter implements IPlaylistWriter
             File absolute = entry.getAbsoluteFile().getCanonicalFile();
 
             // Switch to UNC representation if selected in the options
-            if (this.options.getAlwaysUseUNCPaths())
+            if (this.playListOptions.getAlwaysUseUNCPaths())
             {
               UNCFile temp = new UNCFile(absolute);
               absolute = new File(temp.getUNCPath());
             }
 
-            entry = new PlaylistEntry(absolute, entry.getTitle(), entry.getLength(), listFile);
+            entry = new PlaylistEntry(this.playListOptions, absolute, entry.getTitle(), entry.getLength(), listFile);
             entries.set(i, entry);
           }
           else if (saveRelative && entry.isFound())
@@ -109,7 +107,7 @@ public class PLSWriter implements IPlaylistWriter
             if (temp.isAbsolute())
             {
               // Switch to UNC representation if selected in the options
-              if (this.options.getAlwaysUseUNCPaths())
+              if (this.playListOptions.getAlwaysUseUNCPaths())
               {
                 UNCFile uncd = new UNCFile(temp);
                 temp = new File(uncd.getUNCPath());
@@ -117,7 +115,7 @@ public class PLSWriter implements IPlaylistWriter
             }
 
             // make the entry and addAt it
-            entry = new PlaylistEntry(temp, entry.getTitle(), entry.getLength(), listFile);
+            entry = new PlaylistEntry(this.playListOptions, temp, entry.getTitle(), entry.getLength(), listFile);
             entries.set(i, entry);
           }
         }

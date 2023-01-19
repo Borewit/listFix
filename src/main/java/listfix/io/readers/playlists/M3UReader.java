@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import listfix.io.Constants;
+import listfix.io.IPlayListOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
@@ -49,13 +50,12 @@ import org.apache.log4j.Logger;
  * Reads in a M3U/M3U8 file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
  * @author jcaron
  */
-public class M3UReader implements IPlaylistReader
+public class M3UReader extends PlaylistReader
 {
   private BufferedReader buffer;
   private List<PlaylistEntry> results = new ArrayList<>();
   private long fileLength = 0;
   private String _encoding = "";
-  private File _listFile;
   private static final PlaylistType type = PlaylistType.M3U;
   private static final Logger _logger = Logger.getLogger(M3UReader.class);
 
@@ -66,23 +66,23 @@ public class M3UReader implements IPlaylistReader
 
   /**
    *
-   * @param in
+   * @param m3uFile
    * @throws FileNotFoundException
    */
-  public M3UReader(File in) throws FileNotFoundException
+  public M3UReader(IPlayListOptions playListOptions, File m3uFile) throws FileNotFoundException
   {
-    _listFile = in;
-    _encoding = UnicodeUtils.getEncoding(in);
-    if (_encoding.equals("UTF-8") || in.getName().toLowerCase().endsWith(".m3u8"))
+    super(playListOptions, m3uFile);
+    _encoding = UnicodeUtils.getEncoding(m3uFile);
+    if (_encoding.equals("UTF-8") || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
     {
-      buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(in), "UTF-8"), StandardCharsets.UTF_8));
+      buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(m3uFile), "UTF-8"), StandardCharsets.UTF_8));
       _encoding = "UTF-8";
     }
     else
     {
-      buffer = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
+      buffer = new BufferedReader(new InputStreamReader(new FileInputStream(m3uFile)));
     }
-    fileLength = in.length();
+    fileLength = m3uFile.length();
   }
 
   /**
@@ -373,13 +373,13 @@ public class M3UReader implements IPlaylistReader
         }
         tokenNumber++;
       }
-      results.add(new PlaylistEntry(path.toString(), fileName, extInf, _listFile));
+      results.add(new PlaylistEntry(this.playListOptions, path.toString(), fileName, extInf, playlistFile));
     }
     else
     {
       try
       {
-        results.add(new PlaylistEntry(new URI(L2.trim()), L1));
+        results.add(new PlaylistEntry(this.playListOptions, new URI(L2.trim()), L1));
       }
       catch (Exception e)
       {

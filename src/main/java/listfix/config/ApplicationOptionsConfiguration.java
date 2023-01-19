@@ -6,9 +6,8 @@ import java.io.IOException;
 
 import static listfix.io.Constants.DATA_DIR;
 
-public class ApplicationOptionsConfiguration extends ApplicationConfigFile<JsonAppOptions>
+public class ApplicationOptionsConfiguration extends JsonConfigFile<IAppOptions>
 {
-
   /**
    * The path to the options JSON file.
    */

@@ -33,7 +33,7 @@ import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
@@ -44,12 +44,10 @@ import listfix.view.support.ProgressAdapter;
  * A playlist writer capable of saving to M3U or M3U8 format.
  * @author jcaron
  */
-public class M3UWriter implements IPlaylistWriter
+public class M3UWriter extends PlaylistWriter
 {
-  private IFilePathOptions options;
-
-  public M3UWriter(IFilePathOptions options) {
-    this.options = options;
+  public M3UWriter(IPlayListOptions options) {
+    super(options);
   }
 
   /**
@@ -60,7 +58,7 @@ public class M3UWriter implements IPlaylistWriter
    * @throws IOException
    */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException
+  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws IOException
   {
     boolean track = adapter != null;
     List<PlaylistEntry> entries = list.getEntries();
@@ -86,14 +84,14 @@ public class M3UWriter implements IPlaylistWriter
             File absolute = entry.getAbsoluteFile().getCanonicalFile();
 
             // Switch to UNC representation if selected in the options
-            if (GUIDriver.getInstance().getOptions().getAlwaysUseUNCPaths())
+            if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
             {
               UNCFile temp = new UNCFile(absolute);
               absolute = new File(temp.getUNCPath());
             }
 
             // make the entry and addAt it
-            entry = new PlaylistEntry(absolute, entry.getExtInf(), listFile);
+            entry = new PlaylistEntry(this.playListOptions, absolute, entry.getExtInf(), listFile);
             entries.set(i, entry);
           }
           else if (saveRelative && entry.isFound())
@@ -111,7 +109,7 @@ public class M3UWriter implements IPlaylistWriter
             if (temp.isAbsolute())
             {
               // Switch to UNC representation if selected in the options
-              if (GUIDriver.getInstance().getOptions().getAlwaysUseUNCPaths())
+              if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
               {
                 UNCFile uncd = new UNCFile(temp);
                 temp = new File(uncd.getUNCPath());
@@ -119,7 +117,7 @@ public class M3UWriter implements IPlaylistWriter
             }
 
             // make the entry and addAt it
-            entry = new PlaylistEntry(temp, entry.getExtInf(), listFile);
+            entry = new PlaylistEntry(this.playListOptions, temp, entry.getExtInf(), listFile);
             entries.set(i, entry);
           }
         }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import listfix.io.Constants;
+import listfix.io.IPlayListOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
@@ -42,9 +43,8 @@ import org.apache.log4j.Logger;
  * Reads in a PLS file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
  * @author jcaron
  */
-public class PLSReader implements IPlaylistReader
+public class PLSReader extends PlaylistReader
 {
-  private File plsFile = null;
   private List<PlaylistEntry> results = new ArrayList<>();
   private String encoding = "";
   private static final PlaylistType type = PlaylistType.PLS;
@@ -52,19 +52,19 @@ public class PLSReader implements IPlaylistReader
 
   /**
    *
-   * @param in
+   * @param plsFile
    * @throws FileNotFoundException
    */
-  public PLSReader(File in) throws FileNotFoundException
+  public PLSReader(IPlayListOptions playListOptions, File plsFile) throws FileNotFoundException
   {
+    super(playListOptions, plsFile);
     try
     {
-      encoding = UnicodeUtils.getEncoding(in);
+      encoding = UnicodeUtils.getEncoding(plsFile);
       if (encoding.equals("UTF-8"))
       {
         encoding = "UTF-8";
       }
-      plsFile = in;
     }
     catch (Exception e)
     {
@@ -94,11 +94,11 @@ public class PLSReader implements IPlaylistReader
     PLSProperties propBag = new PLSProperties();
     if (encoding.equals("UTF-8"))
     {
-      propBag.load(new InputStreamReader(new UnicodeInputStream(new FileInputStream(plsFile), "UTF-8"), "UTF8"));
+      propBag.load(new InputStreamReader(new UnicodeInputStream(new FileInputStream(playlistFile), "UTF-8"), "UTF8"));
     }
     else
     {
-      propBag.load(new FileInputStream(plsFile));
+      propBag.load(new FileInputStream(playlistFile));
     }
 
     // Find out how many entries we have to process.
@@ -162,7 +162,7 @@ public class PLSReader implements IPlaylistReader
     {
       try
       {
-        results.add(new PlaylistEntry(new URI(file), title, duration));
+        results.add(new PlaylistEntry(this.playListOptions, new URI(file), title, duration));
       }
       catch (URISyntaxException ex)
       {
@@ -184,7 +184,7 @@ public class PLSReader implements IPlaylistReader
           file = file.replace("/", Constants.FS);
         }
       }
-      results.add(new PlaylistEntry(new File(file), title, duration, plsFile));
+      results.add(new PlaylistEntry(playListOptions, new File(file), title, duration, playlistFile));
     }
   }
 

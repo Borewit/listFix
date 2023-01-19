@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.itunes.ITunesMediaLibrary;
 import listfix.model.playlists.itunes.ITunesTrack;
 import listfix.model.playlists.PlaylistEntry;
@@ -45,9 +46,8 @@ import org.apache.log4j.Logger;
  *
  * @author jcaron
  */
-public class ITunesXMLReader implements IPlaylistReader
+public class ITunesXMLReader extends PlaylistReader
 {
-  private final File _listFile;
   private String _encoding;
   private static final Logger _logger = Logger.getLogger(ITunesXMLReader.class);
 
@@ -55,12 +55,12 @@ public class ITunesXMLReader implements IPlaylistReader
 
   /**
    *
-   * @param inputFile
+   * @param itunesXmlFile
    */
-  public ITunesXMLReader(File inputFile)
+  public ITunesXMLReader(IPlayListOptions playListOptions, File itunesXmlFile)
   {
-    _listFile = inputFile;
-    _encoding = UnicodeUtils.getEncoding(_listFile);
+    super(playListOptions, itunesXmlFile);
+    _encoding = UnicodeUtils.getEncoding(playlistFile);
   }
 
   @Override
@@ -85,7 +85,7 @@ public class ITunesXMLReader implements IPlaylistReader
   public List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException
   {
     List<PlaylistEntry> results = new ArrayList<>();
-    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
+    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
     if (playlist != null)
     {
       PlistPlaylist plistList = (PlistPlaylist) playlist;
@@ -112,7 +112,7 @@ public class ITunesXMLReader implements IPlaylistReader
   public List<PlaylistEntry> readPlaylist() throws IOException
   {
     List<PlaylistEntry> results = new ArrayList<>();
-    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
+    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
     PlistPlaylist plistList = (PlistPlaylist) playlist;
     _library = new ITunesMediaLibrary(plistList);
     Map<String, ITunesTrack> tracks = getLibrary().getTracks();
@@ -134,13 +134,13 @@ public class ITunesXMLReader implements IPlaylistReader
     {
       if (track.getTrackType().equals(ITunesTrack.URL))
       {
-        ITunesPlaylistEntry result = new ITunesPlaylistEntry(new URI(track.getLocation()), track);
+        ITunesPlaylistEntry result = new ITunesPlaylistEntry(this.playListOptions, new URI(track.getLocation()), track);
         // result.setTrackId(track.getTrackId());
         return result;
       }
       else
       {
-        ITunesPlaylistEntry result = new ITunesPlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), _listFile, track);
+        ITunesPlaylistEntry result = new ITunesPlaylistEntry(this.playListOptions, new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistFile, track);
         // result.setTrackId(track.getTrackId());
         return result;
       }

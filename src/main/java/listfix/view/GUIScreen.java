@@ -90,6 +90,7 @@ import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
 
 import listfix.config.ApplicationOptionsConfiguration;
+import listfix.config.IAppOptions;
 import listfix.config.IMediaLibrary;
 import listfix.config.MediaLibraryConfiguration;
 import listfix.controller.GUIDriver;
@@ -183,7 +184,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     splashScreen.setStatusBar("Initializing UI...");
   }
 
-  private JsonAppOptions getApplicationConfig()
+  private IAppOptions getApplicationConfig()
   {
     return this._guiDriver.getApplicationConfiguration().getConfig();
   }
@@ -194,7 +195,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private void postInitComponents()
   {
     // Set the user-selected font and look & feel
-    final JsonAppOptions appConfig = this.getApplicationConfig();
+    final IAppOptions appConfig = this.getApplicationConfig();
     setApplicationFont(appConfig.getAppFont());
     this.setLookAndFeel(appConfig.getLookAndFeel());
 
@@ -689,7 +690,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   /**
    * @return
    */
-  public JsonAppOptions getOptions()
+  public IAppOptions getOptions()
   {
     return this._guiDriver.getApplicationConfiguration().getConfig();
   }
@@ -703,7 +704,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   {
     final ApplicationOptionsConfiguration applicationConfiguration = this._guiDriver.getApplicationConfiguration();
     final String oldPlaylistsDirectory = applicationConfiguration.getConfig().getPlaylistsDirectory();
-    AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, applicationConfiguration.getConfig());
+    AppOptionsDialog optDialog = new AppOptionsDialog(this, "listFix() options", true, (JsonAppOptions) applicationConfiguration.getConfig());
     JsonAppOptions options = optDialog.showDialog();
     if (optDialog.getResultCode() == AppOptionsDialog.OK)
     {
@@ -2013,7 +2014,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           @Override
           protected Void doInBackground() throws Exception
           {
-            boolean saveRelative = GUIDriver.getInstance().getOptions().getSavePlaylistsWithRelativePaths();
+            boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
             list.save(saveRelative, this);
             return null;
           }
@@ -2376,7 +2377,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           @Override
           protected Boolean doInBackground() throws Exception
           {
-            boolean saveRelative = GUIDriver.getInstance().getOptions().getSavePlaylistsWithRelativePaths();
+            boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
             list.save(saveRelative, this);
             return true;
           }
@@ -3117,7 +3118,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
     com.jidesoft.utils.Lm.verifyLicense("Jeremy Caron", "listFix()", "AMu.5dFy1Fuos0hs:l2.GQ9AzUy2GgB2");
 
-    JsonAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
+    IAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
     InitApplicationFont(tempOptions.getAppFont());
     GUIScreen mainWindow = new GUIScreen();
 

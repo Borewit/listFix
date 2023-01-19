@@ -22,6 +22,7 @@ package listfix.model.playlists;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,20 +30,15 @@ import java.util.regex.Pattern;
 
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.config.IMediaLibrary;
-import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
-import listfix.io.writers.IFilePathOptions;
-import listfix.json.JsonAppOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.ArrayFunctions;
-import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
 import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author jcaron
@@ -50,7 +46,7 @@ import org.apache.log4j.Logger;
 public class PlaylistEntry implements Cloneable
 {
   // logger
-  private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
+  private final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
 
   /**
    * The list of folders we know don't exist.
@@ -103,6 +99,8 @@ public class PlaylistEntry implements Cloneable
   private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(([a-z])([A-Z]))");
   private String _trackId;
 
+  private final IPlayListOptions playListOptions;
+
   /**
    * @return the _status
    */
@@ -113,13 +111,24 @@ public class PlaylistEntry implements Cloneable
 
   // Construct an M3U URL entry.
 
+  private PlaylistEntry(IPlayListOptions playListOptions)
+  {
+    this.playListOptions = playListOptions;
+  }
+
+  private PlaylistEntry(IPlayListOptions playListOptions, URI uri)
+  {
+    this.playListOptions = playListOptions;
+    _thisURI = uri;
+  }
+
   /**
    * @param uri
    * @param extra
    */
-  public PlaylistEntry(URI uri, String extra)
+  public PlaylistEntry(IPlayListOptions playListOptions, URI uri, String extra)
   {
-    _thisURI = uri;
+    this(playListOptions, uri);
     _extInf = extra;
     parseExtraInfo(extra);
   }
@@ -132,9 +141,9 @@ public class PlaylistEntry implements Cloneable
    * @param cid
    * @param tid
    */
-  public PlaylistEntry(URI uri, String extra, String cid, String tid)
+  public PlaylistEntry(IPlayListOptions playListOptions, URI uri, String extra, String cid, String tid)
   {
-    this(uri, extra);
+    this(playListOptions, uri, extra);
     _cid = cid;
     _tid = tid;
   }
@@ -146,9 +155,9 @@ public class PlaylistEntry implements Cloneable
    * @param title
    * @param length
    */
-  public PlaylistEntry(URI uri, String title, long length)
+  public PlaylistEntry(IPlayListOptions playListOptions, URI uri, String title, long length)
   {
-    _thisURI = uri;
+    this(playListOptions, uri);
     _title = title;
     _length = length;
     _extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
@@ -162,25 +171,24 @@ public class PlaylistEntry implements Cloneable
    * @param length
    * @param list
    */
-  public PlaylistEntry(URI uri, String title, long length, Playlist list)
+  public PlaylistEntry(IPlayListOptions playListOptions, URI uri, String title, long length, Playlist list)
   {
-    _thisURI = uri;
-    _title = title;
+    this(playListOptions, uri);
     _length = length;
     _extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
     _playlist = list;
   }
 
   // Construct an M3U path & file-name based entry.
-
   /**
    * @param p
    * @param f
    * @param extra
    * @param list
    */
-  public PlaylistEntry(String p, String f, String extra, File list)
+  public PlaylistEntry(IPlayListOptions playListOptions, String p, String f, String extra, File list)
   {
+    this(playListOptions);
     _path = p;
     _fileName = f;
     _extInf = extra;
@@ -263,9 +271,9 @@ public class PlaylistEntry implements Cloneable
    * @param cid
    * @param tid
    */
-  public PlaylistEntry(String p, String f, String extra, File list, String cid, String tid)
+  public PlaylistEntry(IPlayListOptions playListOptions, String p, String f, String extra, File list, String cid, String tid)
   {
-    this(p, f, extra, list);
+    this(playListOptions, p, f, extra, list);
     _cid = cid;
     _tid = tid;
   }
@@ -277,8 +285,9 @@ public class PlaylistEntry implements Cloneable
    * @param extra
    * @param list
    */
-  public PlaylistEntry(File input, String extra, File list)
+  public PlaylistEntry(IPlayListOptions playListOptions, File input, String extra, File list)
   {
+    this(playListOptions);
     _fileName = input.getName();
     _path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
     _thisFile = input;
@@ -340,9 +349,9 @@ public class PlaylistEntry implements Cloneable
    * @param cid
    * @param tid
    */
-  public PlaylistEntry(File input, String extra, File list, String cid, String tid)
+  public PlaylistEntry(IPlayListOptions playListOptions, File input, String extra, File list, String cid, String tid)
   {
-    this(input, extra, list);
+    this(playListOptions, input, extra, list);
     _cid = cid;
     _tid = tid;
   }
@@ -350,13 +359,15 @@ public class PlaylistEntry implements Cloneable
   // PLS constructor, which has file references, a title, and a length
 
   /**
+   * @param playListOptions
    * @param input
    * @param title
    * @param length
    * @param list
    */
-  public PlaylistEntry(File input, String title, long length, File list)
+  public PlaylistEntry(IPlayListOptions playListOptions, File input, String title, long length, File list)
   {
+    this(playListOptions);
     _fileName = input.getName();
     _path = input.getPath().substring(0, input.getPath().indexOf(_fileName));
     _thisFile = input;
@@ -416,6 +427,7 @@ public class PlaylistEntry implements Cloneable
    */
   public PlaylistEntry(PlaylistEntry entry)
   {
+    this.playListOptions = entry.playListOptions;
     _fileName = entry._fileName;
     _path = entry._path;
     _extInf = entry._extInf;
@@ -623,7 +635,7 @@ public class PlaylistEntry implements Cloneable
     {
       List<PlaylistEntry> tempList = new ArrayList<>();
       tempList.add(this);
-      (new Playlist(tempList, this._playlist.getFilePathOptions())).play();
+      (new Playlist(this._playlist.getPlayListOptions(), tempList)).play();
     }
   }
 
@@ -635,7 +647,7 @@ public class PlaylistEntry implements Cloneable
   {
     String fileSearchResult = null;
     String trimmedFileName = _fileName.trim();
-    boolean caseSensitiveMatching = Constants.FILE_SYSTEM_IS_CASE_SENSITIVE && !GUIDriver.getInstance().getOptions().getCaseInsensitiveExactMatching();
+    boolean caseSensitiveMatching = this.fileSystemIsCaseSensitive && !this.playListOptions.getCaseInsensitiveExactMatching();
     String candidateFileName;
     int lastFileSeparatorIndex;
     for (String file : fileList)
@@ -674,17 +686,12 @@ public class PlaylistEntry implements Cloneable
     return false;
   }
 
-  private JsonAppOptions getApplicationConfig()
-  {
-    return GUIDriver.getInstance().getOptions();
-  }
-
   /**
    * @param mediaFiles
    * @param observer
    * @return
    */
-  public List<PotentialPlaylistEntryMatch> findClosestMatches(Collection<String> mediaFiles, IProgressObserver<Playlist> observer, IFilePathOptions filePathOptions)
+  public List<PotentialPlaylistEntryMatch> findClosestMatches(Collection<String> mediaFiles, IProgressObserver<Playlist> observer, IPlayListOptions filePathOptions)
   {
     List<PotentialPlaylistEntryMatch> matches = new ArrayList<>();
     ProgressAdapter<Playlist> progress = ProgressAdapter.wrap(observer);
@@ -711,15 +718,15 @@ public class PlaylistEntry implements Cloneable
           // Only keep the top X highest-rated matches (default is 20), anything more than that has a good chance of using too much memory
           // on systems w/ huge media libraries, too little RAM, or when fixing excessively large playlists (the things you have to worry
           // about when people run your software on ancient PCs in Africa =])
-          if (matches.size() < getApplicationConfig().getMaxClosestResults())
+          if (matches.size() <this.playListOptions.getMaxClosestResults())
           {
-            matches.add(new PotentialPlaylistEntryMatch(mediaFile, score, _playlist.getFile()));
+            matches.add(new PotentialPlaylistEntryMatch(this.playListOptions, mediaFile, score, _playlist.getFile()));
           }
           else
           {
-            if (matches.get(getApplicationConfig().getMaxClosestResults() - 1).getScore() < score)
+            if (matches.get(this.playListOptions.getMaxClosestResults() - 1).getScore() < score)
             {
-              matches.set(getApplicationConfig().getMaxClosestResults() - 1, new PotentialPlaylistEntryMatch(mediaFile, score, _playlist.getFile()));
+              matches.set(this.playListOptions.getMaxClosestResults() - 1, new PotentialPlaylistEntryMatch(this.playListOptions, mediaFile, score, _playlist.getFile()));
             }
           }
           matches.sort(new MatchedPlaylistEntryComparator());
@@ -733,34 +740,23 @@ public class PlaylistEntry implements Cloneable
     return matches;
   }
 
-  /**
-   * @return
-   */
   @Override
   public Object clone()
   {
-    PlaylistEntry result = null;
-    if (!this.isURL())
+    try
     {
-      result = new PlaylistEntry(this);
+      return this.isURL() ?
+        new PlaylistEntry(this.playListOptions, new URI(this.getURI().toString()), this.getTitle(), this.getLength(), _playlist) :
+        new PlaylistEntry(this);
     }
-    else
+    catch (URISyntaxException e)
     {
-      try
-      {
-        result = new PlaylistEntry(new URI(this.getURI().toString()), this.getTitle(), this.getLength(), _playlist);
-      }
-      catch (Exception e)
-      {
-        //eat the error for now.
-        _logger.warn(ExStack.toString(e));
-      }
+      throw new RuntimeException(e);
     }
-    return result;
   }
 
   /**
-   * @return the _title
+   * @return the title
    */
   public String getTitle()
   {
@@ -768,7 +764,7 @@ public class PlaylistEntry implements Cloneable
   }
 
   /**
-   * @return the _length, in milliseconds
+   * @return the length, in milliseconds
    */
   public long getLength()
   {
@@ -815,7 +811,7 @@ public class PlaylistEntry implements Cloneable
    */
   public boolean updatePathToMediaLibraryIfFoundOutside(IMediaLibrary dirLists)
   {
-    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), _path, !GUIDriver.FILE_SYSTEM_IS_CASE_SENSITIVE))
+    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), _path, !this.fileSystemIsCaseSensitive))
     {
       return findNewLocationFromFileList(dirLists.getNestedMediaFiles());
     }

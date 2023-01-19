@@ -26,7 +26,7 @@ import java.util.List;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.ITunesXMLReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
-import listfix.io.writers.IFilePathOptions;
+import listfix.io.IPlayListOptions;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.view.support.IProgressObserver;
@@ -37,7 +37,7 @@ import listfix.view.support.IProgressObserver;
  */
 public class PlaylistFactory
 {
-  public static Playlist getPlaylist(File file, IProgressObserver observer, IFilePathOptions filePathOptions) throws IOException
+  public static Playlist getPlaylist(File file, IProgressObserver observer, IPlayListOptions filePathOptions) throws IOException
   {
     IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(file, filePathOptions);
     List<PlaylistEntry> entries = playlistProcessor.readPlaylist(observer);
@@ -48,7 +48,7 @@ public class PlaylistFactory
     }
     else
     {
-      return new Playlist(file, playlistProcessor.getPlaylistType(), entries, filePathOptions);
+      return new Playlist(filePathOptions, file, playlistProcessor.getPlaylistType(), entries);
     }
   }
 }
