@@ -635,7 +635,7 @@ public class PlaylistEntry implements Cloneable
     {
       List<PlaylistEntry> tempList = new ArrayList<>();
       tempList.add(this);
-      (new Playlist(this._playlist.getPlayListOptions(), tempList)).play();
+      (new Playlist(this.playListOptions, tempList)).play();
     }
   }
 
