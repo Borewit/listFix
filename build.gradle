@@ -29,7 +29,6 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'java'
-    id 'idea'
 
     /* https://github.com/openjfx/javafx-gradle-plugin */
     id 'org.openjfx.javafxplugin' version '0.0.10'
@@ -90,8 +89,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
-
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
 
