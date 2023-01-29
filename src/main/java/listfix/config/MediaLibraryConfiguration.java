@@ -8,9 +8,7 @@ import listfix.json.JsonMediaLibrary;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static listfix.io.Constants.DATA_DIR;
 
@@ -92,17 +90,19 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
       }
     }
   }
-
-  private static void normalizeFileSetToUNC(Set<String> paths)
+  static void normalizeFileSetToUNC(Set<String> paths)
   {
-    Iterator<String> i = paths.iterator();
-    paths.clear();
-
-    while (i.hasNext())
-    {
-      String path = i.next();
+    Collection<String> iterator = new LinkedList<>(paths);
+    for (String path : iterator) {
       UNCFile file = new UNCFile(path);
-      paths.add(file.onNetworkDrive() ? file.getUNCPath() : path);
+      if (file.onNetworkDrive()) {
+        String uncPath = file.getUNCPath();
+        if (!uncPath.equals(path)) {
+          // Replace path with normalized UNC path
+          paths.remove(path);
+          paths.add(uncPath);
+        }
+      }
     }
   }
 

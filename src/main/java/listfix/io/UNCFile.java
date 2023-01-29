@@ -24,8 +24,6 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import listfix.util.ExStack;
-import org.apache.log4j.Logger;
 import pspdash.NetworkDriveList;
 
 /**
@@ -36,25 +34,16 @@ public class UNCFile extends File
 {
   private static NetworkDriveList driveLister = new NetworkDriveList();
   private static final List<UNCFile> networkDrives = new ArrayList<>();
-  private static final Logger _logger = Logger.getLogger(UNCFile.class);
 
   static
   {
     File[] roots = File.listRoots();
     for (File root : roots)
     {
-      try
+      UNCFile file = new UNCFile(root);
+      if (file.onNetworkDrive())
       {
-        UNCFile file = new UNCFile(root);
-        if (file.onNetworkDrive())
-        {
-          networkDrives.add(file);
-        }
-      }
-      catch (Exception e)
-      {
-        // eat the error and continue
-        _logger.error(ExStack.toString(e));
+        networkDrives.add(file);
       }
     }
   }

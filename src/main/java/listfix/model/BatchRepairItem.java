@@ -39,10 +39,6 @@ public class BatchRepairItem
   private File _playlistFile;
   private List<BatchMatchItem> _closestMatches;
 
-  /**
-   *
-   * @param file
-   */
   public BatchRepairItem(File file, IPlayListOptions filePathOptions)
   {
     _path = file.getPath();
@@ -54,10 +50,6 @@ public class BatchRepairItem
     }
   }
 
-  /**
-   *
-   * @param list
-   */
   public BatchRepairItem(Playlist list, IPlayListOptions filePathOptions)
   {
     _playlist = list;
@@ -66,89 +58,51 @@ public class BatchRepairItem
     _playlistFile = list.getFile();
   }
 
-  /**
-   *
-   * @return
-   */
   public String getPath()
   {
     return _path;
   }
 
-  /**
-   *
-   * @param path
-   */
   public void setPath(String path)
   {
     this._path = path;
   }
 
-  /**
-   *
-   * @return
-   */
-  public String getDisplayName()
+   public String getDisplayName()
   {
     return _displayName;
   }
 
-  /**
-   *
-   * @param displayName
-   */
   public void setDisplayName(String displayName)
   {
     this._displayName = displayName;
   }
 
-  /**
-   *
-   * @return
-   */
   public Playlist getPlaylist()
   {
     return _playlist;
   }
 
-  /**
-   *
-   * @param playlist
-   */
   public void setPlaylist(Playlist playlist)
   {
     this._playlist = playlist;
   }
 
-  /**
-   * @return the _playlistFile
-   */
   public File getPlaylistFile()
   {
     return _playlistFile;
   }
 
-  /**
-   * @param playlistFile the _playlistFile to set
-   */
   public void setPlaylistFile(File playlistFile)
   {
     this._playlistFile = playlistFile;
   }
 
-   /**
-    *
-    * @param findClosestMatches
-    */
   void setClosestMatches(List<BatchMatchItem> findClosestMatches)
   {
     _closestMatches = findClosestMatches;
   }
 
-  /**
-   *
-   * @return
-   */
   public List<BatchMatchItem> getClosestMatches()
   {
     return _closestMatches;
