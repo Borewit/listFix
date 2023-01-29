@@ -181,6 +181,8 @@ task makeSplashScreen(type: Svg2PngTask, dependsOn: generateSplashScreenWithVers
     destination = new File('src/main/resources/images/listfixSplashScreen.png')
 }
 
+rootProject.tasks.getByName('compileJava').dependsOn makeSplashScreen
+
 task makeIcon (type: Svg2IcoTask) {
     group = 'graphics'
     input {
