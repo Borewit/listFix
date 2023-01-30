@@ -1,5 +1,6 @@
 package listfix.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.log4j.Logger;
@@ -53,6 +54,7 @@ public abstract class JsonConfigFile<T>
   protected static <T> T readJson(File jsonFile, Class<T> valueType) throws IOException
   {
     final ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     return mapper.reader().readValue(jsonFile, valueType);
   }
 
@@ -61,23 +63,6 @@ public abstract class JsonConfigFile<T>
     final ObjectMapper mapper = new ObjectMapper();
     mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty JSON
     mapper.writer().writeValue(this.jsonFile, this.jsonPojo);
-  }
-
-  public boolean existAndIsValid()
-  {
-    if (this.jsonFile.exists())
-    {
-      try
-      {
-        this.read();
-        return true;
-      }
-      catch (IOException ioException)
-      {
-        return false;
-      }
-    }
-    return true;
   }
 
   /**
