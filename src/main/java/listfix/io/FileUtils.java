@@ -86,6 +86,7 @@ public class FileUtils
   {
     try
     {
+      relativeTo = relativeTo.isFile() ? relativeTo.getParentFile() : relativeTo;
       return Path.of(UNCFile.from(relativeTo).getUNCPath()).relativize(file.toPath()).toString();
     }
     catch (IllegalArgumentException exception)
