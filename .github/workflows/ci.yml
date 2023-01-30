@@ -17,5 +17,7 @@ jobs:
         run: ./gradlew build
       - name: Run unit tests (Gradle)
         run: ./gradlew test
-      - name: CheckStyle (Gradle)
-        run: ./gradlew check
+      - name: CheckStyle main (Gradle)
+        run: ./gradlew checkstyleMain
+      - name: CheckStyle test (Gradle)
+        run: ./gradlew checkstyleTest
