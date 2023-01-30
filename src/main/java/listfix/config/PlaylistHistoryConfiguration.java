@@ -4,19 +4,15 @@ import listfix.json.JsonPlayListHistory;
 
 import java.io.IOException;
 
-import static listfix.io.Constants.DATA_DIR;
-
 /**
  * @author Borewit
  */
 public class PlaylistHistoryConfiguration extends JsonConfigFile<JsonPlayListHistory>
 {
 
-  private static final String path_json_history = DATA_DIR + "history.json";
-
   public PlaylistHistoryConfiguration()
   {
-    super(path_json_history);
+    super("history.json");
   }
 
   @Override

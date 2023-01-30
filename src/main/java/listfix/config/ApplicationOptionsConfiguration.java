@@ -4,18 +4,14 @@ import listfix.json.JsonAppOptions;
 
 import java.io.IOException;
 
-import static listfix.io.Constants.DATA_DIR;
-
 public class ApplicationOptionsConfiguration extends JsonConfigFile<IAppOptions>
 {
   /**
    * The path to the options JSON file.
    */
-  public static final String path_json_options = DATA_DIR + "options.json";
-
   public ApplicationOptionsConfiguration()
   {
-    super(path_json_options);
+    super("options.json");
   }
 
   @Override

@@ -21,6 +21,7 @@
 package listfix.io;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Contains app-wide constants that are used throughout the listFix() codebase.
@@ -43,7 +44,7 @@ public class Constants
   /**
    * The directory on disk where the listFix() config files are stored.
    */
-  public static final String DATA_DIR = HOME_DIR + FS + ".listFix()" + FS;
+  public static final Path DATA_DIR = Path.of(HOME_DIR, ".listFix()");
 
   /**
    * The line break string on the current OS.

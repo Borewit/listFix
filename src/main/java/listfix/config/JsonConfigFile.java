@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 
+import static listfix.io.Constants.DATA_DIR;
+
 public abstract class JsonConfigFile<T>
 {
   public static final Logger _logger = Logger.getLogger(JsonConfigFile.class);
@@ -14,9 +16,9 @@ public abstract class JsonConfigFile<T>
   protected final File jsonFile;
   protected T jsonPojo = null;
 
-  public JsonConfigFile(String filename)
+  public JsonConfigFile(String configurationFileName)
   {
-    this.jsonFile = new File(filename);
+    this.jsonFile = DATA_DIR.resolve(configurationFileName).toFile();
   }
 
   public File getFile()

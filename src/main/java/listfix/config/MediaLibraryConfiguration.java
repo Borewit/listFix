@@ -10,18 +10,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static listfix.io.Constants.DATA_DIR;
-
 /**
  * @author Borewit
  */
 public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
 {
-  private static final String path_json_dirLists = DATA_DIR + "mediaLibrary.json";
-
   public MediaLibraryConfiguration()
   {
-    super(path_json_dirLists);
+    super("mediaLibrary.json");
   }
 
   @Override
