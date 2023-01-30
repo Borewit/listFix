@@ -1,18 +1,18 @@
 /**
  * listFix() - Fix Broken Playlists!
- *
+ * <p>
  * This file is part of listFix().
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import listfix.config.IMediaLibrary;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
 import listfix.view.support.DualProgressAdapter;
@@ -40,6 +42,7 @@ import listfix.view.support.ProgressAdapter;
 
 /**
  * Serves to model the batch repair operations on multiple playlists, both closest matches and exact matches.
+ *
  * @author jcaron
  */
 
@@ -49,7 +52,7 @@ public class BatchRepair
   private final List<BatchRepairItem> _items = new ArrayList<>();
 
   // The list of files in the media library to be considered during the repair.
-  private final String[] _mediaFiles;
+  private final IMediaLibrary mediaLibrary;
 
   // The lowest common directory of all playlists being repaired.
   private File _rootDirectory;
@@ -58,13 +61,12 @@ public class BatchRepair
   private String _description;
 
   /**
-   *
-   * @param mediaFiles
+   * @param mediaLibrary Media library to be considered during the repair
    * @param rootDirectory
    */
-  public BatchRepair(String[] mediaFiles, File rootDirectory)
+  public BatchRepair(IMediaLibrary mediaLibrary, File rootDirectory)
   {
-    _mediaFiles = mediaFiles;
+    this.mediaLibrary = mediaLibrary;
     _rootDirectory = rootDirectory;
     if (!rootDirectory.isDirectory())
     {
@@ -73,7 +75,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @return
    */
   public List<BatchRepairItem> getItems()
@@ -82,7 +83,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @param ix
    * @return
    */
@@ -92,7 +92,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @return
    */
   public Boolean isEmpty()
@@ -101,7 +100,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @return
    */
   public String getDescription()
@@ -110,7 +108,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @param description
    */
   public void setDescription(String description)
@@ -119,7 +116,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @return
    */
   public File getRootDirectory()
@@ -128,7 +124,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @return
    */
   public List<Playlist> getPlaylists()
@@ -142,7 +137,6 @@ public class BatchRepair
   }
 
   /**
-   *
    * @param item
    */
   public void add(BatchRepairItem item)
@@ -152,10 +146,11 @@ public class BatchRepair
 
   /**
    * Performs an exact matches search on all entries in multiple playlists.
+   *
    * @param observer The progress observer for this operation.
    * @throws IOException
    */
-  public void performExactMatchRepair(IDualProgressObserver<String> observer) throws IOException
+  public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlayListOptions filePathOptions)
   {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
     progress.getOverall().setTotal(_items.size() * 2);
@@ -173,7 +168,7 @@ public class BatchRepair
           File file = new File(item.getPath());
           try
           {
-            Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask());
+            Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask(), filePathOptions);
             item.setPlaylist(temp);
           }
           catch (IOException e)
@@ -188,7 +183,7 @@ public class BatchRepair
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
-          list.batchRepair(_mediaFiles, progress.getTask());
+          list.batchRepair(this.mediaLibrary, progress.getTask());
         }
         else
         {
@@ -210,9 +205,10 @@ public class BatchRepair
 
   /**
    * Performs a closest matches search on all entries in multiple playlists.
+   *
    * @param observer The progress observer for this operation.
    */
-  public void performClosestMatchRepair(IDualProgressObserver<String> observer)
+  public void performClosestMatchRepair(IDualProgressObserver<String> observer, IPlayListOptions filePathOptions)
   {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
     progress.getOverall().setTotal(_items.size() * 2);
@@ -230,7 +226,7 @@ public class BatchRepair
           File file = new File(item.getPath());
           try
           {
-            Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask());
+            Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask(), filePathOptions);
             item.setPlaylist(temp);
           }
           catch (IOException e)
@@ -245,7 +241,7 @@ public class BatchRepair
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
-          item.setClosestMatches(list.findClosestMatches(_mediaFiles, progress.getTask()));
+          item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), progress.getTask()));
         }
         else
         {
@@ -267,6 +263,7 @@ public class BatchRepair
 
   /**
    * Helper method to get auto-generated zip file name for backing up the playlists in this batch repair.
+   *
    * @return
    */
   public String getDefaultBackupName()
@@ -279,16 +276,17 @@ public class BatchRepair
 
   /**
    * Save out all the playlists in this batch repair and backup the originals if told to do so.
-   * @param saveRelative      Should the playlist be saved relatively or not.
+   *
+   * @param filePathOptions      Options
    * @param isClosestMatchesSave Are we saving the results of a closest matches search?
-   * @param backup        Should we backup the originals to a zip file?
-   * @param destination      The path to the backup zip file we'll create if told to backup the originals.
-   * @param observer        The progress observer for this operation.
+   * @param backup               Should we backup the originals to a zip file?
+   * @param destination          The path to the backup zip file we'll create if told to backup the originals.
+   * @param observer             The progress observer for this operation.
    * @throws Exception
    */
-  public void save(boolean saveRelative, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver observer) throws Exception
+  public void save(IPlayListOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
   {
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 
     // get included items
     int stepCount = 0;
@@ -348,7 +346,7 @@ public class BatchRepair
       {
         item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
       }
-      item.getPlaylist().save(saveRelative, progress);
+      item.getPlaylist().save(filePathOptions.getSavePlaylistsWithRelativePaths(), progress);
     }
   }
 }

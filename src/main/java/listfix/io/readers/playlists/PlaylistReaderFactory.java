@@ -23,6 +23,7 @@ package listfix.io.readers.playlists;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.enums.PlaylistType;
 
@@ -32,34 +33,35 @@ import listfix.model.enums.PlaylistType;
  */
 public class PlaylistReaderFactory
 {
+
   /**
    *
    * @param inputFile
    * @return
    * @throws FileNotFoundException
    */
-  public static IPlaylistReader getPlaylistReader(File inputFile) throws FileNotFoundException
+  public static IPlaylistReader getPlaylistReader(File inputFile, IPlayListOptions playListOptions) throws FileNotFoundException
   {
-    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
+    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile, playListOptions);
     if (type == PlaylistType.M3U)
     {
-      return new M3UReader(inputFile);
+      return new M3UReader(playListOptions, inputFile);
     }
     else if (type == PlaylistType.PLS)
     {
-      return new PLSReader(inputFile);
+      return new PLSReader(playListOptions, inputFile);
     }
     else if (type == PlaylistType.XSPF)
     {
-      return new XSPFReader(inputFile);
+      return new XSPFReader(playListOptions, inputFile);
     }
     else if (type == PlaylistType.WPL)
     {
-      return new WPLReader(inputFile);
+      return new WPLReader(playListOptions, inputFile);
     }
     else if (type == PlaylistType.ITUNES)
     {
-      return new ITunesXMLReader(inputFile);
+      return new ITunesXMLReader(playListOptions, inputFile);
     }
     else
     {

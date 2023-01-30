@@ -20,81 +20,63 @@
 
 package listfix.controller;
 
+import listfix.config.MediaLibraryConfiguration;
 import listfix.io.*;
-import listfix.io.writers.FileWriter;
 import listfix.util.*;
 import listfix.view.support.ProgressWorker;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
 
 /**
- *
  * @author jcaron
  */
 public class MediaLibraryOperator
 {
-  private GUIDriver guiDriver;
-  private String[] mediaDir;
-  private String[] mediaLibraryDirectoryList;
-  private String[] mediaLibraryFileList;
-  private String[] mediaDirs;
+  private static final Logger _logger = Logger.getLogger(MediaLibraryOperator.class);
+  private MediaLibraryConfiguration mediaLibraryConfiguration;
   private ProgressWorker _observer;
 
   /**
-   *
    * @param observer
    */
   public MediaLibraryOperator(ProgressWorker observer)
   {
-    _observer = observer;
-    guiDriver = GUIDriver.getInstance();
+    this._observer = observer;
+    this.mediaLibraryConfiguration = GUIDriver.getInstance().getMediaLibrarConfiguration();
   }
 
   /**
-   *
    * @param dir
    */
   public void addDirectory(String dir)
   {
-    if (!guiDriver.hasAddedMediaDirectory())
+    final Set<String> mediaDir = this.mediaLibraryConfiguration.getConfig().getDirectories();
+    mediaDir.add(dir);
+    DirectoryScanner ds = new DirectoryScanner();
+    ds.createMediaLibraryDirectoryAndFileList(mediaDir, _observer);
+    if (!_observer.getCancelled())
     {
-      mediaDir = new String[1];
-      mediaDir[0] = dir;
-      DirectoryScanner ds = new DirectoryScanner();
-      ds.createMediaLibraryDirectoryAndFileList(mediaDir, _observer);
-      if (!_observer.getCancelled())
+      _observer.setMessage("Finishing...");
+      replaceSetValues(this.mediaLibraryConfiguration.getConfig().getNestedDirectories(), ds.getDirectoryList());
+      replaceSetValues(this.mediaLibraryConfiguration.getConfig().getNestedMediaFiles(), ds.getFileList());
+      ds.reset();
+      try
       {
-        _observer.setMessage("Finishing...");
-        mediaLibraryDirectoryList = ds.getDirectoryList();
-        mediaLibraryFileList = ds.getFileList();
-        ds.reset();
-        guiDriver.setMediaDirs(mediaDir);
-        java.util.Arrays.sort(mediaLibraryDirectoryList);
-        guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
-        java.util.Arrays.sort(mediaLibraryFileList);
-        guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-        (new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
+        this.mediaLibraryConfiguration.write();
+      }
+      catch (IOException e)
+      {
+        _logger.error(ExStack.toString(e));
       }
     }
-    else
-    {
-      String[] tempMediaDir = new String[1];
-      tempMediaDir[0] = dir;
-      mediaDir = ArrayFunctions.copyArrayAddOneValue(guiDriver.getMediaDirs(), dir);
-      DirectoryScanner ds = new DirectoryScanner();
-      ds.createMediaLibraryDirectoryAndFileList(tempMediaDir, _observer);
-      if (!_observer.getCancelled())
-      {
-        _observer.setMessage("Finishing...");
-        mediaLibraryDirectoryList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryDirectoryList(), ds.getDirectoryList());
-        mediaLibraryFileList = ArrayFunctions.mergeArray(guiDriver.getMediaLibraryFileList(), ds.getFileList());
-        ds.reset();
-        guiDriver.setMediaDirs(mediaDir);
-        java.util.Arrays.sort(mediaLibraryDirectoryList);
-        guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
-        java.util.Arrays.sort(mediaLibraryFileList);
-        guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-        (new FileWriter()).writeMediaLibrary(mediaDir, mediaLibraryDirectoryList, mediaLibraryFileList);
-      }
-    }
+  }
+
+  private static void replaceSetValues(Set<String> set, Collection<String> newValues) {
+    set.clear();
+    set.addAll(newValues);
   }
 
   /**
@@ -102,23 +84,19 @@ public class MediaLibraryOperator
    */
   public void refresh()
   {
-    mediaDirs = guiDriver.getMediaDirs();
-    if (mediaDirs != null)
+    DirectoryScanner ds = new DirectoryScanner();
+    ds.createMediaLibraryDirectoryAndFileList(this.mediaLibraryConfiguration.getConfig().getDirectories(), _observer);
+    if (!_observer.getCancelled())
     {
-      DirectoryScanner ds = new DirectoryScanner();
-      ds.createMediaLibraryDirectoryAndFileList(guiDriver.getMediaDirs(), _observer);
-      if (!_observer.getCancelled())
+      _observer.setMessage("Finishing...");
+      ds.reset();
+      try
       {
-        _observer.setMessage("Finishing...");
-        mediaLibraryDirectoryList = ds.getDirectoryList();
-        mediaLibraryFileList = ds.getFileList();
-        ds.reset();
-        guiDriver.setMediaDirs(mediaDirs);
-        java.util.Arrays.sort(mediaLibraryDirectoryList);
-        guiDriver.setMediaLibraryDirectoryList(mediaLibraryDirectoryList);
-        java.util.Arrays.sort(mediaLibraryFileList);
-        guiDriver.setMediaLibraryFileList(mediaLibraryFileList);
-        (new FileWriter()).writeMediaLibrary(mediaDirs, mediaLibraryDirectoryList, mediaLibraryFileList);
+        this.mediaLibraryConfiguration.write();
+      }
+      catch (IOException e)
+      {
+        _logger.error(ExStack.toString(e));
       }
     }
   }

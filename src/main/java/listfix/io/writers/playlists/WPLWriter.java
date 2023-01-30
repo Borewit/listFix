@@ -31,11 +31,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
-import listfix.controller.GUIDriver;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.UNCFile;
 import listfix.io.UnicodeInputStream;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
@@ -45,8 +45,12 @@ import listfix.view.support.ProgressAdapter;
  * A playlist writer capable of saving to WPL format.
  * @author jcaron & jpeterson
  */
-public class WPLWriter implements IPlaylistWriter
+public class WPLWriter extends PlaylistWriter
 {
+  public WPLWriter(IPlayListOptions options) {
+    super(options);
+  }
+
   /**
    * Saves the list to disk.  Always writes in UTF-8.
    * @param list The list to persist to disk.
@@ -55,7 +59,7 @@ public class WPLWriter implements IPlaylistWriter
    * @throws IOException
    */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws IOException
+  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws IOException
   {
     boolean track = adapter != null;
     List<PlaylistEntry> entries = list.getEntries();
@@ -81,12 +85,12 @@ public class WPLWriter implements IPlaylistWriter
             File absolute = entry.getAbsoluteFile().getCanonicalFile();
 
             // Switch to UNC representation if selected in the options
-            if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+            if (this.playListOptions.getAlwaysUseUNCPaths())
             {
               UNCFile temp = new UNCFile(absolute);
               absolute = new File(temp.getUNCPath());
             }
-            entry = new PlaylistEntry(absolute, entry.getExtInf(), listFile, entry.getCID(), entry.getTID());
+            entry = new PlaylistEntry(playListOptions, absolute, entry.getExtInf(), listFile, entry.getCID(), entry.getTID());
             entries.set(i, entry);
           }
           else
@@ -106,7 +110,7 @@ public class WPLWriter implements IPlaylistWriter
               if (temp.isAbsolute())
               {
                 // Switch to UNC representation if selected in the options
-                if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
+                if (this.playListOptions.getAlwaysUseUNCPaths())
                 {
                   UNCFile uncd = new UNCFile(temp);
                   temp = new File(uncd.getUNCPath());
@@ -114,7 +118,7 @@ public class WPLWriter implements IPlaylistWriter
               }
 
               // make the entry and addAt it
-              entry = new PlaylistEntry(temp, entry.getExtInf(), listFile, entry.getCID(), entry.getTID());
+              entry = new PlaylistEntry(playListOptions, temp, entry.getExtInf(), listFile, entry.getCID(), entry.getTID());
               entries.set(i, entry);
             }
           }

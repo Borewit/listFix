@@ -161,9 +161,9 @@ public final class WindowSaver implements AWTEventListener
     {
       settings.store(new FileOutputStream(PROP_FILE), null);
     }
-    catch (IOException ex)
+    catch (IOException e)
     {
-      _logger.error(ExStack.toString(ex));
+      throw new RuntimeException(e);
     }
   }
 

@@ -22,6 +22,7 @@ package listfix.model;
 import java.io.File;
 import java.util.List;
 
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.util.FileNameTokenizer;
 
@@ -38,116 +39,70 @@ public class BatchRepairItem
   private File _playlistFile;
   private List<BatchMatchItem> _closestMatches;
 
-  /**
-   *
-   * @param file
-   */
-  public BatchRepairItem(File file)
+  public BatchRepairItem(File file, IPlayListOptions filePathOptions)
   {
     _path = file.getPath();
     _displayName = file.getName();
     _playlistFile = file;
-    if (Playlist.isPlaylist(file))
+    if (Playlist.isPlaylist(file, filePathOptions))
     {
-      _displayName = (new FileNameTokenizer()).removeExtensionFromFileName(_displayName);
+      _displayName = (new FileNameTokenizer(filePathOptions)).removeExtensionFromFileName(_displayName);
     }
   }
 
-  /**
-   *
-   * @param list
-   */
-  public BatchRepairItem(Playlist list)
+  public BatchRepairItem(Playlist list, IPlayListOptions filePathOptions)
   {
     _playlist = list;
     _path = list.getFile().getPath();
-    _displayName = (new FileNameTokenizer()).removeExtensionFromFileName(list.getFile().getName());
+    _displayName = (new FileNameTokenizer(filePathOptions)).removeExtensionFromFileName(list.getFile().getName());
     _playlistFile = list.getFile();
   }
 
-  /**
-   *
-   * @return
-   */
   public String getPath()
   {
     return _path;
   }
 
-  /**
-   *
-   * @param path
-   */
   public void setPath(String path)
   {
     this._path = path;
   }
 
-  /**
-   *
-   * @return
-   */
-  public String getDisplayName()
+   public String getDisplayName()
   {
     return _displayName;
   }
 
-  /**
-   *
-   * @param displayName
-   */
   public void setDisplayName(String displayName)
   {
     this._displayName = displayName;
   }
 
-  /**
-   *
-   * @return
-   */
   public Playlist getPlaylist()
   {
     return _playlist;
   }
 
-  /**
-   *
-   * @param playlist
-   */
   public void setPlaylist(Playlist playlist)
   {
     this._playlist = playlist;
   }
 
-  /**
-   * @return the _playlistFile
-   */
   public File getPlaylistFile()
   {
     return _playlistFile;
   }
 
-  /**
-   * @param playlistFile the _playlistFile to set
-   */
   public void setPlaylistFile(File playlistFile)
   {
     this._playlistFile = playlistFile;
   }
 
-   /**
-    *
-    * @param findClosestMatches
-    */
   void setClosestMatches(List<BatchMatchItem> findClosestMatches)
   {
     _closestMatches = findClosestMatches;
   }
 
-  /**
-   *
-   * @return
-   */
   public List<BatchMatchItem> getClosestMatches()
   {
     return _closestMatches;

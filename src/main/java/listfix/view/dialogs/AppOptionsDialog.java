@@ -42,7 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import listfix.model.AppOptions;
+import listfix.json.JsonAppOptions;
 import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.controls.JTransparentTextArea;
@@ -73,7 +73,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private int _resultCode;
   private String _fileName;
-  private AppOptions _options = null;
+  private JsonAppOptions _options = null;
   private Font _chosenFont = null;
   private LookAndFeelInfo[] _installedLookAndFeelInfos = null;
 
@@ -133,12 +133,12 @@ public class AppOptionsDialog extends javax.swing.JDialog
    * @param modal
    * @param opts
    */
-  public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, AppOptions opts)
+  public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, JsonAppOptions opts)
   {
     super(parent, title, modal);
     if (opts == null)
     {
-      _options = new AppOptions();
+      _options = new JsonAppOptions();
     }
     else
     {
@@ -273,7 +273,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
    *
    * @return
    */
-  public AppOptions showDialog()
+  public JsonAppOptions showDialog()
   {
     this.center();
     this.setVisible(true);

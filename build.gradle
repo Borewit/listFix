@@ -29,7 +29,6 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'java'
-    id 'idea'
 
     /* https://github.com/openjfx/javafx-gradle-plugin */
     id 'org.openjfx.javafxplugin' version '0.0.10'
@@ -62,7 +61,7 @@ gitVersioning.apply {
     }
 }
 
-sourceCompatibility = 8
+sourceCompatibility = 15
 targetCompatibility = 15
 
 javafx {
@@ -122,6 +121,13 @@ dependencies {
     // Used to read the version number from the manifest
     // https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests/1.2.1
     implementation 'com.jcabi:jcabi-manifests:1.2.1'
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+
+    // JUnit Jupiter using Gradle's native JUnit Platform
+    testImplementation(platform('org.junit:junit-bom:5.9.2'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
 }
 
 application {

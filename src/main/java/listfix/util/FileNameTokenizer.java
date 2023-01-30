@@ -20,11 +20,9 @@
 
 package listfix.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
-import listfix.controller.GUIDriver;
+import listfix.io.IPlayListOptions;
+
+import java.util.*;
 
 /**
  *
@@ -35,23 +33,16 @@ public class FileNameTokenizer
   private static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";
   public List<String> ignoreList = new ArrayList<>();
 
-  public FileNameTokenizer()
+  public FileNameTokenizer(IPlayListOptions filePathOptions)
   {
-    String ignoredWords = GUIDriver.getInstance().getAppOptions().getIgnoredSmallWords();
-    StringTokenizer tokenMaker = new StringTokenizer(ignoredWords, " ,;|");
+    StringTokenizer tokenMaker = new StringTokenizer(filePathOptions.getIgnoredSmallWords(), " ,;|");
     while (tokenMaker.hasMoreTokens())
     {
       ignoreList.add(tokenMaker.nextToken());
     }
   }
 
-  /**
-   *
-   * @param filename1
-   * @param filename2
-   * @return
-   */
-  public int score(String filename1, String filename2)
+   public int score(String filename1, String filename2)
   {
     return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
   }

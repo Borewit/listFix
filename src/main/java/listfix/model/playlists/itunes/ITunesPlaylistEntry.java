@@ -23,9 +23,8 @@ package listfix.model.playlists.itunes;
 import java.io.File;
 import java.net.URI;
 
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.PlaylistEntry;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -35,18 +34,16 @@ public class ITunesPlaylistEntry extends PlaylistEntry
 {
   private final ITunesTrack _track;
 
-  // logger
-  private static final Logger _logger = Logger.getLogger(PlaylistEntry.class);
 
-  public ITunesPlaylistEntry(File input, String title, long length, File list, ITunesTrack track)
+  public ITunesPlaylistEntry(IPlayListOptions playListOptions, File input, String title, long length, File list, ITunesTrack track)
   {
-    super(input, title, length, list);
+    super(playListOptions, input, title, length, list);
     _track = track;
   }
 
-  public ITunesPlaylistEntry(URI input, ITunesTrack track)
+  public ITunesPlaylistEntry(IPlayListOptions playListOptions, URI input, ITunesTrack track)
   {
-    super(input, "");
+    super(playListOptions, input, "");
     _track = track;
   }
 

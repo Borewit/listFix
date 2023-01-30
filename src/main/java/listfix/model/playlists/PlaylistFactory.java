@@ -21,12 +21,12 @@
 package listfix.model.playlists;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.ITunesXMLReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
+import listfix.io.IPlayListOptions;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.view.support.IProgressObserver;
@@ -37,18 +37,18 @@ import listfix.view.support.IProgressObserver;
  */
 public class PlaylistFactory
 {
-  public static Playlist getPlaylist(File file, IProgressObserver observer) throws FileNotFoundException, IOException
+  public static Playlist getPlaylist(File file, IProgressObserver observer, IPlayListOptions filePathOptions) throws IOException
   {
-    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(file);
+    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(file, filePathOptions);
     List<PlaylistEntry> entries = playlistProcessor.readPlaylist(observer);
 
     if (playlistProcessor.getPlaylistType() == PlaylistType.ITUNES)
     {
-      return new ITunesPlaylist(file, entries, ((ITunesXMLReader)playlistProcessor).getLibrary());
+      return new ITunesPlaylist(file, entries, ((ITunesXMLReader)playlistProcessor).getLibrary(), filePathOptions);
     }
     else
     {
-      return new Playlist(file, playlistProcessor.getPlaylistType(), entries);
+      return new Playlist(filePathOptions, file, playlistProcessor.getPlaylistType(), entries);
     }
   }
 }

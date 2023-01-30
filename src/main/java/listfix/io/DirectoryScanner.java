@@ -21,13 +21,13 @@
 package listfix.io;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 import listfix.view.support.ProgressWorker;
 
 /**
  * Creates a list of the indexed files and subdirectories contained in a list of input directories.
+ *
  * @author jcaron
  */
 
@@ -38,11 +38,10 @@ public class DirectoryScanner
   private int recursiveCount = 0;
 
   /**
-   *
    * @param baseDirs
    * @param task
    */
-  public void createMediaLibraryDirectoryAndFileList(String[] baseDirs, ProgressWorker task)
+  public void createMediaLibraryDirectoryAndFileList(Collection<String> baseDirs, ProgressWorker task)
   {
     this.reset();
     for (String baseDir : baseDirs)
@@ -129,24 +128,18 @@ public class DirectoryScanner
   }
 
   /**
-   *
    * @return
    */
-  public String[] getFileList()
+  public List<String> getFileList()
   {
-    String[] result = new String[thisFileList.size()];
-    thisFileList.toArray(result);
-    return result;
+    return this.thisFileList;
   }
 
   /**
-   *
    * @return
    */
-  public String[] getDirectoryList()
+  public List<String> getDirectoryList()
   {
-    String[] result = new String[thisDirList.size()];
-    thisDirList.toArray(result);
-    return result;
+    return this.thisDirList;
   }
 }

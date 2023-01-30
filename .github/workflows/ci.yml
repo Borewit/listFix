@@ -13,5 +13,9 @@ jobs:
           java-version: 15
           distribution: 'adopt'
           cache: 'gradle'
-      - name: Build with Gradle
+      - name: Build (Gradle)
         run: ./gradlew build
+      - name: Run unit tests (Gradle)
+        run: ./gradlew test
+      - name: CheckStyle (Gradle)
+        run: ./gradlew check

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.itunes.ITunesMediaLibrary;
 import listfix.model.playlists.itunes.ITunesTrack;
 import listfix.model.playlists.Playlist;
@@ -65,7 +66,38 @@ public class PlaylistOpener
         Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
       }
       ITunesMediaLibrary list = new ITunesMediaLibrary(plistList);
-      Playlist myList = convertToListFixPlaylist(list, toOpen);
+      Playlist myList = convertToListFixPlaylist(list, toOpen, new IPlayListOptions()
+      {
+        @Override
+        public boolean getAlwaysUseUNCPaths()
+        {
+          return false;
+        }
+
+        @Override
+        public boolean getSavePlaylistsWithRelativePaths()
+        {
+          return false;
+        }
+
+        @Override
+        public String getIgnoredSmallWords()
+        {
+          return "";
+        }
+
+        @Override
+        public int getMaxClosestResults()
+        {
+          return 0;
+        }
+
+        @Override
+        public boolean getCaseInsensitiveExactMatching()
+        {
+          return true;
+        }
+      });
       myList.getEntries();
     }
     catch (IOException ex)
@@ -74,7 +106,7 @@ public class PlaylistOpener
     }
   }
 
-  private static Playlist convertToListFixPlaylist(ITunesMediaLibrary list, File listFile)
+  private static Playlist convertToListFixPlaylist(ITunesMediaLibrary list, File listFile, IPlayListOptions playListOptions)
   {
     List<PlaylistEntry> newList = new ArrayList<>();
     Map<String, ITunesTrack> tracks = list.getTracks();
@@ -84,7 +116,7 @@ public class PlaylistOpener
       ITunesTrack track = tracks.get(id);
       try
       {
-        newList.add(new ITunesPlaylistEntry(new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), listFile, track));
+        newList.add(new ITunesPlaylistEntry(playListOptions, new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), listFile, track));
       }
       catch (URISyntaxException ex)
       {
@@ -93,7 +125,7 @@ public class PlaylistOpener
     }
     try
     {
-      return new ITunesPlaylist(listFile, newList, list);
+      return new ITunesPlaylist(listFile, newList, list, playListOptions);
     }
     catch (Exception ex)
     {

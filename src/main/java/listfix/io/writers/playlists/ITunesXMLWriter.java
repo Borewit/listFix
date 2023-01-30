@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.playlists.itunes.ITunesPlaylist;
@@ -45,15 +46,20 @@ import org.apache.log4j.Logger;
  *
  * @author jcaron
  */
-public class ITunesXMLWriter implements IPlaylistWriter
+public class ITunesXMLWriter extends PlaylistWriter
 {
   private static final Logger _logger = Logger.getLogger(ITunesXMLWriter.class);
 
   private static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
     "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
 
+  public ITunesXMLWriter(IPlayListOptions playListOptions)
+  {
+    super(playListOptions);
+  }
+
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception
+  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception
   {
     Map<String, ITunesTrack> trackMap = new HashMap<>();
 

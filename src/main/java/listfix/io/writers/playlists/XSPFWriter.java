@@ -33,6 +33,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import listfix.io.FileUtils;
+import listfix.io.IPlayListOptions;
 import listfix.io.UNCFile;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
@@ -45,12 +46,17 @@ import org.apache.log4j.Logger;
  * A playlist writer capable of saving to XSPF ("spiff") format.
  * @author jcaron
  */
-public class XSPFWriter implements IPlaylistWriter
+public class XSPFWriter extends PlaylistWriter
 {
   private static final Logger _logger = Logger.getLogger(XSPFWriter.class);
   private boolean _saveRelative;
   private Playlist _list;
   private Media _trackToAdd;
+
+  public XSPFWriter(IPlayListOptions playListOptions)
+  {
+    super(playListOptions);
+  }
 
   /**
    * Saves the list to disk.  Always writes in UTF-8.
@@ -60,7 +66,7 @@ public class XSPFWriter implements IPlaylistWriter
    * @throws Exception
    */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter adapter) throws Exception
+  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception
   {
     _saveRelative = saveRelative;
     _list = list;

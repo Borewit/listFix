@@ -32,6 +32,7 @@ import java.util.List;
 
 import listfix.io.Constants;
 import listfix.io.FileUtils;
+import listfix.io.IPlayListOptions;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.enums.PlaylistType;
 import listfix.util.ExStack;
@@ -45,9 +46,8 @@ import org.apache.log4j.Logger;
  * Reads in a XSPF file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
  * @author jcaron
  */
-public class XSPFReader implements IPlaylistReader
+public class XSPFReader extends PlaylistReader
 {
-  private final File _listFile;
   private String _encoding;
 
   private static final PlaylistType type = PlaylistType.XSPF;
@@ -55,12 +55,12 @@ public class XSPFReader implements IPlaylistReader
 
   /**
    *
-   * @param inputFile
+   * @param xspfFile
    */
-  public XSPFReader(File inputFile)
+  public XSPFReader(IPlayListOptions playListOptions, File xspfFile)
   {
-    _listFile = inputFile;
-    _encoding = UnicodeUtils.getEncoding(_listFile);
+    super(playListOptions, xspfFile);
+    _encoding = UnicodeUtils.getEncoding(xspfFile);
   }
 
   /**
@@ -112,10 +112,10 @@ public class XSPFReader implements IPlaylistReader
     List<PlaylistEntry> entriesList = new ArrayList<>();
     URI uri;
     File trackFile;
-    SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(_listFile);
+    SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
     if (loadedList.getProvider().getId().equals("xspf"))
     {
-      christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(_listFile);
+      christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
 
       // Set the total if we have an observer.
       if (progress != null)
@@ -139,7 +139,7 @@ public class XSPFReader implements IPlaylistReader
         {
           if (FileUtils.isURL(track.getStringContainers().get(0).getText()))
           {
-            entriesList.add(new PlaylistEntry(new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
+            entriesList.add(new PlaylistEntry(this.playListOptions, new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
           }
           else
           {
@@ -151,12 +151,12 @@ public class XSPFReader implements IPlaylistReader
               if (trackFile.toString().startsWith(Constants.FS + Constants.FS) && !trackFile.toString().startsWith("\\\\"))
               {
                 // This was a relative, non-UNC entry...
-                entriesList.add(new PlaylistEntry(new File(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+                entriesList.add(new PlaylistEntry(this.playListOptions, new File(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, playlistFile));
               }
               else
               {
                 // Regular entry...
-                entriesList.add(new PlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, _listFile));
+                entriesList.add(new PlaylistEntry(this.playListOptions, trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, playlistFile));
               }
             }
           }
