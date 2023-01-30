@@ -3,7 +3,8 @@ package listfix.config;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import static listfix.io.Constants.DATA_DIR;
 
 public abstract class JsonConfigFile<T>
 {
-  public static final Logger _logger = Logger.getLogger(JsonConfigFile.class);
+  public static final Logger _logger = LogManager.getLogger(JsonConfigFile.class);
 
   protected final File jsonFile;
   protected T jsonPojo = null;

@@ -26,24 +26,22 @@
 
 package listfix.view.controls;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
-import listfix.util.ExStack;
 import listfix.view.dialogs.PlaylistsTableModel;
 import listfix.view.support.ZebraJTable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -53,7 +51,7 @@ public class PlaylistsList extends javax.swing.JPanel
 {
   private BatchRepair _batch;
 
-  private static final Logger _logger = Logger.getLogger(PlaylistsList.class);
+  private static final Logger _logger = LogManager.getLogger(PlaylistsList.class);
 
     /** Creates new form PlaylistsList */
     public PlaylistsList()
@@ -243,7 +241,7 @@ public class PlaylistsList extends javax.swing.JPanel
       }
       catch (Exception e)
       {
-        _logger.warn(ExStack.toString(e));
+        _logger.warn(e);
       }
       _uiLists.setRowSelectionInterval(uiIndex, uiIndex);
     }

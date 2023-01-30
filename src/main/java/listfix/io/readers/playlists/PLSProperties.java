@@ -774,34 +774,6 @@ public class PLSProperties extends Hashtable<Object, Object>
   }
 
   /**
-   * Calls the <code>store(OutputStream out, String comments)</code> method
-   * and suppresses IOExceptions that were thrown.
-   *
-   * @deprecated This method does not throw an IOException if an I/O error
-   * occurs while saving the property list.  The preferred way to save a
-   * properties list is via the <code>store(OutputStream out,
-   * String comments)</code> method or the
-   * <code>storeToXML(OutputStream os, String comment)</code> method.
-   *
-   * @param   out      an output stream.
-   * @param   comments   a description of the property list.
-   * @exception  ClassCastException  if this <code>Properties</code> object
-   *             contains any keys or values that are not
-   *             <code>Strings</code>.
-   */
-  @Deprecated
-  public synchronized void save(OutputStream out, String comments)
-  {
-    try
-    {
-      store(out, comments);
-    }
-    catch (IOException e)
-    {
-    }
-  }
-
-  /**
    * Writes this property list (key and element pairs) in this
    * <code>Properties</code> table to the output character stream in a
    * format suitable for using the {@link #load(java.io.Reader) load(Reader)}

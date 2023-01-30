@@ -21,50 +21,6 @@
 package listfix.view.controls;
 
 import com.jidesoft.swing.FolderChooser;
-
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Frame;
-import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.DropMode;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.SwingUtilities;
-import javax.swing.TransferHandler;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
 import listfix.config.IMediaLibrary;
 import listfix.io.*;
 import listfix.io.filters.AudioFileFilter;
@@ -79,24 +35,50 @@ import listfix.model.playlists.PlaylistFactory;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.GUIScreen;
-import listfix.view.dialogs.ReorderPlaylistDialog;
-import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.BatchClosestMatchResultsDialog;
+import listfix.view.dialogs.EditFilenameDialog;
 import listfix.view.dialogs.ProgressDialog;
+import listfix.view.dialogs.ReorderPlaylistDialog;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
-
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author jcaron
  */
 public class PlaylistEditCtrl extends javax.swing.JPanel
 {
-  private static final Logger _logger = Logger.getLogger(PlaylistEditCtrl.class);
+  private static final Logger _logger = LogManager.getLogger(PlaylistEditCtrl.class);
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
   private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
   private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
@@ -219,8 +201,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           catch (ExecutionException ex)
           {
             showWaitCursor(false);
+            _logger.error("Add File Error", ex);
             JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Add File Error", JOptionPane.ERROR_MESSAGE);
-            _logger.error(ExStack.toString(ex));
             return;
           }
 
@@ -306,12 +288,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             _uiTable.addRowSelectionInterval(viewIx, viewIx);
           }
         }
-        catch (CancellationException | InterruptedException ex)
+        catch (CancellationException | InterruptedException ignored)
         {
         }
         catch (ExecutionException ex)
         {
-          _logger.error(ExStack.toString(ex));
+          _logger.error("Error processing missing files", ex);
         }
       }
     };
@@ -428,7 +410,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
     catch (Exception ex)
     {
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Error finding closest matches", ex);
       JOptionPane.showMessageDialog(this.getParentFrame(), ex);
       return;
     }
@@ -478,7 +460,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
     catch (InterruptedException | ExecutionException ex)
     {
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Error finding closest matches", ex);
       JOptionPane.showMessageDialog(this.getParentFrame(), ex);
       return;
     }
@@ -638,7 +620,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         }
         catch (InterruptedException | ExecutionException e)
         {
-          _logger.error(ExStack.toString(e));
+          _logger.error("Error saving playlist", e);
 
           JOptionPane.showMessageDialog(getParentFrame(),
               new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", e.getCause())),
@@ -672,7 +654,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       }
       catch (InterruptedException | ExecutionException ex)
       {
-        _logger.error(ExStack.toString(ex));
+        _logger.error("Save playlist error", ex);
 
         JOptionPane.showMessageDialog(getParentFrame(),
             new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", ex.getCause())),
@@ -733,7 +715,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       JOptionPane.showMessageDialog(getParentFrame(),
           new JTransparentTextArea(ExStack.textFormatErrorForUser("Could not open the selected playlist entries.", ex.getCause())),
           "Playback Error", JOptionPane.ERROR_MESSAGE);
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Playback error", ex);
     }
   }
 
@@ -883,7 +865,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnReload.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnReload.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnReload.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnReload.addMouseListener(new java.awt.event.MouseAdapter()
+    _btnReload.addMouseListener(new MouseAdapter()
     {
       public void mouseClicked(java.awt.event.MouseEvent evt)
       {
@@ -1018,20 +1000,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     _btnLocate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-find.gif"))); // NOI18N
     _btnLocate.setToolTipText("Find Exact Matches");
-    _btnLocate.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+    _btnLocate.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnLocate.setFocusable(false);
     _btnLocate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
     _btnLocate.setMaximumSize(new java.awt.Dimension(31, 31));
     _btnLocate.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnLocate.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnLocate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnLocate.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onBtnLocateActionPerformed(evt);
-      }
-    });
+    _btnLocate.addActionListener(evt -> onBtnLocateActionPerformed(evt));
     _uiToolbar.add(_btnLocate);
 
     _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.png"))); // NOI18N
@@ -1043,13 +1019,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnPlay.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onBtnPlayActionPerformed(evt);
-      }
-    });
+    _btnPlay.addActionListener(this::onBtnPlayActionPerformed);
     _uiToolbar.add(_btnPlay);
     _uiToolbar.add(jSeparator5);
 
@@ -1062,13 +1032,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnPrevMissing.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnPrevMissing.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnPrevMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnPrevMissing.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnPrevMissingActionPerformed(evt);
-      }
-    });
+    _btnPrevMissing.addActionListener(evt -> _btnPrevMissingActionPerformed(evt));
     _uiToolbar.add(_btnPrevMissing);
 
     _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next.png"))); // NOI18N
@@ -1080,13 +1044,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnNextMissing.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnNextMissing.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnNextMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnNextMissing.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnNextMissingActionPerformed(evt);
-      }
-    });
+    _btnNextMissing.addActionListener(evt -> _btnNextMissingActionPerformed(evt));
     _uiToolbar.add(_btnNextMissing);
 
     add(_uiToolbar, java.awt.BorderLayout.PAGE_START);
@@ -1101,7 +1059,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
     _uiTable.setRowHeight(20);
     _uiTable.getTableHeader().setReorderingAllowed(false);
-    _uiTable.addMouseListener(new java.awt.event.MouseAdapter()
+    _uiTable.addMouseListener(new MouseAdapter()
     {
       public void mousePressed(java.awt.event.MouseEvent evt)
       {
@@ -1279,8 +1237,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             catch (ExecutionException ex)
             {
               showWaitCursor(false);
+              _logger.error("Reload error", ex);
               JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
-              _logger.error(ExStack.toString(ex));
               return;
             }
 
@@ -1463,7 +1421,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         JOptionPane.showMessageDialog(getParentFrame(),
             new JTransparentTextArea(ExStack.textFormatErrorForUser("An error has occured, 1 or more files were not copied.", e.getCause())),
             "Copy Error", JOptionPane.ERROR_MESSAGE);
-        _logger.error(ExStack.toString(e));
+        _logger.error("Error", e);
       }
     }
   }//GEN-LAST:event__miCopySelectedFilesActionPerformed
@@ -1972,7 +1930,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
             catch (UnsupportedFlavorException | IOException ex)
             {
-              _logger.warn(ExStack.toString(ex));
+              _logger.warn(ex);
             }
           }
           return false;
@@ -1992,7 +1950,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
             catch (UnsupportedFlavorException | IOException ex)
             {
-              _logger.warn(ExStack.toString(ex));
+              _logger.warn(ex);
             }
           }
           return false;
@@ -2029,7 +1987,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               }
               catch (Exception ex)
               {
-                _logger.warn(ExStack.toString(ex));
+                _logger.warn(ex);
               }
               insertAt++;
             }
@@ -2095,7 +2053,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(),
                   new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
                   "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
-              _logger.error(ExStack.toString(ex));
+              _logger.error("Open playlist error", ex);
             }
           }
         };
@@ -2118,7 +2076,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             try
             {
-              final String data;
               if (t.getTransferData(flavor) instanceof String)
               {
                 // In this case, it's a magically delicious string coming from the playlist panel
@@ -2155,7 +2112,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
             catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
             {
-              _logger.error(ExStack.toString(ex));
+              _logger.error("Error", ex);
               return false;
             }
           }
@@ -2204,7 +2161,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
             catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
             {
-              _logger.error(ExStack.toString(ex));
+              _logger.error("Error", ex);
               return false;
             }
           }
@@ -2236,7 +2193,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           }
           catch (IOException ex)
           {
-            _logger.error(ExStack.toString(ex));
+            _logger.error("Error", ex);
             return null;
           }
         }

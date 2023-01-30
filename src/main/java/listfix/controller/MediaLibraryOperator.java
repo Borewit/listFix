@@ -21,10 +21,10 @@
 package listfix.controller;
 
 import listfix.config.MediaLibraryConfiguration;
-import listfix.io.*;
-import listfix.util.*;
+import listfix.io.DirectoryScanner;
 import listfix.view.support.ProgressWorker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public class MediaLibraryOperator
 {
-  private static final Logger _logger = Logger.getLogger(MediaLibraryOperator.class);
+  private static final Logger _logger = LogManager.getLogger(MediaLibraryOperator.class);
   private MediaLibraryConfiguration mediaLibraryConfiguration;
   private ProgressWorker _observer;
 
@@ -69,7 +69,7 @@ public class MediaLibraryOperator
       }
       catch (IOException e)
       {
-        _logger.error(ExStack.toString(e));
+        _logger.error("Error", e);
       }
     }
   }
@@ -96,7 +96,7 @@ public class MediaLibraryOperator
       }
       catch (IOException e)
       {
-        _logger.error(ExStack.toString(e));
+        _logger.error("Error", e);
       }
     }
   }

@@ -50,14 +50,6 @@ public class BatchRepairItem
     }
   }
 
-  public BatchRepairItem(Playlist list, IPlayListOptions filePathOptions)
-  {
-    _playlist = list;
-    _path = list.getFile().getPath();
-    _displayName = (new FileNameTokenizer(filePathOptions)).removeExtensionFromFileName(list.getFile().getName());
-    _playlistFile = list.getFile();
-  }
-
   public String getPath()
   {
     return _path;

@@ -21,26 +21,20 @@
 package listfix.io.writers.playlists;
 
 import christophedelory.content.Content;
-import christophedelory.playlist.AbstractPlaylistComponent;
-import christophedelory.playlist.Media;
-import christophedelory.playlist.SpecificPlaylist;
-import christophedelory.playlist.SpecificPlaylistFactory;
-import christophedelory.playlist.SpecificPlaylistProvider;
+import christophedelory.playlist.*;
 import christophedelory.playlist.xspf.Track;
-
-import java.io.FileOutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import listfix.io.FileUtils;
 import listfix.io.IPlayListOptions;
 import listfix.io.UNCFile;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.util.ExStack;
 import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import java.io.FileOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A playlist writer capable of saving to XSPF ("spiff") format.
@@ -48,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class XSPFWriter extends PlaylistWriter
 {
-  private static final Logger _logger = Logger.getLogger(XSPFWriter.class);
+  private static final Logger _logger = LogManager.getLogger(XSPFWriter.class);
   private boolean _saveRelative;
   private Playlist _list;
   private Media _trackToAdd;
@@ -100,7 +94,7 @@ public class XSPFWriter extends PlaylistWriter
       }
       catch (Exception ex)
       {
-        _logger.error(ExStack.toString(ex), ex);
+        _logger.error(ex, ex);
         throw ex;
       }
     }
@@ -200,7 +194,7 @@ public class XSPFWriter extends PlaylistWriter
       }
       catch (URISyntaxException ex)
       {
-        _logger.error(ExStack.toString(ex), ex);
+        _logger.error(ex, ex);
       }
     }
 
@@ -213,7 +207,7 @@ public class XSPFWriter extends PlaylistWriter
       }
       catch (URISyntaxException ex)
       {
-        _logger.error(ExStack.toString(ex), ex);
+        _logger.error(ex, ex);
         throw ex;
       }
     }

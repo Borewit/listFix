@@ -112,8 +112,19 @@ dependencies {
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
-    // https://mvnrepository.com/artifact/log4j/log4j
-    implementation 'log4j:log4j:1.2.6'
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+
+    // Apache SLF4J to Log4j2 Adapter (bridge)
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j-impl:2.19.0'
+
+    // Required for log4j yaml configuration files
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2'
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation 'commons-io:commons-io:2.11.0'
@@ -121,9 +132,6 @@ dependencies {
     // Used to read the version number from the manifest
     // https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests/1.2.1
     implementation 'com.jcabi:jcabi-manifests:1.2.1'
-
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
 
     // Required by "src/jar/lizzy.jar"
     // https://mvnrepository.com/artifact/commons-logging/commons-logging
@@ -185,7 +193,7 @@ task makePngIcon(type: Svg2PngTask) {
     destination = new File("$generatedImages/icon.png")
 }
 
-processResources.dependsOn makePngIcon
+tasks.processResources.dependsOn makePngIcon
 
 task generateSplashScreenWithVersion(type: Copy) {
     group = 'graphics'
@@ -202,7 +210,7 @@ task makeSplashScreen(type: Svg2PngTask, dependsOn: generateSplashScreenWithVers
     destination = new File("$generatedImages/listfixSplashScreen.png")
 }
 
-processResources.dependsOn makeSplashScreen
+tasks.processResources.dependsOn makeSplashScreen
 
 task makeIcon (type: Svg2IcoTask) {
     group = 'graphics'

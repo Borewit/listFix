@@ -20,19 +20,17 @@
 
 package listfix.controller;
 
-import java.io.File;
-import java.io.IOException;
-
 import listfix.config.ApplicationOptionsConfiguration;
 import listfix.config.IAppOptions;
 import listfix.config.IMediaLibrary;
 import listfix.config.MediaLibraryConfiguration;
 import listfix.json.JsonAppOptions;
 import listfix.model.PlaylistHistory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import listfix.util.ExStack;
-
-import org.apache.log4j.Logger;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author jcaron
@@ -49,7 +47,7 @@ public final class GUIDriver
    */
   public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
 
-  private static final Logger _logger = Logger.getLogger(GUIDriver.class);
+  private static final Logger _logger = LogManager.getLogger(GUIDriver.class);
   private static GUIDriver _instance;
 
   /**
@@ -80,7 +78,7 @@ public final class GUIDriver
       showMediaDirWindow = true;
 
       // This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distribute listFix()
-      _logger.error(ExStack.toString(e));
+      _logger.error("Error initializing", e);
     }
   }
 

@@ -20,34 +20,29 @@
 
 package listfix.io.readers.playlists;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import listfix.io.Constants;
+import listfix.io.IPlayListOptions;
+import listfix.io.UnicodeInputStream;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.PlaylistEntry;
+import listfix.util.ArrayFunctions;
+import listfix.util.OperatingSystem;
+import listfix.util.UnicodeUtils;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import listfix.io.Constants;
-import listfix.io.IPlayListOptions;
-import listfix.io.UnicodeInputStream;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.enums.PlaylistType;
-import listfix.util.ArrayFunctions;
-import listfix.util.ExStack;
-import listfix.util.OperatingSystem;
-import listfix.util.UnicodeUtils;
-import listfix.view.support.IProgressObserver;
-import listfix.view.support.ProgressAdapter;
-
-import org.apache.log4j.Logger;
-
 /**
  * Reads in a M3U/M3U8 file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ *
  * @author jcaron
  */
 public class M3UReader extends PlaylistReader
@@ -57,18 +52,10 @@ public class M3UReader extends PlaylistReader
   private long fileLength = 0;
   private String _encoding = "";
   private static final PlaylistType type = PlaylistType.M3U;
-  private static final Logger _logger = Logger.getLogger(M3UReader.class);
+  private static final Logger _logger = LogManager.getLogger(M3UReader.class);
 
-  /**
-   *
-   */
   private StringBuilder _cache;
 
-  /**
-   *
-   * @param m3uFile
-   * @throws FileNotFoundException
-   */
   public M3UReader(IPlayListOptions playListOptions, File m3uFile) throws FileNotFoundException
   {
     super(playListOptions, m3uFile);
@@ -85,42 +72,24 @@ public class M3UReader extends PlaylistReader
     fileLength = m3uFile.length();
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public String getEncoding()
   {
     return _encoding;
   }
 
-  /**
-   *
-   * @param encoding
-   */
   @Override
   public void setEncoding(String encoding)
   {
     this._encoding = encoding;
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public PlaylistType getPlaylistType()
   {
     return type;
   }
 
-  /**
-   *
-   * @param observer
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
   {
@@ -132,7 +101,7 @@ public class M3UReader extends PlaylistReader
     if (observer != null)
     {
       progress = ProgressAdapter.wrap(observer);
-      progress.setTotal((int)fileLength);
+      progress.setTotal((int) fileLength);
     }
 
     _cache = new StringBuilder();
@@ -211,7 +180,7 @@ public class M3UReader extends PlaylistReader
               // Fill the progress bar
               if (progress != null)
               {
-                progress.setCompleted((int)fileLength);
+                progress.setCompleted((int) fileLength);
               }
 
               return results;
@@ -242,14 +211,13 @@ public class M3UReader extends PlaylistReader
     // Fill the progress bar
     if (progress != null)
     {
-      progress.setCompleted((int)fileLength);
+      progress.setCompleted((int) fileLength);
     }
 
     return results;
   }
 
   /**
-   *
    * @return
    * @throws IOException
    */
@@ -384,7 +352,7 @@ public class M3UReader extends PlaylistReader
       catch (Exception e)
       {
         // eat the error for now, it's only one entry.
-        _logger.warn(ExStack.toString(e));
+        _logger.warn(e);
       }
     }
   }

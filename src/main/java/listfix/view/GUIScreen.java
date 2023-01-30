@@ -25,91 +25,24 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DarkStar;
 import com.jgoodies.looks.plastic.theme.LightGray;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
-
 import com.jidesoft.document.DocumentComponent;
 import com.jidesoft.document.DocumentComponentEvent;
 import com.jidesoft.document.DocumentComponentListener;
 import com.jidesoft.document.DocumentPane;
 import com.jidesoft.document.DocumentPane.TabbedPaneCustomizer;
-
 import com.jidesoft.swing.FolderChooser;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideTabbedPane;
-
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.TransferHandler;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-
-import javax.xml.bind.JAXBException;
-
 import listfix.config.ApplicationOptionsConfiguration;
 import listfix.config.IAppOptions;
 import listfix.config.IMediaLibrary;
 import listfix.config.MediaLibraryConfiguration;
 import listfix.controller.GUIDriver;
 import listfix.controller.MediaLibraryOperator;
-
 import listfix.exceptions.MediaDirNotFoundException;
-
-import listfix.io.BrowserLauncher;
-import listfix.io.Constants;
-import listfix.io.FileTreeNodeGenerator;
-import listfix.io.FileUtils;
-import listfix.io.PlaylistScanner;
-import listfix.io.StringArrayListSerializer;
-import listfix.io.TreeNodeFile;
-import listfix.io.UNCFile;
-import listfix.io.WinampHelper;
+import listfix.io.*;
 import listfix.io.filters.ExtensionFilter;
 import listfix.io.filters.PlaylistFileFilter;
-
 import listfix.json.JsonAppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
@@ -117,11 +50,9 @@ import listfix.model.PlaylistHistory;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
-
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.util.FileTypeSearch;
-
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.AppOptionsDialog;
@@ -132,9 +63,43 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import javax.swing.*;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.FontUIResource;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.xml.bind.JAXBException;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author jcaron
@@ -147,14 +112,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private final JFileChooser _jSaveFileChooser = new JFileChooser();
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private final List<Playlist> _openPlaylists = new ArrayList<>();
-  private final Image applicationIcon = new javax.swing.ImageIcon(getClass().getResource("/images/icon.png")).getImage();
+  private final Image applicationIcon = new javax.swing.ImageIcon(Objects.requireNonNull(getClass().getResource("/images/icon.png"))).getImage();
   private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.png");
 
   private GUIDriver _guiDriver = null;
   private Playlist _currentPlaylist;
   private IPlaylistModifiedListener _playlistListener;
 
-  private static final Logger _logger = Logger.getLogger(GUIScreen.class);
+  private static final Logger _logger = LogManager.getLogger(GUIScreen.class);
 
   private final String applicationVersion = Manifests.read("Implementation-Version");
 
@@ -522,7 +487,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         }
         catch (IOException ex)
         {
-          _logger.warn(ExStack.toString(ex));
+          _logger.warn(ex);
           return null;
         }
 
@@ -682,7 +647,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException e)
     {
-      _logger.warn(ExStack.toString(e));
+      _logger.warn(e);
       dtde.rejectDrop();
     }
   }
@@ -728,7 +693,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
       catch (IOException e)
       {
-        _logger.error(ExStack.toString(e));
+        _logger.error("Writing application configuration", e);
       }
       if (!oldPlaylistsDirectory.equals(options.getPlaylistsDirectory()))
       {
@@ -837,47 +802,23 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _playlistTreeRightClickMenu.add(_miOpenSelectedPlaylists);
 
     _miExactMatchesSearch.setText("Find Exact Matches");
-    _miExactMatchesSearch.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miExactMatchesSearchActionPerformed(evt);
-      }
-    });
+    _miExactMatchesSearch.addActionListener(evt -> _miExactMatchesSearchActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miExactMatchesSearch);
 
     _miClosestMatchesSearch.setText("Find Closest Matches");
-    _miClosestMatchesSearch.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miClosestMatchesSearchActionPerformed(evt);
-      }
-    });
+    _miClosestMatchesSearch.addActionListener(evt -> _miClosestMatchesSearchActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
 
     _miDeletePlaylist.setMnemonic('D');
     _miDeletePlaylist.setText("Delete Selected");
     _miDeletePlaylist.setToolTipText("Delete Selected Folders & Playlists");
-    _miDeletePlaylist.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miDeletePlaylistActionPerformed(evt);
-      }
-    });
+    _miDeletePlaylist.addActionListener(evt -> _miDeletePlaylistActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miDeletePlaylist);
 
     _miRenameSelectedItem.setMnemonic('R');
     _miRenameSelectedItem.setText("Rename");
     _miRenameSelectedItem.setToolTipText("Rename selected file or folder");
-    _miRenameSelectedItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miRenameSelectedItemActionPerformed(evt);
-      }
-    });
+    _miRenameSelectedItem.addActionListener(evt -> _miRenameSelectedItemActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miRenameSelectedItem);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -1636,7 +1577,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     catch (IOException e)
     {
-      _logger.error(ExStack.toString(e));
+      _logger.error("Error clear M3U history", e);
     }
     updateRecentMenu();
   }//GEN-LAST:event__clearHistoryMenuItemActionPerformed
@@ -1704,9 +1645,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     catch (IOException | HeadlessException ex)
     {
+      _logger.error("Open playlist error", ex);
       JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected.", ex.getCause())),
         "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
-      _logger.error(ExStack.toString(ex));
       return;
     }
 
@@ -1743,7 +1684,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           }
           catch (InterruptedException | ExecutionException ex)
           {
-            _logger.error(ExStack.toString(ex));
+            _logger.error("Open playlist error", ex);
 
             JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
               "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
@@ -1761,7 +1702,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           }
           catch (IOException e)
           {
-            _logger.error(ExStack.toString(e));
+            _logger.error("Error", e);
           }
 
           updateRecentMenu();
@@ -1946,7 +1887,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     catch (IOException ex)
     {
-      _logger.warn(ExStack.toString(ex));
+      _logger.warn(ex);
     }
 
     updateRecentMenu();
@@ -1970,14 +1911,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       for (String file : files)
       {
         JMenuItem temp = new JMenuItem(file);
-        temp.addActionListener(new java.awt.event.ActionListener()
-        {
-          @Override
-          public void actionPerformed(java.awt.event.ActionEvent evt)
-          {
-            recentPlaylistActionPerformed(evt);
-          }
-        });
+        temp.addActionListener(evt -> recentPlaylistActionPerformed(evt));
         recentMenu.add(temp);
       }
     }
@@ -2026,7 +1960,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
       catch (InterruptedException | ExecutionException ex)
       {
-        _logger.error(ExStack.toString(ex));
+        _logger.error("Error saving your playlist", ex);
         JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
       }
       finally
@@ -2161,7 +2095,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
       catch (HeadlessException | InterruptedException | ExecutionException e)
       {
-        _logger.error(ExStack.toString(e));
+        _logger.error("Error saving your playlist", e);
         JOptionPane.showMessageDialog(this, new JTransparentTextArea("Sorry, there was an error saving your playlist.  Please try again, or file a bug report."));
         return false;
       }
@@ -2399,8 +2333,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         }
         catch (ExecutionException ex)
         {
+          _logger.error("Save Error", ex);
           JOptionPane.showMessageDialog(GUIScreen.this, ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
-          _logger.error(ExStack.toString(ex));
         }
 
         return false;
@@ -2526,13 +2460,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         }
         catch (ExecutionException ex)
         {
-          _logger.error(ExStack.toString(ex));
+          _logger.error(ex);
         }
       }
       catch (HeadlessException e)
       {
-        JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, media directory could not be added."));
-        _logger.error(ExStack.toString(e));
+        JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occurred, media directory could not be added."));
+        _logger.error("Error adding media directory", e);
       }
     }
     else
@@ -2562,7 +2496,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library."));
-      _logger.warn(ExStack.toString(e));
+      _logger.warn(e);
     }
     updateMediaDirButtons();
   }//GEN-LAST:event__removeMediaDirButtonActionPerformed
@@ -2580,7 +2514,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occured, files in the media directory you removed may not have been completely removed from the library.  Please refresh the library."));
-      _logger.warn(ExStack.toString(e));
+      _logger.warn(e);
     }
     updateMediaDirButtons();
   }
@@ -2639,7 +2573,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     catch (ExecutionException ex)
     {
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Error refresh media directories", ex);
     }
   }
 
@@ -2807,7 +2741,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     catch (IOException ex)
     {
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Error creating a new playlist", ex);
       JOptionPane.showMessageDialog(this,
         new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.", ex.getCause())),
         "New Playlist Error",
@@ -2844,7 +2778,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           catch (JAXBException | IOException ex)
           {
             JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea("Sorry, there was a problem extracting your playlists.  The error was: " + ex.getMessage()), "Extraction Error", JOptionPane.ERROR_MESSAGE);
-            _logger.warn(ExStack.toString(ex));
+            _logger.warn(ex);
           }
           finally
           {
@@ -3105,7 +3039,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
            UnsupportedLookAndFeelException ex)
     {
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Error while changing look & feel", ex);
     }
   }
 
@@ -3114,7 +3048,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public static void main(String[] args) throws IOException
   {
-    BasicConfigurator.configure();
+    _logger.info("Starting ListFix()...");
 
     com.jidesoft.utils.Lm.verifyLicense("Jeremy Caron", "listFix()", "AMu.5dFy1Fuos0hs:l2.GQ9AzUy2GgB2");
 
@@ -3143,7 +3077,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
       catch (Exception ex)
       {
-        _logger.error("Error opening playlists from command line: " + ExStack.toString(ex));
+        _logger.error("Error opening playlists from command line", ex);
       }
     }
   }

@@ -19,12 +19,11 @@
 
 package listfix.view.support;
 
-import java.awt.Font;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.awt.*;
 import java.util.StringTokenizer;
-
-import listfix.util.ExStack;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -32,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class FontExtensions
 {
-  private static final Logger _logger = Logger.getLogger(FontExtensions.class);
+  private static final Logger _logger = LogManager.getLogger(FontExtensions.class);
 
   /**
    *
@@ -105,7 +104,7 @@ public class FontExtensions
     }
     catch (Exception ex)
     {
-      _logger.info(ExStack.toString(ex));
+      _logger.info(ex);
       return null;
     }
   }

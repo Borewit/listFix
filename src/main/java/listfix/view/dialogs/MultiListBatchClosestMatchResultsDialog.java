@@ -26,28 +26,26 @@
 
 package listfix.view.dialogs;
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellEditor;
-
 import listfix.io.IPlayListOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
-import listfix.util.ExStack;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
@@ -60,7 +58,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   private BatchRepair _batch;
   private boolean _userCancelled = false;
   private boolean _userAccepted = false;
-  private static final Logger _logger = Logger.getLogger(MultiListBatchClosestMatchResultsDialog.class);
+  private static final Logger _logger = LogManager.getLogger(MultiListBatchClosestMatchResultsDialog.class);
 
   private IPlayListOptions filePathOptions;
 
@@ -330,7 +328,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
       Throwable ex = eex.getCause();
       String msg = "An error occurred while saving: " + ex.getMessage();
       JOptionPane.showMessageDialog(MultiListBatchClosestMatchResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
-      _logger.error(ExStack.toString(ex));
+      _logger.error(ex);
       return;
     }
 

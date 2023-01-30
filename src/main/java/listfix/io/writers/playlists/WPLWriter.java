@@ -20,26 +20,14 @@
 
 package listfix.io.writers.playlists;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.List;
-
-import listfix.io.Constants;
-import listfix.io.FileUtils;
-import listfix.io.UNCFile;
-import listfix.io.UnicodeInputStream;
-import listfix.io.IPlayListOptions;
+import listfix.io.*;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.view.support.ProgressAdapter;
+
+import java.io.*;
+import java.util.List;
 
 /**
  * A playlist writer capable of saving to WPL format.
@@ -201,7 +189,7 @@ public class WPLWriter extends PlaylistWriter
     catch (Exception ex)
     {
       // Don't bother logging here, it's expected when saving out a new file
-      // _logger.error(ExStack.toString(ex));
+      // _logger.error(ex);
       newHead = true;
     }
     if (newHead)

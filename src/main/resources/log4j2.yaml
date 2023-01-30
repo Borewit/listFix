@@ -1,0 +1,54 @@
+configuration:
+
+  name: Default
+
+  properties:
+    property:
+      - name: log-path
+        value: "${sys:user.home}/.listFix()/logs"
+      - name: archive
+        value: "${log-path}/archive"
+
+  appenders:
+
+    console:
+      name: Console-Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c{1} - %msg%n"
+
+    file:
+      name: File-Appender
+      fileName: "${log-path}/logfile.log"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c{1} - %msg%n"
+
+    rollingFile:
+      name: RollingFile-Appender
+      fileName: "${log-path}/rollingfile.log"
+      filePattern: "${archive}/rollingfile.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c{1} - %msg%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 512 kB
+      DefaultRolloverStrategy:
+        max: '30'
+
+  loggers:
+
+    root:
+      level: debug
+      appender-ref:
+        ref: Console-Appender
+
+    logger:
+      name: listfix
+      level: debug
+      appenderRef:
+        - ref: Console-Appender
+          level: info
+        - ref: File-Appender
+          level: info
+        - ref: RollingFile-Appender
+          level: debug
