@@ -141,13 +141,18 @@ jar {
     }
 }
 
+def generatedDir = "$buildDir/generated"
+def generatedSources = "$generatedDir/sources"
+def generatedResources = "$generatedDir/resources"
+def generatedImages = "$generatedResources/images"
+
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'build/generated/sources/xjc/java/main']
+            srcDirs = ['src/main/java', "$generatedSources/xjc/java/main"]
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ['src/main/resources', generatedResources]
         }
     }
 }
@@ -169,8 +174,10 @@ task makePngIcon(type: Svg2PngTask) {
     source = new File('src/main/svg/listFix() icon.svg')
     width = 64
     height = 64
-    destination = new File('src/main/resources/images/icon.png')
+    destination = new File("$generatedImages/icon.png")
 }
+
+processResources.dependsOn makePngIcon
 
 task generateSplashScreenWithVersion(type: Copy) {
     group = 'graphics'
@@ -184,10 +191,10 @@ task makeSplashScreen(type: Svg2PngTask, dependsOn: generateSplashScreenWithVers
     source = new File("$buildDir/generated-src/listFix() logo.svg")
     width = 400
     height = 160
-    destination = new File('src/main/resources/images/listfixSplashScreen.png')
+    destination = new File("$generatedImages/listfixSplashScreen.png")
 }
 
-rootProject.tasks.getByName('compileJava').dependsOn makeSplashScreen
+processResources.dependsOn makeSplashScreen
 
 task makeIcon (type: Svg2IcoTask) {
     group = 'graphics'
