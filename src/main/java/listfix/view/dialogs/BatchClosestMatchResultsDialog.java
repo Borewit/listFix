@@ -29,7 +29,8 @@ import javax.swing.table.TableCellEditor;
 import listfix.model.BatchMatchItem;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This is the results dialog we display when running a closest matches search on multiple files in a playlist (this operation originally worked only on a single entry)..
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
-  private static final Logger _logger = Logger.getLogger(BatchClosestMatchResultsDialog.class);
+  private static final Logger _logger = LogManager.getLogger(BatchClosestMatchResultsDialog.class);
 
   /**
    *

@@ -20,40 +20,22 @@
 
 package listfix.view.controls;
 
-import java.awt.Component;
-import java.awt.Point;
+import listfix.model.BatchMatchItem;
+import listfix.model.playlists.PotentialPlaylistEntryMatch;
+import listfix.view.support.ZebraJTable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.swing.table.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
-import listfix.model.BatchMatchItem;
-import listfix.model.playlists.PotentialPlaylistEntryMatch;
-import listfix.util.ExStack;
-import listfix.view.support.ZebraJTable;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -63,7 +45,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 {
   private List<BatchMatchItem> _items;
 
-  private static final Logger _logger = Logger.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
+  private static final Logger _logger = LogManager.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
   private int _width;
 
   /**
@@ -281,7 +263,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
       }
       catch (Exception ex)
       {
-        _logger.warn(ExStack.toString(ex));
+        _logger.warn(ex);
       }
     }
 

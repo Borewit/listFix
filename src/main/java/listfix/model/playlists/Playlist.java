@@ -20,31 +20,30 @@
 
 package listfix.model.playlists;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.*;
-
 import listfix.config.IMediaLibrary;
-
 import listfix.io.FileLauncher;
+import listfix.io.IPlayListOptions;
 import listfix.io.UNCFile;
 import listfix.io.readers.playlists.IPlaylistReader;
 import listfix.io.readers.playlists.PlaylistReaderFactory;
-import listfix.io.writers.FileCopier;
-import listfix.io.IPlayListOptions;
 import listfix.io.writers.playlists.IPlaylistWriter;
 import listfix.io.writers.playlists.PlaylistWriterFactory;
 import listfix.model.BatchMatchItem;
 import listfix.model.enums.PlaylistType;
-import listfix.util.ExStack;
 import listfix.util.FileNameTokenizer;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
-
 import listfix.view.support.ProgressWorker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 /**
  * @author jcaron
@@ -65,7 +64,7 @@ public class Playlist
   private int _missingCount;
   private boolean _isModified;
   private boolean _isNew;
-  private static final Logger _logger = Logger.getLogger(Playlist.class);
+  private static final Logger _logger = LogManager.getLogger(Playlist.class);
 
   private final IPlayListOptions playListOptions;
 
@@ -211,12 +210,12 @@ public class Playlist
             dest = new File(destinationDirectory.getPath(), tempEntry.getFileName());
             try
             {
-              FileCopier.copy(fileToCopy, dest);
+              Files.copy(fileToCopy.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
             catch (IOException e)
             {
               // eat the error and continue
-              _logger.error(ExStack.toString(e));
+              throw new RuntimeException("Error copying file", e);
             }
           }
         }
@@ -568,7 +567,7 @@ public class Playlist
     }
     catch (IOException | InterruptedException e)
     {
-      _logger.warn(ExStack.toString(e));
+      _logger.warn(e);
     }
   }
 

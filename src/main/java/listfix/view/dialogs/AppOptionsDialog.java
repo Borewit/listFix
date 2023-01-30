@@ -24,33 +24,23 @@ package listfix.view.dialogs;
  *
  * @author  jcaron
  */
-import com.jidesoft.swing.FolderChooser;
-import java.awt.Dimension;
 
-import java.awt.Font;
-import java.awt.Point;
+import com.jidesoft.swing.FolderChooser;
+import listfix.json.JsonAppOptions;
+import listfix.util.OperatingSystem;
+import listfix.view.controls.JTransparentTextArea;
+import listfix.view.support.FontExtensions;
+import net.mariottini.swing.JFontChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
-import listfix.json.JsonAppOptions;
-import listfix.util.ExStack;
-import listfix.util.OperatingSystem;
-import listfix.view.controls.JTransparentTextArea;
-import listfix.view.support.FontExtensions;
-
-import net.mariottini.swing.JFontChooser;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -68,7 +58,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
   public static final int CANCEL = 1;
 
   private static final long serialVersionUID = 3409894354485158935L;
-  private static final Logger _logger = Logger.getLogger(AppOptionsDialog.class);
+  private static final Logger _logger = LogManager.getLogger(AppOptionsDialog.class);
   public static final String TEXT_FIELD_TRAILING_SPACER = "     ";
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private int _resultCode;
@@ -703,7 +693,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
       catch (FileNotFoundException e)
       {
         JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
-        _logger.info(ExStack.toString(e));
+        _logger.info(e);
       }
     }
   }//GEN-LAST:event_playlistDirectoryBrowseButtonActionPerformed

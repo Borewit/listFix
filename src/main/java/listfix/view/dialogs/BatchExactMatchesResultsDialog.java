@@ -19,27 +19,24 @@
 
 package listfix.view.dialogs;
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import listfix.io.IPlayListOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
-import listfix.util.ExStack;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ProgressWorker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This is the dialog we display for an exact matches search on multiple playlists.
@@ -48,7 +45,7 @@ import org.apache.log4j.Logger;
 public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 {
   private boolean _userCancelled = false;
-  private static final Logger _logger = Logger.getLogger(BatchExactMatchesResultsDialog.class);
+  private static final Logger _logger = LogManager.getLogger(BatchExactMatchesResultsDialog.class);
 
   private IPlayListOptions playListOptions;
 
@@ -69,7 +66,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
 
     // load and repair lists
     final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Exact Matches...", "Please wait...", "Overall Progress:");
-    DualProgressWorker dpw = new DualProgressWorker<Void, String>()
+    DualProgressWorker<Void, String> dpw = new DualProgressWorker<>()
     {
       @Override
       protected void process(List<ProgressItem<String>> chunks)
@@ -97,7 +94,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
       }
 
       @Override
-      protected Void doInBackground() throws Exception
+      protected Void doInBackground()
       {
         _batch.performExactMatchRepair(this, BatchExactMatchesResultsDialog.this.playListOptions);
         return null;
@@ -328,7 +325,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
       Throwable ex = eex.getCause();
       String msg = "An error occurred while saving: " + ex.getMessage();
       JOptionPane.showMessageDialog(BatchExactMatchesResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
-      _logger.error(ExStack.toString(eex));
+      _logger.error(eex);
       return;
     }
 

@@ -1,5 +1,4 @@
-
-/**
+/*
  * listFix() - Fix Broken Playlists!
  * <p>
  * This file is part of listFix().
@@ -19,26 +18,26 @@
  */
 package listfix.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import listfix.config.IMediaLibrary;
-import listfix.io.writers.FileCopier;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.winamp.generated.Playlist;
 import listfix.model.playlists.winamp.generated.Playlists;
-import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 /**
  * Provides convenience methods for interacting w/ the Winamp Media Library and determining if Winamp is installed.
@@ -50,7 +49,7 @@ public class WinampHelper
   private static final String HOME_PATH = System.getenv("APPDATA");
   private static final String WINAMP_PATH1 = HOME_PATH + "\\Winamp\\Plugins\\ml\\playlists\\";
   private static final String WINAMP_PATH2 = HOME_PATH + "\\Winamp\\Plugins\\ml\\";
-  private static final Logger _logger = Logger.getLogger(WinampHelper.class);
+  private static final Logger _logger = LogManager.getLogger(WinampHelper.class);
 
   private static String WINAMP_PATH = "";
 
@@ -93,17 +92,11 @@ public class WinampHelper
     }
     catch (JAXBException ex)
     {
-      _logger.error(ExStack.toString(ex));
+      _logger.error("Error while repairing Winamp playlist", ex);
       return null;
     }
   }
 
-  /**
-   * @param destDir
-   * @param observer
-   * @throws JAXBException
-   * @throws IOException
-   */
   public static void extractPlaylists(File destDir, IProgressObserver observer) throws JAXBException, IOException
   {
     // avoid resetting total if part of batch operation
@@ -122,8 +115,10 @@ public class WinampHelper
     }
     for (Playlist list : winLists)
     {
-      FileCopier.copy(new File(WINAMP_PATH + list.getFilename()),
-          new File(destDir.getPath() + System.getProperty("file.separator") + FileUtils.replaceInvalidWindowsFileSystemCharsWithChar(list.getTitle(), '_') + ".m3u8"));
+      Path sourceFile = Path.of(WINAMP_PATH, list.getFilename());
+      Path targetPath = Path.of(destDir.getPath(), FileUtils.replaceInvalidWindowsFileSystemCharsWithChar(list.getTitle(), '_') + ".m3u8");
+      Files.copy(sourceFile, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
       progress.stepCompleted();
     }
   }

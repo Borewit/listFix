@@ -23,24 +23,22 @@ package listfix.io.readers.playlists;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.xspf.Track;
+import listfix.io.Constants;
+import listfix.io.FileUtils;
+import listfix.io.IPlayListOptions;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.PlaylistEntry;
+import listfix.util.UnicodeUtils;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import listfix.io.Constants;
-import listfix.io.FileUtils;
-import listfix.io.IPlayListOptions;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.enums.PlaylistType;
-import listfix.util.ExStack;
-import listfix.util.UnicodeUtils;
-import listfix.view.support.IProgressObserver;
-import listfix.view.support.ProgressAdapter;
-
-import org.apache.log4j.Logger;
 
 /**
  * Reads in a XSPF file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
@@ -51,7 +49,7 @@ public class XSPFReader extends PlaylistReader
   private String _encoding;
 
   private static final PlaylistType type = PlaylistType.XSPF;
-  private static final Logger _logger = Logger.getLogger(XSPFReader.class);
+  private static final Logger _logger = LogManager.getLogger(XSPFReader.class);
 
   /**
    *
@@ -163,7 +161,7 @@ public class XSPFReader extends PlaylistReader
         }
         catch (Exception ex)
         {
-          _logger.error("[XSPFReader] - Could not convert lizzy entry to PlaylistEntry - " + ExStack.toString(ex), ex);
+          _logger.error("[XSPFReader] - Could not convert lizzy entry to PlaylistEntry - " + ex, ex);
         }
 
         if (progress != null)

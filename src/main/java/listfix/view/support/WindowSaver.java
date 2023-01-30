@@ -20,8 +20,12 @@
 
 package listfix.view.support;
 
-import java.awt.AWTEvent;
-import java.awt.Dimension;
+import listfix.io.Constants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -33,12 +37,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import javax.swing.JFrame;
-
-import listfix.io.Constants;
-import listfix.util.ExStack;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -49,7 +47,7 @@ public final class WindowSaver implements AWTEventListener
   private static final String PROP_FILE = Constants.DATA_DIR + "position.ini";
   private static WindowSaver saver;
   private Map framemap;
-  private static final Logger _logger = Logger.getLogger(WindowSaver.class);
+  private static final Logger _logger = LogManager.getLogger(WindowSaver.class);
 
   private WindowSaver()
   {
@@ -90,7 +88,7 @@ public final class WindowSaver implements AWTEventListener
     }
     catch (Exception ex)
     {
-      _logger.warn(ExStack.toString(ex));
+      _logger.warn(ex);
     }
   }
 
@@ -116,7 +114,7 @@ public final class WindowSaver implements AWTEventListener
       }
       catch (IOException ex)
       {
-        _logger.info(ExStack.toString(ex));
+        _logger.info(ex);
       }
       saver.framemap.put(name, frame);
       frame.validate();

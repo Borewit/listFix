@@ -19,6 +19,7 @@
  */
 
 package listfix.playlists.itunes;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import christophedelory.playlist.SpecificPlaylist;
@@ -45,8 +46,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author jcaron, Borewit
@@ -134,7 +133,7 @@ public class ITunesPlaylistTests
       }
       catch (URISyntaxException ex)
       {
-        Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
+        throw new RuntimeException(ex);
       }
     }
     try
@@ -143,9 +142,8 @@ public class ITunesPlaylistTests
     }
     catch (Exception ex)
     {
-      Logger.getLogger(PlaylistOpener.class.getName()).log(Level.SEVERE, null, ex);
+      throw new RuntimeException(ex);
     }
-    return null;
   }
 
   private synchronized File create_iTunes_Music_Library() throws IOException

@@ -20,14 +20,13 @@
 
 package listfix.io;
 
-import java.lang.reflect.Method;
-import javax.swing.JOptionPane;
-
-import listfix.util.ExStack;
 import listfix.util.OperatingSystem;
 import listfix.view.controls.JTransparentTextArea;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import javax.swing.*;
+import java.lang.reflect.Method;
 
 /**
  * A class who's sole responsibility is to launch the default web browser on various OSes.
@@ -36,7 +35,7 @@ import org.apache.log4j.Logger;
 public class BrowserLauncher
 {
   private static final String _errMsg = "Error attempting to launch default web browser";
-  private static final Logger _logger = Logger.getLogger(BrowserLauncher.class);
+  private static final Logger _logger = LogManager.getLogger(BrowserLauncher.class);
 
   /**
    * Attempts to open the given url in the system's default web browser.
@@ -85,7 +84,7 @@ public class BrowserLauncher
     catch (Exception e)
     {
       JOptionPane.showMessageDialog(null, new JTransparentTextArea(_errMsg + ": " + e.getLocalizedMessage()));
-      _logger.info(ExStack.toString(e));
+      _logger.warn(e);
     }
   }
 }

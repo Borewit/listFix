@@ -20,24 +20,23 @@
 
 package listfix.io.readers.playlists;
 
+import listfix.io.Constants;
+import listfix.io.IPlayListOptions;
+import listfix.io.UnicodeInputStream;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.PlaylistEntry;
+import listfix.util.OperatingSystem;
+import listfix.util.UnicodeUtils;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import listfix.io.Constants;
-import listfix.io.IPlayListOptions;
-import listfix.io.UnicodeInputStream;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.enums.PlaylistType;
-import listfix.util.ExStack;
-import listfix.util.OperatingSystem;
-import listfix.util.UnicodeUtils;
-import listfix.view.support.IProgressObserver;
-import listfix.view.support.ProgressAdapter;
-
-import org.apache.log4j.Logger;
 
 /**
  * Reads in a PLS file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
@@ -48,7 +47,7 @@ public class PLSReader extends PlaylistReader
   private List<PlaylistEntry> results = new ArrayList<>();
   private String encoding = "";
   private static final PlaylistType type = PlaylistType.PLS;
-  private static final Logger _logger = Logger.getLogger(PLSReader.class);
+  private static final Logger _logger = LogManager.getLogger(PLSReader.class);
 
   /**
    *
@@ -60,15 +59,11 @@ public class PLSReader extends PlaylistReader
     super(playListOptions, plsFile);
     try
     {
-      encoding = UnicodeUtils.getEncoding(plsFile);
-      if (encoding.equals("UTF-8"))
-      {
-        encoding = "UTF-8";
-      }
+      this.encoding = UnicodeUtils.getEncoding(plsFile);
     }
     catch (Exception e)
     {
-      _logger.error(ExStack.toString(e));
+      throw new RuntimeException(e);
     }
   }
 
@@ -143,20 +138,13 @@ public class PLSReader extends PlaylistReader
     return results;
   }
 
-  private void processEntry(PLSProperties propBag, int index) throws IOException
+  private void processEntry(PLSProperties propBag, int index)
   {
     String file = propBag.getProperty("File" + index, "");
     String title = propBag.getProperty("Title" + index, "");
     String length = propBag.getProperty("Length" + index, "");
     long duration = -1;
-    try
-    {
-      // convert to millis for internal representation.
-      duration = Long.parseLong(length) * 1000L;
-    }
-    catch (Exception e)
-    {
-    }
+    duration = Long.parseLong(length) * 1000L;
 
     if (file.contains("://"))
     {
@@ -166,7 +154,7 @@ public class PLSReader extends PlaylistReader
       }
       catch (URISyntaxException ex)
       {
-        _logger.error(ExStack.toString(ex));
+        _logger.error(ex);
       }
     }
     else

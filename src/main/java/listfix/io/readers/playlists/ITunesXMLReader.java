@@ -40,7 +40,8 @@ import listfix.model.playlists.itunes.ITunesPlaylistEntry;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -49,7 +50,7 @@ import org.apache.log4j.Logger;
 public class ITunesXMLReader extends PlaylistReader
 {
   private String _encoding;
-  private static final Logger _logger = Logger.getLogger(ITunesXMLReader.class);
+  private static final Logger _logger = LogManager.getLogger(ITunesXMLReader.class);
 
   private ITunesMediaLibrary _library;
 

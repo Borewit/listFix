@@ -20,27 +20,21 @@
 
 package listfix.io.writers.playlists;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-
 import listfix.io.IPlayListOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.model.playlists.itunes.ITunesPlaylistEntry;
 import listfix.model.playlists.itunes.ITunesTrack;
-import listfix.util.ExStack;
 import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -48,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class ITunesXMLWriter extends PlaylistWriter
 {
-  private static final Logger _logger = Logger.getLogger(ITunesXMLWriter.class);
+  private static final Logger _logger = LogManager.getLogger(ITunesXMLWriter.class);
 
   private static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
     "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
@@ -112,7 +106,7 @@ public class ITunesXMLWriter extends PlaylistWriter
       }
       catch (Exception ex)
       {
-        _logger.error(ExStack.toString(ex), ex);
+        _logger.error("Error writing library", ex);
         throw ex;
       }
     }
@@ -161,7 +155,7 @@ public class ITunesXMLWriter extends PlaylistWriter
       }
       catch (URISyntaxException ex)
       {
-        _logger.error(ExStack.toString(ex), ex);
+       throw new RuntimeException(ex);
       }
     }
     else if (mediaURI.toString().startsWith("file:////"))
@@ -172,7 +166,7 @@ public class ITunesXMLWriter extends PlaylistWriter
       }
       catch (URISyntaxException ex)
       {
-        _logger.error(ExStack.toString(ex), ex);
+        throw new RuntimeException(ex);
       }
     }
     return mediaURI;

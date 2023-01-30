@@ -20,19 +20,11 @@
 
 package listfix.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-
 import listfix.io.UnicodeInputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 
 /**
  *
@@ -40,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class UnicodeUtils
 {
-  private static final Logger _logger = Logger.getLogger(UnicodeUtils.class);
+  private static final Logger _logger = LogManager.getLogger(UnicodeUtils.class);
 
   /**
    *
@@ -167,7 +159,7 @@ public class UnicodeUtils
       }
       catch (Exception ex)
       {
-        _logger.warn(ExStack.toString(ex));
+        _logger.warn(ex);
         return null;
       }
     }

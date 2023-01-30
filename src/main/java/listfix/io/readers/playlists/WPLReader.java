@@ -20,29 +20,22 @@
 
 package listfix.io.readers.playlists;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import listfix.io.Constants;
+import listfix.io.IPlayListOptions;
+import listfix.io.UnicodeInputStream;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.PlaylistEntry;
+import listfix.util.ArrayFunctions;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import listfix.io.Constants;
-import listfix.io.IPlayListOptions;
-import listfix.io.UnicodeInputStream;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.enums.PlaylistType;
-import listfix.util.ArrayFunctions;
-import listfix.util.ExStack;
-import listfix.view.support.IProgressObserver;
-import listfix.view.support.ProgressAdapter;
-
-import org.apache.log4j.Logger;
 
 /**
  * Reads in a WPL file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
@@ -56,7 +49,7 @@ public class WPLReader extends PlaylistReader
   private String encoding = "";
   private File playlistFile;
   private static final PlaylistType type = PlaylistType.WPL;
-  private static final Logger _logger = Logger.getLogger(WPLReader.class);
+  private static final Logger _logger = LogManager.getLogger(WPLReader.class);
 
   /**
    *
@@ -78,7 +71,7 @@ public class WPLReader extends PlaylistReader
     catch (UnsupportedEncodingException ex)
     {
       // this should never happen (utf-8 must be supported) - rethrow as runtime exception
-      _logger.error("Holy shit, ther'e no UTF-8 support on this machine!! " + ExStack.toString(ex));
+      _logger.error("Holy shit, ther'e no UTF-8 support on this machine!! " + ex);
       throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
     }
     encoding = "UTF-8";
@@ -355,7 +348,7 @@ public class WPLReader extends PlaylistReader
       catch (Exception e)
       {
         // eat the error for now.
-        _logger.warn(ExStack.toString(e));
+        _logger.warn(e);
       }
     }
   }
