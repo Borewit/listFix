@@ -220,6 +220,10 @@ tasks.withType(Checkstyle).configureEach {
     exclude 'listfix/model/playlists/winamp/generated/**.java'
 }
 
+task checkStyle(type: DefaultTask, dependsOn: [checkstyleMain, checkstyleTest]) {
+    group = 'verification'
+}
+
 task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: [makeIcon, fatJar]) {
     // mandatory
     mainClass = project.mainClassName
