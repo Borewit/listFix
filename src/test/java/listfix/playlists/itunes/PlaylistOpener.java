@@ -18,7 +18,7 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.testing;
+package listfix.playlists.itunes;
 
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;

@@ -125,6 +125,14 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
 
+    // Required by "src/jar/lizzy.jar"
+    // https://mvnrepository.com/artifact/commons-logging/commons-logging
+    runtimeOnly 'commons-logging:commons-logging:1.2'
+
+    // Required by "src/jar/lizzy.jar"
+    // https://mvnrepository.com/artifact/org.codehaus.castor/castor-xml
+    implementation 'org.codehaus.castor:castor-xml:1.4.1'
+
     // JUnit Jupiter using Gradle's native JUnit Platform
     testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
