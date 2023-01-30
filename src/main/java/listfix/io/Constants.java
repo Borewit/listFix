@@ -56,7 +56,7 @@ public class Constants
   public static final String INVALID_WINDOWS_FILENAME_CHARACTERS = "*|\\/:\"<>?";
 
   /**
-   * Boolean specifying if the current OS's file system is case sensitive.
+   * Boolean specifying if the current OS's file system is case-sensitive.
    */
   public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
 }

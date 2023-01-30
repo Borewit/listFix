@@ -149,4 +149,8 @@ public class UNCFile extends File
   {
     return driveLister.onNetworkDrive(this.getAbsolutePath());
   }
+
+  public static UNCFile from(File file) {
+    return new UNCFile(file);
+  }
 }
