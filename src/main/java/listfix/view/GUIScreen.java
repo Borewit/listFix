@@ -1606,7 +1606,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
           nodeFile = (TreeNodeFile) curNode.getUserObject();
           String str = curNode.toString();
-          String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), FileUtils.GetExtension(nodeFile));
+          String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), "." + FileUtils.getFileExtension(nodeFile.getName()));
           if (reply != null && !"".equals(reply))
           {
             TreeNodeFile destFile = new TreeNodeFile(nodeFile.getParent() + Constants.FS + reply);

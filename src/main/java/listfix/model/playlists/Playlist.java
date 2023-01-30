@@ -27,7 +27,6 @@ import java.util.*;
 
 import listfix.config.IMediaLibrary;
 
-import listfix.io.Constants;
 import listfix.io.FileLauncher;
 import listfix.io.UNCFile;
 import listfix.io.readers.playlists.IPlaylistReader;
@@ -209,7 +208,7 @@ public class Playlist
           fileToCopy = tempEntry.getAbsoluteFile();
           if (tempEntry.isFound()) // && fileToCopy.exists())
           {
-            dest = new File(destinationDirectory.getPath() + Constants.FS + tempEntry.getFileName());
+            dest = new File(destinationDirectory.getPath(), tempEntry.getFileName());
             try
             {
               FileCopier.copy(fileToCopy, dest);
@@ -777,7 +776,7 @@ public class Playlist
 
   /**
    * @param mediaLibrary Media library used to reference existing media files
-   * @param observer Progress observer
+   * @param observer     Progress observer
    * @return
    */
   public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver observer)
@@ -824,12 +823,14 @@ public class Playlist
    * @param dirLists Media library used for repair
    * @param observer Progress observer
    */
-  public void batchRepair(IMediaLibrary dirLists, IProgressObserver<String> observer) {
+  public void batchRepair(IMediaLibrary dirLists, IProgressObserver<String> observer)
+  {
     this.batchRepair(dirLists.getNestedMediaFiles(), dirLists, observer);
   }
 
   /**
    * Similar to repair, but doesn't return repaired row information
+   *
    * @param fileList Media library used for repair
    * @param observer Progress observer
    */

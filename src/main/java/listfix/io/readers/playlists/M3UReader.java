@@ -281,7 +281,7 @@ public class M3UReader extends PlaylistReader
     }
     else if (OperatingSystem.isLinux()) // Linux Specific Setup
     {
-      if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith(Constants.FS))
+      if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith("/"))
       {
         // Need to append ./ on relative entries to load them properly
         path.append("./");

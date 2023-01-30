@@ -63,44 +63,30 @@ public class DirectoryScanner
 
       File mediaDir = new File(baseDir);
       String[] entryList = mediaDir.list();
-      List<String> fileList = new ArrayList<>();
-      List<String> dirList = new ArrayList<>();
-      StringBuilder s = new StringBuilder();
+      Set<String> fileList = new TreeSet<>();
+      Set<String> dirList = new TreeSet<>();
 
       if (entryList != null)
       {
         File tempFile;
         for (String entryList1 : entryList)
         {
-          s.append(baseDir);
-          if (!baseDir.endsWith(Constants.FS))
-          {
-            s.append(Constants.FS);
-          }
-          s.append(entryList1);
-          tempFile = new File(s.toString());
+          tempFile = new File(baseDir, entryList1);
           if (tempFile.isDirectory())
           {
-            dirList.add(s.toString());
+            dirList.add(tempFile.getPath());
           }
           else
           {
             if (FileUtils.isMediaFile(tempFile))
             {
-              fileList.add(s.toString());
+              fileList.add(tempFile.getPath());
             }
           }
-          s.setLength(0);
         }
       }
 
-      Collections.sort(fileList);
-      Collections.sort(dirList);
-
-      for (String file : fileList)
-      {
-        thisFileList.add(file);
-      }
+      thisFileList.addAll(fileList);
 
       for (String dir : dirList)
       {
@@ -110,10 +96,6 @@ public class DirectoryScanner
 
       fileList.clear();
       dirList.clear();
-    }
-    else
-    {
-      return;
     }
   }
 
