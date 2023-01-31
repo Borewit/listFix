@@ -37,6 +37,8 @@ import listfix.view.support.ProgressAdapter;
 import listfix.view.support.ProgressWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,6 +56,10 @@ public class Playlist
   private static final String BR = System.getProperty("line.separator");
   private static final String HOME_DIR = System.getProperty("user.home");
   private static int NEW_LIST_COUNT = -1;
+
+  private static final Marker markerPlaylist = MarkerManager.getMarker("Playlist");
+  private static final Marker markerPlaylistRepair = MarkerManager.getMarker("Playlist-Repair").setParents(markerPlaylist);
+
   private File _file;
   private List<PlaylistEntry> _entries = new ArrayList<>();
   private List<PlaylistEntry> _originalEntries = new ArrayList<>();
@@ -761,22 +767,16 @@ public class Playlist
     return ents;
   }
 
-  /**
-   * @param ix
-   * @param newName
-   */
   public void changeEntryFileName(int ix, String newName)
   {
     _entries.get(ix).setFileName(newName);
     refreshStatus();
   }
 
-  // returns positions of repaired rows
-
   /**
    * @param mediaLibrary Media library used to reference existing media files
    * @param observer     Progress observer
-   * @return
+   * @return Positions of repaired rows
    */
   public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver observer)
   {
@@ -786,35 +786,37 @@ public class Playlist
     List<Integer> fixed = new ArrayList<>();
     for (int ix = 0; ix < _entries.size(); ix++)
     {
-      if (!observer.getCancelled())
+      if (observer.getCancelled())
       {
-        progress.stepCompleted();
-
-        PlaylistEntry entry = _entries.get(ix);
-        if (!entry.isFound() && !entry.isURL())
-        {
-          entry.findNewLocationFromFileList(mediaLibrary.getNestedMediaFiles());
-          if (entry.isFound())
-          {
-            fixed.add(ix);
-            refreshStatus();
-          }
-        }
-        else if (entry.isFound() && !entry.isURL())
-        {
-          if (entry.updatePathToMediaLibraryIfFoundOutside(mediaLibrary))
-          {
-            fixed.add(ix);
-            refreshStatus();
-          }
-        }
-      }
-      else
-      {
+        _logger.info(markerPlaylistRepair, "Observer cancelled, quit repair");
         return null;
       }
-    }
 
+      progress.stepCompleted();
+
+      PlaylistEntry entry = _entries.get(ix);
+      if (!entry.isFound() && !entry.isURL())
+      {
+        _logger.debug(markerPlaylistRepair, "Fixing entry " + entry.getPath());
+        entry.findNewLocationFromFileList(mediaLibrary.getNestedMediaFiles());
+        if (entry.isFound())
+        {
+          _logger.debug(markerPlaylistRepair, "Fixed entry " + entry.getPath());
+          fixed.add(ix);
+          refreshStatus();
+        }
+      }
+      else if (entry.isFound() && !entry.isURL())
+      {
+        _logger.debug(markerPlaylistRepair, "Found " + entry.getPath());
+        if (entry.updatePathToMediaLibraryIfFoundOutside(mediaLibrary))
+        {
+          fixed.add(ix);
+          refreshStatus();
+        }
+      }
+    }
+    _logger.info(markerPlaylistRepair, "Completed.");
     return fixed;
   }
 

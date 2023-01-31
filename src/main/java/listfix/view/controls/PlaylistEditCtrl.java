@@ -46,6 +46,8 @@ import listfix.view.support.ZebraJTable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -82,7 +84,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
   private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
   private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
-
+  private static final Marker markerPlaylistControl = MarkerManager.getMarker("PlaylistCtrl");
+  private static final Marker markerRepair = MarkerManager.getMarker("PlaylistCtrl-Repair").setParents(markerPlaylistControl);
+  private static final Marker markerRepairWorker = MarkerManager.getMarker("PlaylistCtrl-Repair-Worker").setParents(markerRepair);
   private FolderChooser _destDirFileChooser = new FolderChooser();
 
   private int currentlySelectedRow = 0;
@@ -267,19 +271,25 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   public void locateMissingFiles()
   {
+    _logger.debug(markerRepair, "Start locateMissingFiles()");
     ProgressWorker worker = new ProgressWorker<List<Integer>, Void>()
     {
       @Override
       protected List<Integer> doInBackground()
       {
-        return _playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
+        _logger.debug(markerRepairWorker, "Start repairing in background....");
+        List<Integer> result = _playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
+        _logger.debug(markerRepairWorker, "Repair completed.");
+        return result;
       }
 
       @Override
       protected void done()
       {
+        _logger.debug(markerRepair, "Handling background done()");
         try
         {
+          _logger.debug(markerRepair, "Updating UI-table...");
           _uiTable.clearSelection();
           List<Integer> fixed = get();
           for (Integer fixIx : fixed)
@@ -287,13 +297,15 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
             _uiTable.addRowSelectionInterval(viewIx, viewIx);
           }
+          _logger.debug(markerRepair, "Completed updating UI-table");
         }
-        catch (CancellationException | InterruptedException ignored)
+        catch (CancellationException | InterruptedException exception)
         {
+          _logger.warn(markerRepair, "Repair interrupted", exception);
         }
         catch (ExecutionException ex)
         {
-          _logger.error("Error processing missing files", ex);
+          _logger.error(markerRepair, "Error processing missing files", ex);
         }
       }
     };
