@@ -20,17 +20,20 @@
 
 package listfix.view;
 
+import javax.print.*;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.Sides;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Locale;
-
-import javax.print.*;
-import javax.print.attribute.*;
-import javax.print.attribute.standard.*;
-import javax.swing.*;
-import javax.swing.border.*;
 
 /**
  *

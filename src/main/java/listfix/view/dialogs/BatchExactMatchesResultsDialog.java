@@ -19,7 +19,7 @@
 
 package listfix.view.dialogs;
 
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
@@ -47,14 +47,14 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
   private boolean _userCancelled = false;
   private static final Logger _logger = LogManager.getLogger(BatchExactMatchesResultsDialog.class);
 
-  private IPlayListOptions playListOptions;
+  private IPlaylistOptions playListOptions;
 
   /** Creates new form BatchExactMatchesResultsDialog
    * @param parent
    * @param batch
    * @param modal
    */
-  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch, IPlayListOptions playListOptions)
+  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch, IPlaylistOptions playListOptions)
   {
     super(parent, batch.getDescription(), modal);
     this.playListOptions = playListOptions;

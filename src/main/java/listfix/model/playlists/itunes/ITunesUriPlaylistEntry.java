@@ -18,39 +18,43 @@
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.view.support;
+package listfix.model.playlists.itunes;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.io.File;
+import listfix.model.playlists.UriPlaylistEntry;
+
+import java.net.URI;
 
 /**
  *
  * @author jcaron
  */
-public class PlaylistTreeNode extends DefaultMutableTreeNode
+public class ITunesUriPlaylistEntry extends UriPlaylistEntry implements IITunesPlaylistEntry
 {
-  public PlaylistTreeNode(Object object)
+  private final ITunesTrack _track;
+
+  public ITunesUriPlaylistEntry(URI input, ITunesTrack track)
   {
-    super(object);
+    super(input, "");
+    _track = track;
   }
 
-  @Override
-  public int hashCode()
+  /**
+   * @return the _track
+   */
+  public ITunesTrack getTrack()
   {
-    return ((File)this.getUserObject()).getAbsolutePath().hashCode();
+    return _track;
   }
 
+  /**
+   *
+   * @return
+   */
   @Override
-  public boolean equals(Object obj)
+  public ITunesUriPlaylistEntry clone()
   {
-    if (obj == null)
-    {
-      return false;
-    }
-    if (getClass() != obj.getClass())
-    {
-      return false;
-    }
-    return hashCode() == ((PlaylistTreeNode)obj).hashCode();
+    ITunesUriPlaylistEntry clone = new ITunesUriPlaylistEntry(this.getURI(), this._track);
+    super.copyTo(clone);
+    return clone;
   }
 }

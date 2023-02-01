@@ -19,11 +19,10 @@
 
 package listfix.io.filters;
 
+import javax.swing.filechooser.FileFilter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.TreeSet;
-
-import javax.swing.filechooser.FileFilter;
 
 /**
  *

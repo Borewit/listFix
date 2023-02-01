@@ -19,12 +19,12 @@
 
 package listfix.model;
 
-import java.io.File;
-import java.util.List;
-
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.model.playlists.Playlist;
 import listfix.util.FileNameTokenizer;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Serves to model a batch repair operation on a single playlist, for both exact and closest matches repairs.
@@ -39,7 +39,7 @@ public class BatchRepairItem
   private File _playlistFile;
   private List<BatchMatchItem> _closestMatches;
 
-  public BatchRepairItem(File file, IPlayListOptions filePathOptions)
+  public BatchRepairItem(File file, IPlaylistOptions filePathOptions)
   {
     _path = file.getPath();
     _displayName = file.getName();

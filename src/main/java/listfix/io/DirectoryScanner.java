@@ -20,10 +20,10 @@
 
 package listfix.io;
 
+import listfix.view.support.ProgressWorker;
+
 import java.io.File;
 import java.util.*;
-
-import listfix.view.support.ProgressWorker;
 
 /**
  * Creates a list of the indexed files and subdirectories contained in a list of input directories.

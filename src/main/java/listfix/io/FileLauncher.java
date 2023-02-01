@@ -20,9 +20,10 @@
 
 package listfix.io;
 
-import java.awt.Desktop;
-import java.io.*;
 import listfix.util.OperatingSystem;
+
+import java.awt.*;
+import java.io.*;
 
 /**
  *

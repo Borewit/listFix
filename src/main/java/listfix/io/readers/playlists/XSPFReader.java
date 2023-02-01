@@ -25,18 +25,20 @@ import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.xspf.Track;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class XSPFReader extends PlaylistReader
    *
    * @param xspfFile
    */
-  public XSPFReader(IPlayListOptions playListOptions, File xspfFile)
+  public XSPFReader(IPlaylistOptions playListOptions, Path xspfFile)
   {
     super(playListOptions, xspfFile);
     _encoding = UnicodeUtils.getEncoding(xspfFile);
@@ -108,12 +110,10 @@ public class XSPFReader extends PlaylistReader
     }
 
     List<PlaylistEntry> entriesList = new ArrayList<>();
-    URI uri;
-    File trackFile;
-    SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
+    SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
     if (loadedList.getProvider().getId().equals("xspf"))
     {
-      christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
+      christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
 
       // Set the total if we have an observer.
       if (progress != null)
@@ -137,25 +137,22 @@ public class XSPFReader extends PlaylistReader
         {
           if (FileUtils.isURL(track.getStringContainers().get(0).getText()))
           {
-            entriesList.add(new PlaylistEntry(this.playListOptions, new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
+            entriesList.add(new UriPlaylistEntry(new URI(track.getStringContainers().get(0).getText()), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1));
           }
           else
           {
-            uri = new URI(track.getStringContainers().get(0).getText());
+            URI uri = new URI(track.getStringContainers().get(0).getText());
 
-            trackFile = new File(uri.getSchemeSpecificPart());
-            if (trackFile != null)
+            Path trackFile = Path.of(uri.getSchemeSpecificPart());
+            if (trackFile.toString().startsWith(Constants.FS + Constants.FS) && !trackFile.toString().startsWith("\\\\"))
             {
-              if (trackFile.toString().startsWith(Constants.FS + Constants.FS) && !trackFile.toString().startsWith("\\\\"))
-              {
-                // This was a relative, non-UNC entry...
-                entriesList.add(new PlaylistEntry(this.playListOptions, new File(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, playlistFile));
-              }
-              else
-              {
-                // Regular entry...
-                entriesList.add(new PlaylistEntry(this.playListOptions, trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, playlistFile));
-              }
+              // This was a relative, non-UNC entry...
+              entriesList.add(new FilePlaylistEntry(Path.of(trackFile.toString().substring(2)), track.getTitle(), track.getDuration() != null ? track.getDuration().longValue() : -1, playlistPath));
+            }
+            else
+            {
+              // Regular entry...
+              entriesList.add(new FilePlaylistEntry(trackFile, getTitle(track), track.getDuration() != null ? track.getDuration().longValue() : -1, playlistPath));
             }
           }
         }

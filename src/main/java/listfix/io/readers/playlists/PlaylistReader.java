@@ -1,18 +1,23 @@
 package listfix.io.readers.playlists;
 
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public abstract class PlaylistReader implements IPlaylistReader
 {
-  protected final IPlayListOptions playListOptions;
+  protected final IPlaylistOptions playListOptions;
 
-  protected final File playlistFile;
+  protected final Path playlistPath;
 
-  public PlaylistReader(IPlayListOptions playListOptions, File playlistFile) {
+  public PlaylistReader(IPlaylistOptions playListOptions, Path playlistPath) {
     this.playListOptions = playListOptions;
-    this.playlistFile = playlistFile;
+    this.playlistPath = playlistPath;
+  }
+
+  public Path getPath()
+  {
+    return this.playlistPath;
   }
 
 }

@@ -20,37 +20,22 @@
 
 package listfix.model.playlists.itunes;
 
-import java.io.File;
-import java.net.URI;
+import listfix.model.playlists.FilePlaylistEntry;
 
-import listfix.io.IPlayListOptions;
-import listfix.model.playlists.PlaylistEntry;
+import java.nio.file.Path;
 
 /**
  *
  * @author jcaron
  */
-public class ITunesPlaylistEntry extends PlaylistEntry
+public class ITunesFilePlaylistEntry extends FilePlaylistEntry implements  IITunesPlaylistEntry
 {
   private final ITunesTrack _track;
 
-
-  public ITunesPlaylistEntry(IPlayListOptions playListOptions, File input, String title, long length, File list, ITunesTrack track)
+  public ITunesFilePlaylistEntry(Path input, String title, long length, Path playlistPath, ITunesTrack track)
   {
-    super(playListOptions, input, title, length, list);
+    super(input, title, length, playlistPath);
     _track = track;
-  }
-
-  public ITunesPlaylistEntry(IPlayListOptions playListOptions, URI input, ITunesTrack track)
-  {
-    super(playListOptions, input, "");
-    _track = track;
-  }
-
-  private ITunesPlaylistEntry(ITunesPlaylistEntry toClone)
-  {
-    super(toClone);
-    _track = toClone.getTrack();
   }
 
   /**
@@ -66,8 +51,10 @@ public class ITunesPlaylistEntry extends PlaylistEntry
    * @return
    */
   @Override
-  public Object clone()
+  public ITunesFilePlaylistEntry clone()
   {
-    return new ITunesPlaylistEntry(this);
+    ITunesFilePlaylistEntry clone = new ITunesFilePlaylistEntry(this.trackPath, this._title, this._length, this.playlistPath, _track);
+    super.copyTo(clone);
+    return clone;
   }
 }

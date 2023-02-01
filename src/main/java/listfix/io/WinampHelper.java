@@ -77,7 +77,7 @@ public class WinampHelper
    * @return A BatchRepair instance
    * @see BatchRepair
    */
-  public static BatchRepair getWinampBatchRepair(IMediaLibrary mediaFiles, IPlayListOptions filePathOptions)
+  public static BatchRepair getWinampBatchRepair(IMediaLibrary mediaFiles, IPlaylistOptions filePathOptions)
   {
     try
     {

@@ -22,26 +22,25 @@ package listfix.io.readers.playlists;
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.plist.PlistPlaylist;
+import listfix.io.IPlaylistOptions;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.itunes.ITunesFilePlaylistEntry;
+import listfix.model.playlists.itunes.ITunesMediaLibrary;
+import listfix.model.playlists.itunes.ITunesTrack;
+import listfix.model.playlists.itunes.ITunesUriPlaylistEntry;
+import listfix.util.UnicodeUtils;
+import listfix.view.support.IProgressObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import listfix.io.IPlayListOptions;
-import listfix.model.playlists.itunes.ITunesMediaLibrary;
-import listfix.model.playlists.itunes.ITunesTrack;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.itunes.ITunesPlaylistEntry;
-import listfix.util.UnicodeUtils;
-import listfix.view.support.IProgressObserver;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -58,10 +57,10 @@ public class ITunesXMLReader extends PlaylistReader
    *
    * @param itunesXmlFile
    */
-  public ITunesXMLReader(IPlayListOptions playListOptions, File itunesXmlFile)
+  public ITunesXMLReader(IPlaylistOptions playListOptions, Path itunesXmlFile)
   {
     super(playListOptions, itunesXmlFile);
-    _encoding = UnicodeUtils.getEncoding(playlistFile);
+    _encoding = UnicodeUtils.getEncoding(playlistPath);
   }
 
   @Override
@@ -86,7 +85,7 @@ public class ITunesXMLReader extends PlaylistReader
   public List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException
   {
     List<PlaylistEntry> results = new ArrayList<>();
-    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
+    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
     if (playlist != null)
     {
       PlistPlaylist plistList = (PlistPlaylist) playlist;
@@ -113,7 +112,7 @@ public class ITunesXMLReader extends PlaylistReader
   public List<PlaylistEntry> readPlaylist() throws IOException
   {
     List<PlaylistEntry> results = new ArrayList<>();
-    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistFile);
+    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
     PlistPlaylist plistList = (PlistPlaylist) playlist;
     _library = new ITunesMediaLibrary(plistList);
     Map<String, ITunesTrack> tracks = getLibrary().getTracks();
@@ -135,15 +134,13 @@ public class ITunesXMLReader extends PlaylistReader
     {
       if (track.getTrackType().equals(ITunesTrack.URL))
       {
-        ITunesPlaylistEntry result = new ITunesPlaylistEntry(this.playListOptions, new URI(track.getLocation()), track);
         // result.setTrackId(track.getTrackId());
-        return result;
+        return new ITunesUriPlaylistEntry(new URI(track.getLocation()), track);
       }
       else
       {
-        ITunesPlaylistEntry result = new ITunesPlaylistEntry(this.playListOptions, new File((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistFile, track);
         // result.setTrackId(track.getTrackId());
-        return result;
+        return new ITunesFilePlaylistEntry(Path.of((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistPath, track);
       }
     }
     catch (URISyntaxException ex)

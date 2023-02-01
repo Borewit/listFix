@@ -21,10 +21,12 @@
 package listfix.io.readers.playlists;
 
 import listfix.io.Constants;
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.ArrayFunctions;
 import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
@@ -36,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -56,9 +59,12 @@ public class M3UReader extends PlaylistReader
 
   private StringBuilder _cache;
 
-  public M3UReader(IPlayListOptions playListOptions, File m3uFile) throws FileNotFoundException
+  public M3UReader(IPlaylistOptions playListOptions, Path m3uPath) throws FileNotFoundException
   {
-    super(playListOptions, m3uFile);
+    super(playListOptions, m3uPath);
+
+    File m3uFile = m3uPath.toFile();
+
     _encoding = UnicodeUtils.getEncoding(m3uFile);
     if (_encoding.equals("UTF-8") || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
     {
@@ -341,13 +347,13 @@ public class M3UReader extends PlaylistReader
         }
         tokenNumber++;
       }
-      results.add(new PlaylistEntry(this.playListOptions, path.toString(), fileName, extInf, playlistFile));
+      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), extInf, playlistPath));
     }
     else
     {
       try
       {
-        results.add(new PlaylistEntry(this.playListOptions, new URI(L2.trim()), L1));
+        results.add(new UriPlaylistEntry(new URI(L2.trim()), L1));
       }
       catch (Exception e)
       {

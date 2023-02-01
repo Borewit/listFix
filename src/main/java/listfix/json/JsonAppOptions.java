@@ -20,23 +20,23 @@
 
 package listfix.json;
 
-import java.awt.Font;
-import java.io.File;
-import javax.swing.UIManager;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import listfix.config.IAppOptions;
 import listfix.io.Constants;
+import listfix.io.IPlaylistOptions;
 import listfix.io.readers.JsonFontDeserializer;
-import listfix.io.IPlayListOptions;
 import listfix.io.writers.JsonFontSerializer;
 import listfix.util.OperatingSystem;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 
 /**
  * @author jcaron
  */
-public class JsonAppOptions implements IPlayListOptions, IAppOptions
+public class JsonAppOptions implements IPlaylistOptions, IAppOptions
 {
   private static final String EMPTY_STRING = "None Selected";
 

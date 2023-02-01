@@ -20,12 +20,12 @@
 
 package listfix.io.writers.playlists;
 
+import listfix.io.IPlaylistOptions;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.Playlist;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-
-import listfix.io.IPlayListOptions;
-import listfix.model.playlists.Playlist;
-import listfix.model.enums.PlaylistType;
 
 /**
  *
@@ -39,7 +39,7 @@ public class PlaylistWriterFactory
    * @return
    * @throws FileNotFoundException
    */
-  public static IPlaylistWriter getPlaylistWriter(File inputFile, IPlayListOptions playListOptions) throws FileNotFoundException
+  public static IPlaylistWriter getPlaylistWriter(File inputFile, IPlaylistOptions playListOptions) throws FileNotFoundException
   {
     PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile, playListOptions);
     if (type == PlaylistType.M3U)

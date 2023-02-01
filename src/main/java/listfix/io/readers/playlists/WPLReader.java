@@ -21,10 +21,12 @@
 package listfix.io.readers.playlists;
 
 import listfix.io.Constants;
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.ArrayFunctions;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -33,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -61,12 +64,12 @@ public class WPLReader extends PlaylistReader
    * @param wplFile
    * @throws FileNotFoundException
    */
-  public WPLReader(IPlayListOptions playListOptions, File wplFile) throws FileNotFoundException
+  public WPLReader(IPlaylistOptions playListOptions, Path wplFile) throws FileNotFoundException
   {
     super(playListOptions, wplFile);
     try
     {
-      _buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(wplFile), "UTF-8"), "UTF8"));
+      _buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(wplFile.toFile()), "UTF-8"), "UTF8"));
     }
     catch (UnsupportedEncodingException ex)
     {
@@ -75,7 +78,7 @@ public class WPLReader extends PlaylistReader
       throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
     }
     encoding = "UTF-8";
-    fileLength = wplFile.length();
+    fileLength = wplFile.toFile().length();
   }
 
   private String XMLDecode(String s)
@@ -337,13 +340,13 @@ public class WPLReader extends PlaylistReader
         }
         tokenNumber++;
       }
-      results.add(new PlaylistEntry(this.playListOptions, path.toString(), fileName, extInf, playlistFile, cid, tid));
+      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), extInf, playlistFile.toPath(), cid, tid));
     }
     else
     {
       try
       {
-        results.add(new PlaylistEntry(this.playListOptions, new URI(L2.trim()), "", cid, tid));
+        results.add(new UriPlaylistEntry(new URI(L2.trim()), "", cid, tid));
       }
       catch (Exception e)
       {

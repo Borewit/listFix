@@ -24,8 +24,10 @@ package listfix.view.dialogs;
  *
  * @author  jcaron
  */
+
 import listfix.model.EditFilenameResult;
-import java.awt.Point;
+
+import java.awt.*;
 
 /**
  *

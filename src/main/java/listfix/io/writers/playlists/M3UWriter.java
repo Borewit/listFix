@@ -20,150 +20,43 @@
 
 package listfix.io.writers.playlists;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.List;
-
-import listfix.controller.GUIDriver;
 import listfix.io.Constants;
-import listfix.io.FileUtils;
-import listfix.io.UNCFile;
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
-import listfix.view.support.ProgressAdapter;
+
+import java.io.*;
 
 /**
  * A playlist writer capable of saving to M3U or M3U8 format.
+ *
  * @author jcaron
  */
-public class M3UWriter extends PlaylistWriter
+public class M3UWriter extends PlaylistWriter<StringBuilder>
 {
-  public M3UWriter(IPlayListOptions options) {
+  public M3UWriter(IPlaylistOptions options)
+  {
     super(options);
   }
 
-  /**
-   * Saves the list to disk.  If the list's filename ends in m3u8, will save in M3U8 format.  Otherwise saves in M3U format.
-   * @param list The list to persist to disk.
-   * @param saveRelative Specifies if the playlist should be written out relatively or not.
-   * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
-   * @throws IOException
-   */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws IOException
+  protected StringBuilder initCollector()
   {
-    boolean track = adapter != null;
-    List<PlaylistEntry> entries = list.getEntries();
-    File listFile = list.getFile();
-    StringBuilder buffer = new StringBuilder();
+    return new StringBuilder();
+  }
+
+  @Override
+  protected void writeHeader(StringBuilder buffer, Playlist playlist)
+  {
     buffer.append("#EXTM3U").append(Constants.BR);
-    PlaylistEntry entry;
-    String relativePath;
-    for (int i = 0; i < entries.size(); i++)
-    {
-      if (!track || !adapter.getCancelled())
-      {
-        if (track)
-        {
-          adapter.stepCompleted();
-        }
-        entry = entries.get(i);
-        if (!entry.isURL())
-        {
-          if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
-          {
-            // replace existing relative entry with a new absolute one
-            File absolute = entry.getAbsoluteFile().getCanonicalFile();
+  }
 
-            // Switch to UNC representation if selected in the options
-            if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-            {
-              UNCFile temp = new UNCFile(absolute);
-              absolute = new File(temp.getUNCPath());
-            }
-
-            // make the entry and addAt it
-            entry = new PlaylistEntry(this.playListOptions, absolute, entry.getExtInf(), listFile);
-            entries.set(i, entry);
-          }
-          else if (saveRelative && entry.isFound())
-          {
-            // replace existing entry with a new relative one
-            relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), listFile);
-            if (!OperatingSystem.isWindows() && !relativePath.contains(Constants.FS))
-            {
-              relativePath = "." + Constants.FS + relativePath;
-            }
-
-            // make a new file out of this relative path, and see if it's really relative...
-            // if it's absolute, we have to perform the UNC check and convert if necessary.
-            File temp = new File(relativePath);
-            if (temp.isAbsolute())
-            {
-              // Switch to UNC representation if selected in the options
-              if (GUIDriver.getInstance().getAppOptions().getAlwaysUseUNCPaths())
-              {
-                UNCFile uncd = new UNCFile(temp);
-                temp = new File(uncd.getUNCPath());
-              }
-            }
-
-            // make the entry and addAt it
-            entry = new PlaylistEntry(this.playListOptions, temp, entry.getExtInf(), listFile);
-            entries.set(i, entry);
-          }
-        }
-
-        buffer.append(serializeEntry(entry)).append(Constants.BR);
-      }
-      else
-      {
-        return;
-      }
-    }
-
-    if (!track || !adapter.getCancelled())
-    {
-      File dirToSaveIn = listFile.getParentFile().getAbsoluteFile();
-      if (!dirToSaveIn.exists())
-      {
-        dirToSaveIn.mkdirs();
-      }
-
-      FileOutputStream outputStream = new FileOutputStream(listFile);
-      if (list.isUtfFormat() || listFile.getName().toLowerCase().endsWith("m3u8"))
-      {
-        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-        try (BufferedWriter output = new BufferedWriter(osw))
-        {
-          if (OperatingSystem.isWindows())
-          {
-            // For some reason, linux players seem to choke on this header when I addAt it... perhaps the stream classes do it automatically.
-            output.write(UnicodeUtils.getBOM("UTF-8"));
-          }
-          output.write(buffer.toString());
-        }
-        outputStream.close();
-        list.setUtfFormat(true);
-      }
-      else
-      {
-        try (BufferedOutputStream output = new BufferedOutputStream(outputStream))
-        {
-          output.write(buffer.toString().getBytes());
-        }
-        outputStream.close();
-        list.setUtfFormat(false);
-      }
-    }
+  @Override
+  protected void writeEntry(StringBuilder buffer, PlaylistEntry entry, int index)
+  {
+    buffer.append(serializeEntry(entry)).append(Constants.BR);
   }
 
   private String serializeEntry(PlaylistEntry entry)
@@ -174,39 +67,45 @@ public class M3UWriter extends PlaylistWriter
       result.append(entry.getExtInf());
       result.append(Constants.BR);
     }
-    if (!entry.isURL())
+    result.append(normalizeTrackPath(this.playListOptions.getSavePlaylistsWithRelativePaths(), entry));
+    return result.toString();
+  }
+
+  @Override
+  protected void finalize(StringBuilder buffer, Playlist playlist) throws IOException
+  {
+    final File playListFile = playlist.getFile();
+
+    final File dirToSaveIn = playListFile.getParentFile().getAbsoluteFile();
+    if (!dirToSaveIn.exists())
     {
-      if (!entry.isRelative())
+      dirToSaveIn.mkdirs();
+    }
+
+    FileOutputStream outputStream = new FileOutputStream(playListFile);
+    if (playlist.isUtfFormat() || playListFile.getName().toLowerCase().endsWith("m3u8"))
+    {
+      Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+      try (BufferedWriter output = new BufferedWriter(osw))
       {
-        if (entry.getPath().endsWith(Constants.FS))
+        if (OperatingSystem.isWindows())
         {
-          result.append(entry.getPath());
-          result.append(entry.getFileName());
+          // For some reason, linux players seem to choke on this header when I addAt it... perhaps the stream classes do it automatically.
+          output.write(UnicodeUtils.getBOM("UTF-8"));
         }
-        else
-        {
-          result.append(entry.getPath());
-          result.append(Constants.FS);
-          result.append(entry.getFileName());
-        }
+        output.write(buffer.toString());
       }
-      else
-      {
-        String tempPath = entry.getFile().getPath();
-        if (tempPath.substring(0, tempPath.indexOf(entry.getFileName())).equals(Constants.FS))
-        {
-          result.append(entry.getFileName());
-        }
-        else
-        {
-          result.append(entry.getFile().getPath());
-        }
-      }
+      outputStream.close();
+      playlist.setUtfFormat(true);
     }
     else
     {
-      result.append(entry.getURI().toString());
+      try (BufferedOutputStream output = new BufferedOutputStream(outputStream))
+      {
+        output.write(buffer.toString().getBytes());
+      }
+      outputStream.close();
+      playlist.setUtfFormat(false);
     }
-    return result.toString();
   }
 }

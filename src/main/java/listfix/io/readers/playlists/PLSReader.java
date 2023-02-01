@@ -21,10 +21,12 @@
 package listfix.io.readers.playlists;
 
 import listfix.io.Constants;
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
@@ -32,9 +34,13 @@ import listfix.view.support.ProgressAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +60,7 @@ public class PLSReader extends PlaylistReader
    * @param plsFile
    * @throws FileNotFoundException
    */
-  public PLSReader(IPlayListOptions playListOptions, File plsFile) throws FileNotFoundException
+  public PLSReader(IPlaylistOptions playListOptions, Path plsFile) throws FileNotFoundException
   {
     super(playListOptions, plsFile);
     try
@@ -89,11 +95,11 @@ public class PLSReader extends PlaylistReader
     PLSProperties propBag = new PLSProperties();
     if (encoding.equals("UTF-8"))
     {
-      propBag.load(new InputStreamReader(new UnicodeInputStream(new FileInputStream(playlistFile), "UTF-8"), "UTF8"));
+      propBag.load(new InputStreamReader(new UnicodeInputStream(new FileInputStream(playlistPath.toFile()), "UTF-8"), "UTF8"));
     }
     else
     {
-      propBag.load(new FileInputStream(playlistFile));
+      propBag.load(new FileInputStream(playlistPath.toFile()));
     }
 
     // Find out how many entries we have to process.
@@ -150,7 +156,7 @@ public class PLSReader extends PlaylistReader
     {
       try
       {
-        results.add(new PlaylistEntry(this.playListOptions, new URI(file), title, duration));
+        results.add(new UriPlaylistEntry(new URI(file), title, duration));
       }
       catch (URISyntaxException ex)
       {
@@ -160,9 +166,8 @@ public class PLSReader extends PlaylistReader
     else
     {
       // We have to perform FS conversion here...
+      // if there are no FS instances in this string, look for the one from the other file system
       if (!file.contains(Constants.FS))
-      {
-        // if there are no FS instances in this string, look for the one from the other file system
         if (OperatingSystem.isLinux() || OperatingSystem.isMac())
         {
           file = file.replace("\\", Constants.FS);
@@ -171,8 +176,7 @@ public class PLSReader extends PlaylistReader
         {
           file = file.replace("/", Constants.FS);
         }
-      }
-      results.add(new PlaylistEntry(playListOptions, new File(file), title, duration, playlistFile));
+      results.add(new FilePlaylistEntry(Path.of(file), title, duration, playlistPath));
     }
   }
 

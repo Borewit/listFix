@@ -19,18 +19,14 @@
 
 package listfix.view.dialogs;
 
-import java.awt.DisplayMode;
-
-
-import java.util.List;
-
-import javax.swing.table.TableCellEditor;
-
 import listfix.model.BatchMatchItem;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.util.List;
 
 /**
  * This is the results dialog we display when running a closest matches search on multiple files in a playlist (this operation originally worked only on a single entry)..
@@ -38,7 +34,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
-  private static final Logger _logger = LogManager.getLogger(BatchClosestMatchResultsDialog.class);
+  private final Logger _logger = LogManager.getLogger(BatchClosestMatchResultsDialog.class);
 
   /**
    *

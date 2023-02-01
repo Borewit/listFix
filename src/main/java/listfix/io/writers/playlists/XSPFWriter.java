@@ -23,142 +23,118 @@ package listfix.io.writers.playlists;
 import christophedelory.content.Content;
 import christophedelory.playlist.*;
 import christophedelory.playlist.xspf.Track;
-import listfix.io.FileUtils;
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.io.UNCFile;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.view.support.ProgressAdapter;
+import listfix.model.playlists.UriPlaylistEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
  * A playlist writer capable of saving to XSPF ("spiff") format.
+ *
  * @author jcaron
  */
-public class XSPFWriter extends PlaylistWriter
+public class XSPFWriter extends PlaylistWriter<christophedelory.playlist.Playlist>
 {
   private static final Logger _logger = LogManager.getLogger(XSPFWriter.class);
-  private boolean _saveRelative;
-  private Playlist _list;
   private Media _trackToAdd;
 
-  public XSPFWriter(IPlayListOptions playListOptions)
+  public XSPFWriter(IPlaylistOptions playListOptions)
   {
     super(playListOptions);
   }
 
-  /**
-   * Saves the list to disk.  Always writes in UTF-8.
-   * @param list The list to persist to disk.
-   * @param saveRelative
-   * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
-   * @throws Exception
-   */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception
+  protected christophedelory.playlist.Playlist initCollector()
   {
-    _saveRelative = saveRelative;
-    _list = list;
+    return new christophedelory.playlist.Playlist();
+  }
 
-    boolean track = adapter != null;
+  @Override
+  protected void writeEntry(christophedelory.playlist.Playlist lizzyList, PlaylistEntry entry, int index) throws IOException
+  {
+    lizzyList.getRootSequence().addComponent(getMedia(entry));
+  }
 
-    // First, construct a generic lizzy playlist
-    christophedelory.playlist.Playlist lizzyList = new christophedelory.playlist.Playlist();
-    for (PlaylistEntry entry : list.getEntries())
+  @Override
+  protected void finalize(christophedelory.playlist.Playlist lizzyList, Playlist playlist) throws Exception
+  {
+    SpecificPlaylistProvider spp = SpecificPlaylistFactory.getInstance().findProviderByExtension(playlist.getFilename());
+    try
     {
-      if (!track || !adapter.getCancelled())
+      SpecificPlaylist specificPlaylist = spp.toSpecificPlaylist(lizzyList);
+      addXspfMetadata(specificPlaylist, playlist);
+      try (FileOutputStream stream = new FileOutputStream(playlist.getFile()))
       {
-        lizzyList.getRootSequence().addComponent(getMedia(entry));
-        if (track)
-        {
-          adapter.stepCompleted();
-        }
+        specificPlaylist.writeTo(stream, "UTF8");
       }
     }
-    if (!track || !adapter.getCancelled())
+    catch (Exception ex)
     {
-      SpecificPlaylistProvider spp = SpecificPlaylistFactory.getInstance().findProviderByExtension(list.getFilename());
-      try
-      {
-        SpecificPlaylist specificPlaylist = spp.toSpecificPlaylist(lizzyList);
-        addXspfMetadata(specificPlaylist, list);
-        try (FileOutputStream stream = new FileOutputStream(list.getFile()))
-        {
-          specificPlaylist.writeTo(stream, "UTF8");
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.error(ex, ex);
-        throw ex;
-      }
+      _logger.error("Failed to write XSPF", ex);
+      throw ex;
     }
   }
 
-  private AbstractPlaylistComponent getMedia(PlaylistEntry entry) throws Exception
+  private AbstractPlaylistComponent getMedia(PlaylistEntry entry) throws IOException
   {
     _trackToAdd = new Media();
     _trackToAdd.setSource(getContent(entry));
     return _trackToAdd;
   }
 
-  private Content getContent(PlaylistEntry entry) throws Exception
+  private Content getContent(PlaylistEntry entry) throws IOException
   {
+    final boolean _saveRelative = this.playListOptions.getSavePlaylistsWithRelativePaths();
     URI mediaURI;
     if (entry.isURL())
     {
-      mediaURI = entry.getURI();
+      mediaURI = ((UriPlaylistEntry) entry).getURI();
     }
     else
     {
-      if (entry.getAbsoluteFile() != null)
+      FilePlaylistEntry filePlaylistEntry = (FilePlaylistEntry) entry;
+      if (filePlaylistEntry.isRelative())
       {
-        if (_saveRelative)
+        // replace existing entry with a new relative one
+        String relativePath = filePlaylistEntry.getTrackPath().toString();
+
+        // repoint entry object to a new one?
+        UNCFile file = new UNCFile(relativePath);
+        filePlaylistEntry.setTrackPath(file.toPath());
+
+        if (file.isInUNCFormat())
         {
-          // replace existing entry with a new relative one
-          String relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), _list.getFile().getAbsoluteFile().getCanonicalFile());
-
-          /*
-          if (!relativePath.startsWith("." + Constants.FS))
-          {
-            relativePath = "." + Constants.FS + relativePath;
-          }
-          */
-
-          // repoint entry object to a new one?
-          UNCFile file = new UNCFile(relativePath);
-          entry.setFile(file);
-
-          if (file.isInUNCFormat())
-          {
-            relativePath = "file:" + relativePath;
-          }
-          else
-          {
-            relativePath = "file:///" + relativePath;
-          }
-
-          return new Content(relativePath.replace(" ", "%20"));
+          relativePath = "file:" + filePlaylistEntry.getTrackPath().toString();
         }
         else
         {
-          // Handle found files.
-          mediaURI = entry.getAbsoluteFile().toURI();
-          entry.setFile(entry.getAbsoluteFile());
+          relativePath = "file://" + filePlaylistEntry.getTrackPath().toString();
         }
+
+        return new Content(relativePath.replace(" ", "%20"));
       }
       else
       {
-        // Handle missing files.
-        mediaURI = entry.getFile().toURI();
+        mediaURI = ((FilePlaylistEntry) entry).getTrackPath().toUri();
       }
     }
-    mediaURI = normalizeFileUri(mediaURI);
+    try
+    {
+      mediaURI = normalizeFileUri(mediaURI);
+    }
+    catch (URISyntaxException e)
+    {
+      throw new RuntimeException(e);
+    }
     //repoint entry object to a new one?
     return new Content(mediaURI);
   }
@@ -176,7 +152,7 @@ public class XSPFWriter extends PlaylistWriter
         long duration = list.getEntries().get(i).getLength();
         if (duration > 0)
         {
-          track.setDuration((int)duration);
+          track.setDuration((int) duration);
         }
       }
     }

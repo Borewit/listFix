@@ -20,95 +20,88 @@
 
 package listfix.io.writers.playlists;
 
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
+import listfix.model.playlists.UriPlaylistEntry;
+import listfix.model.playlists.itunes.IITunesPlaylistEntry;
 import listfix.model.playlists.itunes.ITunesPlaylist;
-import listfix.model.playlists.itunes.ITunesPlaylistEntry;
 import listfix.model.playlists.itunes.ITunesTrack;
-import listfix.view.support.ProgressAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
  * @author jcaron
  */
-public class ITunesXMLWriter extends PlaylistWriter
+public class ITunesXMLWriter extends PlaylistWriter<Map<String, ITunesTrack>>
 {
   private static final Logger _logger = LogManager.getLogger(ITunesXMLWriter.class);
 
   private static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
     "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
 
-  public ITunesXMLWriter(IPlayListOptions playListOptions)
+  public ITunesXMLWriter(IPlaylistOptions playListOptions)
   {
     super(playListOptions);
   }
 
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception
+  protected Map<String, ITunesTrack> initCollector()
   {
-    Map<String, ITunesTrack> trackMap = new HashMap<>();
+    return new TreeMap<String, ITunesTrack>();
+  }
 
-    // Need to take each entry in the playlist and update the Dict in its corresponding ITunesTrack to point to the proper location
-    // Add each ITunesTrack to a map
-    ITunesTrack tempTrack;
-    for (PlaylistEntry entry : list.getEntries())
+  @Override
+  protected void writeEntry(Map<String, ITunesTrack> collector, PlaylistEntry entry, int index) throws Exception
+  {
+    final ITunesTrack iTunesTrack = ((IITunesPlaylistEntry) entry).getTrack();
+
+    URI mediaURI;
+    if (entry.isURL())
     {
-      tempTrack = ((ITunesPlaylistEntry)entry).getTrack();
-
-      URI mediaURI;
-      if (entry.isURL())
-      {
-        mediaURI = entry.getURI();
-      }
-      else
-      {
-        if (entry.getAbsoluteFile() != null)
-        {
-          // Handle found files.
-          mediaURI = entry.getAbsoluteFile().toURI();
-        }
-        else
-        {
-          // Handle missing files.
-          mediaURI = entry.getFile().toURI();
-        }
-      }
-      mediaURI = normalizeFileUri(mediaURI);
-
-      tempTrack.setLocation(mediaURI.toString());
-      trackMap.put(tempTrack.getTrackId(), tempTrack);
+      mediaURI = ((UriPlaylistEntry) entry).getURI();
+    }
+    else
+    {
+      FilePlaylistEntry fileEntry = (FilePlaylistEntry) entry;
+      mediaURI = fileEntry.getAbsolutePath().toUri();
     }
 
-    ITunesPlaylist iList = (ITunesPlaylist)list;
+    mediaURI = normalizeFileUri(mediaURI);
+
+    iTunesTrack.setLocation(mediaURI.toString());
+    collector.put(iTunesTrack.getTrackId(), iTunesTrack);
+  }
+
+  @Override
+  protected void finalize(Map<String, ITunesTrack> trackMap, Playlist playlist) throws Exception
+  {
+    ITunesPlaylist iList = (ITunesPlaylist) playlist;
     iList.getLibrary().setTracks(trackMap);
 
-    if (!adapter.getCancelled())
+    try
     {
-      try
+      try (FileOutputStream stream = new FileOutputStream(playlist.getFile()))
       {
-        try (FileOutputStream stream = new FileOutputStream(list.getFile()))
-        {
-          iList.getLibrary().getPlist().writeTo(stream, "UTF-8");
-        }
+        iList.getLibrary().getPlist().writeTo(stream, "UTF-8");
+      }
 
-        //FileWriter second argument is for append if its true than FileWriter will
-        //write bytes at the end of File (append) rather than beginning of file
-        insertStringInFile(list.getFile(), 1, HEADER);
-      }
-      catch (Exception ex)
-      {
-        _logger.error("Error writing library", ex);
-        throw ex;
-      }
+      //FileWriter second argument is for append if its true than FileWriter will
+      //write bytes at the end of File (append) rather than beginning of file
+      insertStringInFile(playlist.getFile(), 1, HEADER);
+    }
+    catch (Exception ex)
+    {
+      _logger.error("Error writing library", ex);
+      throw ex;
     }
   }
 

@@ -20,12 +20,12 @@
 
 package listfix.io.readers.playlists;
 
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.PlaylistEntry;
+import listfix.view.support.IProgressObserver;
+
 import java.io.IOException;
 import java.util.List;
-
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.enums.PlaylistType;
-import listfix.view.support.IProgressObserver;
 
 /**
  * Represents an entity capable of reading in a playlist file and returning

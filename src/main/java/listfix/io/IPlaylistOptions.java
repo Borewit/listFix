@@ -1,6 +1,6 @@
 package listfix.io;
 
-public interface IPlayListOptions
+public interface IPlaylistOptions
 {
   boolean getAlwaysUseUNCPaths();
 

@@ -20,9 +20,9 @@
 
 package listfix.model.playlists;
 
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Serves to model a closest match on a single playlist entry.
@@ -31,20 +31,16 @@ import java.io.File;
 
 public class PotentialPlaylistEntryMatch
 {
-  private PlaylistEntry thisEntry = null;
+  private final PlaylistEntry thisEntry;
+  private final IPlaylistOptions playlistOptions;
   private int _score = 0;
 
-  /**
-   *
-   * @param file
-   * @param score
-   * @param list
-   */
-  public PotentialPlaylistEntryMatch(IPlayListOptions appOptions, File file, int score, File list)
+  public PotentialPlaylistEntryMatch(Path track, int score, Path playlist, IPlaylistOptions playlistOptions)
   {
-    thisEntry = new PlaylistEntry(appOptions, file, "", list);
-    thisEntry.setFixed(true);
-    _score = score;
+    this.thisEntry = new FilePlaylistEntry(track, playlist);
+    this.playlistOptions = playlistOptions;
+    this.thisEntry.setFixed(true);
+    this._score = score;
   }
 
   /**
@@ -63,5 +59,10 @@ public class PotentialPlaylistEntryMatch
   public PlaylistEntry getPlaylistFile()
   {
     return thisEntry;
+  }
+
+  public IPlaylistOptions getPlaylistOptions()
+  {
+    return playlistOptions;
   }
 }

@@ -20,8 +20,9 @@
 
 package listfix.model;
 
-import java.util.List;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
+
+import java.util.List;
 
 /**
  *

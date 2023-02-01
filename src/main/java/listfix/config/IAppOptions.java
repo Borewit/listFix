@@ -1,10 +1,10 @@
 package listfix.config;
 
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 
 import java.awt.*;
 
-public interface IAppOptions extends IPlayListOptions
+public interface IAppOptions extends IPlaylistOptions
 {
   boolean getAutoLocateEntriesOnPlaylistLoad();
 

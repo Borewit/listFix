@@ -28,9 +28,7 @@ import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.PlaylistEntryList;
 import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.Playlist;
-import listfix.model.playlists.PlaylistEntry;
-import listfix.model.playlists.PlaylistFactory;
+import listfix.model.playlists.*;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.GUIScreen;
@@ -120,11 +118,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     SwingUtilities.updateComponentTreeUI(this);
   }
 
-  protected IPlayListOptions getPlaylistOptions() {
+  protected IPlaylistOptions getPlaylistOptions()
+  {
     return this.mainWindow.getOptions();
   }
 
-  private IMediaLibrary getMediaLibrary() {
+  private IMediaLibrary getMediaLibrary()
+  {
     return this.mainWindow.getMediaLibrary();
   }
 
@@ -269,7 +269,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   public void locateMissingFiles()
   {
     _logger.debug(markerRepair, "Start locateMissingFiles()");
-    ProgressWorker worker = new ProgressWorker<List<Integer>, Void>()
+    ProgressWorker<List<Integer>, Void> worker = new ProgressWorker<>()
     {
       @Override
       protected List<Integer> doInBackground()
@@ -511,9 +511,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         this.mainWindow.getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
       }
 
-      if (!entry.isURL())
+      if (entry instanceof FilePlaylistEntry)
       {
-        chooser.setSelectedFile(entry.getAbsoluteFile());
+        chooser.setSelectedFile(((FilePlaylistEntry) entry).getAbsolutePath().toFile());
       }
       if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
       {
@@ -525,7 +525,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("You cannot replace a file with a playlist file. Use \"Add File\" instead."), "Replace File Error", JOptionPane.ERROR_MESSAGE);
           return;
         }
-        PlaylistEntry newEntry = new PlaylistEntry(this.getPlaylistOptions(), file, null, _playlist.getFile());
+        PlaylistEntry newEntry = new FilePlaylistEntry(file.toPath(), null, _playlist.getFile().toPath());
         _playlist.replace(rowIx, newEntry);
         getTableModel().fireTableRowsUpdated(rowIx, rowIx);
       }
@@ -632,8 +632,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           _logger.error("Error saving playlist", e);
 
           JOptionPane.showMessageDialog(getParentFrame(),
-              new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", e.getCause())),
-              "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
+            new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", e.getCause())),
+            "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
         }
         finally
         {
@@ -666,8 +666,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         _logger.error("Save playlist error", ex);
 
         JOptionPane.showMessageDialog(getParentFrame(),
-            new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", ex.getCause())),
-            "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
+          new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", ex.getCause())),
+          "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
       }
       finally
       {
@@ -722,8 +722,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     catch (Exception ex)
     {
       JOptionPane.showMessageDialog(getParentFrame(),
-          new JTransparentTextArea(ExStack.textFormatErrorForUser("Could not open the selected playlist entries.", ex.getCause())),
-          "Playback Error", JOptionPane.ERROR_MESSAGE);
+        new JTransparentTextArea(ExStack.textFormatErrorForUser("Could not open the selected playlist entries.", ex.getCause())),
+        "Playback Error", JOptionPane.ERROR_MESSAGE);
       _logger.error("Playback error", ex);
     }
   }
@@ -1175,7 +1175,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       if (evt.getClickCount() == 2)
       {
         if (_uiTable.getSelectedRowCount() == 1 && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isFound()
-            && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isURL())
+          && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isURL())
         {
           findClosestMatches();
         }
@@ -1210,11 +1210,11 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     if (_playlist.isModified())
     {
       Object[] options =
-          {
-              "Discard Changes and Reload", "Cancel"
-          };
+        {
+          "Discard Changes and Reload", "Cancel"
+        };
       int rc = JOptionPane.showOptionDialog(this.getParentFrame(), new JTransparentTextArea("The current list is modified, do you really want to discard these changes and reload from source?"), "Confirm Reload",
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
       if (rc == JOptionPane.NO_OPTION)
       {
         return;
@@ -1428,8 +1428,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       catch (InterruptedException | ExecutionException e)
       {
         JOptionPane.showMessageDialog(getParentFrame(),
-            new JTransparentTextArea(ExStack.textFormatErrorForUser("An error has occured, 1 or more files were not copied.", e.getCause())),
-            "Copy Error", JOptionPane.ERROR_MESSAGE);
+          new JTransparentTextArea(ExStack.textFormatErrorForUser("An error has occured, 1 or more files were not copied.", e.getCause())),
+          "Copy Error", JOptionPane.ERROR_MESSAGE);
         _logger.error("Error", e);
       }
     }
@@ -1638,13 +1638,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           else if (rowIx >= 0 && rowIx < _playlist.size() && (colIx == 3))
           {
             PlaylistEntry entry = _playlist.get(rowIx);
-            if (entry.isURL())
+            if (entry instanceof UriPlaylistEntry)
             {
               // Show the URL
-              return entry.getURI().toString();
+              return ((UriPlaylistEntry) entry).getURI().toString();
             }
-            else if (entry.isRelative())
+            else if (entry instanceof FilePlaylistEntry)
             {
+              FilePlaylistEntry filePlaylistEntry = (FilePlaylistEntry) entry;
+              if (filePlaylistEntry.isRelative())
+              {
               /*
               Shows full relative path
               if (!entry.getPath().isEmpty())
@@ -1657,13 +1660,18 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               }
               */
 
-              // Show the full absolute path of a relative entry
-              return FilenameUtils.normalize(entry.getAbsoluteFile().toString());
+                // Show the full absolute path of a relative entry
+                return FilenameUtils.normalize(filePlaylistEntry.getAbsolutePath().toString());
+              }
+              else
+              {
+                // Show the file location
+                return FilenameUtils.normalize(entry.getPath() + Constants.FS + entry.getFileName());
+              }
             }
             else
             {
-              // Show the file location
-              return FilenameUtils.normalize(entry.getPath() + Constants.FS + entry.getFileName());
+              throw new RuntimeException("Invalid playlist entry");
             }
           }
         }
@@ -1801,7 +1809,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               _uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
             }
             else if ((isOverItem && _uiTable.getSelectedRowCount() == 0)
-                || (!_uiTable.isRowSelected(rowIx)))
+              || (!_uiTable.isRowSelected(rowIx)))
             {
               _uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
             }
@@ -1841,8 +1849,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       public boolean canImport(TransferHandler.TransferSupport info)
       {
         if (info.isDataFlavorSupported(_playlistEntryListFlavor)
-            || info.isDataFlavorSupported(DataFlavor.stringFlavor)
-            || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+          || info.isDataFlavorSupported(DataFlavor.stringFlavor)
+          || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
         {
           JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
           if (dl.getRow() == -1)
@@ -1921,7 +1929,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       private boolean HandleFileListFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
       {
         int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
-            "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
+          "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
 
         if (result == JOptionPane.YES_OPTION)
         {
@@ -2060,8 +2068,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             catch (InterruptedException | ExecutionException ex)
             {
               JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(),
-                  new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
-                  "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+                new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
+                "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
               _logger.error("Open playlist error", ex);
             }
           }
@@ -2075,7 +2083,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
       {
         int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
-            "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
+          "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
 
         if (result == JOptionPane.YES_OPTION)
         {

@@ -20,134 +20,76 @@
 
 package listfix.io.writers.playlists;
 
-import listfix.io.*;
+import listfix.io.Constants;
+import listfix.io.IPlaylistOptions;
+import listfix.io.UnicodeInputStream;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.util.OperatingSystem;
-import listfix.view.support.ProgressAdapter;
 
 import java.io.*;
-import java.util.List;
 
 /**
  * A playlist writer capable of saving to WPL format.
+ *
  * @author jcaron & jpeterson
  */
-public class WPLWriter extends PlaylistWriter
+public class WPLWriter extends PlaylistWriter<StringBuilder>
 {
-  public WPLWriter(IPlayListOptions options) {
+  public WPLWriter(IPlaylistOptions options)
+  {
     super(options);
   }
 
-  /**
-   * Saves the list to disk.  Always writes in UTF-8.
-   * @param list The list to persist to disk.
-   * @param saveRelative Specifies if the playlist should be written out relatively or not.
-   * @param adapter An optionally null progress adapter which lets other code monitor the progress of this operation.
-   * @throws IOException
-   */
   @Override
-  public void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws IOException
+  protected StringBuilder initCollector() throws Exception
   {
-    boolean track = adapter != null;
-    List<PlaylistEntry> entries = list.getEntries();
-    File listFile = list.getFile();
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(getWPLHead(listFile));
-    PlaylistEntry entry;
-    String relativePath;
-    for (int i = 0; i < entries.size(); i++)
+    return new StringBuilder();
+  }
+
+  protected void writeHeader(StringBuilder buffer, Playlist playlist) throws Exception
+  {
+    final File playlistFile = playlist.getFile();
+    buffer.append(getWPLHead(playlistFile));
+  }
+
+  @Override
+  protected void writeEntry(StringBuilder buffer, PlaylistEntry entry, int index) throws Exception
+  {
+    String media = "\t\t\t<media src=\"" + XMLEncode(serializeEntry(entry)) + "\"";
+    if (!entry.getCID().isEmpty())
     {
-      if (!track || !adapter.getCancelled())
-      {
-        if (track)
-        {
-          adapter.stepCompleted();
-        }
-        entry = entries.get(i);
-        if (!entry.isURL())
-        {
-          if (!saveRelative && entry.isRelative() && entry.getAbsoluteFile() != null)
-          {
-            // replace existing relative entry with a new absolute one
-            File absolute = entry.getAbsoluteFile().getCanonicalFile();
-
-            // Switch to UNC representation if selected in the options
-            if (this.playListOptions.getAlwaysUseUNCPaths())
-            {
-              UNCFile temp = new UNCFile(absolute);
-              absolute = new File(temp.getUNCPath());
-            }
-            entry = new PlaylistEntry(playListOptions, absolute, entry.getExtInf(), listFile, entry.getCID(), entry.getTID());
-            entries.set(i, entry);
-          }
-          else
-          {
-            if (saveRelative && entry.isFound())
-            {
-              // replace existing entry with a new relative one
-              relativePath = FileUtils.getRelativePath(entry.getAbsoluteFile().getCanonicalFile(), listFile);
-              if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
-              {
-                relativePath = "." + Constants.FS + relativePath;
-              }
-
-              // make a new file out of this relative path, and see if it's really relative...
-              // if it's absolute, we have to perform the UNC check and convert if necessary.
-              File temp = new File(relativePath);
-              if (temp.isAbsolute())
-              {
-                // Switch to UNC representation if selected in the options
-                if (this.playListOptions.getAlwaysUseUNCPaths())
-                {
-                  UNCFile uncd = new UNCFile(temp);
-                  temp = new File(uncd.getUNCPath());
-                }
-              }
-
-              // make the entry and addAt it
-              entry = new PlaylistEntry(playListOptions, temp, entry.getExtInf(), listFile, entry.getCID(), entry.getTID());
-              entries.set(i, entry);
-            }
-          }
-        }
-
-        String media = "\t\t\t<media src=\"" + XMLEncode(serializeEntry(entry)) + "\"";
-        if (!entry.getCID().isEmpty())
-        {
-          media += " cid=\"" + entry.getCID() + "\"";
-        }
-        if (!entry.getTID().isEmpty())
-        {
-          media += " tid=\"" + entry.getTID() + "\"";
-        }
-        media += "/>" + Constants.BR;
-        buffer.append(media);
-      }
-      else
-      {
-        return;
-      }
+      media += " cid=\"" + entry.getCID() + "\"";
     }
+    if (!entry.getTID().isEmpty())
+    {
+      media += " tid=\"" + entry.getTID() + "\"";
+    }
+    media += "/>" + Constants.BR;
+    buffer.append(media);
+  }
+
+  @Override
+  protected void finalize(StringBuilder buffer, Playlist playlist) throws Exception
+  {
     buffer.append(getWPLFoot());
 
-    if (!track || !adapter.getCancelled())
+    final File playlistFile = playlist.getFile();
+
+    File dirToSaveIn = playlistFile.getParentFile().getAbsoluteFile();
+    if (!dirToSaveIn.exists())
     {
-      File dirToSaveIn = listFile.getParentFile().getAbsoluteFile();
-      if (!dirToSaveIn.exists())
-      {
-        dirToSaveIn.mkdirs();
-      }
-      try (FileOutputStream outputStream = new FileOutputStream(listFile))
-      {
-        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
-        try (BufferedWriter output = new BufferedWriter(osw))
-        {
-          output.write(buffer.toString());
-        }
-      }
-      list.setUtfFormat(true);
+      dirToSaveIn.mkdirs();
     }
+    try (FileOutputStream outputStream = new FileOutputStream(playlistFile))
+    {
+      Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+      try (BufferedWriter output = new BufferedWriter(osw))
+      {
+        output.write(buffer.toString());
+      }
+    }
+    playlist.setUtfFormat(true);
+
   }
 
   // WPL Helper Method
@@ -208,39 +150,7 @@ public class WPLWriter extends PlaylistWriter
   private String serializeEntry(PlaylistEntry entry)
   {
     StringBuilder result = new StringBuilder();
-    if (!entry.isURL())
-    {
-      if (!entry.isRelative())
-      {
-        if (entry.getPath().endsWith(Constants.FS))
-        {
-          result.append(entry.getPath());
-          result.append(entry.getFileName());
-        }
-        else
-        {
-          result.append(entry.getPath());
-          result.append(Constants.FS);
-          result.append(entry.getFileName());
-        }
-      }
-      else
-      {
-        String tempPath = entry.getFile().getPath();
-        if (tempPath.substring(0, tempPath.indexOf(entry.getFileName())).equals(Constants.FS))
-        {
-          result.append(entry.getFileName());
-        }
-        else
-        {
-          result.append(entry.getFile().getPath());
-        }
-      }
-    }
-    else
-    {
-      result.append(entry.getURI().toString());
-    }
+    result.append(normalizeTrackPath(this.playListOptions.getSavePlaylistsWithRelativePaths(), entry));
     return result.toString();
   }
 }
