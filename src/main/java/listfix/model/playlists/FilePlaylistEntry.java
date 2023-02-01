@@ -131,7 +131,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   {
     String[] emptyPaths = new String[NonExistentDirectories.size()];
     NonExistentDirectories.toArray(emptyPaths);
-    return isFound() || ArrayFunctions.containsStringPrefixingAnotherString(emptyPaths, this.getPath(), false);
+    return isFound() || ArrayFunctions.containsStringPrefixingAnotherString(emptyPaths, this.getTrackFolder(), false);
   }
 
   private void resetAbsoluteFile()
@@ -145,7 +145,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   public boolean findNewLocationFromFileList(Collection<String> fileList, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
     String fileSearchResult = null;
-    String trimmedFileName = this.getFileName().trim();
+    String trimmedFileName = this.getTrackFileName().trim();
     boolean caseSensitiveMatching = this.fileSystemIsCaseSensitive && !caseInsensitiveExactMatching;
     String candidateFileName;
     for (String file : fileList)
@@ -174,7 +174,7 @@ public class FilePlaylistEntry extends PlaylistEntry
 
   public boolean updatePathToMediaLibraryIfFoundOutside(IMediaLibrary dirLists, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
-    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), this.getPath(), !this.fileSystemIsCaseSensitive))
+    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), this.getTrackFolder(), !this.fileSystemIsCaseSensitive))
     {
       return findNewLocationFromFileList(dirLists.getNestedMediaFiles(), caseInsensitiveExactMatching, useRelativePath);
     }
@@ -229,13 +229,14 @@ public class FilePlaylistEntry extends PlaylistEntry
   }
 
   @Override
-  public String getPath()
+  public String getTrackFolder()
   {
-    return this.trackPath.getParent().toString();
+    Path parent = this.trackPath.getParent();
+    return parent == null ? "" : parent.toString();
   }
 
   @Override
-  public String getFileName()
+  public String getTrackFileName()
   {
     return this.trackPath.getFileName().toString();
   }

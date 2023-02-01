@@ -106,9 +106,9 @@ public abstract class PlaylistEntry implements Cloneable
     }
   }
 
-  public abstract String getPath();
+  public abstract String getTrackFolder();
 
-  public abstract String getFileName();
+  public abstract String getTrackFileName();
 
   public String getExtInf()
   {
@@ -171,7 +171,7 @@ public abstract class PlaylistEntry implements Cloneable
     matches.clear();
 
     // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
-    String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
+    String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getTrackFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
     File mediaFile;
     int score;
     for (String mediaFilePath : mediaFiles)

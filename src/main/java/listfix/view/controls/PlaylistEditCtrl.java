@@ -373,7 +373,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     {
       int rowIx = _uiTable.convertRowIndexToModel(row);
       PlaylistEntry entry = _playlist.get(rowIx);
-      EditFilenameResult response = EditFilenameDialog.showDialog(getParentFrame(), "Edit Filename", true, entry.getFileName());
+      EditFilenameResult response = EditFilenameDialog.showDialog(getParentFrame(), "Edit Filename", true, entry.getTrackFileName());
       if (response.getResultCode() == EditFilenameDialog.OK)
       {
         _playlist.changeEntryFileName(rowIx, response.getFileName());
@@ -499,9 +499,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
       JFileChooser chooser = new JFileChooser();
       chooser.addChoosableFileFilter(new AudioFileFilter());
-      chooser.setDialogTitle("Replacing '" + entry.getFileName() + "'");
+      chooser.setDialogTitle("Replacing '" + entry.getTrackFileName() + "'");
 
-      File deepest = FileUtils.findDeepestPathToExist(new File(entry.getPath()));
+      File deepest = FileUtils.findDeepestPathToExist(new File(entry.getTrackFolder()));
       if (deepest != null)
       {
         chooser.setCurrentDirectory(deepest);
@@ -1666,7 +1666,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               else
               {
                 // Show the file location
-                return FilenameUtils.normalize(entry.getPath() + Constants.FS + entry.getFileName());
+                return FilenameUtils.normalize(entry.getTrackFolder() + Constants.FS + entry.getTrackFileName());
               }
             }
             else
@@ -2276,9 +2276,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             return ImageIcons.IMG_MISSING;
           }
         case 2:
-          return entry.getFileName();
+          return entry.getTrackFileName();
         case 3:
-          return entry.getPath();
+          return entry.getTrackFolder();
         default:
           return null;
       }

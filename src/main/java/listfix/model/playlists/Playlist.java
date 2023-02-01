@@ -214,7 +214,7 @@ public class Playlist
           fileToCopy = ((FilePlaylistEntry) tempEntry).getAbsolutePath();
           if (tempEntry.isFound()) // && fileToCopy.exists())
           {
-            dest = Path.of(destinationDirectory.getPath(), tempEntry.getFileName());
+            dest = Path.of(destinationDirectory.getPath(), tempEntry.getTrackFileName());
             try
             {
               Files.copy(fileToCopy, dest, StandardCopyOption.REPLACE_EXISTING);
@@ -1056,10 +1056,10 @@ public class Playlist
       switch (_sortIx)
       {
         case Filename:
-          rc = lhs.getFileName().compareToIgnoreCase(rhs.getFileName());
+          rc = lhs.getTrackFileName().compareToIgnoreCase(rhs.getTrackFileName());
           break;
         case Path:
-          rc = lhs.getPath().compareToIgnoreCase(rhs.getPath());
+          rc = lhs.getTrackFolder().compareToIgnoreCase(rhs.getTrackFolder());
           break;
         case Status:
           // Randomly chosen order... Found > Fixed > Missing > URL (seemed reasonable)
@@ -1121,7 +1121,7 @@ public class Playlist
     for (int ix = 0; ix < _entries.size();)
     {
       PlaylistEntry entry = _entries.get(ix);
-      String name = entry.getFileName();
+      String name = entry.getTrackFileName();
       if (found.contains(name))
       {
         // duplicate found, remove

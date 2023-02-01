@@ -29,6 +29,7 @@ import listfix.io.IPlaylistOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.playlists.itunes.*;
+import listfix.util.TestUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -51,7 +52,7 @@ import java.util.Map;
 public class ITunesPlaylistTests
 {
 
-  public static final String iTunesLibraryXmlPath = "/itunes/iTunes Music Library.xml";
+  public static final String iTunesLibraryXmlPath = "/playlists/itunes/iTunes Music Library.xml";
 
   @Rule
   public TemporaryFolder itunesFolder = new TemporaryFolder();
@@ -150,15 +151,7 @@ public class ITunesPlaylistTests
   {
     if (this.itunesMusicLibraryFile == null)
     {
-      this.itunesMusicLibraryFile = this.itunesFolder.newFile("iTunes Music Library.xml");
-      try (InputStream inputStream = this.getClass().getResourceAsStream(iTunesLibraryXmlPath))
-      {
-        assertNotNull(inputStream, "Load test resource: \"" + iTunesLibraryXmlPath + "\"");
-        java.nio.file.Files.copy(
-          inputStream,
-          this.itunesMusicLibraryFile.toPath(),
-          StandardCopyOption.REPLACE_EXISTING);
-      }
+      this.itunesMusicLibraryFile = TestUtil.createFileFromResource(this.itunesFolder, iTunesLibraryXmlPath, "iTunes Music Library.xml");
     }
     return this.itunesMusicLibraryFile;
   }

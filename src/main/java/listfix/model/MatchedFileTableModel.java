@@ -78,7 +78,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
     for (int i = 0; i < n; i++)
     {
             PotentialPlaylistEntryMatch entry = input.get(i);
-      tempData[i][0] = entry.getPlaylistFile().getFileName();
+      tempData[i][0] = entry.getPlaylistFile().getTrackFileName();
       tempData[i][1] = entry.getScore() + "";
     }
     data = tempData;

@@ -166,14 +166,14 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
             BatchMatchItem item = _items.get(rowIx);
             if (colIx == 1)
             {
-              return item.getEntry().getPath();
+              return item.getEntry().getTrackFolder();
             }
             else
             {
               PotentialPlaylistEntryMatch match = item.getSelectedMatch();
               if (match != null)
               {
-                return match.getPlaylistFile().getPath();
+                return match.getPlaylistFile().getTrackFolder();
               }
             }
           }
@@ -334,7 +334,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
             return rowIndex + 1;
 
           case 1:
-            return item.getEntry().getFileName();
+            return item.getEntry().getTrackFileName();
 
           case 2:
             return "";
@@ -342,7 +342,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
             PotentialPlaylistEntryMatch match = item.getSelectedMatch();
             if (match != null)
             {
-              return match.getPlaylistFile().getFileName();
+              return match.getPlaylistFile().getTrackFileName();
             }
             else
             {
@@ -441,7 +441,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
         {
           if (index > 0)
           {
-            list.setToolTipText(((PotentialPlaylistEntryMatch) ((MatchComboBoxModel) list.getModel())._matches.get(index - 1)).getPlaylistFile().getPath());
+            list.setToolTipText(((PotentialPlaylistEntryMatch) ((MatchComboBoxModel) list.getModel())._matches.get(index - 1)).getPlaylistFile().getTrackFolder());
           }
         }
 
@@ -476,7 +476,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
         if (index > 0)
         {
           PotentialPlaylistEntryMatch match = _matches.get(index - 1);
-          return Integer.toString(match.getScore()) + ": " + match.getPlaylistFile().getFileName();
+          return Integer.toString(match.getScore()) + ": " + match.getPlaylistFile().getTrackFileName();
         }
         else
         {

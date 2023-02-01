@@ -79,13 +79,13 @@ public class UriPlaylistEntry extends PlaylistEntry
   }
 
   @Override
-  public String getPath()
+  public String getTrackFolder()
   {
     return "";
   }
 
   @Override
-  public String getFileName()
+  public String getTrackFileName()
   {
     return this.uri.toString();
   }
