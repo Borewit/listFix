@@ -116,7 +116,7 @@ public class M3UReader extends PlaylistReader
     if (line1 != null)
     {
       // Ignore the standard M3U header and random mediamonkey crap.
-      while (line1.contains("#EXTM3U") || line1.startsWith("#EXTINFUTF8"))
+      while (line1.contains("#EXTM3U") || line1.startsWith("#EXTINFUTF8") || line1.isEmpty())
       {
         line1 = readLine();
         if (line1 == null)
