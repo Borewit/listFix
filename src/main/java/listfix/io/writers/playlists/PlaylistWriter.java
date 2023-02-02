@@ -11,6 +11,7 @@ import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.view.support.ProgressAdapter;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -42,7 +43,7 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
     throw new IllegalArgumentException("entry of unsupported type");
   }
 
-  protected static PlaylistEntry normalizeEntry(IPlaylistOptions playListOptions, Playlist playlist, PlaylistEntry entry) throws IOException
+  protected static void normalizeEntry(IPlaylistOptions playListOptions, Playlist playlist, PlaylistEntry entry) throws IOException
   {
     final boolean saveRelative = playListOptions.getSavePlaylistsWithRelativePaths();
     final File playlistFile = playlist.getFile();
@@ -61,7 +62,7 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
           UNCFile temp = new UNCFile(absolute);
           absolute = new File(temp.getUNCPath());
         }
-        return new FilePlaylistEntry(absolute.toPath(), entry.getExtInf(), playlistFile.toPath(), entry.getCID(), entry.getTID());
+        ((FilePlaylistEntry) entry).setTrackPath(absolute.toPath());
       }
       else
       {
@@ -86,13 +87,12 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
               temp = new File(uncd.getUNCPath());
             }
           }
-
           // make the entry and addAt it
-          return new FilePlaylistEntry(temp.toPath(), entry.getExtInf(), playlistFile.toPath(), entry.getCID(), entry.getTID());
+          ((FilePlaylistEntry) entry).setTrackPath(temp.toPath());
         }
       }
     }
-    return entry;
+
   }
 
   /**
@@ -101,20 +101,26 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
    * @param playlist     The list to persist to disk.
    * @param saveRelative Specifies if the playlist should be written out relatively or not.
    * @param adapter      An optionally null progress adapter which lets other code monitor the progress of this operation.
-   * @throws IOException
+   * @throws Exception   If the playlist failed to save
    */
   @Override
-  public void save(Playlist playlist, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception
+  public void save(Playlist playlist, boolean saveRelative, @Nullable ProgressAdapter<String> adapter) throws Exception
   {
     C collector = this.initCollector();
+    final int totalSteps = playlist.getEntries().size() + 2;
+
+    if (adapter != null) {
+      adapter.setTotal(totalSteps);
+    }
 
     this.writeHeader(collector, playlist);
+    adapter.stepCompleted();
 
     int index = 0;
     for (PlaylistEntry entry : playlist.getEntries())
     {
-      PlaylistEntry normalizedEntry = normalizeEntry(this.playListOptions, playlist, entry);
-      this.writeEntry(collector, normalizedEntry, index++);
+      normalizeEntry(this.playListOptions, playlist, entry);
+      this.writeEntry(collector, entry, index++);
       if (adapter != null)
       {
         if (adapter.getCancelled())
@@ -128,6 +134,7 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
     if (adapter != null && !adapter.getCancelled())
     {
       this.finalize(collector, playlist);
+      adapter.setCompleted(totalSteps);
     }
   }
 
