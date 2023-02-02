@@ -13,7 +13,7 @@ import java.util.Collection;
 public class FilePlaylistEntry extends PlaylistEntry
 {
   // This entry's File object.
-  private final boolean fileSystemIsCaseSensitive = File.separatorChar == '/';
+  private static final boolean isWindows = File.separatorChar == '\\';
   protected Path trackPath;
   protected Path playlistPath;
 
@@ -23,7 +23,7 @@ public class FilePlaylistEntry extends PlaylistEntry
 
   public FilePlaylistEntry(Path trackPath, Path playlistPath)
   {
-    this.trackPath = trackPath;
+    this.trackPath = convertPath(trackPath);
     this.playlistPath = playlistPath;
     // should we skip the exists check?
     if (this.skipExistsCheck())
@@ -70,6 +70,25 @@ public class FilePlaylistEntry extends PlaylistEntry
         _status = PlaylistEntryStatus.Missing;
       }
     }
+  }
+
+  private static Path convertPath(Path path) {
+    String pathAsString = path.toString();
+    if (isWindows)
+    {
+      if (pathAsString.startsWith("/") || pathAsString.startsWith("../") ||  pathAsString.startsWith("./"))
+      {
+        pathAsString = pathAsString.replace("/", "\\");
+      }
+    }
+    else
+    {
+      if (pathAsString.startsWith("\\") || pathAsString.startsWith("..\\") ||  pathAsString.startsWith(".\\"))
+      {
+        pathAsString = pathAsString.replace("\\", "/");
+      }
+    }
+    return Path.of(pathAsString);
   }
 
   /**
@@ -146,7 +165,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   {
     String fileSearchResult = null;
     String trimmedFileName = this.getTrackFileName().trim();
-    boolean caseSensitiveMatching = this.fileSystemIsCaseSensitive && !caseInsensitiveExactMatching;
+    boolean caseSensitiveMatching = !this.isWindows && !caseInsensitiveExactMatching;
     String candidateFileName;
     for (String file : fileList)
     {
@@ -174,7 +193,7 @@ public class FilePlaylistEntry extends PlaylistEntry
 
   public boolean updatePathToMediaLibraryIfFoundOutside(IMediaLibrary dirLists, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
-    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), this.getTrackFolder(), !this.fileSystemIsCaseSensitive))
+    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), this.getTrackFolder(), this.isWindows))
     {
       return findNewLocationFromFileList(dirLists.getNestedMediaFiles(), caseInsensitiveExactMatching, useRelativePath);
     }
