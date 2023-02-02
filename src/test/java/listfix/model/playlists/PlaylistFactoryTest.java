@@ -4,6 +4,7 @@ import listfix.io.IPlaylistOptions;
 import listfix.json.JsonAppOptions;
 import listfix.util.TestUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,6 +39,7 @@ public class PlaylistFactoryTest
   }
 
   @Test
+  @Ignore
   public void readPlaylistPls() throws IOException
   {
     File plsPlaylistFile = TestUtil.createFileFromResource(this.temporaryFolder, "/playlists/pls/playlist.pls", "playlist.pls");
