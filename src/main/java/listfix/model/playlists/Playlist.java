@@ -883,7 +883,7 @@ public class Playlist
   public List<BatchMatchItem> findClosestMatches(List<PlaylistEntry> entries, Collection<String> libraryFiles, IProgressObserver<String> observer)
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
-    progress.setTotal(entries.size());
+    progress.setTotal(entries.size() * libraryFiles.size());
 
     List<BatchMatchItem> fixed = new LinkedList<>();
     int ix = 0;
@@ -892,14 +892,13 @@ public class Playlist
       if (observer.getCancelled()) return null;
       if (!entry.isURL() && !entry.isFound())
       {
-        List<PotentialPlaylistEntryMatch> matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
+        List<PotentialPlaylistEntryMatch> matches = entry.findClosestMatches(libraryFiles, progress, this.playListOptions);
         if (!matches.isEmpty())
         {
           fixed.add(new BatchMatchItem(ix, entry, matches));
         }
       }
       ix++;
-      progress.stepCompleted();
     }
 
     return fixed;
