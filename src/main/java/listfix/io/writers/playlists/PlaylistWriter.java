@@ -106,36 +106,33 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
   @Override
   public void save(Playlist playlist, boolean saveRelative, @Nullable ProgressAdapter<String> adapter) throws Exception
   {
-    C collector = this.initCollector();
-    final int totalSteps = playlist.getEntries().size() + 2;
-
-    if (adapter != null) {
-      adapter.setTotal(totalSteps);
+    if (adapter == null) {
+      // Create a dummy progress-adapter
+      adapter = ProgressAdapter.wrap(null);
     }
 
+    final int totalSteps = playlist.getEntries().size() + 3;
+    adapter.setTotal(totalSteps);
+    C collector = this.initCollector();
+    adapter.stepCompleted(); // Extra step 1/3
+
     this.writeHeader(collector, playlist);
-    adapter.stepCompleted();
+    adapter.stepCompleted(); // Extra step 2/3
 
     int index = 0;
     for (PlaylistEntry entry : playlist.getEntries())
     {
       normalizeEntry(this.playListOptions, playlist, entry);
       this.writeEntry(collector, entry, index++);
-      if (adapter != null)
+      if (adapter.getCancelled())
       {
-        if (adapter.getCancelled())
-        {
-          break;
-        }
-        adapter.stepCompleted();
+        break;
       }
+      adapter.stepCompleted();
     }
 
-    if (adapter != null && !adapter.getCancelled())
-    {
-      this.finalize(collector, playlist);
-      adapter.setCompleted(totalSteps);
-    }
+    this.finalize(collector, playlist);
+    adapter.setCompleted(totalSteps); // Extra step 3/3
   }
 
   protected abstract C initCollector() throws Exception;
