@@ -25,14 +25,7 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DarkStar;
 import com.jgoodies.looks.plastic.theme.LightGray;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
-import com.jidesoft.document.DocumentComponent;
-import com.jidesoft.document.DocumentComponentEvent;
-import com.jidesoft.document.DocumentComponentListener;
-import com.jidesoft.document.DocumentPane;
-import com.jidesoft.document.DocumentPane.TabbedPaneCustomizer;
-import com.jidesoft.swing.FolderChooser;
-import com.jidesoft.swing.JideMenu;
-import com.jidesoft.swing.JideTabbedPane;
+
 import listfix.config.ApplicationOptionsConfiguration;
 import listfix.config.IAppOptions;
 import listfix.config.IMediaLibrary;
@@ -55,14 +48,15 @@ import listfix.util.ExStack;
 import listfix.util.FileTypeSearch;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistEditCtrl;
-import listfix.view.dialogs.AppOptionsDialog;
-import listfix.view.dialogs.BatchExactMatchesResultsDialog;
-import listfix.view.dialogs.MultiListBatchClosestMatchResultsDialog;
-import listfix.view.dialogs.ProgressDialog;
+import listfix.view.dialogs.*;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
+import listfix.swing.DocumentComponentEvent;
+import listfix.swing.IDocumentComponentListener;
+import listfix.swing.JDocumentComponent;
+import listfix.swing.JDocumentPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -94,6 +88,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -218,10 +213,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
     addPlaylistPanelModelListener();
 
-    _documentPane.setGroupsAllowed(false);
-    _documentPane.setFloatingAllowed(false);
-    _documentPane.setTabbedPaneCustomizer(createTabCustomizer());
-    _documentPane.setTabColorProvider(createTabColorProvider());
+//    _documentPane.setGroupsAllowed(false);
+//    _documentPane.setFloatingAllowed(false);
+//    _documentPane.setTabbedPaneCustomizer(createTabCustomizer());
+//    _documentPane.setTabColorProvider(createTabColorProvider());
 
     // Load the position the window was in when it was last closed.
     WindowSaver.getInstance().loadSettings(this);
@@ -236,63 +231,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
     // Stop showing the loading screen
     splashScreen.setVisible(false);
-  }
-
-  private TabbedPaneCustomizer createTabCustomizer()
-  {
-    return new TabbedPaneCustomizer()
-    {
-      @Override
-      public void customize(final JideTabbedPane tabbedPane)
-      {
-        tabbedPane.setShowCloseButton(true);
-        tabbedPane.setUseDefaultShowCloseButtonOnTab(false);
-        tabbedPane.setShowCloseButtonOnTab(true);
-        tabbedPane.setScrollSelectedTabOnWheel(true);
-        tabbedPane.setRightClickSelect(false);
-        tabbedPane.setCloseTabOnMouseMiddleButton(true);
-        tabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-      }
-    };
-  }
-
-  private DocumentPane.DocumentTabColorProvider createTabColorProvider()
-  {
-    return new DocumentPane.DocumentTabColorProvider()
-    {
-      @Override
-      public Color getBackgroundAt(int documentIndex)
-      {
-        if (_documentPane.getDocumentAt(documentIndex) == _documentPane.getActiveDocument())
-        {
-          return new Color(255, 179, 93);
-        }
-        return _docTabPanel.getBackground();
-      }
-
-      @Override
-      public Color getForegroundAt(int documentIndex)
-      {
-        Color c = getBackgroundAt(documentIndex);
-        float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-        float brightness = hsb[2];
-
-        if (brightness < 0.5)
-        {
-          return Color.WHITE;
-        }
-        else
-        {
-          return Color.BLACK;
-        }
-      }
-
-      @Override
-      public float getGradientRatio(int documentIndex)
-      {
-        return 0.5F;
-      }
-    };
   }
 
   private void addPlaylistPanelModelListener()
@@ -504,8 +442,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
     _jMediaDirChooser.setDialogTitle("Specify a media directory...");
     _jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-    _jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
-    _jMediaDirChooser.setRecentListVisible(false);
     _jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
     _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
 
@@ -749,9 +685,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _spacerPanel = new javax.swing.JPanel();
     _newIconButton = new javax.swing.JButton();
     _docTabPanel = new javax.swing.JPanel();
-    _documentPane = new com.jidesoft.document.DocumentPane();
+    _documentPane = new JDocumentPane();
     _mainMenuBar = new javax.swing.JMenuBar();
-    _fileMenu = new JideMenu();
+    _fileMenu = new JMenu();
     _newPlaylistMenuItem = new javax.swing.JMenuItem();
     _loadMenuItem = new javax.swing.JMenuItem();
     _closeMenuItem = new javax.swing.JMenuItem();
@@ -770,13 +706,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _appOptionsMenuItem = new javax.swing.JMenuItem();
     jSeparator5 = new javax.swing.JPopupMenu.Separator();
     _exitMenuItem = new javax.swing.JMenuItem();
-    _repairMenu = new JideMenu();
+    _repairMenu = new JMenu();
     _miBatchRepair = new javax.swing.JMenuItem();
     _miExactMatchRepairOpenPlaylists = new javax.swing.JMenuItem();
     _miClosestMatchRepairOpenPlaylists = new javax.swing.JMenuItem();
     _batchRepairWinampMenuItem = new javax.swing.JMenuItem();
     _extractPlaylistsMenuItem = new javax.swing.JMenuItem();
-    _helpMenu = new JideMenu();
+    _helpMenu = new JMenu();
     _helpMenuItem = new javax.swing.JMenuItem();
     _updateCheckMenuItem = new javax.swing.JMenuItem();
     _aboutMenuItem = new javax.swing.JMenuItem();
@@ -1131,64 +1067,34 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _closeMenuItem.setMnemonic('C');
     _closeMenuItem.setText("Close");
     _closeMenuItem.setToolTipText("Closes The Current Playlist");
-    _closeMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _closeMenuItemActionPerformed(evt);
-      }
-    });
+    _closeMenuItem.addActionListener(evt -> _closeMenuItemActionPerformed(evt));
     _fileMenu.add(_closeMenuItem);
 
     _closeAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _closeAllMenuItem.setMnemonic('A');
     _closeAllMenuItem.setText("Close All");
     _closeAllMenuItem.setToolTipText("Closes All Open Playlists");
-    _closeAllMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _closeAllMenuItemActionPerformed(evt);
-      }
-    });
+    _closeAllMenuItem.addActionListener(evt -> _closeAllMenuItemActionPerformed(evt));
     _fileMenu.add(_closeAllMenuItem);
     _fileMenu.add(jSeparator1);
 
     _saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _saveMenuItem.setMnemonic('S');
     _saveMenuItem.setText("Save");
-    _saveMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _saveMenuItemActionPerformed(evt);
-      }
-    });
+    _saveMenuItem.addActionListener(evt -> _saveMenuItemActionPerformed(evt));
     _fileMenu.add(_saveMenuItem);
 
     _saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _saveAsMenuItem.setMnemonic('V');
     _saveAsMenuItem.setText("Save As");
-    _saveAsMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _saveAsMenuItemActionPerformed(evt);
-      }
-    });
+    _saveAsMenuItem.addActionListener(evt -> _saveAsMenuItemActionPerformed(evt));
     _fileMenu.add(_saveAsMenuItem);
 
     _saveAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _saveAllMenuItem.setMnemonic('S');
     _saveAllMenuItem.setText("Save All");
     _saveAllMenuItem.setToolTipText("Save All Open Playlists");
-    _saveAllMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _saveAllMenuItemActionPerformed(evt);
-      }
-    });
+    _saveAllMenuItem.addActionListener(evt -> _saveAllMenuItemActionPerformed(evt));
     _fileMenu.add(_saveAllMenuItem);
     _fileMenu.add(jSeparator2);
 
@@ -1196,26 +1102,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _miReload.setMnemonic('R');
     _miReload.setText("Reload");
     _miReload.setToolTipText("Reloads The Currently Open Playlist");
-    _miReload.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miReloadActionPerformed(evt);
-      }
-    });
+    _miReload.addActionListener(evt -> _miReloadActionPerformed(evt));
     _fileMenu.add(_miReload);
 
     _miReloadAll.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _miReloadAll.setMnemonic('l');
     _miReloadAll.setText("Reload All");
     _miReloadAll.setToolTipText("Reloads All Currently Open Playlists");
-    _miReloadAll.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miReloadAllActionPerformed(evt);
-      }
-    });
+    _miReloadAll.addActionListener(evt -> _miReloadAllActionPerformed(evt));
     _fileMenu.add(_miReloadAll);
     _fileMenu.add(jSeparator3);
 
@@ -1227,13 +1121,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _clearHistoryMenuItem.setMnemonic('H');
     _clearHistoryMenuItem.setText("Clear Playlist History");
     _clearHistoryMenuItem.setToolTipText("Clears the recently opened playlist history");
-    _clearHistoryMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _clearHistoryMenuItemActionPerformed(evt);
-      }
-    });
+    _clearHistoryMenuItem.addActionListener(evt -> _clearHistoryMenuItemActionPerformed(evt));
     _fileMenu.add(_clearHistoryMenuItem);
     _fileMenu.add(jSeparator4);
 
@@ -1241,26 +1129,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _appOptionsMenuItem.setMnemonic('p');
     _appOptionsMenuItem.setText("Options...");
     _appOptionsMenuItem.setToolTipText("Opens the Options Screen");
-    _appOptionsMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _appOptionsMenuItemActionPerformed(evt);
-      }
-    });
+    _appOptionsMenuItem.addActionListener(evt -> _appOptionsMenuItemActionPerformed(evt));
     _fileMenu.add(_appOptionsMenuItem);
     _fileMenu.add(jSeparator5);
 
     _exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
     _exitMenuItem.setMnemonic('x');
     _exitMenuItem.setText("Exit");
-    _exitMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _exitMenuItemActionPerformed(evt);
-      }
-    });
+    _exitMenuItem.addActionListener(evt -> _exitMenuItemActionPerformed(evt));
     _fileMenu.add(_exitMenuItem);
 
     _mainMenuBar.add(_fileMenu);
@@ -1271,62 +1147,32 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _miBatchRepair.setMnemonic('E');
     _miBatchRepair.setText("Exact Matches Repair...");
     _miBatchRepair.setToolTipText("Runs an \"Exact Matches Repair\" on lists chosen from the file system");
-    _miBatchRepair.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onMenuBatchRepairActionPerformed(evt);
-      }
-    });
+    _miBatchRepair.addActionListener(evt -> onMenuBatchRepairActionPerformed(evt));
     _repairMenu.add(_miBatchRepair);
 
     _miExactMatchRepairOpenPlaylists.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _miExactMatchRepairOpenPlaylists.setText("Quick Repair Currently Open Playlists");
     _miExactMatchRepairOpenPlaylists.setToolTipText("Runs an \"Exact Matches Repair\" on all open playlists");
-    _miExactMatchRepairOpenPlaylists.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(evt);
-      }
-    });
+    _miExactMatchRepairOpenPlaylists.addActionListener(evt -> _miExactMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(evt));
     _repairMenu.add(_miExactMatchRepairOpenPlaylists);
 
     _miClosestMatchRepairOpenPlaylists.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _miClosestMatchRepairOpenPlaylists.setText("Deep Repair Currently Open Playlists");
     _miClosestMatchRepairOpenPlaylists.setToolTipText("Runs an \"Closest Matches Repair\" on all open playlists");
-    _miClosestMatchRepairOpenPlaylists.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(evt);
-      }
-    });
+    _miClosestMatchRepairOpenPlaylists.addActionListener(evt -> _miClosestMatchRepairOpenPlaylistsonMenuBatchRepairActionPerformed(evt));
     _repairMenu.add(_miClosestMatchRepairOpenPlaylists);
 
     _batchRepairWinampMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _batchRepairWinampMenuItem.setMnemonic('B');
     _batchRepairWinampMenuItem.setText("Batch Repair Winamp Media Library Playlists...");
-    _batchRepairWinampMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _batchRepairWinampMenuItemActionPerformed(evt);
-      }
-    });
+    _batchRepairWinampMenuItem.addActionListener(evt -> _batchRepairWinampMenuItemActionPerformed(evt));
     _repairMenu.add(_batchRepairWinampMenuItem);
 
     _extractPlaylistsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _extractPlaylistsMenuItem.setMnemonic('W');
     _extractPlaylistsMenuItem.setText("Extract Winamp Media Library Playlists");
     _extractPlaylistsMenuItem.setToolTipText("Extract Winamp Media Library Playlists");
-    _extractPlaylistsMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _extractPlaylistsMenuItemActionPerformed(evt);
-      }
-    });
+    _extractPlaylistsMenuItem.addActionListener(evt -> _extractPlaylistsMenuItemActionPerformed(evt));
     _repairMenu.add(_extractPlaylistsMenuItem);
 
     _mainMenuBar.add(_repairMenu);
@@ -1338,39 +1184,21 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _helpMenuItem.setMnemonic('H');
     _helpMenuItem.setText("Help");
     _helpMenuItem.setToolTipText("Open listFix() documentation");
-    _helpMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _helpMenuItemActionPerformed(evt);
-      }
-    });
+    _helpMenuItem.addActionListener(evt -> _helpMenuItemActionPerformed(evt));
     _helpMenu.add(_helpMenuItem);
 
     _updateCheckMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _updateCheckMenuItem.setMnemonic('C');
     _updateCheckMenuItem.setText("Check For Updates");
     _updateCheckMenuItem.setToolTipText("Opens the listFix() download site");
-    _updateCheckMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _updateCheckMenuItemActionPerformed(evt);
-      }
-    });
+    _updateCheckMenuItem.addActionListener(evt -> _updateCheckMenuItemActionPerformed(evt));
     _helpMenu.add(_updateCheckMenuItem);
 
     _aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
     _aboutMenuItem.setMnemonic('A');
     _aboutMenuItem.setText("About");
     _aboutMenuItem.setToolTipText("Version info and such...");
-    _aboutMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _aboutMenuItemActionPerformed(evt);
-      }
-    });
+    _aboutMenuItem.addActionListener(evt -> _aboutMenuItemActionPerformed(evt));
     _helpMenu.add(_aboutMenuItem);
 
     _mainMenuBar.add(_helpMenu);
@@ -1651,7 +1479,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       return;
     }
 
-    DocumentComponent tempComp = _documentPane.getDocument(path);
+    JDocumentComponent tempComp = _documentPane.getDocument(path);
     if (tempComp == null)
     {
       PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file, this.getOptions());
@@ -1731,17 +1559,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
     // Add the tab to the tabbed pane
     String title = list.getFilename();
-    String path = list.getFile().getPath();
-    try
-    {
-      path = list.getFile().getCanonicalPath();
-    }
-    catch (IOException e)
-    {
+    Path path = list.getFile().toPath().normalize();
 
-    }
-
-    final DocumentComponent tempComp = createDocumentComponentForEditor(editor, path, title);
+    final JDocumentComponent tempComp = createDocumentComponentForEditor(editor, path, title);
     tempComp.setTooltip(list.getFile().getPath());
 
     _documentPane.openDocument(tempComp);
@@ -1777,12 +1597,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
   }
 
-  private DocumentComponent createDocumentComponentForEditor(PlaylistEditCtrl editor, String path, String title)
+  private JDocumentComponent createDocumentComponentForEditor(PlaylistEditCtrl editor, Path path, String title)
   {
     ImageIcon icon;
     icon = getIconForPlaylist(editor.getPlaylist());
-    final DocumentComponent tempComp = new DocumentComponent(editor, path, title, icon);
-    tempComp.addDocumentComponentListener(new DocumentComponentListener()
+    final JDocumentComponent tempComp = new JDocumentComponent(editor, path, title, icon);
+    tempComp.addDocumentComponentListener(new IDocumentComponentListener()
     {
       @Override
       public void documentComponentOpened(DocumentComponentEvent e)
@@ -1805,42 +1625,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           currentTabChanged();
           updateMenuItemStatuses();
         }
-      }
-
-      @Override
-      public void documentComponentMoving(DocumentComponentEvent e)
-      {
-
-      }
-
-      @Override
-      public void documentComponentMoved(DocumentComponentEvent e)
-      {
-
-      }
-
-      @Override
-      public void documentComponentActivated(DocumentComponentEvent e)
-      {
-        currentTabChanged();
-      }
-
-      @Override
-      public void documentComponentDeactivated(DocumentComponentEvent e)
-      {
-
-      }
-
-      @Override
-      public void documentComponentDocked(DocumentComponentEvent e)
-      {
-
-      }
-
-      @Override
-      public void documentComponentFloated(DocumentComponentEvent e)
-      {
-
       }
     });
     return tempComp;
@@ -1927,7 +1711,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     SwingUtilities.updateComponentTreeUI(_documentPane);
   }
 
-  private Playlist getPlaylistFromDocumentComponent(DocumentComponent ctrl)
+  private Playlist getPlaylistFromDocumentComponent(JDocumentComponent ctrl)
   {
     return ((PlaylistEditCtrl) ctrl.getComponent()).getPlaylist();
   }
@@ -2196,7 +1980,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
   }
 
-  private void updateTabTitleForPlaylist(Playlist list, DocumentComponent comp)
+  private void updateTabTitleForPlaylist(Playlist list, JDocumentComponent comp)
   {
     String title;
     if (list.isModified())
@@ -2228,8 +2012,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public void runExactMatchOnAllTabs()
   {
-    DocumentComponent firstComp = _documentPane.getActiveDocument();
-    DocumentComponent comp = _documentPane.getActiveDocument();
+    JDocumentComponent firstComp = _documentPane.getActiveDocument();
+    JDocumentComponent comp = _documentPane.getActiveDocument();
     do
     {
       PlaylistEditCtrl ctrl = (PlaylistEditCtrl) comp.getComponent();
@@ -2249,8 +2033,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public void runClosestMatchOnAllTabs()
   {
-    DocumentComponent firstComp = _documentPane.getActiveDocument();
-    DocumentComponent comp = _documentPane.getActiveDocument();
+    JDocumentComponent firstComp = _documentPane.getActiveDocument();
+    JDocumentComponent comp = _documentPane.getActiveDocument();
     do
     {
       PlaylistEditCtrl ctrl = (PlaylistEditCtrl) comp.getComponent();
@@ -2268,8 +2052,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void reloadAllTabs()
   {
-    DocumentComponent firstComp = _documentPane.getActiveDocument();
-    DocumentComponent comp = _documentPane.getActiveDocument();
+    JDocumentComponent firstComp = _documentPane.getActiveDocument();
+    JDocumentComponent comp = _documentPane.getActiveDocument();
     do
     {
       PlaylistEditCtrl ctrl = (PlaylistEditCtrl) comp.getComponent();
@@ -2288,7 +2072,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    * @param ctrl
    * @return
    */
-  public boolean tryCloseTab(DocumentComponent ctrl)
+  public boolean tryCloseTab(JDocumentComponent ctrl)
   {
     if (!_documentPane.isDocumentOpened(ctrl.getName()))
     {
@@ -2710,11 +2494,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     try
     {
       _currentPlaylist = new Playlist(this.getOptions());
-      String path = _currentPlaylist.getFile().getCanonicalPath();
+      Path path = _currentPlaylist.getFile().toPath();
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
       String title = _currentPlaylist.getFilename();
-      final DocumentComponent tempComp = createDocumentComponentForEditor(editor, path, title);
+      final JDocumentComponent tempComp = createDocumentComponentForEditor(editor, path, title);
       _documentPane.openDocument(tempComp);
       _documentPane.setActiveDocument(tempComp.getName());
 
@@ -2793,9 +2577,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void _closeMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__closeMenuItemActionPerformed
   {//GEN-HEADEREND:event__closeMenuItemActionPerformed
-    if (_documentPane.getDocumentCount() > 0 && _documentPane.getActiveDocument() != null)
+    if (_documentPane.getDocumentCount() > 0)
     {
-      _documentPane.closeDocument(_documentPane.getActiveDocumentName());
+      _documentPane.closeActiveDocument();
     }
   }//GEN-LAST:event__closeMenuItemActionPerformed
 
@@ -3033,7 +2817,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
 
       UIManager.setLookAndFeel(realClassName);
-      _documentPane.setTabbedPaneCustomizer(createTabCustomizer());
       updateAllComponentTreeUIs();
     }
     catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
@@ -3049,8 +2832,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   public static void main(String[] args) throws IOException
   {
     _logger.info("Starting ListFix()...");
-
-    com.jidesoft.utils.Lm.verifyLicense("Jeremy Caron", "listFix()", "AMu.5dFy1Fuos0hs:l2.GQ9AzUy2GgB2");
 
     IAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
     InitApplicationFont(tempOptions.getAppFont());
@@ -3097,7 +2878,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private javax.swing.JMenuItem _closeAllMenuItem;
   private javax.swing.JMenuItem _closeMenuItem;
   private javax.swing.JPanel _docTabPanel;
-  private com.jidesoft.document.DocumentPane _documentPane;
+  private JDocumentPane _documentPane;
   private javax.swing.JMenuItem _exitMenuItem;
   private javax.swing.JMenuItem _extractPlaylistsMenuItem;
   private javax.swing.JMenu _fileMenu;

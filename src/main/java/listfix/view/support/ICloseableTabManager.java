@@ -19,7 +19,7 @@
 
 package listfix.view.support;
 
-import com.jidesoft.document.DocumentComponent;
+import listfix.swing.JDocumentComponent;
 
 /**
  *
@@ -32,7 +32,7 @@ public interface ICloseableTabManager
    * @param ctrl
    * @return
    */
-  boolean tryCloseTab(DocumentComponent ctrl);
+  boolean tryCloseTab(JDocumentComponent ctrl);
 
   /**
    *
@@ -44,7 +44,7 @@ public interface ICloseableTabManager
    *
    * @param ctrl
    */
-  void closeAllOtherTabs(DocumentComponent ctrl);
+  void closeAllOtherTabs(JDocumentComponent ctrl);
 
   /**
    *

@@ -83,9 +83,6 @@ def manifestAttributes = [
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-
-    // For dependency "com.jidesoft:jide-components:3.6.10":
-    maven { url "https://maven.enginehub.org/repo/" }
 }
 
 dependencies {
@@ -96,9 +93,6 @@ dependencies {
 
     // Provides christophedelory.playlist.*
     implementation files('src/lib/lizzy.jar')
-
-    // https://mvnrepository.com/artifact/com.jidesoft/jide-components/3.6.10
-    implementation 'com.jidesoft:jide-components:3.6.10'
 
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
     implementation 'com.jgoodies:jgoodies-common:1.8.0'
