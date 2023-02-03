@@ -100,14 +100,10 @@ public class XSPFReader extends PlaylistReader
    * @throws IOException
    */
   @Override
-  public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
+  public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
     // Init a progress adapter if we have a progress observer.
-    ProgressAdapter progress = null;
-    if (observer != null)
-    {
-      progress = ProgressAdapter.wrap(observer);
-    }
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 
     List<PlaylistEntry> entriesList = new ArrayList<>();
     SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
@@ -116,21 +112,15 @@ public class XSPFReader extends PlaylistReader
       christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
 
       // Set the total if we have an observer.
-      if (progress != null)
-      {
-        progress.setTotal(xspfList.getTracks().size());
-      }
+      progress.setTotal(xspfList.getTracks().size());
 
       int trackCount = 0;
       for (Track track : xspfList.getTracks())
       {
-        if (observer != null)
+        if (observer.getCancelled())
         {
-          if (observer.getCancelled())
-          {
-            // Bail out if the user cancelled.
-            return null;
-          }
+          // Bail out if the user cancelled.
+          return null;
         }
 
         try
@@ -161,11 +151,8 @@ public class XSPFReader extends PlaylistReader
           _logger.error("[XSPFReader] - Could not convert lizzy entry to PlaylistEntry - " + ex, ex);
         }
 
-        if (progress != null)
-        {
-          // Step forward if we have an observer.
-          progress.setCompleted(trackCount++);
-        }
+        // Step forward if we have an observer.
+        progress.setCompleted(trackCount++);
       }
       return entriesList;
     }

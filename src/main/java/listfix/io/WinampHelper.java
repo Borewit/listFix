@@ -97,11 +97,11 @@ public class WinampHelper
     }
   }
 
-  public static void extractPlaylists(File destDir, IProgressObserver observer) throws JAXBException, IOException
+  public static void extractPlaylists(File destDir, IProgressObserver<Void> observer) throws JAXBException, IOException
   {
     // avoid resetting total if part of batch operation
     boolean hasTotal = observer instanceof ProgressAdapter;
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<Void> progress = ProgressAdapter.wrap(observer);
 
     if (!destDir.exists())
     {

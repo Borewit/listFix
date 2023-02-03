@@ -1482,7 +1482,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file, this.getOptions());
 
-      ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+      ProgressWorker<Playlist, String> worker = new ProgressWorker<>()
       {
         @Override
         protected Playlist doInBackground() throws Exception

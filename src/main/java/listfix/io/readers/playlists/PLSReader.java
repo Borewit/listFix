@@ -80,16 +80,12 @@ public class PLSReader extends PlaylistReader
    * @throws IOException
    */
   @Override
-  public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
+  public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
     // Definition of the PLS format can be found @ http://gonze.com/playlists/playlist-format-survey.html#PLS
 
     // Init a progress adapter if we have a progress observer.
-    ProgressAdapter progress = null;
-    if (observer != null)
-    {
-      progress = ProgressAdapter.wrap(observer);
-    }
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 
     // Load the PLS file into memory (it's basically a glorified INI | java properties file).
     PLSProperties propBag = new PLSProperties();
@@ -106,10 +102,7 @@ public class PLSReader extends PlaylistReader
     int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
 
     // Set the total if we have an observer.
-    if (progress != null)
-    {
-      progress.setTotal((int) entries);
-    }
+    progress.setTotal(entries);
 
     // Loop over the entries and process each in turn.
     for (int i = 1; i <= entries; i++)
@@ -123,11 +116,8 @@ public class PLSReader extends PlaylistReader
         }
       }
       processEntry(propBag, i);
-      if (progress != null)
-      {
-        // Step forward if we have an observer.
-        progress.setCompleted(i);
-      }
+      // Step forward if we have an observer.
+      progress.setCompleted(i);
     }
     return results;
   }

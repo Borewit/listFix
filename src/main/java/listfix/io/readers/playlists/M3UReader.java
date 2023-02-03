@@ -97,18 +97,13 @@ public class M3UReader extends PlaylistReader
   }
 
   @Override
-  public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
+  public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
     // See http://gonze.com/playlists/playlist-format-survey.html#M3U for the format of an M3U file.
     // Line1 holds the metadata about the file that we just hang on to, line2 represents the file reference.
 
     //Initialize the progress adapter if we're given an observer.
-    ProgressAdapter progress = null;
-    if (observer != null)
-    {
-      progress = ProgressAdapter.wrap(observer);
-      progress.setTotal((int) fileLength);
-    }
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 
     _cache = new StringBuilder();
     String line1 = readLine();
@@ -164,10 +159,7 @@ public class M3UReader extends PlaylistReader
         cacheSize = _cache.toString().getBytes().length;
         if (cacheSize < fileLength)
         {
-          if (progress != null)
-          {
-            progress.setCompleted(cacheSize);
-          }
+          progress.setCompleted(cacheSize);
         }
 
         // Start processing the next entry.
@@ -184,10 +176,7 @@ public class M3UReader extends PlaylistReader
             if (line1 == null)
             {
               // Fill the progress bar
-              if (progress != null)
-              {
-                progress.setCompleted((int) fileLength);
-              }
+              progress.setCompleted((int) fileLength);
 
               return results;
             }
@@ -215,10 +204,7 @@ public class M3UReader extends PlaylistReader
     buffer.close();
 
     // Fill the progress bar
-    if (progress != null)
-    {
-      progress.setCompleted((int) fileLength);
-    }
+    progress.setCompleted((int) fileLength);
 
     return results;
   }

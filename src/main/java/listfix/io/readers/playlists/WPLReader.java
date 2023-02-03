@@ -127,17 +127,10 @@ public class WPLReader extends PlaylistReader
    * @throws IOException
    */
   @Override
-  public List<PlaylistEntry> readPlaylist(IProgressObserver observer) throws IOException
+  public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
-    ProgressAdapter progress = null;
-    if (observer != null)
-    {
-      progress = ProgressAdapter.wrap(observer);
-    }
-    if (progress != null)
-    {
-      progress.setTotal((int) fileLength);
-    }
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    progress.setTotal((int) fileLength);
 
     _cache = new StringBuilder();
     String line = readLine();
@@ -148,10 +141,7 @@ public class WPLReader extends PlaylistReader
     int cacheSize = _cache.toString().getBytes().length;
     if (cacheSize < fileLength)
     {
-      if (progress != null)
-      {
-        progress.setCompleted(cacheSize);
-      }
+      progress.setCompleted(cacheSize);
     }
 
     while (line != null)
@@ -166,10 +156,7 @@ public class WPLReader extends PlaylistReader
       cacheSize = _cache.toString().getBytes().length;
       if (cacheSize < fileLength)
       {
-        if (progress != null)
-        {
-          progress.setCompleted(cacheSize);
-        }
+        progress.setCompleted(cacheSize);
       }
       line = readLine();
       if (line == null)
@@ -201,10 +188,7 @@ public class WPLReader extends PlaylistReader
       cacheSize = _cache.toString().getBytes().length;
       if (cacheSize < fileLength)
       {
-        if (progress != null)
-        {
-          progress.setCompleted(cacheSize);
-        }
+        progress.setCompleted(cacheSize);
       }
     }
     _buffer.close();

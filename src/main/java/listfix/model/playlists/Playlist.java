@@ -153,7 +153,7 @@ public class Playlist
     return this.playListOptions;
   }
 
-  private void init(File playlist, IProgressObserver<Void> observer) throws IOException
+  private void init(File playlist, IProgressObserver<String> observer) throws IOException
   {
     _file = playlist;
     IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist.toPath(), playListOptions);
@@ -197,9 +197,9 @@ public class Playlist
    * @param destinationDirectory
    * @param observer
    */
-  public void copySelectedEntries(List<Integer> entryIndexList, File destinationDirectory, IProgressObserver observer)
+  public void copySelectedEntries(List<Integer> entryIndexList, File destinationDirectory, IProgressObserver<String> observer)
   {
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(entryIndexList.size());
     PlaylistEntry tempEntry;
     Path fileToCopy;
@@ -769,9 +769,9 @@ public class Playlist
    * @param observer     Progress observer
    * @return Positions of repaired rows
    */
-  public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver observer)
+  public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
   {
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
 
     List<Integer> fixed = new ArrayList<>();
@@ -919,7 +919,7 @@ public class Playlist
    */
   public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, Collection<String> libraryFiles, ProgressWorker<List<BatchMatchItem>, String> observer)
   {
-    ProgressAdapter progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(_entries.size());
 
     List<BatchMatchItem> fixed = new ArrayList<>();

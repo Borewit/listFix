@@ -269,7 +269,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   public void locateMissingFiles()
   {
     _logger.debug(markerRepair, "Start locateMissingFiles()");
-    ProgressWorker<List<Integer>, Void> worker = new ProgressWorker<>()
+    ProgressWorker<List<Integer>, String> worker = new ProgressWorker<>()
     {
       @Override
       protected List<Integer> doInBackground()
@@ -1399,7 +1399,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       {
         final File destDir = _destDirFileChooser.getSelectedFile();
 
-        ProgressWorker<Void, Void> worker = new ProgressWorker<Void, Void>()
+        ProgressWorker<Void, String> worker = new ProgressWorker<>()
         {
           @Override
           protected Void doInBackground()
@@ -2037,10 +2037,9 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
       private int ProcessDroppedPlaylist(final File tempFile, int insertAt)
       {
-        final Collection<String> libraryFiles;
         final int currentInsertPoint = insertAt;
 
-        ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+        ProgressWorker<Playlist, String> worker = new ProgressWorker<>()
         {
           @Override
           protected Playlist doInBackground() throws Exception

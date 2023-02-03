@@ -58,7 +58,7 @@ public interface IPlaylistReader
    * @return
    * @throws IOException
    */
-  List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException;
+  List<PlaylistEntry> readPlaylist(IProgressObserver<String> input) throws IOException;
 
   /**
    *

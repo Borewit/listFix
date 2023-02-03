@@ -82,7 +82,7 @@ public class ITunesXMLReader extends PlaylistReader
   }
 
   @Override
-  public List<PlaylistEntry> readPlaylist(IProgressObserver input) throws IOException
+  public List<PlaylistEntry> readPlaylist(IProgressObserver<String> input) throws IOException
   {
     List<PlaylistEntry> results = new ArrayList<>();
     SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
