@@ -4,7 +4,6 @@ import listfix.io.IPlaylistOptions;
 import listfix.json.JsonAppOptions;
 import listfix.util.TestUtil;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -32,13 +31,13 @@ public class PlaylistFactoryTest
   }
 
   @Test
-  @Ignore
   public void readPlaylistPls() throws IOException
   {
+    // Extended PLS (PLSv2)
     File plsPlaylistFile = TestUtil.createFileFromResource(this, "/playlists/pls/playlist.pls");
 
     Playlist plsPlaylist = PlaylistFactory.getPlaylist(plsPlaylistFile.toPath(), null, playlistOptions);
     assertNotNull(plsPlaylist, "PlaylistFactory should read and construct PLS playlist");
-    assertEquals(2, plsPlaylist.getEntries().size(), "PLS playlist contains 4 tracks");
+    assertEquals(5, plsPlaylist.getEntries().size(), "PLS playlist contains 4 tracks");
   }
 }
