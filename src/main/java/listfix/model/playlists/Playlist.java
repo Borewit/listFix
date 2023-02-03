@@ -335,12 +335,14 @@ public class Playlist
     _type = type;
   }
 
-  /**
-   * @return
-   */
   public File getFile()
   {
     return _file;
+  }
+
+  public Path getPath()
+  {
+    return _file.toPath();
   }
 
   /**

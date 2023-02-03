@@ -67,7 +67,7 @@ public class M3UWriter extends PlaylistWriter<StringBuilder>
       result.append(entry.getExtInf());
       result.append(Constants.BR);
     }
-    result.append(normalizeTrackPath(this.playListOptions.getSavePlaylistsWithRelativePaths(), entry));
+    result.append(entry.trackPathToString());
     return result.toString();
   }
 

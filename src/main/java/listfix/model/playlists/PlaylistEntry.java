@@ -149,6 +149,11 @@ public abstract class PlaylistEntry implements Cloneable
 
   public abstract boolean isRelative();
 
+  /**
+   * Used to serialize track path to playlist
+   */
+  public abstract String trackPathToString();
+
   // Try to open the file with the "default" MP3 player (only works on some systems).
 
   public void play(IPlaylistOptions playListOptions) throws Exception

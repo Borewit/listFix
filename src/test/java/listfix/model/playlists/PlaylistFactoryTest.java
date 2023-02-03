@@ -5,9 +5,7 @@ import listfix.json.JsonAppOptions;
 import listfix.util.TestUtil;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PlaylistFactoryTest
 {
-  public static final String playlist_m3u_example = "/playlists/m3u/playlist.m3u";
-
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
   private IPlaylistOptions playlistOptions;
 
   @Before
@@ -31,7 +24,7 @@ public class PlaylistFactoryTest
   @Test
   public void readPlaylistM3u() throws IOException
   {
-    File m3uPlaylistFile = TestUtil.createFileFromResource(this.temporaryFolder, "/playlists/m3u/playlist.m3u", "playlist.m3u");
+    File m3uPlaylistFile = TestUtil.createFileFromResource(this, "/playlists/m3u/playlist.m3u");
 
     Playlist m3uPlaylist = PlaylistFactory.getPlaylist(m3uPlaylistFile.toPath(), null, playlistOptions);
     assertNotNull(m3uPlaylist, "PlaylistFactory should read and construct M3U playlist");
@@ -42,7 +35,7 @@ public class PlaylistFactoryTest
   @Ignore
   public void readPlaylistPls() throws IOException
   {
-    File plsPlaylistFile = TestUtil.createFileFromResource(this.temporaryFolder, "/playlists/pls/playlist.pls", "playlist.pls");
+    File plsPlaylistFile = TestUtil.createFileFromResource(this, "/playlists/pls/playlist.pls");
 
     Playlist plsPlaylist = PlaylistFactory.getPlaylist(plsPlaylistFile.toPath(), null, playlistOptions);
     assertNotNull(plsPlaylist, "PlaylistFactory should read and construct PLS playlist");

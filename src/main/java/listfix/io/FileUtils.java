@@ -24,6 +24,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
@@ -82,16 +83,22 @@ public class FileUtils
     }
   }
 
-  public static String getRelativePath(File file, File relativeTo)
+  public static String getRelativePath(File trackPath, File playlistPath)
   {
+    return getRelativePath(trackPath.toPath(), playlistPath.toPath()).toString();
+  }
+
+  public static Path getRelativePath(Path trackPath, Path playlistPath)
+  {
+    Path offset = Files.isDirectory(playlistPath) ? playlistPath :  playlistPath.getParent();
+    String uncPath = UNCFile.from(offset.normalize().toFile()).getUNCPath();
     try
     {
-      relativeTo = relativeTo.isFile() ? relativeTo.getParentFile() : relativeTo;
-      return Path.of(UNCFile.from(relativeTo).getUNCPath()).relativize(file.toPath()).toString();
+      return Path.of(uncPath).relativize(trackPath);
     }
     catch (IllegalArgumentException exception)
     {
-      throw exception;
+      return trackPath;
     }
   }
 

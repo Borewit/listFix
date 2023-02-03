@@ -42,4 +42,13 @@ public class FileUtilsTests
     File trackFile = Path.of(this.mediaFolder.getRoot().getPath(), "Madonna", "Like a Prayer.mp3").toFile();
     assertEquals(Path.of("..", "Madonna", "Like a Prayer.mp3").toString(), FileUtils.getRelativePath(trackFile, playlistFile));
   }
+
+  @Test
+  public void getRelativePathWithUncommonRoot() throws IOException
+  {
+    Path trackPath = Path.of("C:", "music", "track.flac");
+    Path playlistFile = Path.of("D:", "playlist", "playlist.m3u8");
+    Path result = FileUtils.getRelativePath(trackPath, playlistFile);
+    assertEquals(trackPath, result, "getRelativePath() should preserve absolute path of there is no common root");
+  }
 }

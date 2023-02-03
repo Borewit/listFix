@@ -20,8 +20,6 @@
 
 package listfix.playlists.itunes;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.plist.PlistPlaylist;
@@ -36,7 +34,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -50,8 +47,6 @@ import java.util.Map;
 public class ITunesPlaylistTests
 {
 
-  public static final String iTunesLibraryXmlPath = "/playlists/itunes/iTunes Music Library.xml";
-
   @Rule
   public TemporaryFolder itunesFolder = new TemporaryFolder();
   private File itunesMusicLibraryFile;
@@ -59,7 +54,7 @@ public class ITunesPlaylistTests
   @Test
   public void write_iTunes_music_library() throws Exception
   {
-    File toOpen = create_iTunes_Music_Library();
+    File toOpen = TestUtil.createFileFromResource(this, "/playlists/itunes/iTunesMusicLibrary.xml");
     // File toOpen = new File("C:\\Users\\jcaron\\Desktop\\svnListfix\\testing\\iTunesTest.xml");
     SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(toOpen);
     PlistPlaylist plistList = (PlistPlaylist) playlist;
@@ -72,7 +67,7 @@ public class ITunesPlaylistTests
   @Test
   public void openPlaylist() throws Exception
   {
-    final File toOpen = create_iTunes_Music_Library();
+    final File toOpen = TestUtil.createFileFromResource(this, "/playlists/itunes/iTunesMusicLibrary.xml");
 
     SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(toOpen);
     PlistPlaylist plistList = (PlistPlaylist) playlist;
@@ -143,14 +138,5 @@ public class ITunesPlaylistTests
     {
       throw new RuntimeException(ex);
     }
-  }
-
-  private synchronized File create_iTunes_Music_Library() throws IOException
-  {
-    if (this.itunesMusicLibraryFile == null)
-    {
-      this.itunesMusicLibraryFile = TestUtil.createFileFromResource(this.itunesFolder, iTunesLibraryXmlPath, "iTunes Music Library.xml");
-    }
-    return this.itunesMusicLibraryFile;
   }
 }

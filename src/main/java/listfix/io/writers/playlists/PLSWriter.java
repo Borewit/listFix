@@ -65,11 +65,11 @@ public class PLSWriter extends PlaylistWriter<StringBuilder>
     if (!entry.isURL())
     {
       result.append("File").append(index).append("=");
-      result.append(normalizeTrackPath(this.playListOptions.getSavePlaylistsWithRelativePaths(), entry));
+      result.append(entry.trackPathToString());
     }
     else
     {
-      result.append("File").append(index).append("=").append(result.append(normalizeTrackPath(this.playListOptions.getSavePlaylistsWithRelativePaths(), entry)));
+      result.append("File").append(index).append("=").append(result.append(entry.trackPathToString()));
     }
     result.append(Constants.BR);
 

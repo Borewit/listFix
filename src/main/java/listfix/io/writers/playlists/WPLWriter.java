@@ -150,7 +150,7 @@ public class WPLWriter extends PlaylistWriter<StringBuilder>
   private String serializeEntry(PlaylistEntry entry)
   {
     StringBuilder result = new StringBuilder();
-    result.append(normalizeTrackPath(this.playListOptions.getSavePlaylistsWithRelativePaths(), entry));
+    result.append(entry.trackPathToString());
     return result.toString();
   }
 }

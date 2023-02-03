@@ -1,13 +1,11 @@
 package listfix.io.writers.playlists;
 
-import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UNCFile;
 import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.view.support.ProgressAdapter;
 
@@ -25,28 +23,9 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
     this.playListOptions = playListOptions;
   }
 
-  protected static String normalizeTrackPath(boolean saveRelative, PlaylistEntry entry)
-  {
-    if (entry instanceof FilePlaylistEntry)
-    {
-      FilePlaylistEntry filePlaylistEntry = (FilePlaylistEntry) entry;
-      Path trackPath = saveRelative ?
-        filePlaylistEntry.getPlaylistPath().relativize(filePlaylistEntry.getAbsolutePath()) :
-        filePlaylistEntry.getAbsolutePath();
-
-      return trackPath.toString();
-    }
-    else if (entry instanceof UriPlaylistEntry)
-    {
-      ((UriPlaylistEntry) entry).getURI().toString();
-    }
-    throw new IllegalArgumentException("entry of unsupported type");
-  }
-
   protected static void normalizeEntry(IPlaylistOptions playListOptions, Playlist playlist, PlaylistEntry entry) throws IOException
   {
     final boolean saveRelative = playListOptions.getSavePlaylistsWithRelativePaths();
-    final File playlistFile = playlist.getFile();
 
     if (entry instanceof FilePlaylistEntry)
     {
@@ -69,22 +48,22 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
         if (saveRelative && entry.isFound())
         {
           // replace existing entry with a new relative one
-          String relativePath = FileUtils.getRelativePath(filePlaylistEntry.getAbsolutePath().toFile().getCanonicalFile(), playlistFile);
-          if (!OperatingSystem.isWindows() && relativePath.indexOf(Constants.FS) < 0)
+          Path relativePath = FileUtils.getRelativePath(filePlaylistEntry.getAbsolutePath(), playlist.getPath());
+          if (!OperatingSystem.isWindows() && !relativePath.toString().contains("/"))
           {
-            relativePath = Path.of(".", relativePath).toString();
+            relativePath = Path.of(".").resolve(relativePath); // ToDo: is this required?
           }
 
           // make a new file out of this relative path, and see if it's really relative...
           // if it's absolute, we have to perform the UNC check and convert if necessary.
-          File temp = new File(relativePath);
+          File temp = relativePath.toFile();
           if (temp.isAbsolute())
           {
             // Switch to UNC representation if selected in the options
             if (playListOptions.getAlwaysUseUNCPaths())
             {
-              UNCFile uncd = new UNCFile(temp);
-              temp = new File(uncd.getUNCPath());
+              UNCFile uncFile = new UNCFile(temp);
+              temp = new File(uncFile.getUNCPath());
             }
           }
           // make the entry and addAt it
