@@ -47,6 +47,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author jcaron
@@ -874,79 +875,40 @@ public class Playlist
     }
   }
 
-  /**
-   * @param libraryFiles
-   * @param observer
-   * @return
-   */
   public List<BatchMatchItem> findClosestMatches(Collection<String> libraryFiles, IProgressObserver<String> observer)
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
-    progress.setTotal(_entries.size());
+    return findClosestMatches(this._entries, libraryFiles, observer);
+  }
 
-    List<BatchMatchItem> fixed = new ArrayList<>();
-    PlaylistEntry entry;
-    List<PotentialPlaylistEntryMatch> matches;
-    for (int ix = 0; ix < _entries.size(); ix++)
+  public List<BatchMatchItem> findClosestMatches(List<PlaylistEntry> entries, Collection<String> libraryFiles, IProgressObserver<String> observer)
+  {
+    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    progress.setTotal(entries.size());
+
+    List<BatchMatchItem> fixed = new LinkedList<>();
+    int ix = 0;
+    for (PlaylistEntry entry: entries)
     {
-      progress.stepCompleted();
-      if (!observer.getCancelled())
+      if (observer.getCancelled()) return null;
+      if (!entry.isURL() && !entry.isFound())
       {
-        entry = _entries.get(ix);
-        if (!entry.isURL() && !entry.isFound())
+        List<PotentialPlaylistEntryMatch> matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
+        if (!matches.isEmpty())
         {
-          matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
-          if (!matches.isEmpty())
-          {
-            fixed.add(new BatchMatchItem(ix, entry, matches));
-          }
+          fixed.add(new BatchMatchItem(ix, entry, matches));
         }
       }
-      else
-      {
-        return null;
-      }
+      ix++;
+      progress.stepCompleted();
     }
 
     return fixed;
   }
 
-  /**
-   * @param rowList
-   * @param libraryFiles
-   * @param observer
-   * @return
-   */
   public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, Collection<String> libraryFiles, ProgressWorker<List<BatchMatchItem>, String> observer)
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
-    progress.setTotal(_entries.size());
-
-    List<BatchMatchItem> fixed = new ArrayList<>();
-    PlaylistEntry entry;
-    List<PotentialPlaylistEntryMatch> matches;
-    for (Integer ix : rowList)
-    {
-      progress.stepCompleted();
-      if (!observer.getCancelled())
-      {
-        entry = _entries.get(ix);
-        if (!entry.isURL() && !entry.isFound())
-        {
-          matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
-          if (!matches.isEmpty())
-          {
-            fixed.add(new BatchMatchItem(ix, entry, matches));
-          }
-        }
-      }
-      else
-      {
-        return null;
-      }
-    }
-
-    return fixed;
+    List<PlaylistEntry> entrySelection = rowList.stream().map(ix -> this._entries.get(ix)).collect(Collectors.toUnmodifiableList());
+    return findClosestMatches(entrySelection, libraryFiles, observer);
   }
 
   /**
