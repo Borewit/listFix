@@ -13,11 +13,7 @@ jobs:
           java-version: 15
           distribution: 'adopt'
           cache: 'gradle'
-      - name: Build (Gradle)
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Run build with Gradle Wrapper
         run: ./gradlew build
-      - name: Run unit tests (Gradle)
-        run: ./gradlew test
-      - name: CheckStyle main (Gradle)
-        run: ./gradlew checkstyleMain
-      - name: CheckStyle test (Gradle)
-        run: ./gradlew checkstyleTest
