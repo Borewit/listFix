@@ -75,8 +75,11 @@ public class JDocumentPane extends JTabbedPane
 
   public void openDocument(JDocumentComponent document)
   {
-    int i = super.getTabCount();
-    super.addTab(document.getTitle(), document.getIcon(), document, document.getPath().toString());
+    int index = super.getTabCount();
+    this.addTab(document.getTitle(), document.getIcon(), document, document.getPath().toString());
+
+    JPanel tabComponent = new JButtonTabComponent(this, document.getIcon());
+    this.setTabComponentAt(index, tabComponent);
     document.notifyOpened();
   }
 
