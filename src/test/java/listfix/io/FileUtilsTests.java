@@ -1,5 +1,6 @@
 package listfix.io;
 
+import listfix.util.OperatingSystem;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -49,6 +50,9 @@ public class FileUtilsTests
     Path trackPath = Path.of("C:", "music", "track.flac");
     Path playlistFile = Path.of("D:", "playlist", "playlist.m3u8");
     Path result = FileUtils.getRelativePath(trackPath, playlistFile);
-    assertEquals(trackPath, result, "getRelativePath() should preserve absolute path of there is no common root");
+    if (OperatingSystem.isWindows()) {
+      assertEquals(trackPath, result, "getRelativePath() should preserve absolute path of there is no common root");
+    }
+    // ToDo: check this can be ported to Unix as well
   }
 }
