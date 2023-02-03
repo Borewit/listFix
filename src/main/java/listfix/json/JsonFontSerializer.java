@@ -1,4 +1,4 @@
-package listfix.io.writers;
+package listfix.json;
 
 
 import com.fasterxml.jackson.core.JsonGenerator;

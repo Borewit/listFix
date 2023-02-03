@@ -18,10 +18,11 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.writers.playlists;
+package listfix.io.playlists.m3u;
 
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
+import listfix.io.playlists.PlaylistWriter;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;

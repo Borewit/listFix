@@ -18,11 +18,12 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.readers.playlists;
+package listfix.io.playlists.wpl;
 
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UnicodeInputStream;
+import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;

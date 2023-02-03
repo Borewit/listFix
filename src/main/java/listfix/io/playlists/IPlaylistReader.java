@@ -18,7 +18,7 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.readers.playlists;
+package listfix.io.playlists;
 
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.PlaylistEntry;

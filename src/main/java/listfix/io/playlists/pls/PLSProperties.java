@@ -5,7 +5,7 @@
  * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package listfix.io.readers.playlists;
+package listfix.io.playlists.pls;
 
 import java.io.*;
 import java.util.Date;

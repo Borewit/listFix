@@ -25,8 +25,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import listfix.config.IAppOptions;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
-import listfix.io.readers.JsonFontDeserializer;
-import listfix.io.writers.JsonFontSerializer;
 import listfix.util.OperatingSystem;
 
 import javax.swing.*;

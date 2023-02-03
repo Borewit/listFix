@@ -17,12 +17,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, please see http://www.gnu.org/licenses/
  */
-package listfix.io.readers.playlists;
+package listfix.io.playlists.itunes;
 
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
 import christophedelory.playlist.plist.PlistPlaylist;
 import listfix.io.IPlaylistOptions;
+import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.playlists.itunes.ITunesFilePlaylistEntry;

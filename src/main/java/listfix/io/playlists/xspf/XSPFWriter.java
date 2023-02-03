@@ -18,13 +18,14 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.writers.playlists;
+package listfix.io.playlists.xspf;
 
 import christophedelory.content.Content;
 import christophedelory.playlist.*;
 import christophedelory.playlist.xspf.Track;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UNCFile;
+import listfix.io.playlists.PlaylistWriter;
 import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;

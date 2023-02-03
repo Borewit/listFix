@@ -21,9 +21,9 @@
 package listfix.model.playlists;
 
 import listfix.io.IPlaylistOptions;
-import listfix.io.readers.playlists.IPlaylistReader;
-import listfix.io.readers.playlists.ITunesXMLReader;
-import listfix.io.readers.playlists.PlaylistReaderFactory;
+import listfix.io.playlists.IPlaylistReader;
+import listfix.io.playlists.itunes.ITunesXMLReader;
+import listfix.io.playlists.PlaylistReaderFactory;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.view.support.IProgressObserver;

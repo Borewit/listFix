@@ -1,4 +1,4 @@
-package listfix.io.writers.playlists;
+package listfix.io.playlists;
 
 import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;

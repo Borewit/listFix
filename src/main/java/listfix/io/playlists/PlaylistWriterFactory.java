@@ -18,9 +18,14 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.writers.playlists;
+package listfix.io.playlists;
 
 import listfix.io.IPlaylistOptions;
+import listfix.io.playlists.itunes.ITunesXMLWriter;
+import listfix.io.playlists.m3u.M3UWriter;
+import listfix.io.playlists.pls.PLSWriter;
+import listfix.io.playlists.wpl.WPLWriter;
+import listfix.io.playlists.xspf.XSPFWriter;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 
