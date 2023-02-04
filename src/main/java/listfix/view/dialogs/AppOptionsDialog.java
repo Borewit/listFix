@@ -30,9 +30,10 @@ import listfix.json.JsonAppOptions;
 import listfix.util.OperatingSystem;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.support.FontExtensions;
-import net.mariottini.swing.JFontChooser;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import say.swing.JFontChooser;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
