@@ -1,12 +1,46 @@
 package listfix.swing;
 
 import javax.swing.*;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class JDocumentPane extends JTabbedPane
 {
 
+  private final List<IDocumentChangeListener> documentChangeListeners = new LinkedList<>();
+
   public JDocumentPane()
   {
+    this.addContainerListener(new ContainerListener()
+    {
+      @Override
+      public void componentAdded(ContainerEvent e)
+      {
+        if (e.getChild() instanceof JDocumentComponent)
+        {
+          documentChangeListeners.forEach(listener -> listener.documentOpened((JDocumentComponent) e.getChild()));
+        }
+      }
+
+      @Override
+      public void componentRemoved(ContainerEvent e)
+      {
+        if (e.getChild() instanceof JDocumentComponent)
+        {
+          documentChangeListeners.forEach(new Consumer<IDocumentChangeListener>()
+          {
+            @Override
+            public void accept(IDocumentChangeListener listener)
+            {
+              listener.documentClosed((JDocumentComponent) e.getChild());
+            }
+          });
+        }
+      }
+    });
   }
 
   public int getDocumentCount()
@@ -80,18 +114,6 @@ public class JDocumentPane extends JTabbedPane
 
     JPanel tabComponent = new JButtonTabComponent(this, document.getIcon());
     this.setTabComponentAt(index, tabComponent);
-    document.notifyOpened();
-  }
-
-  public boolean closeDocument(String name)
-  {
-    int i = getDocumentIndexByName(name);
-    if (i != -1)
-    {
-      this.closeDocument(i);
-      return true;
-    }
-    return false;
   }
 
   public boolean renameDocument(String oldName, String newName)
@@ -103,13 +125,6 @@ public class JDocumentPane extends JTabbedPane
       return true;
     }
     return false;
-  }
-
-
-  public String getActiveDocumentName()
-  {
-    JDocumentComponent doc = this.getActiveDocument();
-    return doc == null ? null : doc.getName();
   }
 
   public void closeAll()
@@ -132,10 +147,34 @@ public class JDocumentPane extends JTabbedPane
   public void closeDocument(int i)
   {
     JDocumentComponent doc = this.getDocumentAt(i);
-    if (doc != null) {
-      doc.notifyClosing();
+    if (doc != null)
+    {
       super.remove(i);
-      doc.notifyClosed();
     }
   }
+
+  public void tryToClose(int i)
+  {
+    JDocumentComponent doc = this.getDocumentAt(i);
+    for (IDocumentChangeListener listener : documentChangeListeners)
+    {
+      if (!listener.tryClosingDocument(doc))
+      {
+        return; // closing cancelled
+      }
+    }
+    // No objected to close the document
+    this.remove(i);
+  }
+
+  public void addDocumentChangeListener(IDocumentChangeListener listener)
+  {
+    this.documentChangeListeners.add(listener);
+  }
+
+  public void removeCloseDocumentListener(IDocumentChangeListener listener)
+  {
+    this.documentChangeListeners.remove(listener);
+  }
+
 }

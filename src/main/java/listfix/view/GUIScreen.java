@@ -43,6 +43,7 @@ import listfix.model.PlaylistHistory;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
+import listfix.swing.IDocumentChangeListener;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.util.FileTypeSearch;
@@ -53,8 +54,6 @@ import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
-import listfix.swing.DocumentComponentEvent;
-import listfix.swing.IDocumentComponentListener;
 import listfix.swing.JDocumentComponent;
 import listfix.swing.JDocumentPane;
 import org.apache.logging.log4j.LogManager;
@@ -78,10 +77,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -265,9 +261,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void recheckStatusOfOpenPlaylists()
   {
-    for (Playlist list : _openPlaylists)
+    for (Playlist playlist : _openPlaylists)
     {
-      list.updateModifiedStatus();
+      playlist.updateModifiedStatus();
     }
   }
 
@@ -828,13 +824,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _removeMediaDirButton.setFocusable(false);
     _removeMediaDirButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
     _removeMediaDirButton.setMinimumSize(new java.awt.Dimension(73, 25));
-    _removeMediaDirButton.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _removeMediaDirButtonActionPerformed(evt);
-      }
-    });
+    _removeMediaDirButton.addActionListener(evt -> _removeMediaDirButtonActionPerformed(evt));
     _mediaLibraryButtonPanel.add(_removeMediaDirButton);
 
     _refreshMediaDirsButton.setText("Refresh");
@@ -878,7 +868,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _playlistDirectoryTree.setMaximumSize(null);
     _playlistDirectoryTree.setMinimumSize(null);
     _playlistDirectoryTree.setPreferredSize(null);
-    _playlistDirectoryTree.addKeyListener(new java.awt.event.KeyAdapter()
+    _playlistDirectoryTree.addKeyListener(new KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
       {
@@ -1041,26 +1031,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _newPlaylistMenuItem.setMnemonic('N');
     _newPlaylistMenuItem.setText("New Playlist");
     _newPlaylistMenuItem.setToolTipText("Creates a New Playlist");
-    _newPlaylistMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _newPlaylistMenuItemActionPerformed(evt);
-      }
-    });
+    _newPlaylistMenuItem.addActionListener(evt -> _newPlaylistMenuItemActionPerformed(evt));
     _fileMenu.add(_newPlaylistMenuItem);
 
     _loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _loadMenuItem.setMnemonic('O');
     _loadMenuItem.setText("Open Playlist");
     _loadMenuItem.setToolTipText("Opens a Playlist");
-    _loadMenuItem.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        openIconButtonActionPerformed(evt);
-      }
-    });
+    _loadMenuItem.addActionListener(evt -> openIconButtonActionPerformed(evt));
     _fileMenu.add(_loadMenuItem);
 
     _closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -1202,6 +1180,34 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _helpMenu.add(_aboutMenuItem);
 
     _mainMenuBar.add(_helpMenu);
+
+    _documentPane.addDocumentChangeListener(new IDocumentChangeListener()
+    {
+      @Override
+      public boolean tryClosingDocument(JDocumentComponent document)
+      {
+        return GUIScreen.this.tryCloseTab(document);
+      }
+
+      @Override
+      public void documentOpened(JDocumentComponent document)
+      {
+        updateMenuItemStatuses();
+      }
+
+      @Override
+      public void documentClosed(JDocumentComponent document)
+      {
+        final Playlist playlist = getPlaylistFromDocumentComponent(document);
+        cleanupOnTabClose(playlist);
+        if (_documentPane.getDocumentCount() == 0)
+          {
+            ((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
+            currentTabChanged();
+           updateMenuItemStatuses();
+          }
+      }
+    });
 
     setJMenuBar(_mainMenuBar);
 
@@ -1445,14 +1451,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       if (list.getFile().equals(file))
       {
         String path = list.getFile().getPath();
-        try
-        {
-          path = list.getFile().getCanonicalPath();
-        }
-        catch (IOException e)
-        {
-
-        }
         _documentPane.setActiveDocument(path);
         return;
       }
@@ -1602,31 +1600,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     ImageIcon icon;
     icon = getIconForPlaylist(editor.getPlaylist());
     final JDocumentComponent tempComp = new JDocumentComponent(editor, path, title, icon);
-    tempComp.addDocumentComponentListener(new IDocumentComponentListener()
-    {
-      @Override
-      public void documentComponentOpened(DocumentComponentEvent e)
-      {
-        updateMenuItemStatuses();
-      }
 
-      @Override
-      public void documentComponentClosing(DocumentComponentEvent e)
-      {
-        e.getDocumentComponent().setAllowClosing(tryCloseTab(e.getDocumentComponent()));
-      }
-
-      @Override
-      public void documentComponentClosed(DocumentComponentEvent e)
-      {
-        if (_documentPane.getDocumentCount() == 0)
-        {
-          ((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
-          currentTabChanged();
-          updateMenuItemStatuses();
-        }
-      }
-    });
     return tempComp;
   }
 
@@ -2078,14 +2052,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       return false;
     }
-    final Playlist list = getPlaylistFromDocumentComponent(ctrl);
-    if (list.isModified())
+    final Playlist playlist = getPlaylistFromDocumentComponent(ctrl);
+    if (playlist.isModified())
     {
       Object[] options =
         {
           "Save", "Save As", "Don't Save", "Cancel"
         };
-      int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("The playlist \"" + list.getFilename() + "\" has been modified. Do you want to save the changes?"), "Confirm Close",
+      int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("The playlist \"" + playlist.getFilename() + "\" has been modified. Do you want to save the changes?"), "Confirm Close",
         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 
       if (rc == 0)
@@ -2096,7 +2070,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           protected Boolean doInBackground() throws Exception
           {
             boolean saveRelative = GUIDriver.getInstance().getAppOptions().getSavePlaylistsWithRelativePaths();
-            list.save(saveRelative, this);
+            playlist.save(saveRelative, this);
             return true;
           }
         };
@@ -2108,7 +2082,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           boolean savedOk = worker.get();
           if (savedOk)
           {
-            cleanupOnTabClose(list);
+            cleanupOnTabClose(playlist);
             return true;
           }
         }
@@ -2125,11 +2099,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       }
       else if (rc == 1)
       {
-        return handleSaveAs(list);
+        return handleSaveAs(playlist);
       }
       else if (rc == 2)
       {
-        cleanupOnTabClose(list);
+        cleanupOnTabClose(playlist);
         return true;
       }
       else
@@ -2139,7 +2113,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     }
     else
     {
-      cleanupOnTabClose(list);
       return true;
     }
   }

@@ -12,9 +12,9 @@ import java.awt.event.*;
  */
 public class JButtonTabComponent extends JPanel
 {
-  private final JTabbedPane pane;
+  private final JDocumentPane pane;
 
-  public JButtonTabComponent(final JTabbedPane pane, Icon icon)
+  public JButtonTabComponent(final JDocumentPane pane, Icon icon)
   {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -72,33 +72,12 @@ public class JButtonTabComponent extends JPanel
       addActionListener(this);
     }
 
-    private void init() {
-      int size = 17;
-      setPreferredSize(new Dimension(size, size));
-      setToolTipText("close this tab");
-      //Make the button looks the same for all Laf's
-      setUI(new BasicButtonUI());
-      //Make it transparent
-      setContentAreaFilled(false);
-      //No need to be focusable
-      setFocusable(false);
-      setBorder(BorderFactory.createEtchedBorder());
-      setBorderPainted(false);
-      //Making nice rollover effect
-      //we use the same listener for all buttons
-      addMouseListener(buttonMouseListener);
-      setRolloverEnabled(true);
-      //Close the proper tab by clicking the button
-      addActionListener(this);
-    }
-
-
     public void actionPerformed(ActionEvent e)
     {
       int i = pane.indexOfTabComponent(JButtonTabComponent.this);
       if (i != -1)
       {
-        pane.remove(i);
+        pane.tryToClose(i);
       }
     }
 
