@@ -7,15 +7,17 @@ categories:
   - title: 🚀 Enhancements
     labels:
       - enhancement
+  - title: 🎨 Improvements
+    labels:
+      - improvement
   - title: 🐛 Bug Fixes
     labels:
       - bug
-  - title: ⬆️ Dependencies
-    labels:
-      - dependencies
   - title: 🔧 Under the hood
     labels:
       - debt
+  - title: ⬆️ Dependencies
+    labels:
       - dependencies
 exclude-labels:
   - DevOps
