@@ -242,7 +242,7 @@ public abstract class PlaylistEntry implements Cloneable
       if (extra.contains(","))
       {
         String[] split = extra.split(",");
-        if (split != null && split.length > 1)
+        if (split.length > 1)
         {
           try
           {
@@ -256,7 +256,7 @@ public abstract class PlaylistEntry implements Cloneable
           }
           _title = split[1];
         }
-        else if (split != null && split.length == 1)
+        else if (split.length == 1)
         {
           // assume it's a _title?
           _title = split[0];
