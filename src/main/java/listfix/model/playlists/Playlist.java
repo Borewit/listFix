@@ -563,11 +563,12 @@ public class Playlist
   {
     try
     {
+      _logger.debug(String.format("Launching file: " + _file));
       FileLauncher.launch(_file);
     }
     catch (IOException | InterruptedException e)
     {
-      _logger.warn(e);
+      _logger.warn(String.format("Launching file: " + _file), e);
     }
   }
 
@@ -1204,6 +1205,7 @@ public class Playlist
   private void quickSave() throws Exception
   {
     IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.playListOptions);
+    _logger.debug(String.format("Writing playlist to %s", _file.getName()));
     writer.save(this, false, null);
   }
 
