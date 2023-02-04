@@ -5,7 +5,6 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class JDocumentPane extends JTabbedPane
 {
@@ -30,14 +29,7 @@ public class JDocumentPane extends JTabbedPane
       {
         if (e.getChild() instanceof JDocumentComponent)
         {
-          documentChangeListeners.forEach(new Consumer<IDocumentChangeListener>()
-          {
-            @Override
-            public void accept(IDocumentChangeListener listener)
-            {
-              listener.documentClosed((JDocumentComponent) e.getChild());
-            }
-          });
+          documentChangeListeners.forEach(listener -> listener.documentClosed((JDocumentComponent) e.getChild()));
         }
       }
     });
@@ -50,7 +42,7 @@ public class JDocumentPane extends JTabbedPane
 
   public JDocumentComponent getDocumentAt(int documentIndex)
   {
-    return (JDocumentComponent) super.getComponent(documentIndex);
+    return (JDocumentComponent) super.getComponentAt(documentIndex);
   }
 
   public JDocumentComponent getActiveDocument()
