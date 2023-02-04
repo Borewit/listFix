@@ -55,7 +55,7 @@ import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.WindowSaver;
 import listfix.swing.JDocumentComponent;
-import listfix.swing.JDocumentPane;
+import listfix.swing.JDocumentTabbedPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -681,7 +681,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _spacerPanel = new javax.swing.JPanel();
     _newIconButton = new javax.swing.JButton();
     _docTabPanel = new javax.swing.JPanel();
-    _documentPane = new JDocumentPane();
+    _documentPane = new JDocumentTabbedPane();
     _mainMenuBar = new javax.swing.JMenuBar();
     _fileMenu = new JMenu();
     _newPlaylistMenuItem = new javax.swing.JMenuItem();
@@ -2048,10 +2048,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public boolean tryCloseTab(JDocumentComponent ctrl)
   {
-    if (!_documentPane.isDocumentOpened(ctrl.getName()))
-    {
-      return false;
-    }
     final Playlist playlist = getPlaylistFromDocumentComponent(ctrl);
     if (playlist.isModified())
     {
@@ -2851,7 +2847,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private javax.swing.JMenuItem _closeAllMenuItem;
   private javax.swing.JMenuItem _closeMenuItem;
   private javax.swing.JPanel _docTabPanel;
-  private JDocumentPane _documentPane;
+  private JDocumentTabbedPane _documentPane;
   private javax.swing.JMenuItem _exitMenuItem;
   private javax.swing.JMenuItem _extractPlaylistsMenuItem;
   private javax.swing.JMenu _fileMenu;

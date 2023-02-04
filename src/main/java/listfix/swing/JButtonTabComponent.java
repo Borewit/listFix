@@ -12,9 +12,9 @@ import java.awt.event.*;
  */
 public class JButtonTabComponent extends JPanel
 {
-  private final JDocumentPane pane;
+  private final JDocumentTabbedPane pane;
 
-  public JButtonTabComponent(final JDocumentPane pane, Icon icon)
+  public JButtonTabComponent(final JDocumentTabbedPane pane, Icon icon)
   {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));

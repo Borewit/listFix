@@ -6,12 +6,12 @@ import java.awt.event.ContainerListener;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JDocumentPane extends JTabbedPane
+public class JDocumentTabbedPane extends JTabbedPane
 {
 
   private final List<IDocumentChangeListener> documentChangeListeners = new LinkedList<>();
 
-  public JDocumentPane()
+  public JDocumentTabbedPane()
   {
     this.addContainerListener(new ContainerListener()
     {
