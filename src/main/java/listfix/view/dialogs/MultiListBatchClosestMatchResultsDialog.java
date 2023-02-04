@@ -40,8 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import java.io.File;
 import java.util.List;
@@ -131,17 +129,12 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     {
       ListSelectionModel lsm = _pnlList.getSelectionModel();
       lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      lsm.addListSelectionListener(new ListSelectionListener()
-      {
-        @Override
-        public void valueChanged(ListSelectionEvent e)
+      lsm.addListSelectionListener(e -> {
+        if (e.getValueIsAdjusting())
         {
-          if (e.getValueIsAdjusting())
-          {
-            return;
-          }
-          updateSelectedPlaylist();
+          return;
         }
+        updateSelectedPlaylist();
       });
 
       _pnlList.initPlaylistsList();
@@ -168,14 +161,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     }
   }
 
-  private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
-  {
-    @Override
-    public void playlistModified(Playlist list)
-    {
-      onPlaylistModified(list);
-    }
-  };
+  private final IPlaylistModifiedListener listener = list -> onPlaylistModified(list);
 
   private void onPlaylistModified(Playlist list)
   {
