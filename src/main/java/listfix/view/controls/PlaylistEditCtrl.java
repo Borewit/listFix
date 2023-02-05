@@ -20,7 +20,6 @@
 
 package listfix.view.controls;
 
-import com.jidesoft.swing.FolderChooser;
 import listfix.config.IMediaLibrary;
 import listfix.io.*;
 import listfix.io.filters.AudioFileFilter;
@@ -35,10 +34,7 @@ import listfix.model.playlists.PlaylistFactory;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.GUIScreen;
-import listfix.view.dialogs.BatchClosestMatchResultsDialog;
-import listfix.view.dialogs.EditFilenameDialog;
-import listfix.view.dialogs.ProgressDialog;
-import listfix.view.dialogs.ReorderPlaylistDialog;
+import listfix.view.dialogs.*;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
 import listfix.view.support.ProgressWorker;
@@ -81,7 +77,6 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private static final Logger _logger = LogManager.getLogger(PlaylistEditCtrl.class);
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
   private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
-  private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
 
   private FolderChooser _destDirFileChooser = new FolderChooser();
 
@@ -2209,10 +2204,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   private void initFolderChooser()
   {
-    _destDirFileChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
     _destDirFileChooser.setDialogTitle("Choose a destination directory...");
-    _destDirFileChooser.setAcceptAllFileFilterUsed(false);
-    _destDirFileChooser.setRecentListVisible(false);
   }
 
   private class PlaylistTableModel extends AbstractTableModel

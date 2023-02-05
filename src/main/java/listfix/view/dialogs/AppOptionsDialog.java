@@ -25,7 +25,7 @@ package listfix.view.dialogs;
  * @author  jcaron
  */
 
-import com.jidesoft.swing.FolderChooser;
+
 import listfix.json.JsonAppOptions;
 import listfix.util.OperatingSystem;
 import listfix.view.controls.JTransparentTextArea;
@@ -145,8 +145,6 @@ public class AppOptionsDialog extends javax.swing.JDialog
   {
     _jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
     _jMediaDirChooser.setAcceptAllFileFilterUsed(false);
-    _jMediaDirChooser.setAvailableButtons(FolderChooser.BUTTON_DESKTOP | FolderChooser.BUTTON_MY_DOCUMENTS | FolderChooser.BUTTON_NEW | FolderChooser.BUTTON_REFRESH);
-    _jMediaDirChooser.setRecentListVisible(false);
     _jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
     _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
   }
@@ -673,7 +671,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
     if (_options.getPlaylistsDirectory() != null && _options.getPlaylistsDirectory().length() > 0)
     {
       _jMediaDirChooser.setCurrentDirectory(new File(_options.getPlaylistsDirectory()));
-      _jMediaDirChooser.setSelectedFolder(new File(_options.getPlaylistsDirectory()));
+      _jMediaDirChooser.setSelectedFile(new File(_options.getPlaylistsDirectory()));
     }
     int response = _jMediaDirChooser.showOpenDialog(this);
     if (response == JFileChooser.APPROVE_OPTION)
