@@ -63,11 +63,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * @author jcaron
@@ -77,11 +79,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private static final Logger _logger = LogManager.getLogger(PlaylistEditCtrl.class);
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
   private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
-
   private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
   private static final Marker markerPlaylistControl = MarkerManager.getMarker("PlaylistCtrl");
   private static final Marker markerRepair = MarkerManager.getMarker("PlaylistCtrl-Repair").setParents(markerPlaylistControl);
   private static final Marker markerRepairWorker = MarkerManager.getMarker("PlaylistCtrl-Repair-Worker").setParents(markerRepair);
+  private static final String txtOpenFileLocationSingular = "Open File Location";
+  private static final String txtOpenFileLocationPlural = "Open File Locations";
   private FolderChooser _destDirFileChooser = new FolderChooser();
 
   private int currentlySelectedRow = 0;
@@ -381,6 +384,35 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         getTableModel().fireTableRowsUpdated(rowIx, rowIx);
       }
     }
+  }
+
+  private void openPlayListEntryLocation() throws IOException
+  {
+    for (PlaylistEntry entry : this.getSelectedPlayListEntries().stream().distinct().collect(Collectors.toList()))
+    {
+      if (entry instanceof FilePlaylistEntry)
+      {
+        Path parent = ((FilePlaylistEntry) entry).getAbsolutePath().getParent();
+        if (parent != null)
+        {
+          Desktop.getDesktop().open(parent.toFile());
+        }
+      }
+      else if (entry instanceof UriPlaylistEntry)
+      {
+        Desktop.getDesktop().browse(((UriPlaylistEntry) entry).getURI());
+      }
+    }
+  }
+
+  private List<PlaylistEntry> getSelectedPlayListEntries()
+  {
+    int[] rows = this._uiTable.getSelectedRows();
+    if (rows == null)
+    {
+      return Collections.emptyList();
+    }
+    return Arrays.stream(rows).mapToObj(rowIx -> this._playlist.get(rowIx)).collect(Collectors.toList());
   }
 
   private void findClosestMatches()
@@ -741,6 +773,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     _playlistEntryRightClickMenu = new javax.swing.JPopupMenu();
     _miEditFilename = new javax.swing.JMenuItem();
+    _miOpenFileLocation = new javax.swing.JMenuItem();
     _miReplace = new javax.swing.JMenuItem();
     jSeparator3 = new javax.swing.JPopupMenu.Separator();
     _miFindClosest = new javax.swing.JMenuItem();
@@ -770,23 +803,26 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _uiTable = createTable();
 
     _miEditFilename.setText("Edit Filename");
-    _miEditFilename.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onMenuEditFilenameActionPerformed(evt);
-      }
-    });
+    _miEditFilename.addActionListener(evt -> onMenuEditFilenameActionPerformed(evt));
     _playlistEntryRightClickMenu.add(_miEditFilename);
 
-    _miReplace.setText("Replace Selected Entry");
-    _miReplace.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+    _miOpenFileLocation = new javax.swing.JMenuItem();
+    _miOpenFileLocation.setText(txtOpenFileLocationSingular);
+    _miOpenFileLocation.addActionListener(evt -> {
+      try
       {
-        onMenuReplaceSelectedEntry(evt);
+        openPlayListEntryLocation();
+      }
+      catch (IOException e)
+      {
+        _logger.error("Failed to open playlist-entry location", e);
+        throw new RuntimeException(e);
       }
     });
+    _playlistEntryRightClickMenu.add(_miOpenFileLocation);
+
+    _miReplace.setText("Replace Selected Entry");
+    _miReplace.addActionListener(evt -> onMenuReplaceSelectedEntry(evt));
     _playlistEntryRightClickMenu.add(_miReplace);
     _playlistEntryRightClickMenu.add(jSeparator3);
 
@@ -998,13 +1034,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnMagicFix.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnMagicFix.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnMagicFix.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnMagicFix.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnMagicFixonBtnLocateActionPerformed(evt);
-      }
-    });
+    _btnMagicFix.addActionListener(evt -> _btnMagicFixonBtnLocateActionPerformed(evt));
     _uiToolbar.add(_btnMagicFix);
 
     _btnLocate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-find.gif"))); // NOI18N
@@ -1028,7 +1058,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnPlay.addActionListener(this::onBtnPlayActionPerformed);
+    _btnPlay.addActionListener(this :: onBtnPlayActionPerformed);
     _uiToolbar.add(_btnPlay);
     _uiToolbar.add(jSeparator5);
 
@@ -1222,10 +1252,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       else
       {
         showWaitCursor(true);
-        ProgressWorker worker = new ProgressWorker()
+        ProgressWorker<Void, String> worker = new ProgressWorker<>()
         {
           @Override
-          protected Object doInBackground() throws IOException
+          protected Void doInBackground() throws IOException
           {
             this.setMessage("Please wait while your playlist is reloaded from disk.");
             _playlist.reload(this);
@@ -1476,6 +1506,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private javax.swing.JButton _btnUp;
   private javax.swing.JMenuItem _miCopySelectedFiles;
   private javax.swing.JMenuItem _miEditFilename;
+  private javax.swing.JMenuItem _miOpenFileLocation;
   private javax.swing.JMenuItem _miFindClosest;
   private javax.swing.JMenuItem _miNewPlaylistFromSelected;
   private javax.swing.JMenuItem _miRemoveDups;
@@ -1822,11 +1853,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             {
               _miReplace.setText("Replace Selected Entries");
               _miEditFilename.setText("Edit Filenames");
+              _miOpenFileLocation.setText(txtOpenFileLocationPlural);
             }
             else
             {
               _miEditFilename.setText("Edit Filename");
               _miReplace.setText("Replace Selected Entry");
+              _miOpenFileLocation.setText(txtOpenFileLocationSingular);
             }
 
             _playlistEntryRightClickMenu.show(e.getComponent(), p.x, p.y);
