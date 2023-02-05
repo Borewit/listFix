@@ -20,4 +20,10 @@ public interface IDocumentChangeListener
    * @param document Document which has been opened
    */
   void documentClosed(JDocumentComponent document);
+
+  /**
+   * Notification a document is active
+   * @param doc Active document
+   */
+  void documentActivated(JDocumentComponent doc);
 }

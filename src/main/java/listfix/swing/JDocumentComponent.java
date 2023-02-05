@@ -1,5 +1,7 @@
 package listfix.swing;
 
+import listfix.view.controls.PlaylistEditCtrl;
+
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
@@ -35,9 +37,9 @@ public class JDocumentComponent extends JPanel
     return new JDocumentComponent(path);
   }
 
-  public JComponent getComponent()
+  public PlaylistEditCtrl getComponent()
   {
-    return (JComponent) super.getComponent(0);
+    return (PlaylistEditCtrl) super.getComponent(0);
   }
 
   public void setTitle(String title)
