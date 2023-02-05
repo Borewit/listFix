@@ -1201,12 +1201,19 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         final Playlist playlist = getPlaylistFromDocumentComponent(document);
         cleanupOnTabClose(playlist);
         if (_documentPane.getDocumentCount() == 0)
-          {
-            ((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
-            currentTabChanged();
-           updateMenuItemStatuses();
-          }
+        {
+          ((java.awt.CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
+          currentTabChanged();
+          updateMenuItemStatuses();
+        }
       }
+
+      @Override
+      public void documentActivated(JDocumentComponent doc)
+      {
+        GUIScreen.this.currentTabChanged(doc);
+      }
+
     });
 
     setJMenuBar(_mainMenuBar);
@@ -1631,7 +1638,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public void updateCurrentTab(Playlist list)
   {
-    PlaylistEditCtrl oldEditor = (PlaylistEditCtrl) _documentPane.getActiveDocument().getComponent();
+    PlaylistEditCtrl oldEditor = _documentPane.getActiveDocument().getComponent();
 
     _documentPane.getActiveDocument().setTitle(list.getFilename());
     oldEditor.setPlaylist(list, true);
@@ -1901,7 +1908,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void currentTabChanged()
   {
-    Playlist list = _documentPane.getActiveDocument() != null ? ((PlaylistEditCtrl) _documentPane.getActiveDocument().getComponent()).getPlaylist() : null;
+    this.currentTabChanged(_documentPane.getActiveDocument());
+  }
+
+  private void currentTabChanged(JDocumentComponent documentComponent)
+  {
+    Playlist list = documentComponent != null ? ((PlaylistEditCtrl) documentComponent.getComponent()).getPlaylist() : null;
     if (list == _currentPlaylist)
     {
       return;
