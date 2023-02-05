@@ -115,6 +115,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private static final String applicationVersion = Manifests.read("Implementation-Version");
 
   /**
+   * The components should only be enabled when 1 or more playlists are loaded
+   */
+  private Component[] componentsRequireActivePlaylist;
+
+  /**
    * Creates new form GUIScreen
    */
   public GUIScreen()
@@ -1218,6 +1223,24 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
     setJMenuBar(_mainMenuBar);
 
+    this.componentsRequireActivePlaylist = new Component[]{
+      _openExplorerMenuItem,
+      _saveAllMenuItem,
+      _saveAsMenuItem,
+      _saveMenuItem,
+
+      _closeAllMenuItem,
+      _closeMenuItem,
+
+      _miReload,
+      _miReloadAll,
+
+      _miExactMatchRepairOpenPlaylists,
+      _miClosestMatchRepairOpenPlaylists,
+    };
+
+    splashScreen.setIconImage(applicationIcon);
+
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
@@ -1676,7 +1699,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
       for (String file : files)
       {
         JMenuItem temp = new JMenuItem(file);
-        temp.addActionListener(evt -> recentPlaylistActionPerformed(evt));
+        temp.addActionListener(this :: recentPlaylistActionPerformed);
         recentMenu.add(temp);
       }
     }
@@ -1874,36 +1897,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void updateMenuItemStatuses()
   {
-    if (_documentPane.getDocumentCount() > 0)
-    {
-      _saveAllMenuItem.setEnabled(true);
-      _saveAsMenuItem.setEnabled(true);
-      _saveMenuItem.setEnabled(true);
-
-      _closeAllMenuItem.setEnabled(true);
-      _closeMenuItem.setEnabled(true);
-
-      _miReload.setEnabled(true);
-      _miReloadAll.setEnabled(true);
-
-      _miExactMatchRepairOpenPlaylists.setEnabled(true);
-      _miClosestMatchRepairOpenPlaylists.setEnabled(true);
-    }
-    else
-    {
-      _saveAllMenuItem.setEnabled(false);
-      _saveAsMenuItem.setEnabled(false);
-      _saveMenuItem.setEnabled(false);
-
-      _closeAllMenuItem.setEnabled(false);
-      _closeMenuItem.setEnabled(false);
-
-      _miReload.setEnabled(false);
-      _miReloadAll.setEnabled(false);
-
-      _miExactMatchRepairOpenPlaylists.setEnabled(false);
-      _miClosestMatchRepairOpenPlaylists.setEnabled(false);
-    }
+    boolean enable = _documentPane.getDocumentCount() > 0;
+    Arrays.stream(componentsRequireActivePlaylist).forEach(c -> c.setEnabled(enable));
   }
 
   private void currentTabChanged()
