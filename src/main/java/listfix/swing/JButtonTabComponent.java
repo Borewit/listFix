@@ -91,21 +91,28 @@ public class JButtonTabComponent extends JPanel
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D) g.create();
-      //shift the image for pressed buttons
-      if (getModel().isPressed())
+      try
       {
-        g2.translate(1, 1);
+        //shift the image for pressed buttons
+        if (getModel().isPressed())
+        {
+          g2.translate(1, 1);
+        }
+        g2.setStroke(new BasicStroke(2));
+        g2.setColor(Color.BLACK);
+        if (getModel().isRollover())
+        {
+          g2.setColor(Color.BLUE);
+        }
+        int delta = 6;
+        g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
+        g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+        g2.dispose();
       }
-      g2.setStroke(new BasicStroke(2));
-      g2.setColor(Color.BLACK);
-      if (getModel().isRollover())
+      finally
       {
-        g2.setColor(Color.MAGENTA);
+        g2.dispose();
       }
-      int delta = 6;
-      g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-      g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
-      g2.dispose();
     }
   }
 
