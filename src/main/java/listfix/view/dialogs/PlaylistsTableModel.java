@@ -1,12 +1,13 @@
 
 package listfix.view.dialogs;
 
-import javax.swing.ImageIcon;
-import javax.swing.table.AbstractTableModel;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
 import listfix.view.support.ImageIcons;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *

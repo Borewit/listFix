@@ -19,7 +19,7 @@
 
 package listfix.view.support;
 
-import javax.swing.SwingWorker;
+import javax.swing.*;
 
 // implement doInBackground() for easiest use. Designed for the single progress
 // bar operation of ProgressDialog.

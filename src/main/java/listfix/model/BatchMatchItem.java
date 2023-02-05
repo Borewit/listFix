@@ -19,10 +19,10 @@
 
 package listfix.model;
 
-import java.util.List;
-
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
+
+import java.util.List;
 
 /**
  * Serves to model the multiple matches that result for a single playlist entry during a closest matches search.  Should probably be renamed to make this more explicit.

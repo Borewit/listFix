@@ -20,10 +20,10 @@
 
 package listfix.controller;
 
+import listfix.view.support.IProgressObserver;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import listfix.view.support.IProgressObserver;
 
 /**
  *

@@ -20,16 +20,16 @@
 
 package listfix.io;
 
+import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
+import listfix.io.filters.PlaylistFileFilter;
+import listfix.view.support.PlaylistTreeNode;
+
+import javax.swing.tree.TreePath;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.tree.TreePath;
-
-import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
-import listfix.io.filters.PlaylistFileFilter;
-import listfix.view.support.PlaylistTreeNode;
 
 /**
  *

@@ -20,13 +20,13 @@
 
 package listfix.model;
 
+import listfix.model.playlists.PlaylistEntry;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.List;
-
-import listfix.model.playlists.PlaylistEntry;
 
 /**
  *

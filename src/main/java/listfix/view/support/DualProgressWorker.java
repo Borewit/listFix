@@ -19,8 +19,8 @@
 
 package listfix.view.support;
 
+import javax.swing.*;
 import java.util.List;
-import javax.swing.SwingWorker;
 
 // doInBackgroiund() - perform work
 // process() - made this abstract to force an override in any derived classes (worker is useless without it)

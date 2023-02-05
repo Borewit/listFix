@@ -20,7 +20,7 @@
 
 package listfix.view.controls;
 
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 /**
  *

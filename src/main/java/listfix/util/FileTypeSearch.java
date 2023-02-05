@@ -20,14 +20,14 @@
 
 package listfix.util;
 
+import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
 
 /**
  *

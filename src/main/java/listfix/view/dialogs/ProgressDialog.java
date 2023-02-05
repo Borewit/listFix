@@ -19,15 +19,15 @@
 
 package listfix.view.dialogs;
 
-import java.awt.Dimension;
+import listfix.view.support.ProgressWorker;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import listfix.view.support.ProgressWorker;
 
 /**
  *

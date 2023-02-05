@@ -26,7 +26,7 @@
 
 package listfix.view.dialogs;
 
-import listfix.io.IPlayListOptions;
+import listfix.io.IPlaylistOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
@@ -40,8 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import java.io.File;
 import java.util.List;
@@ -60,7 +58,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   private boolean _userAccepted = false;
   private static final Logger _logger = LogManager.getLogger(MultiListBatchClosestMatchResultsDialog.class);
 
-  private IPlayListOptions filePathOptions;
+  private IPlaylistOptions filePathOptions;
 
   /**
    * Creates new form MultiListBatchClosestMatchResultsDialog
@@ -68,7 +66,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
    * @param parent
    * @param modal
    */
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IPlayListOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IPlaylistOptions filePathOptions)
   {
     super(parent, modal);
     this.filePathOptions = filePathOptions;
@@ -80,7 +78,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
    * @param modal
    * @param br
    */
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlayListOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlaylistOptions filePathOptions)
   {
     super(parent, br.getDescription(), modal);
     _batch = br;
@@ -131,17 +129,12 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     {
       ListSelectionModel lsm = _pnlList.getSelectionModel();
       lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      lsm.addListSelectionListener(new ListSelectionListener()
-      {
-        @Override
-        public void valueChanged(ListSelectionEvent e)
+      lsm.addListSelectionListener(e -> {
+        if (e.getValueIsAdjusting())
         {
-          if (e.getValueIsAdjusting())
-          {
-            return;
-          }
-          updateSelectedPlaylist();
+          return;
         }
+        updateSelectedPlaylist();
       });
 
       _pnlList.initPlaylistsList();
@@ -168,14 +161,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     }
   }
 
-  private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
-  {
-    @Override
-    public void playlistModified(Playlist list)
-    {
-      onPlaylistModified(list);
-    }
-  };
+  private final IPlaylistModifiedListener listener = list -> onPlaylistModified(list);
 
   private void onPlaylistModified(Playlist list)
   {

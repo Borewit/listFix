@@ -19,6 +19,15 @@
 
 package listfix.model;
 
+import listfix.config.IMediaLibrary;
+import listfix.io.IPlaylistOptions;
+import listfix.model.playlists.Playlist;
+import listfix.model.playlists.PlaylistFactory;
+import listfix.view.support.DualProgressAdapter;
+import listfix.view.support.IDualProgressObserver;
+import listfix.view.support.IProgressObserver;
+import listfix.view.support.ProgressAdapter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,15 +39,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import listfix.config.IMediaLibrary;
-import listfix.io.IPlayListOptions;
-import listfix.model.playlists.Playlist;
-import listfix.model.playlists.PlaylistFactory;
-import listfix.view.support.DualProgressAdapter;
-import listfix.view.support.IDualProgressObserver;
-import listfix.view.support.IProgressObserver;
-import listfix.view.support.ProgressAdapter;
 
 /**
  * Serves to model the batch repair operations on multiple playlists, both closest matches and exact matches.
@@ -150,7 +150,7 @@ public class BatchRepair
    * @param observer The progress observer for this operation.
    * @throws IOException
    */
-  public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlayListOptions filePathOptions)
+  public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
   {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
     progress.getOverall().setTotal(_items.size() * 2);
@@ -208,7 +208,7 @@ public class BatchRepair
    *
    * @param observer The progress observer for this operation.
    */
-  public void performClosestMatchRepair(IDualProgressObserver<String> observer, IPlayListOptions filePathOptions)
+  public void performClosestMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
   {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
     progress.getOverall().setTotal(_items.size() * 2);
@@ -284,7 +284,7 @@ public class BatchRepair
    * @param observer             The progress observer for this operation.
    * @throws Exception
    */
-  public void save(IPlayListOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
+  public void save(IPlaylistOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
 

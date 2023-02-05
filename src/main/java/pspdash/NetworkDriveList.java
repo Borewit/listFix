@@ -45,7 +45,7 @@ import java.util.TreeMap;
 public class NetworkDriveList
 {
   private volatile boolean successful = false;
-  private Map networkDrives = new TreeMap();
+  private Map<String, String> networkDrives = new TreeMap<>();
   private volatile Process subprocess = null;
   private static final Logger _logger = LogManager.getLogger(NetworkDriveList.class);
 
@@ -312,12 +312,12 @@ public class NetworkDriveList
       return null;
     }
     String drivePath = getDrivePath(driveLetter);
-    return (String) networkDrives.get(drivePath);
+    return networkDrives.get(drivePath);
   }
 
-  /** Convert the given filename (in drive letter format) to an UNC name.
-   * @param filename
-   * @return an UNC name, or null if the filename could not be translated.
+  /** Convert the given filename (in drive letter format) to a UNC name.
+   * @param filename Filename to convert to UNC notation
+   * @return UNC name, or null if the filename could not be translated.
    */
   public String toUNCName(String filename)
   {
@@ -330,12 +330,10 @@ public class NetworkDriveList
       return filename;
     }
 
-    Iterator i = networkDrives.entrySet().iterator();
-    while (i.hasNext())
+    for (Map.Entry<String, String> e : networkDrives.entrySet())
     {
-      Map.Entry e = (Map.Entry) i.next();
-      String resPrefix = (String) e.getKey();
-      String uncPrefix = (String) e.getValue();
+      final String resPrefix = e.getKey();
+      String uncPrefix = e.getValue();
 
       if (filename.regionMatches(true, 0, resPrefix, 0, resPrefix.length()))
       {

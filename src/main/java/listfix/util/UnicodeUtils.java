@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.nio.file.Path;
 
 /**
  *
@@ -133,6 +134,11 @@ public class UnicodeUtils
     {
       return null;
     }
+  }
+
+  public static String getEncoding(Path path)
+  {
+    return getEncoding(path.toFile());
   }
 
   /**

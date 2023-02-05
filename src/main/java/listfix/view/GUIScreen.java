@@ -112,7 +112,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private static final Logger _logger = LogManager.getLogger(GUIScreen.class);
 
-  private final String applicationVersion = Manifests.read("Implementation-Version");
+  private static final String applicationVersion = Manifests.read("Implementation-Version");
 
   /**
    * Creates new form GUIScreen
@@ -754,7 +754,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _playlistTreeRightClickMenu.add(_miRenameSelectedItem);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-    setTitle("listFix( ) - v" + applicationVersion);
+    setTitle(String.format("listFix() version %s", applicationVersion));
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     setIconImage(this.applicationIcon);
     setMinimumSize(new java.awt.Dimension(600, 149));
@@ -1482,7 +1482,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     {
       PlaylistType type = Playlist.determinePlaylistTypeFromExtension(file, this.getOptions());
 
-      ProgressWorker<Playlist, Void> worker = new ProgressWorker<Playlist, Void>()
+      ProgressWorker<Playlist, String> worker = new ProgressWorker<>()
       {
         @Override
         protected Playlist doInBackground() throws Exception
@@ -2800,7 +2800,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
    */
   public static void main(String[] args) throws IOException
   {
-    _logger.info("Starting ListFix()...");
+    _logger.info(String.format("Starting ListFix() version \"%s\"...", applicationVersion));
 
     IAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
     InitApplicationFont(tempOptions.getAppFont());

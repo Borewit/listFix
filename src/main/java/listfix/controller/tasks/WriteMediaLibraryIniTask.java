@@ -20,12 +20,11 @@
 
 package listfix.controller.tasks;
 
-import java.io.IOException;
-
 import listfix.config.MediaLibraryConfiguration;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 
 /**
  * @author jcaron

@@ -20,8 +20,8 @@
 
 package listfix.view.support;
 
-import java.io.File;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.io.File;
 
 /**
  *

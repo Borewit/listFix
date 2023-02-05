@@ -20,11 +20,11 @@
 
 package listfix.io;
 
+import listfix.io.filters.PlaylistFileFilter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import listfix.io.filters.PlaylistFileFilter;
 
 /*
 ============================================================================

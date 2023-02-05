@@ -20,7 +20,7 @@
 
 package listfix.view.support;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 /**
  *

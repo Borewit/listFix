@@ -1,5 +1,6 @@
 package listfix.io;
 
+import listfix.util.OperatingSystem;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -41,5 +42,17 @@ public class FileUtilsTests
     assertTrue(playlistFile.createNewFile(), "Create playlist.m3u8");
     File trackFile = Path.of(this.mediaFolder.getRoot().getPath(), "Madonna", "Like a Prayer.mp3").toFile();
     assertEquals(Path.of("..", "Madonna", "Like a Prayer.mp3").toString(), FileUtils.getRelativePath(trackFile, playlistFile));
+  }
+
+  @Test
+  public void getRelativePathWithUncommonRoot() throws IOException
+  {
+    Path trackPath = Path.of("C:", "music", "track.flac");
+    Path playlistFile = Path.of("D:", "playlist", "playlist.m3u8");
+    Path result = FileUtils.getRelativePath(trackPath, playlistFile);
+    if (OperatingSystem.isWindows()) {
+      assertEquals(trackPath, result, "getRelativePath() should preserve absolute path of there is no common root");
+    }
+    // ToDo: check this can be ported to Unix as well
   }
 }
