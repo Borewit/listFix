@@ -85,12 +85,11 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * @author jcaron
@@ -655,6 +654,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
     _miRefreshDirectoryTree = new javax.swing.JMenuItem();
     _miOpenSelectedPlaylists = new javax.swing.JMenuItem();
+    _miOpenSelectedPlaylistLocation = new javax.swing.JMenuItem();
     _miExactMatchesSearch = new javax.swing.JMenuItem();
     _miClosestMatchesSearch = new javax.swing.JMenuItem();
     _miDeletePlaylist = new javax.swing.JMenuItem();
@@ -691,6 +691,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _fileMenu = new JMenu();
     _newPlaylistMenuItem = new javax.swing.JMenuItem();
     _loadMenuItem = new javax.swing.JMenuItem();
+    _openPlaylistLocationMenuItem = new javax.swing.JMenuItem();
     _closeMenuItem = new javax.swing.JMenuItem();
     _closeAllMenuItem = new javax.swing.JMenuItem();
     jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -719,24 +720,16 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _aboutMenuItem = new javax.swing.JMenuItem();
 
     _miRefreshDirectoryTree.setText("Refresh");
-    _miRefreshDirectoryTree.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miRefreshDirectoryTreeActionPerformed(evt);
-      }
-    });
+    _miRefreshDirectoryTree.addActionListener(evt -> _miRefreshDirectoryTreeActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miRefreshDirectoryTree);
 
     _miOpenSelectedPlaylists.setText("Open");
-    _miOpenSelectedPlaylists.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miOpenSelectedPlaylistsActionPerformed(evt);
-      }
-    });
+    _miOpenSelectedPlaylists.addActionListener(evt -> _miOpenSelectedPlaylistsActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miOpenSelectedPlaylists);
+
+    _miOpenSelectedPlaylistLocation.setText("Open Playlist Location");
+    _miOpenSelectedPlaylistLocation.addActionListener(evt -> this.openPlaylistFoldersFromPlaylistTree());
+    _playlistTreeRightClickMenu.add(_miOpenSelectedPlaylistLocation);
 
     _miExactMatchesSearch.setText("Find Exact Matches");
     _miExactMatchesSearch.addActionListener(evt -> _miExactMatchesSearchActionPerformed(evt));
@@ -891,13 +884,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _btnSetPlaylistsDir.setText("Set");
     _btnSetPlaylistsDir.setToolTipText("Opens the options screen where you can set your playlists directory ");
     _btnSetPlaylistsDir.setMargin(new java.awt.Insets(2, 8, 2, 8));
-    _btnSetPlaylistsDir.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnSetPlaylistsDirActionPerformed(evt);
-      }
-    });
+    _btnSetPlaylistsDir.addActionListener(evt -> _btnSetPlaylistsDirActionPerformed(evt));
     _playlistsDirectoryButtonPanel.add(_btnSetPlaylistsDir);
 
     _btnRefresh.setText("Refresh");
@@ -905,13 +892,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _btnRefresh.setFocusable(false);
     _btnRefresh.setMargin(new java.awt.Insets(2, 8, 2, 8));
     _btnRefresh.setMinimumSize(new java.awt.Dimension(71, 25));
-    _btnRefresh.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnRefreshActionPerformed(evt);
-      }
-    });
+    _btnRefresh.addActionListener(evt -> _btnRefreshActionPerformed(evt));
     _playlistsDirectoryButtonPanel.add(_btnRefresh);
 
     _btnOpenSelected.setText("Open");
@@ -920,39 +901,21 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _btnOpenSelected.setFocusable(false);
     _btnOpenSelected.setMargin(new java.awt.Insets(2, 8, 2, 8));
     _btnOpenSelected.setMinimumSize(new java.awt.Dimension(71, 25));
-    _btnOpenSelected.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnOpenSelectedActionPerformed(evt);
-      }
-    });
+    _btnOpenSelected.addActionListener(evt -> _btnOpenSelectedActionPerformed(evt));
     _playlistsDirectoryButtonPanel.add(_btnOpenSelected);
 
     _btnQuickRepair.setText("Quick");
     _btnQuickRepair.setToolTipText("Quick Batch Repair");
     _btnQuickRepair.setEnabled(false);
     _btnQuickRepair.setMargin(new java.awt.Insets(2, 8, 2, 8));
-    _btnQuickRepair.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnQuickRepairActionPerformed(evt);
-      }
-    });
+    _btnQuickRepair.addActionListener(evt -> _btnQuickRepairActionPerformed(evt));
     _playlistsDirectoryButtonPanel.add(_btnQuickRepair);
 
     _btnDeepRepair.setText("Deep");
     _btnDeepRepair.setToolTipText("Deep Batch Repair");
     _btnDeepRepair.setEnabled(false);
     _btnDeepRepair.setMargin(new java.awt.Insets(2, 8, 2, 8));
-    _btnDeepRepair.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _btnDeepRepairActionPerformed(evt);
-      }
-    });
+    _btnDeepRepair.addActionListener(evt -> _btnDeepRepairActionPerformed(evt));
     _playlistsDirectoryButtonPanel.add(_btnDeepRepair);
 
     _playlistDirectoryPanel.add(_playlistsDirectoryButtonPanel, java.awt.BorderLayout.PAGE_END);
@@ -1045,6 +1008,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _loadMenuItem.setToolTipText("Opens a Playlist");
     _loadMenuItem.addActionListener(evt -> openIconButtonActionPerformed(evt));
     _fileMenu.add(_loadMenuItem);
+
+    _openPlaylistLocationMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+    _openPlaylistLocationMenuItem.setMnemonic('E');
+    _openPlaylistLocationMenuItem.setText("Open Playlist Location");
+    _openPlaylistLocationMenuItem.setToolTipText("Opens playlist folder in Explorer");
+    _openPlaylistLocationMenuItem.addActionListener(evt -> openPlaylistLocation(this._currentPlaylist));
+    _fileMenu.add(_openPlaylistLocationMenuItem);
+
 
     _closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
     _closeMenuItem.setMnemonic('C');
@@ -1224,7 +1195,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     setJMenuBar(_mainMenuBar);
 
     this.componentsRequireActivePlaylist = new Component[]{
-      _openExplorerMenuItem,
+      _openPlaylistLocationMenuItem,
       _saveAllMenuItem,
       _saveAsMenuItem,
       _saveMenuItem,
@@ -1331,27 +1302,33 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void openTreeSelectedPlaylists()
   {
-    int[] selRows = _playlistDirectoryTree.getSelectionRows();
-    if (selRows != null && selRows.length > 0)
-    {
-      for (int i : selRows)
+    this.getSelectedFilesFromTreePlaylists().forEach(toOpen -> {
+      if (toOpen.isDirectory())
       {
-        TreePath selPath = _playlistDirectoryTree.getPathForRow(i);
-        File toOpen = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
-        if (toOpen.isDirectory())
+        List<File> files = (new FileTypeSearch()).findFiles(toOpen, new PlaylistFileFilter());
+        for (File f : files)
         {
-          List<File> files = (new FileTypeSearch()).findFiles(toOpen, new PlaylistFileFilter());
-          for (File f : files)
-          {
-            openPlaylist(f);
-          }
-        }
-        else
-        {
-          openPlaylist(toOpen);
+          openPlaylist(f);
         }
       }
+      else
+      {
+        openPlaylist(toOpen);
+      }
+    });
+  }
+
+  private List<File> getSelectedFilesFromTreePlaylists()
+  {
+    int[] selRows = _playlistDirectoryTree.getSelectionRows();
+    if (selRows == null)
+    {
+      return Collections.emptyList();
     }
+    return Arrays.stream(selRows).mapToObj(i -> {
+      TreePath selPath = this._playlistDirectoryTree.getPathForRow(i);
+      return new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
+    }).collect(Collectors.toList());
   }
 
   private void deleteTreeSelectedPlaylists()
@@ -1471,7 +1448,37 @@ public final class GUIScreen extends JFrame implements DropTargetListener
         this.openPlaylist(file);
       }
     }
-  }//GEN-LAST:event_openIconButtonActionPerformed
+  }//GEN-LAST:event_openIconButtonActionPerformed(java.awt.event.ActionEvent evt)
+
+  private void openPlaylistFoldersFromPlaylistTree()
+  {
+    this.getSelectedFilesFromTreePlaylists().stream()
+      .map(File :: getParentFile)
+      .filter(Objects :: nonNull)
+      .distinct()
+      .forEach(this :: openFolderInExplorerPerformed);
+  }
+
+  private void openPlaylistLocation(Playlist playList)
+  {
+    this.openFolderInExplorerPerformed(playList.getFile().getParentFile());
+  }
+
+  private void openFolderInExplorerPerformed(File folder)
+  {
+    if (folder != null)
+    {
+      try
+      {
+        Desktop.getDesktop().open(folder);
+      }
+      catch (IOException e)
+      {
+        _logger.warn("Failed to open playlist folder location", e);
+        throw new RuntimeException(e);
+      }
+    }
+  }
 
   public void openPlaylist(final File file)
   {
@@ -2863,6 +2870,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private javax.swing.JMenuItem _helpMenuItem;
   private javax.swing.JSplitPane _leftSplitPane;
   private javax.swing.JMenuItem _loadMenuItem;
+  private javax.swing.JMenuItem _openPlaylistLocationMenuItem;
   private javax.swing.JList _lstMediaLibraryDirs;
   private javax.swing.JMenuBar _mainMenuBar;
   private javax.swing.JPanel _mediaLibraryButtonPanel;
@@ -2875,6 +2883,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private javax.swing.JMenuItem _miExactMatchRepairOpenPlaylists;
   private javax.swing.JMenuItem _miExactMatchesSearch;
   private javax.swing.JMenuItem _miOpenSelectedPlaylists;
+  private javax.swing.JMenuItem _miOpenSelectedPlaylistLocation;
   private javax.swing.JMenuItem _miRefreshDirectoryTree;
   private javax.swing.JMenuItem _miReload;
   private javax.swing.JMenuItem _miReloadAll;
