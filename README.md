@@ -84,3 +84,6 @@ In project folder, run:
 ```shell
 gradlew packageMyApp
 ```
+
+Other documentation:
+- [Release procedure](doc/Release Procedure.md)
