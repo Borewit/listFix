@@ -21,81 +21,47 @@
 package listfix.view.support;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.text.NumberFormat;
 
-/**
- *
- * @author jcaron
- */
 public class ZebraJTable extends javax.swing.JTable
 {
-  private java.awt.Color[] rowColors = new java.awt.Color[2];
+  private final java.awt.Color[] rowColors = new java.awt.Color[2];
   private boolean drawStripes = false;
 
-  /**
-   *
-   */
   public ZebraJTable()
   {
   }
 
-  /**
-   *
-   * @param numRows
-   * @param numColumns
-   */
   public ZebraJTable(int numRows, int numColumns)
   {
     super(numRows, numColumns);
   }
 
-  /**
-   *
-   * @param rowData
-   * @param columnNames
-   */
-  public ZebraJTable(Object[][] rowData, Object[] columnNames)
+ public ZebraJTable(Object[][] rowData, Object[] columnNames)
   {
     super(rowData, columnNames);
   }
 
-  /**
-   *
-   * @param dataModel
-   */
-  public ZebraJTable(javax.swing.table.TableModel dataModel)
+   public ZebraJTable(javax.swing.table.TableModel dataModel)
   {
     super(dataModel);
   }
 
-  /**
-   *
-   * @param dataModel
-   * @param columnModel
-   */
   public ZebraJTable(javax.swing.table.TableModel dataModel, javax.swing.table.TableColumnModel columnModel)
   {
     super(dataModel, columnModel);
   }
 
-  /**
-   *
-   * @param dataModel
-   * @param columnModel
-   * @param selectionModel
-   */
   public ZebraJTable(javax.swing.table.TableModel dataModel, javax.swing.table.TableColumnModel columnModel, javax.swing.ListSelectionModel selectionModel)
   {
     super(dataModel, columnModel, selectionModel);
   }
 
-  /** Add stripes between cells and behind non-opaque cells.
-   * @param g
+  /**
+   * Add stripes between cells and behind non-opaque cells.
    */
   @Override
   public void paintComponent(java.awt.Graphics g)
@@ -142,11 +108,8 @@ public class ZebraJTable extends javax.swing.JTable
     setOpaque(true);
   }
 
-  /** Add background stripes behind rendered cells.
-   * @param renderer
-   * @param row
-   * @param col
-   * @return
+  /**
+   * Add background stripes behind rendered cells.
    */
   @Override
   public java.awt.Component prepareRenderer(
@@ -160,11 +123,8 @@ public class ZebraJTable extends javax.swing.JTable
     return c;
   }
 
-  /** Add background stripes behind edited cells.
-   * @param editor
-   * @param row
-   * @param col
-   * @return
+  /**
+   * Add background stripes behind edited cells.
    */
   @Override
   public java.awt.Component prepareEditor(
@@ -178,8 +138,8 @@ public class ZebraJTable extends javax.swing.JTable
     return c;
   }
 
-  /** Force the table to fill the viewport's height.
-   * @return
+  /**
+   * Force the table to fill the viewport's height.
    */
   @Override
   public boolean getScrollableTracksViewportHeight()
@@ -192,7 +152,6 @@ public class ZebraJTable extends javax.swing.JTable
     return (p).getHeight() > getPreferredSize().height;
   }
 
-  /** Compute zebra background stripe colors. */
   private void updateZebraColors()
   {
     rowColors[0] = getBackground();
@@ -211,132 +170,79 @@ public class ZebraJTable extends javax.swing.JTable
     rowColors[1] = new java.awt.Color(240, 240, 240);
   }
 
-    /**
-   *
-   * @param colIx
-   * @return
-   */
   public int autoResizeColumn(int colIx)
-    {
-        return autoResizeColumn(colIx, false, -1);
-    }
+  {
+    return autoResizeColumn(colIx, false, -1);
+  }
 
-  /**
-   *
-   * @param colIx
-   * @param fixedWidth
-   * @return
-   */
   public int autoResizeColumn(int colIx, boolean fixedWidth)
+  {
+    return autoResizeColumn(colIx, fixedWidth, -1);
+  }
+
+  public int autoResizeColumn(int colIx, boolean fixedWidth, int minWidth)
+  {
+    TableCellRenderer renderer = getCellRenderer(0, colIx);
+    int maxWidth = 0;
+    for (int rowIx = 0; rowIx < getRowCount(); rowIx++)
     {
-        return autoResizeColumn(colIx, fixedWidth, -1);
+      Object val = getValueAt(rowIx, colIx);
+      Component comp = renderer.getTableCellRendererComponent(this, val, false, false, rowIx, colIx);
+      int width = comp.getPreferredSize().width;
+      if (width > maxWidth)
+      {
+        maxWidth = width;
+      }
     }
 
-    /**
-   *
-   * @param colIx
-   * @param fixedWidth
-   * @param minWidth
-   * @return
-   */
-  public int autoResizeColumn(int colIx, boolean fixedWidth, int minWidth)
-    {
-        TableCellRenderer renderer = getCellRenderer(0, colIx);
-        int maxWidth = 0;
-        for (int rowIx = 0; rowIx < getRowCount(); rowIx++)
-        {
-            Object val = getValueAt(rowIx, colIx);
-            Component comp = renderer.getTableCellRendererComponent(this, val, false, false, rowIx, colIx);
-            int width = comp.getPreferredSize().width;
-            if (width > maxWidth)
-      {
-                maxWidth = width;
-      }
-        }
-
-        // add 6 for default intercell spacing
-        maxWidth += 6;
+    // add 6 for default intercell spacing
+    maxWidth += 6;
     if (maxWidth < minWidth)
     {
       maxWidth = minWidth;
     }
 
-        TableColumn col = getColumnModel().getColumn(colIx);
-        col.setPreferredWidth(maxWidth);
-        if (fixedWidth)
-        {
-            col.setMaxWidth(maxWidth);
-            col.setMinWidth(maxWidth);
-        }
-        return maxWidth;
+    TableColumn col = getColumnModel().getColumn(colIx);
+    col.setPreferredWidth(maxWidth);
+    if (fixedWidth)
+    {
+      col.setMaxWidth(maxWidth);
+      col.setMinWidth(maxWidth);
     }
+    return maxWidth;
+  }
 
-    /**
-   *
-   * @param scroller
-   */
   public void initFillColumnForScrollPane(final JScrollPane scroller)
+  {
+    scroller.addComponentListener(new java.awt.event.ComponentAdapter()
     {
-        scroller.addComponentListener(new java.awt.event.ComponentAdapter()
-        {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent evt)
-            {
-                setFillerColumnWidth(scroller);
-            }
-        });
-    }
+      @Override
+      public void componentResized(java.awt.event.ComponentEvent evt)
+      {
+        setFillerColumnWidth(scroller);
+      }
+    });
+  }
 
-    /**
-   *
-   * @param scroller
-   */
   public void setFillerColumnWidth(JScrollPane scroller)
+  {
+    TableColumnModel cm = getColumnModel();
+    int colCount = cm.getColumnCount();
+    int lastIx = colCount - 1;
+    int normWidth = 0;
+    for (int ix = 0; ix < lastIx; ix++)
     {
-        TableColumnModel cm = getColumnModel();
-        int colCount = cm.getColumnCount();
-        int lastIx = colCount - 1;
-        int normWidth = 0;
-        for (int ix=0; ix < lastIx; ix++)
-        {
-            normWidth += cm.getColumn(ix).getPreferredWidth();
-        }
-        int viewWidth = scroller.getViewport().getWidth();
-        TableColumn fillCol = cm.getColumn(lastIx);
-        if (normWidth < viewWidth)
-        {
-            fillCol.setPreferredWidth(viewWidth - normWidth);
-        }
-        else
-        {
-            fillCol.setPreferredWidth(0);
-        }
+      normWidth += cm.getColumn(ix).getPreferredWidth();
     }
-
-    /**
-   *
-   */
-  public static class IntRenderer extends DefaultTableCellRenderer
+    int viewWidth = scroller.getViewport().getWidth();
+    TableColumn fillCol = cm.getColumn(lastIx);
+    if (normWidth < viewWidth)
     {
-    private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
-
-        /**
-     *
-     */
-    public IntRenderer()
-        {
-            super();
-            setHorizontalAlignment(JLabel.RIGHT);
-        }
-
-        /**
-     *
-     * @param value
-     */
-    @Override
-        protected void setValue(Object value)
-        {
-            setText((value == null) ? "" : _intFormatter.format(value));
-        }
+      fillCol.setPreferredWidth(viewWidth - normWidth);
     }
+    else
+    {
+      fillCol.setPreferredWidth(0);
+    }
+  }
 }

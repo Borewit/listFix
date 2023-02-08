@@ -25,19 +25,10 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.util.StringTokenizer;
 
-/**
- *
- * @author jcaron
- */
 public class FontExtensions
 {
   private static final Logger _logger = LogManager.getLogger(FontExtensions.class);
 
-  /**
-   *
-   * @param inputFont
-   * @return
-   */
   public static String getStyle(Font inputFont)
   {
     if (inputFont.isPlain())

@@ -23,10 +23,6 @@ package listfix.view.support;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.File;
 
-/**
- *
- * @author jcaron
- */
 public class PlaylistTreeNode extends DefaultMutableTreeNode
 {
   public PlaylistTreeNode(Object object)

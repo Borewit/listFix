@@ -90,7 +90,7 @@ public class PlaylistsTableModel extends AbstractTableModel
   @Override
   public Object getValueAt(int rowIndex, int columnIndex)
   {
-    if (_items == null)
+    if (_items == null || _items.isEmpty())
     {
       return null;
     }
@@ -100,7 +100,8 @@ public class PlaylistsTableModel extends AbstractTableModel
       Playlist list = item.getPlaylist();
       switch (columnIndex)
       {
-        case 0:
+        case 0 ->
+        {
           if (list.getMissingCount() > 0)
           {
             return ImageIcons.IMG_MISSING;
@@ -113,10 +114,15 @@ public class PlaylistsTableModel extends AbstractTableModel
           {
             return ImageIcons.IMG_FOUND;
           }
-        case 1:
+        }
+        case 1 ->
+        {
           return item.getDisplayName();
-        default:
+        }
+        default ->
+        {
           return null;
+        }
       }
     }
   }

@@ -62,9 +62,6 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
   /**
    * Creates new form MultiListBatchClosestMatchResultsDialog
-   *
-   * @param parent
-   * @param modal
    */
   public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IPlaylistOptions filePathOptions)
   {
@@ -73,11 +70,6 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     initComponents();
   }
 
-  /**
-   * @param parent
-   * @param modal
-   * @param br
-   */
   public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlaylistOptions filePathOptions)
   {
     super(parent, br.getDescription(), modal);
@@ -141,6 +133,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
       for (BatchRepairItem item : _batch.getItems())
       {
+        IPlaylistModifiedListener listener = this :: onPlaylistModified;
         item.getPlaylist().addModifiedListener(listener);
       }
 
@@ -160,8 +153,6 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
       _userCancelled = true;
     }
   }
-
-  private final IPlaylistModifiedListener listener = list -> onPlaylistModified(list);
 
   private void onPlaylistModified(Playlist list)
   {

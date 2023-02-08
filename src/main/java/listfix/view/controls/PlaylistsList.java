@@ -38,6 +38,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class PlaylistsList extends javax.swing.JPanel
     resizeAllColumns();
 
     // sort playlists by filename
-    RowSorter sorter = _uiLists.getRowSorter();
+    RowSorter<? extends TableModel> sorter = _uiLists.getRowSorter();
     List<RowSorter.SortKey> keys = new ArrayList<>();
     keys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
     sorter.setSortKeys(keys);

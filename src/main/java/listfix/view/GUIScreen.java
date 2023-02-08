@@ -82,6 +82,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -1215,23 +1216,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  /**
+   * Checked
+   */
   private void runClosestMatchesSearchOnSelectedLists()
   {
-    TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
-    List<File> files = new ArrayList<>();
-    for (TreePath path : paths)
-    {
-      File file = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
-      if (file.isFile())
-      {
-        files.add(file);
-      }
-      else
-      {
-        // We're dealing w/ a folder, get all the lists it contains.
-        files.addAll(PlaylistScanner.getAllPlaylists(file));
-      }
-    }
+    _logger.debug("Run Closest Matches Search...");
+    List<File> files = this.getRecursiveSelectedFilesFromTreePlaylists();
     if (files.isEmpty())
     {
       return;
@@ -1260,22 +1251,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void runExactMatchesSearchOnSelectedPlaylists()
   {
-    TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
-    List<File> files = new ArrayList<>();
-    for (TreePath path : paths)
-    {
-      File file = new File(FileTreeNodeGenerator.TreePathToFileSystemPath(path));
-      if (file.isFile())
-      {
-        files.add(file);
-      }
-      else
-      {
-        files.addAll(PlaylistScanner.getAllPlaylists(file));
-      }
-    }
+    _logger.debug("Run Exact Matches Search...");
+    List<File> files = this.getRecursiveSelectedFilesFromTreePlaylists();
     if (files.isEmpty())
     {
+      _logger.info("Abort search, no files selected");
       return;
     }
     BatchRepair br = new BatchRepair(_guiDriver.getMediaLibrary(), files.get(0));
@@ -1318,17 +1298,31 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     });
   }
 
+  private List<File> getRecursiveSelectedFilesFromTreePlaylists() {
+    List<File> files = new ArrayList<>();
+    for (File file : this.getSelectedFilesFromTreePlaylists())
+    {
+      if (file.isFile())
+      {
+        files.add(file);
+      }
+      else
+      {
+        // We're dealing w/ a folder, get all the lists it contains.
+        files.addAll(PlaylistScanner.getAllPlaylists(file));
+      }
+    }
+    return files;
+  }
+
   private List<File> getSelectedFilesFromTreePlaylists()
   {
-    int[] selRows = _playlistDirectoryTree.getSelectionRows();
-    if (selRows == null)
+    TreePath[] paths = _playlistDirectoryTree.getSelectionPaths();
+    if (paths == null)
     {
       return Collections.emptyList();
     }
-    return Arrays.stream(selRows).mapToObj(i -> {
-      TreePath selPath = this._playlistDirectoryTree.getPathForRow(i);
-      return new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath));
-    }).collect(Collectors.toList());
+    return Arrays.stream(paths).map(selPath -> new File(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath))).collect(Collectors.toList());
   }
 
   private void deleteTreeSelectedPlaylists()
@@ -2812,9 +2806,17 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args) throws IOException
+  public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException
   {
     _logger.info(String.format("Starting ListFix() version \"%s\"...", applicationVersion));
+
+    // EDT Exception
+    SwingUtilities.invokeAndWait(() -> {
+      // We are in the event dispatching thread
+      Thread.currentThread().setUncaughtExceptionHandler((thread, e) -> {
+        _logger.error("Uncaught Exception", e);
+      });
+    });
 
     IAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
     InitApplicationFont(tempOptions.getAppFont());
