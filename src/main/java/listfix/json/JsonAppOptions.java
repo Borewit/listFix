@@ -48,7 +48,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private String playlistsDirectory = EMPTY_STRING;
   @JsonSerialize(using = JsonFontSerializer.class)
   @JsonDeserialize(using = JsonFontDeserializer.class)
-  private Font appFont = new Font("SansSerif", 0, 11);
+  private Font appFont = new Font("SansSerif", Font.PLAIN, 11);
   private int maxClosestResults = 20;
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
