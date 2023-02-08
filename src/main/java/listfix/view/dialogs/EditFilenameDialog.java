@@ -48,10 +48,6 @@ public class EditFilenameDialog extends javax.swing.JDialog
   private String fileName;
 
   /** Creates new form EditFilenameDialog
-   * @param parent
-   * @param modal
-   * @param title
-   * @param filename
    */
   public EditFilenameDialog(java.awt.Frame parent, String title, boolean modal, String filename)
   {
@@ -69,37 +65,21 @@ public class EditFilenameDialog extends javax.swing.JDialog
   {
   }
 
-  /**
-   *
-   * @return
-   */
   public String getFileName()
   {
     return fileName;
   }
 
-  /**
-   *
-   * @param x
-   */
   public void setFileName(String x)
   {
     fileName = x;
   }
 
-  /**
-   *
-   * @param i
-   */
   public void setResultCode(int i)
   {
     resultCode = i;
   }
 
-  /**
-   *
-   * @return
-   */
   public int getResultCode()
   {
     return resultCode;
@@ -213,20 +193,14 @@ public class EditFilenameDialog extends javax.swing.JDialog
     setResultCode(OK);
     }//GEN-LAST:event_btnOkActionPerformed
 
-  /** Closes the dialog */
-    private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
+  /**
+   *  Closes the dialog
+   */
+  private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
     setVisible(false);
     dispose();
     }//GEN-LAST:event_closeDialog
 
-  /**
-   *
-   * @param parent
-   * @param title
-   * @param modal
-   * @param filename
-   * @return
-   */
   public static EditFilenameResult showDialog(java.awt.Frame parent, String title, boolean modal, String filename)
   {
     EditFilenameDialog tempDBox = new EditFilenameDialog(parent, title, modal, filename);

@@ -91,41 +91,26 @@ public class BatchRepair
     return _items.get(ix);
   }
 
-  /**
-   * @return
-   */
-  public Boolean isEmpty()
+  public boolean isEmpty()
   {
     return _items.isEmpty();
   }
 
-  /**
-   * @return
-   */
   public String getDescription()
   {
     return _description;
   }
 
-  /**
-   * @param description
-   */
   public void setDescription(String description)
   {
     _description = description;
   }
 
-  /**
-   * @return
-   */
   public File getRootDirectory()
   {
     return _rootDirectory;
   }
 
-  /**
-   * @return
-   */
   public List<Playlist> getPlaylists()
   {
     List<Playlist> result = new ArrayList<>();
@@ -136,9 +121,6 @@ public class BatchRepair
     return result;
   }
 
-  /**
-   * @param item
-   */
   public void add(BatchRepairItem item)
   {
     _items.add(item);
@@ -148,7 +130,6 @@ public class BatchRepair
    * Performs an exact matches search on all entries in multiple playlists.
    *
    * @param observer The progress observer for this operation.
-   * @throws IOException
    */
   public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
   {
@@ -263,8 +244,6 @@ public class BatchRepair
 
   /**
    * Helper method to get auto-generated zip file name for backing up the playlists in this batch repair.
-   *
-   * @return
    */
   public String getDefaultBackupName()
   {

@@ -38,10 +38,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- *
- * @author jcaron
- */
 public final class WindowSaver implements AWTEventListener
 {
   private static final String PROP_FILE = Constants.DATA_DIR + "position.ini";
@@ -54,10 +50,6 @@ public final class WindowSaver implements AWTEventListener
     framemap = new HashMap();
   }
 
-  /**
-   *
-   * @return
-   */
   public static WindowSaver getInstance()
   {
     if (saver == null)
@@ -67,10 +59,6 @@ public final class WindowSaver implements AWTEventListener
     return saver;
   }
 
-  /**
-   *
-   * @param evt
-   */
   @Override
   public void eventDispatched(AWTEvent evt)
   {
@@ -92,10 +80,6 @@ public final class WindowSaver implements AWTEventListener
     }
   }
 
-  /**
-   *
-   * @param frame
-   */
   public void loadSettings(JFrame frame)
   {
     Properties settings = new Properties();
@@ -121,13 +105,6 @@ public final class WindowSaver implements AWTEventListener
     }
   }
 
-  /**
-   *
-   * @param props
-   * @param name
-   * @param value
-   * @return
-   */
   public int getInt(Properties props, String name, int value)
   {
     String v = props.getProperty(name);
@@ -138,9 +115,6 @@ public final class WindowSaver implements AWTEventListener
     return Integer.parseInt(v);
   }
 
-  /**
-   *
-   */
   public void saveSettings()
   {
     Properties settings = new Properties();

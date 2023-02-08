@@ -19,120 +19,89 @@
 
 package listfix.view.support;
 
-/**
- *
- * @author jcaron
- * @param <T>
- */
 public final class DualProgressAdapter<T> implements IDualProgressObserver<T>
 {
-    /**
-   *
-   * @param <T>
-   * @param observer
-   * @return
-   */
   public static <T> DualProgressAdapter<T> wrap(IDualProgressObserver<T> observer)
+  {
+    if (observer instanceof DualProgressAdapter)
+      return (DualProgressAdapter<T>) observer;
+    else
+      return new DualProgressAdapter<>(observer);
+  }
+
+  private DualProgressAdapter(IDualProgressObserver<T> observer)
+  {
+    _observer = observer;
+
+    IProgressObserver<T> taskObserver = new IProgressObserver<T>()
     {
-        if (observer instanceof DualProgressAdapter)
-            return (DualProgressAdapter<T>)observer;
-        else
-            return new DualProgressAdapter(observer);
-    }
+      public void reportProgress(int progress)
+      {
+        _observer.reportTaskProgress(progress, null);
+      }
 
-    private DualProgressAdapter(IDualProgressObserver<T> observer)
-    {
-        _observer = observer;
-
-        IProgressObserver<T> taskObserver = new IProgressObserver<T>()
-        {
-            public void reportProgress(int progress)
-            {
-                _observer.reportTaskProgress(progress, null);
-            }
-
-            public void reportProgress(int progress, T state)
-            {
-                _observer.reportTaskProgress(progress, state);
-            }
+      public void reportProgress(int progress, T state)
+      {
+        _observer.reportTaskProgress(progress, state);
+      }
 
       @Override
       public boolean getCancelled()
       {
         return _observer.getCancelled();
       }
-        };
-        _task = ProgressAdapter.wrap(taskObserver);
+    };
+    _task = ProgressAdapter.wrap(taskObserver);
 
-        IProgressObserver<T> overallObserver = new IProgressObserver<T>()
-        {
-            public void reportProgress(int progress)
-            {
-                _observer.reportOverallProgress(progress, null);
-            }
+    IProgressObserver<T> overallObserver = new IProgressObserver<T>()
+    {
+      public void reportProgress(int progress)
+      {
+        _observer.reportOverallProgress(progress, null);
+      }
 
-            public void reportProgress(int progress, T state)
-            {
-                _observer.reportOverallProgress(progress, state);
-            }
+      public void reportProgress(int progress, T state)
+      {
+        _observer.reportOverallProgress(progress, state);
+      }
 
       @Override
       public boolean getCancelled()
       {
         return _observer.getCancelled();
       }
-        };
-        _overall = ProgressAdapter.wrap(overallObserver);
-    }
+    };
+    _overall = ProgressAdapter.wrap(overallObserver);
+  }
 
-    /**
-   *
-   * @param percentComplete
-   * @param state
-   */
   public void reportTaskProgress(int percentComplete, T state)
-    {
-        if (_observer != null)
-            _observer.reportTaskProgress(percentComplete, state);
-    }
+  {
+    if (_observer != null)
+      _observer.reportTaskProgress(percentComplete, state);
+  }
 
-    /**
-   *
-   * @param percentComplete
-   * @param state
-   */
   public void reportOverallProgress(int percentComplete, T state)
-    {
-        if (_observer != null)
-            _observer.reportOverallProgress(percentComplete, state);
-    }
+  {
+    if (_observer != null)
+      _observer.reportOverallProgress(percentComplete, state);
+  }
 
-    IDualProgressObserver<T> _observer;
+  IDualProgressObserver<T> _observer;
 
-    /**
-   *
-   * @return
-   */
   public ProgressAdapter<T> getTask()
-    {
-        return _task;
-    }
-    ProgressAdapter<T> _task;
+  {
+    return _task;
+  }
 
-    /**
-   *
-   * @return
-   */
+  ProgressAdapter<T> _task;
+
   public ProgressAdapter<T> getOverall()
-    {
-        return _overall;
-    }
-    ProgressAdapter<T> _overall;
+  {
+    return _overall;
+  }
 
-  /**
-   *
-   * @return
-   */
+  ProgressAdapter<T> _overall;
+
   @Override
   public boolean getCancelled()
   {

@@ -43,19 +43,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author jcaron
- */
 public class AppOptionsDialog extends javax.swing.JDialog
 {
   /**
    *
    */
   public static final int OK = 0;
-  /**
-   *
-   */
+
   public static final int CANCEL = 1;
 
   private static final long serialVersionUID = 3409894354485158935L;
@@ -150,44 +144,25 @@ public class AppOptionsDialog extends javax.swing.JDialog
     _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
   }
 
-  /**
-   *
-   */
   public AppOptionsDialog()
   {
   }
 
-  /**
-   *
-   * @return
-   */
   public String getFileName()
   {
     return _fileName;
   }
 
-  /**
-   *
-   * @param x
-   */
   public void setFileName(String x)
   {
     _fileName = x;
   }
 
-  /**
-   *
-   * @param i
-   */
   public void setResultCode(int i)
   {
     _resultCode = i;
   }
 
-  /**
-   *
-   * @return
-   */
   public int getResultCode()
   {
     return _resultCode;

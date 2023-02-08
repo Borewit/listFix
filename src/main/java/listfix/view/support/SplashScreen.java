@@ -21,18 +21,10 @@ package listfix.view.support;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- *
- * @author jcaron
- */
 public class SplashScreen extends JFrame
 {
   private JLabel statusBar;
 
-  /**
-   *
-   * @param imageResourcePath
-   */
   public SplashScreen(String imageResourcePath)
   {
     ClassLoader cl = this.getClass().getClassLoader();

@@ -21,15 +21,7 @@ package listfix.view.support;
 
 import listfix.model.playlists.Playlist;
 
-/**
- *
- * @author jcaron
- */
 public interface IPlaylistModifiedListener
 {
-    /**
-   *
-   * @param list
-   */
   void playlistModified(Playlist list);
 }

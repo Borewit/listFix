@@ -21,33 +21,20 @@ package listfix.view.support;
 
 import javax.swing.*;
 
-// implement doInBackground() for easiest use. Designed for the single progress
-// bar operation of ProgressDialog.
 /**
- *
- * @author jcaron
- * @param <T>
- * @param <V>
+ * Implement doInBackground() for easiest use. Designed for the single progress
+ * bar operation of ProgressDialog.
  */
 public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements IProgressObserver<V>
 {
   private String _message = "";
 
-  /**
-   *
-   * @param progress
-   */
   public void reportProgress(int progress)
   {
     setProgress(progress);
   }
 
-  /**
-   *
-   * @param progress
-   * @param state
-   */
-  public void reportProgress(int progress, V state)
+   public void reportProgress(int progress, V state)
   {
     setProgress(progress);
     if (state != null)
@@ -56,20 +43,12 @@ public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements 
     }
   }
 
-  /**
-   *
-   * @return
-   */
   public boolean getCancelled()
   {
     return this.isCancelled();
   }
 
-  /**
-   *
-   * @param message
-   */
-  public void setMessage(String message)
+   public void setMessage(String message)
   {
     if (message.equals(_message))
     {
@@ -84,10 +63,6 @@ public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements 
     }
   }
 
-  /**
-   *
-   * @return
-   */
   public String getMessage()
   {
     return _message;
