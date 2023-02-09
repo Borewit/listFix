@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,22 +50,12 @@ public class WPLReader extends PlaylistReader
 {
   private BufferedReader _buffer;
   private List<PlaylistEntry> results = new ArrayList<>();
-  private long fileLength = 0;
-  private String encoding = "";
-  private File playlistFile;
+  private final long fileLength;
   private static final PlaylistType type = PlaylistType.WPL;
   private static final Logger _logger = LogManager.getLogger(WPLReader.class);
 
-  /**
-   *
-   */
   private StringBuilder _cache;
 
-  /**
-   *
-   * @param wplFile
-   * @throws FileNotFoundException
-   */
   public WPLReader(IPlaylistOptions playListOptions, Path wplFile) throws FileNotFoundException
   {
     super(playListOptions, wplFile);
@@ -78,7 +69,7 @@ public class WPLReader extends PlaylistReader
       _logger.error("Holy shit, ther'e no UTF-8 support on this machine!! " + ex);
       throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
     }
-    encoding = "UTF-8";
+    encoding = StandardCharsets.UTF_8;
     fileLength = wplFile.toFile().length();
   }
 
@@ -89,26 +80,6 @@ public class WPLReader extends PlaylistReader
     s = s.replaceAll("&gt;", ">");
     s = s.replaceAll("&amp;", "&");
     return s;
-  }
-
-  /**
-   *
-   * @return
-   */
-  @Override
-  public String getEncoding()
-  {
-    return encoding;
-  }
-
-  /**
-   *
-   * @param encoding
-   */
-  @Override
-  public void setEncoding(String encoding)
-  {
-    this.encoding = encoding;
   }
 
   /**
@@ -325,7 +296,7 @@ public class WPLReader extends PlaylistReader
         }
         tokenNumber++;
       }
-      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), extInf, playlistFile.toPath(), cid, tid));
+      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), extInf, super.playlistPath, cid, tid));
     }
     else
     {

@@ -22,7 +22,6 @@ package listfix.io.playlists.m3u;
 
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
-import listfix.io.UnicodeInputStream;
 import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.FilePlaylistEntry;
@@ -38,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -51,10 +51,9 @@ import java.util.StringTokenizer;
  */
 public class M3UReader extends PlaylistReader
 {
-  private BufferedReader buffer;
-  private List<PlaylistEntry> results = new ArrayList<>();
+  private final BufferedReader buffer;
+  private final List<PlaylistEntry> results = new ArrayList<>();
   private long fileLength = 0;
-  private String _encoding = "";
   private static final PlaylistType type = PlaylistType.M3U;
   private static final Logger _logger = LogManager.getLogger(M3UReader.class);
 
@@ -66,29 +65,23 @@ public class M3UReader extends PlaylistReader
 
     File m3uFile = m3uPath.toFile();
 
-    _encoding = UnicodeUtils.getEncoding(m3uFile);
-    if (_encoding.equals("UTF-8") || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
+    encoding = UnicodeUtils.getEncoding(m3uFile);
+    if (encoding.equals(StandardCharsets.UTF_8) || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
     {
-      buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(m3uFile), "UTF-8"), StandardCharsets.UTF_8));
-      _encoding = "UTF-8";
+      buffer = new BufferedReader(new InputStreamReader(new FileInputStream(m3uFile), StandardCharsets.UTF_8));
+      encoding = StandardCharsets.UTF_8;
     }
     else
     {
-      buffer = new BufferedReader(new InputStreamReader(new FileInputStream(m3uFile)));
+      buffer = new BufferedReader(new FileReader(m3uFile));
     }
     fileLength = m3uFile.length();
   }
 
   @Override
-  public String getEncoding()
+  public Charset getEncoding()
   {
-    return _encoding;
-  }
-
-  @Override
-  public void setEncoding(String encoding)
-  {
-    this._encoding = encoding;
+    return encoding;
   }
 
   @Override

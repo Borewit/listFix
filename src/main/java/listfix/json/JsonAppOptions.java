@@ -53,113 +53,72 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
 
-  /**
-   * @return
-   */
   public boolean getAutoLocateEntriesOnPlaylistLoad()
   {
     return autoLocateEntriesOnPlaylistLoad;
   }
 
-  /**
-   * @param autoLocateEntriesOnPlaylistLoad
-   */
   public void setAutoLocateEntriesOnPlaylistLoad(boolean autoLocateEntriesOnPlaylistLoad)
   {
     this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
   }
 
-  /**
-   * @return
-   */
   public int getMaxPlaylistHistoryEntries()
   {
     return maxPlaylistHistoryEntries;
   }
 
-  /**
-   * @param lookAndFeel
-   */
   public void setLookAndFeel(String lookAndFeel)
   {
     this.lookAndFeel = lookAndFeel;
   }
 
-  /**
-   * @return
-   */
   public String getLookAndFeel()
   {
     return lookAndFeel;
   }
 
-  /**
-   * @param maxPlaylistHistoryEntries
-   */
   public void setMaxPlaylistHistoryEntries(int maxPlaylistHistoryEntries)
   {
     this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
   }
 
-  /**
-   * @param autoRefreshMediaLibraryOnStartup
-   */
   public void setAutoRefreshMediaLibraryOnStartup(boolean autoRefreshMediaLibraryOnStartup)
   {
     this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
   }
 
-  /**
-   * @return
-   */
   public boolean getAutoRefreshMediaLibraryOnStartup()
   {
     return autoRefreshMediaLibraryOnStartup;
   }
 
-  /**
-   * @return
-   */
   public boolean getSavePlaylistsWithRelativePaths()
   {
     return savePlaylistsWithRelativePaths;
   }
 
-  /**
-   * @param savePlaylistsWithRelativePaths
-   */
   public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths)
   {
     this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
   }
 
-  /**
-   * @return
-   */
   public boolean getAlwaysUseUNCPaths()
   {
     return alwaysUseUNCPaths;
   }
 
-  /**
-   * @param alwaysUseUNCPaths
-   */
   public void setAlwaysUseUNCPaths(boolean alwaysUseUNCPaths)
   {
     this.alwaysUseUNCPaths = alwaysUseUNCPaths;
   }
 
-  /**
-   * @return
-   */
+
   public String getPlaylistsDirectory()
   {
     return playlistsDirectory;
   }
 
-  /**
-   * @param playlistsDirectory
-   */
   public void setPlaylistsDirectory(String playlistsDirectory)
   {
     if (new File(playlistsDirectory).exists())
@@ -169,7 +128,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @return the appFont
+   * @return The appFont
    */
   public Font getAppFont()
   {
@@ -177,7 +136,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @param appFont the appFont to set
+   * @param appFont The appFont to set
    */
   public void setAppFont(Font appFont)
   {
@@ -185,7 +144,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @return the maxClosestResults
+   * @return The maxClosestResults
    */
   public int getMaxClosestResults()
   {
@@ -201,7 +160,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @return the ignoredSmallWords
+   * @return The ignoredSmallWords
    */
   public String getIgnoredSmallWords()
   {
@@ -209,7 +168,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @param ignoredSmallWords the ignoredSmallWords to set
+   * @param ignoredSmallWords The ignoredSmallWords to set
    */
   public void setIgnoredSmallWords(String ignoredSmallWords)
   {
@@ -217,7 +176,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @return the caseInsensitiveExactMatching
+   * @return The caseInsensitiveExactMatching
    */
   public boolean getCaseInsensitiveExactMatching()
   {
@@ -225,7 +184,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   /**
-   * @param caseInsensitiveExactMatching the caseInsensitiveExactMatching to set
+   * @param caseInsensitiveExactMatching The caseInsensitiveExactMatching to set
    */
   public void setCaseInsensitiveExactMatching(boolean caseInsensitiveExactMatching)
   {

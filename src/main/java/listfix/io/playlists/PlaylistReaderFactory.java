@@ -29,48 +29,23 @@ import listfix.io.playlists.xspf.XSPFReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.Playlist;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 
-/**
- *
- * @author jcaron
- */
 public class PlaylistReaderFactory
 {
 
-  /**
-   *
-   * @param inputFile
-   * @return
-   * @throws FileNotFoundException
-   */
-  public static IPlaylistReader getPlaylistReader(Path inputFile, IPlaylistOptions playListOptions) throws FileNotFoundException
+  public static IPlaylistReader getPlaylistReader(Path inputFile, IPlaylistOptions playListOptions) throws IOException
   {
     PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile.toFile(), playListOptions);
-    if (type == PlaylistType.M3U)
-    {
-      return new M3UReader(playListOptions, inputFile);
-    }
-    else if (type == PlaylistType.PLS)
-    {
-      return new PLSReader(playListOptions, inputFile);
-    }
-    else if (type == PlaylistType.XSPF)
-    {
-      return new XSPFReader(playListOptions, inputFile);
-    }
-    else if (type == PlaylistType.WPL)
-    {
-      return new WPLReader(playListOptions, inputFile);
-    }
-    else if (type == PlaylistType.ITUNES)
-    {
-      return new ITunesXMLReader(playListOptions, inputFile);
-    }
-    else
-    {
-      return null;
-    }
+    return switch (type)
+      {
+        case M3U -> new M3UReader(playListOptions, inputFile);
+        case PLS -> new PLSReader(playListOptions, inputFile);
+        case XSPF -> new XSPFReader(playListOptions, inputFile);
+        case WPL -> new WPLReader(playListOptions, inputFile);
+        case ITUNES -> new ITunesXMLReader(playListOptions, inputFile);
+        default -> throw new IOException("Unsupported playlist type");
+      };
   }
 }

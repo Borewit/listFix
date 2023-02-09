@@ -31,6 +31,16 @@ public class PlaylistFactoryTest
   }
 
   @Test
+  public void readPlaylistM3u8Aight() throws IOException
+  {
+    File m3uPlaylistFile = TestUtil.createFileFromResource(this, "/playlists/m3u/aight.m3u8");
+
+    Playlist m3uPlaylist = PlaylistFactory.getPlaylist(m3uPlaylistFile.toPath(), null, playlistOptions);
+    assertNotNull(m3uPlaylist, "PlaylistFactory should read and construct M3U playlist");
+    assertEquals(265, m3uPlaylist.getEntries().size(), "M3U playlist contains 2 tracks");
+  }
+
+  @Test
   public void readPlaylistPls() throws IOException
   {
     // Extended PLS (PLSv2)

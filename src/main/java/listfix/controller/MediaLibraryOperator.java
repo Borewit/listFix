@@ -36,21 +36,15 @@ import java.util.Set;
 public class MediaLibraryOperator
 {
   private static final Logger _logger = LogManager.getLogger(MediaLibraryOperator.class);
-  private MediaLibraryConfiguration mediaLibraryConfiguration;
-  private ProgressWorker _observer;
+  private final MediaLibraryConfiguration mediaLibraryConfiguration;
+  private final ProgressWorker _observer;
 
-  /**
-   * @param observer
-   */
   public MediaLibraryOperator(ProgressWorker observer)
   {
     this._observer = observer;
     this.mediaLibraryConfiguration = GUIDriver.getInstance().getMediaLibrarConfiguration();
   }
 
-  /**
-   * @param dir
-   */
   public void addDirectory(String dir)
   {
     final Set<String> mediaDir = this.mediaLibraryConfiguration.getConfig().getDirectories();
