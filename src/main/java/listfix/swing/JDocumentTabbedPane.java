@@ -37,8 +37,11 @@ public class JDocumentTabbedPane extends JTabbedPane
     this.addChangeListener(changeEvent -> {
       JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
       int index = sourceTabbedPane.getSelectedIndex();
-      JDocumentComponent doc = JDocumentTabbedPane.this.getDocumentAt(index);
-      documentChangeListeners.forEach(listener -> listener.documentActivated(doc));
+      if (index != -1)
+      {
+        JDocumentComponent doc = JDocumentTabbedPane.this.getDocumentAt(index);
+        documentChangeListeners.forEach(listener -> listener.documentActivated(doc));
+      }
     });
   }
 

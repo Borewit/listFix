@@ -31,7 +31,7 @@ import java.util.List;
  */
 public abstract class Task extends Thread
 {
-  private final List<IProgressObserver> observers;
+  private final List<IProgressObserver<String>> observers;
   private int progress = 0;
 
   /**
@@ -42,34 +42,19 @@ public abstract class Task extends Thread
     observers = new ArrayList<>();
   }
 
-  /**
-   *
-   */
   @Override
   public abstract void run();
 
-  /**
-   *
-   * @param observer
-   */
-  public final void addProgressObserver(IProgressObserver observer)
+  public final void addProgressObserver(IProgressObserver<String> observer)
   {
     observers.add(observer);
   }
 
-  /**
-   *
-   * @param observer
-   */
-  public final void removeProgressObserver(IProgressObserver observer)
+  public final void removeProgressObserver(IProgressObserver<String> observer)
   {
     observers.remove(observer);
   }
 
-  /**
-   *
-   * @param percent
-   */
   public final void notifyObservers(int percent)
   {
     if (percent < 0)
@@ -88,10 +73,6 @@ public abstract class Task extends Thread
     }
   }
 
-  /**
-   *
-   * @return
-   */
   public int getProgress()
   {
     return progress;

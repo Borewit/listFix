@@ -8,9 +8,9 @@ import java.util.TreeSet;
 public class JsonMediaLibrary implements IMediaLibrary
 {
 
-  private Set<String> directories;
-  private Set<String> nestedDirectories;
-  private Set<String> nestedMediaFiles;
+  private final Set<String> directories;
+  private final Set<String> nestedDirectories;
+  private final Set<String> nestedMediaFiles;
 
   public JsonMediaLibrary()
   {

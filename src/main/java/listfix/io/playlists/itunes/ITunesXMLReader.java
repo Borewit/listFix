@@ -49,31 +49,14 @@ import java.util.Map;
  */
 public class ITunesXMLReader extends PlaylistReader
 {
-  private String _encoding;
   private static final Logger _logger = LogManager.getLogger(ITunesXMLReader.class);
 
   private ITunesMediaLibrary _library;
 
-  /**
-   *
-   * @param itunesXmlFile
-   */
   public ITunesXMLReader(IPlaylistOptions playListOptions, Path itunesXmlFile)
   {
     super(playListOptions, itunesXmlFile);
-    _encoding = UnicodeUtils.getEncoding(playlistPath);
-  }
-
-  @Override
-  public String getEncoding()
-  {
-    return _encoding;
-  }
-
-  @Override
-  public void setEncoding(String encoding)
-  {
-    _encoding = encoding;
+    encoding = UnicodeUtils.getEncoding(playlistPath);
   }
 
   @Override
@@ -89,19 +72,7 @@ public class ITunesXMLReader extends PlaylistReader
     SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
     if (playlist != null)
     {
-      PlistPlaylist plistList = (PlistPlaylist) playlist;
-      _library = new ITunesMediaLibrary(plistList);
-      Map<String, ITunesTrack> tracks = getLibrary().getTracks();
-
-      for (String id : tracks.keySet())
-      {
-        PlaylistEntry convertedTrack = iTunesTrackToPlaylistEntry(tracks.get(id));
-        if (convertedTrack != null)
-        {
-          results.add(convertedTrack);
-        }
-      }
-      return results;
+      return getPlaylistEntries(results, (PlistPlaylist) playlist);
     }
     else
     {
@@ -109,13 +80,9 @@ public class ITunesXMLReader extends PlaylistReader
     }
   }
 
-  @Override
-  public List<PlaylistEntry> readPlaylist() throws IOException
+  private List<PlaylistEntry> getPlaylistEntries(List<PlaylistEntry> results, PlistPlaylist playlist)
   {
-    List<PlaylistEntry> results = new ArrayList<>();
-    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
-    PlistPlaylist plistList = (PlistPlaylist) playlist;
-    _library = new ITunesMediaLibrary(plistList);
+    _library = new ITunesMediaLibrary(playlist);
     Map<String, ITunesTrack> tracks = getLibrary().getTracks();
 
     for (String id : tracks.keySet())
@@ -127,6 +94,14 @@ public class ITunesXMLReader extends PlaylistReader
       }
     }
     return results;
+  }
+
+  @Override
+  public List<PlaylistEntry> readPlaylist() throws IOException
+  {
+    List<PlaylistEntry> results = new ArrayList<>();
+    SpecificPlaylist playlist = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
+    return getPlaylistEntries(results, (PlistPlaylist) playlist);
   }
 
   private PlaylistEntry iTunesTrackToPlaylistEntry(ITunesTrack track)

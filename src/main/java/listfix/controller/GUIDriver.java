@@ -82,9 +82,6 @@ public final class GUIDriver
     }
   }
 
-  /**
-   * @return
-   */
   public ApplicationOptionsConfiguration getApplicationConfiguration()
   {
     return this.applicationOptionsConfiguration;
@@ -95,25 +92,11 @@ public final class GUIDriver
     return this.applicationOptionsConfiguration.getConfig();
   }
 
-  /**
-   * @param opts
-   */
   public void setAppOptions(JsonAppOptions opts)
   {
     this.applicationOptionsConfiguration.setConfig(opts);
   }
 
-  /**
-   * @return
-   */
-//  public boolean hasAddedMediaDirectory()
-//  {
-//    return !this.mediaLibraryConfiguration.getConfig().getMediaDirs().isEmpty();
-//  }
-
-  /**
-   * @return
-   */
   public IMediaLibrary getMediaLibrary()
   {
     return this.mediaLibraryConfiguration.getConfig();
@@ -124,50 +107,27 @@ public final class GUIDriver
     return this.mediaLibraryConfiguration;
   }
 
-  /**
-   * @return
-   */
-//  public Set<String> getMediaLibraryFileList()
-//  {
-//    return this.mediaLibraryConfiguration.getConfig().getMediaLibraryFiles();
-//  }
-
-  /**
-   * @return
-   */
   public boolean getShowMediaDirWindow()
   {
     return this.showMediaDirWindow;
   }
 
-  /**
-   * @return
-   */
   public PlaylistHistory getHistory()
   {
     return history;
   }
 
-  /**
-   *
-   */
   public void clearM3UHistory() throws IOException
   {
     this.history.clearHistory();
     this.history.write();
   }
 
-  /**
-   * @return
-   */
   public String[] getRecentM3Us()
   {
     return history.getFilenames();
   }
 
-  /**
-   *
-   */
   public void switchMediaLibraryToMappedDrives()
   {
 

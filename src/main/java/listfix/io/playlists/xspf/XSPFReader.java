@@ -49,8 +49,6 @@ import java.util.List;
  */
 public class XSPFReader extends PlaylistReader
 {
-  private String _encoding;
-
   private static final PlaylistType type = PlaylistType.XSPF;
   private static final Logger _logger = LogManager.getLogger(XSPFReader.class);
 
@@ -61,45 +59,16 @@ public class XSPFReader extends PlaylistReader
   public XSPFReader(IPlaylistOptions playListOptions, Path xspfFile)
   {
     super(playListOptions, xspfFile);
-    _encoding = UnicodeUtils.getEncoding(xspfFile);
+    encoding = UnicodeUtils.getEncoding(xspfFile);
   }
 
-  /**
-   *
-   * @return
-   */
-  @Override
-  public String getEncoding()
-  {
-    return _encoding;
-  }
 
-  /**
-   *
-   * @param encoding
-   */
-  @Override
-  public void setEncoding(String encoding)
-  {
-    _encoding = encoding;
-  }
-
-  /**
-   *
-   * @return
-   */
   @Override
   public PlaylistType getPlaylistType()
   {
     return type;
   }
 
-  /**
-   *
-   * @param observer
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
@@ -163,11 +132,6 @@ public class XSPFReader extends PlaylistReader
     }
   }
 
-  /**
-   *
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist() throws IOException
   {

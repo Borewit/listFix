@@ -31,6 +31,7 @@ import listfix.model.playlists.Playlist;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  *
@@ -44,32 +45,17 @@ public class PlaylistWriterFactory
    * @return
    * @throws FileNotFoundException
    */
-  public static IPlaylistWriter getPlaylistWriter(File inputFile, IPlaylistOptions playListOptions) throws FileNotFoundException
+  public static IPlaylistWriter getPlaylistWriter(File inputFile, IPlaylistOptions playListOptions) throws IOException
   {
     PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile, playListOptions);
-    if (type == PlaylistType.M3U)
-    {
-      return new M3UWriter(playListOptions);
-    }
-    else if (type == PlaylistType.PLS)
-    {
-      return new PLSWriter(playListOptions);
-    }
-    else if (type == PlaylistType.XSPF)
-    {
-      return new XSPFWriter(playListOptions);
-    }
-    else if (type == PlaylistType.WPL)
-    {
-      return new WPLWriter(playListOptions);
-    }
-    else if (type == PlaylistType.ITUNES)
-    {
-      return new ITunesXMLWriter(playListOptions);
-    }
-    else
-    {
-      return null;
-    }
+    return switch (type)
+      {
+        case M3U -> new M3UWriter(playListOptions);
+        case PLS -> new PLSWriter(playListOptions);
+        case XSPF -> new XSPFWriter(playListOptions);
+        case WPL -> new WPLWriter(playListOptions);
+        case ITUNES -> new ITunesXMLWriter(playListOptions);
+        default -> throw new IOException("Unsupported playlist type");
+      };
   }
 }

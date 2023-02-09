@@ -43,19 +43,16 @@ import org.apache.logging.log4j.MarkerManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @author jcaron
- */
 public class Playlist
 {
   private static final String FS = System.getProperty("file.separator");
-  private static final String BR = System.getProperty("line.separator");
   private static final String HOME_DIR = System.getProperty("user.home");
   private static int NEW_LIST_COUNT = -1;
 
@@ -63,8 +60,8 @@ public class Playlist
   private static final Marker markerPlaylistRepair = MarkerManager.getMarker("Playlist-Repair").setParents(markerPlaylist);
 
   private File _file;
-  private List<PlaylistEntry> _entries = new ArrayList<>();
-  private List<PlaylistEntry> _originalEntries = new ArrayList<>();
+  private final List<PlaylistEntry> _entries = new ArrayList<>();
+  private final List<PlaylistEntry> _originalEntries = new ArrayList<>();
   private boolean _utfFormat = false;
   private PlaylistType _type = PlaylistType.UNKNOWN;
   private int _fixedCount;
@@ -76,11 +73,11 @@ public class Playlist
 
   private final IPlaylistOptions playListOptions;
 
+  private final List<IPlaylistModifiedListener> _listeners = new ArrayList<>();
+
+
   /**
    * This constructor creates a temp-file backed playlist from a list of entries, only intended to be used for playback.
-   *
-   * @param sublist
-   * @throws Exception
    */
   public Playlist(IPlaylistOptions playListOptions, List<PlaylistEntry> sublist) throws Exception
   {
@@ -100,10 +97,6 @@ public class Playlist
   /**
    * Initializes a playlist with an externally created set of entries.
    * Currently used when reading playlists with external code.
-   *
-   * @param listFile
-   * @param type
-   * @param entries
    */
   public Playlist(IPlaylistOptions playListOptions, File listFile, PlaylistType type, List<PlaylistEntry> entries)
   {
@@ -118,12 +111,8 @@ public class Playlist
 
   /**
    * Initializes a playlist using internal listFix() I/O model.
-   *
-   * @param playlist
-   * @param observer
-   * @throws IOException
    */
-  public Playlist(IPlaylistOptions playListOptions, File playlist, IProgressObserver observer) throws IOException
+  public Playlist(IPlaylistOptions playListOptions, File playlist, IProgressObserver<String> observer) throws IOException
   {
     this.playListOptions = playListOptions;
     init(playlist, observer);
@@ -133,8 +122,6 @@ public class Playlist
    * Creates an empty, untitled playlist.  The name of the list is auto-generated,
    * Untitled-#.m3u8 by default, where # is the number of lists you have created with this
    * method in the current session.
-   *
-   * @throws IOException
    */
   public Playlist(IPlaylistOptions playListOptions) throws IOException
   {
@@ -174,7 +161,7 @@ public class Playlist
     {
       this.setEntries(playlistProcessor.readPlaylist());
     }
-    _utfFormat = playlistProcessor.getEncoding().equals("UTF-8");
+    _utfFormat = playlistProcessor.getEncoding().equals(StandardCharsets.UTF_8);
     _type = playlistProcessor.getPlaylistType();
     if (_type == PlaylistType.PLS)
     {
@@ -185,19 +172,11 @@ public class Playlist
     refreshStatus();
   }
 
-  /**
-   * @return
-   */
   public List<PlaylistEntry> getEntries()
   {
     return _entries;
   }
 
-  /**
-   * @param entryIndexList
-   * @param destinationDirectory
-   * @param observer
-   */
   public void copySelectedEntries(List<Integer> entryIndexList, File destinationDirectory, IProgressObserver<String> observer)
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
@@ -236,9 +215,6 @@ public class Playlist
     }
   }
 
-  /**
-   * @param observer
-   */
   protected void resetInternalStateAfterSave(IProgressObserver observer)
   {
     // change original _entries
@@ -259,42 +235,16 @@ public class Playlist
     refreshStatus();
   }
 
-  /**
-   *
-   */
   public enum SortIx
   {
-    /**
-     *
-     */
     None,
-    /**
-     *
-     */
     Filename,
-    /**
-     *
-     */
     Path,
-    /**
-     *
-     */
     Status,
-    /**
-     *
-     */
     Random,
-    /**
-     *
-     */
     Reverse
   }
 
-  /**
-   * @param rows
-   * @return
-   * @throws Exception
-   */
   public Playlist getSublist(int[] rows) throws Exception
   {
     List<PlaylistEntry> tempList = new ArrayList<>();
@@ -305,11 +255,6 @@ public class Playlist
     return new Playlist(this.playListOptions, tempList);
   }
 
-  /**
-   * @param rows
-   * @return
-   * @throws IOException
-   */
   public List<PlaylistEntry> getSelectedEntries(int[] rows) throws IOException
   {
     List<PlaylistEntry> tempList = new ArrayList<>();
@@ -320,17 +265,11 @@ public class Playlist
     return tempList;
   }
 
-  /**
-   * @return the _type
-   */
   public PlaylistType getType()
   {
     return _type;
   }
 
-  /**
-   * @param type
-   */
   public void setType(PlaylistType type)
   {
     _type = type;
@@ -346,9 +285,6 @@ public class Playlist
     return _file.toPath();
   }
 
-  /**
-   * @param file
-   */
   public void setFile(File file)
   {
     UNCFile uncFile = new UNCFile(file);
@@ -357,9 +293,6 @@ public class Playlist
     this._file = new File(fileName);
   }
 
-  /**
-   * @param listener
-   */
   public void addModifiedListener(IPlaylistModifiedListener listener)
   {
     if (listener != null)
@@ -379,9 +312,6 @@ public class Playlist
     _listeners.remove(listener);
   }
 
-  /**
-   * @return
-   */
   public List<IPlaylistModifiedListener> getModifiedListeners()
   {
     return _listeners;
@@ -397,8 +327,6 @@ public class Playlist
       }
     }
   }
-
-  private List<IPlaylistModifiedListener> _listeners = new ArrayList<>();
 
   private void setEntries(List<PlaylistEntry> aEntries)
   {
@@ -497,56 +425,38 @@ public class Playlist
     updateModifiedStatus();
   }
 
-  /**
-   * @return
-   */
   public int getFixedCount()
   {
-    return _fixedCount;
+    return this._fixedCount;
   }
 
-  /**
-   * @return
-   */
   public int getUrlCount()
   {
-    return _urlCount;
+    return this._urlCount;
   }
 
-  /**
-   * @return
-   */
   public int getMissingCount()
   {
-    return _missingCount;
+    return this._missingCount;
   }
 
-  /**
-   * @return
-   */
   public boolean isModified()
   {
-    return _isModified;
+    return this._isModified;
   }
 
-  /**
-   * @return
-   */
   public String getFilename()
   {
-    if (_file == null)
+    if (this._file == null)
     {
       return "";
     }
-    return _file.getName();
+    return this._file.getName();
   }
 
-  /**
-   * @return
-   */
   public boolean isEmpty()
   {
-    return _entries.isEmpty();
+    return this._entries.isEmpty();
   }
 
   /**
@@ -556,57 +466,41 @@ public class Playlist
   {
     try
     {
-      _logger.debug(String.format("Launching file: " + _file));
-      FileLauncher.launch(_file);
+      _logger.debug(String.format("Launching file: %s", _file));
+      FileLauncher.launch(this._file);
     }
     catch (IOException | InterruptedException e)
     {
-      _logger.warn(String.format("Launching file: " + _file), e);
+      _logger.warn(String.format("Launching file: %s", _file), e);
     }
   }
 
-  /**
-   * @return
-   */
   public boolean isUtfFormat()
   {
     return _utfFormat;
   }
 
-  /**
-   * @param utfFormat
-   */
   public void setUtfFormat(boolean utfFormat)
   {
     this._utfFormat = utfFormat;
   }
 
-  /**
-   * @return
-   */
   public boolean isNew()
   {
-    return _isNew;
+    return this._isNew;
   }
 
-  /**
-   * @param index
-   * @param newEntry
-   */
   public void replace(int index, PlaylistEntry newEntry)
   {
 
-    if (!_entries.get(index).isFound())
+    if (!this._entries.get(index).isFound())
     {
       newEntry.markFixedIfFound();
     }
-    _entries.set(index, newEntry);
+    this._entries.set(index, newEntry);
     refreshStatus();
   }
 
-  /**
-   * @param indexes
-   */
   public void moveUp(int[] indexes)
   {
     Arrays.sort(indexes);
@@ -627,21 +521,6 @@ public class Playlist
     refreshStatus();
   }
 
-  /**
-   * @param initialPos
-   * @param finalPos
-   */
-  public void moveTo(int initialPos, int finalPos)
-  {
-    PlaylistEntry temp = _entries.get(initialPos);
-    _entries.remove(initialPos);
-    _entries.add(finalPos, temp);
-    refreshStatus();
-  }
-
-  /**
-   * @param indexes
-   */
   public void moveDown(int[] indexes)
   {
     Arrays.sort(indexes);
@@ -651,7 +530,7 @@ public class Playlist
       int rowIx = indexes[ix];
       if (rowIx != floor)
       {
-        Collections.swap(_entries, rowIx, rowIx + 1);
+        Collections.swap(this._entries, rowIx, rowIx + 1);
         indexes[ix] = rowIx + 1;
       }
       else
@@ -662,31 +541,19 @@ public class Playlist
     refreshStatus();
   }
 
-  /**
-   * @param i
-   * @param entries
-   * @return
-   */
   public int addAllAt(int i, List<PlaylistEntry> entries)
   {
-    _entries.addAll(i, entries);
+    this._entries.addAll(i, entries);
     refreshStatus();
     return entries.size();
   }
 
-  /**
-   * @param files
-   * @param observer
-   * @return
-   * @throws FileNotFoundException
-   * @throws IOException
-   */
   public int add(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
   {
     List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
     if (newEntries != null)
     {
-      _entries.addAll(newEntries);
+      this._entries.addAll(newEntries);
       refreshStatus();
       return newEntries.size();
     }
@@ -696,20 +563,12 @@ public class Playlist
     }
   }
 
-  /**
-   * @param ix
-   * @param files
-   * @param observer
-   * @return
-   * @throws FileNotFoundException
-   * @throws IOException
-   */
   public int addAt(int ix, File[] files, IProgressObserver<String> observer) throws IOException
   {
     List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
     if (newEntries != null)
     {
-      _entries.addAll(ix, newEntries);
+      this._entries.addAll(ix, newEntries);
       refreshStatus();
       return newEntries.size();
     }
@@ -738,7 +597,7 @@ public class Playlist
         else
         {
           // regular file
-          ents.add(new FilePlaylistEntry(file.toPath(), null, _file.toPath()));
+          ents.add(new FilePlaylistEntry(file.toPath(), null, this._file.toPath()));
         }
       }
       else
@@ -757,7 +616,7 @@ public class Playlist
 
   public void changeEntryFileName(int ix, String newName)
   {
-    PlaylistEntry entry = _entries.get(ix);
+    PlaylistEntry entry = this._entries.get(ix);
     if (entry instanceof FilePlaylistEntry)
     {
       ((FilePlaylistEntry) entry).setFileName(newName);
@@ -773,7 +632,7 @@ public class Playlist
   public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
-    progress.setTotal(_entries.size());
+    progress.setTotal(this._entries.size());
 
     List<Integer> fixed = new ArrayList<>();
     for (int ix = 0; ix < _entries.size(); ix++)
@@ -785,7 +644,7 @@ public class Playlist
       }
       progress.stepCompleted();
 
-      PlaylistEntry entry = _entries.get(ix);
+      PlaylistEntry entry = this._entries.get(ix);
 
       final boolean caseInsensitiveExactMatching = this.playListOptions.getCaseInsensitiveExactMatching();
       final boolean relativePaths = this.playListOptions.getSavePlaylistsWithRelativePaths();
@@ -887,7 +746,7 @@ public class Playlist
 
     List<BatchMatchItem> fixed = new LinkedList<>();
     int ix = 0;
-    for (PlaylistEntry entry: entries)
+    for (PlaylistEntry entry : entries)
     {
       if (observer.getCancelled()) return null;
       if (!entry.isURL() && !entry.isFound())
@@ -911,10 +770,6 @@ public class Playlist
     return findClosestMatches(entrySelection, libraryFiles, observer);
   }
 
-  /**
-   * @param items
-   * @return
-   */
   public List<Integer> applyClosestMatchSelections(List<BatchMatchItem> items)
   {
     List<Integer> fixed = new ArrayList<>();
@@ -941,18 +796,11 @@ public class Playlist
     return fixed;
   }
 
-  /**
-   * @param index
-   * @return
-   */
   public PlaylistEntry get(int index)
   {
     return _entries.get(index);
   }
 
-  /**
-   * @param indexes
-   */
   public void remove(int[] indexes)
   {
     Arrays.sort(indexes);
@@ -964,10 +812,6 @@ public class Playlist
     refreshStatus();
   }
 
-  /**
-   * @param entry
-   * @return
-   */
   public int remove(PlaylistEntry entry)
   {
     int result = _entries.indexOf(entry);
@@ -976,27 +820,13 @@ public class Playlist
     return result;
   }
 
-  /**
-   * @param sortIx
-   * @param isDescending
-   */
   public void reorder(SortIx sortIx, boolean isDescending)
   {
     switch (sortIx)
     {
-      case Filename:
-      case Path:
-      case Status:
-        Collections.sort(_entries, new EntryComparator(sortIx, isDescending));
-        break;
-
-      case Random:
-        Collections.shuffle(_entries);
-        break;
-
-      case Reverse:
-        Collections.reverse(_entries);
-        break;
+      case Filename, Path, Status -> Collections.sort(_entries, new EntryComparator(sortIx, isDescending));
+      case Random -> Collections.shuffle(_entries);
+      case Reverse -> Collections.reverse(_entries);
     }
     refreshStatus();
   }
@@ -1025,8 +855,8 @@ public class Playlist
         case Path:
           rc = lhs.getTrackFolder().compareToIgnoreCase(rhs.getTrackFolder());
           break;
+// Randomly chosen order... Found > Fixed > Missing > URL (seemed reasonable)
         case Status:
-          // Randomly chosen order... Found > Fixed > Missing > URL (seemed reasonable)
           if (lhs.isURL())
           {
             if (rhs.isURL())
@@ -1075,9 +905,6 @@ public class Playlist
     }
   }
 
-  /**
-   * @return
-   */
   public int removeDuplicates()
   {
     int removed = 0;
@@ -1105,9 +932,6 @@ public class Playlist
     return removed;
   }
 
-  /**
-   * @return
-   */
   public int removeMissing()
   {
     int removed = 0;
@@ -1127,31 +951,15 @@ public class Playlist
     return removed;
   }
 
-  /**
-   * @param destination
-   * @param observer
-   * @throws Exception
-   */
   public void saveAs(File destination, IProgressObserver<String> observer) throws Exception
   {
-    // 2014.12.08 - JCaron - Need to make this assignment so we can determine relativity correctly when saving out entries.
+    // 2014.12.08 - JCaron - Need to make this assignment,
+    // so we can determine relativity correctly when saving out entries.
     setFile(destination);
     _type = determinePlaylistTypeFromExtension(destination, this.playListOptions);
-    if (_type == PlaylistType.PLS)
-    {
-      // apparently winamp shits itself if PLS files are saved in UTF-8 (who knew...)
-      // but, since VLC supports UTF-8 formatted PLS files, and winamp can't read the filenames right
-      // when we don't save as UTF-8 anyway, I'm removing this restriction
-      // _utfFormat = false;
-    }
-    save(this.playListOptions.getSavePlaylistsWithRelativePaths(), observer);
+    this.save(this.playListOptions.getSavePlaylistsWithRelativePaths(), observer);
   }
 
-  /**
-   * @param saveRelative
-   * @param observer
-   * @throws Exception
-   */
   public final void save(boolean saveRelative, IProgressObserver<String> observer) throws Exception
   {
     // avoid resetting total if part of batch operation
@@ -1178,11 +986,7 @@ public class Playlist
     writer.save(this, false, null);
   }
 
-  /**
-   * @param observer
-   * @throws IOException
-   */
-  public void reload(IProgressObserver observer) throws IOException
+  public void reload(IProgressObserver<String> observer) throws IOException
   {
     if (_isNew)
     {
@@ -1206,19 +1010,11 @@ public class Playlist
     refreshStatus();
   }
 
-  /**
-   * @param input
-   * @return
-   */
   public static boolean isPlaylist(File input, IPlaylistOptions filePathOptions)
   {
     return determinePlaylistTypeFromExtension(input, filePathOptions) != PlaylistType.UNKNOWN;
   }
 
-  /**
-   * @param input
-   * @return
-   */
   public static PlaylistType determinePlaylistTypeFromExtension(File input, IPlaylistOptions filePathOptions)
   {
     if (input != null)
@@ -1226,17 +1022,26 @@ public class Playlist
       String lowerCaseExtension = (new FileNameTokenizer(filePathOptions)).getExtensionFromFileName(input.getName()).toLowerCase();
       switch (lowerCaseExtension)
       {
-        case "m3u":
-        case "m3u8":
+        case "m3u", "m3u8" ->
+        {
           return PlaylistType.M3U;
-        case "pls":
+        }
+        case "pls" ->
+        {
           return PlaylistType.PLS;
-        case "wpl":
+        }
+        case "wpl" ->
+        {
           return PlaylistType.WPL;
-        case "xspf":
+        }
+        case "xspf" ->
+        {
           return PlaylistType.XSPF;
-        case "xml":
+        }
+        case "xml" ->
+        {
           return PlaylistType.ITUNES;
+        }
       }
     }
     return PlaylistType.UNKNOWN;

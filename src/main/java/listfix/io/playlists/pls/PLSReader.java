@@ -22,7 +22,6 @@ package listfix.io.playlists.pls;
 
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
-import listfix.io.UnicodeInputStream;
 import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.FilePlaylistEntry;
@@ -41,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,15 +52,9 @@ import java.util.List;
 public class PLSReader extends PlaylistReader
 {
   private List<PlaylistEntry> results = new ArrayList<>();
-  private String encoding = "";
   private static final PlaylistType type = PlaylistType.PLS;
   private static final Logger _logger = LogManager.getLogger(PLSReader.class);
 
-  /**
-   *
-   * @param plsFile
-   * @throws FileNotFoundException
-   */
   public PLSReader(IPlaylistOptions playListOptions, Path plsFile) throws FileNotFoundException
   {
     super(playListOptions, plsFile);
@@ -74,12 +68,6 @@ public class PLSReader extends PlaylistReader
     }
   }
 
-  /**
-   *
-   * @param observer
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
@@ -90,9 +78,9 @@ public class PLSReader extends PlaylistReader
 
     // Load the PLS file into memory (it's basically a glorified INI | java properties file).
     PLSProperties propBag = new PLSProperties();
-    if (encoding.equals("UTF-8"))
+    if (encoding.equals(StandardCharsets.UTF_8))
     {
-      propBag.load(new InputStreamReader(new UnicodeInputStream(new FileInputStream(playlistPath.toFile()), "UTF-8"), "UTF8"));
+      propBag.load(new InputStreamReader(new FileInputStream(playlistPath.toFile()), StandardCharsets.UTF_8));
     }
     else
     {
@@ -123,11 +111,6 @@ public class PLSReader extends PlaylistReader
     return results;
   }
 
-  /**
-   *
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist() throws IOException
   {
@@ -171,30 +154,6 @@ public class PLSReader extends PlaylistReader
     }
   }
 
-  /**
-   *
-   * @return
-   */
-  @Override
-  public String getEncoding()
-  {
-    return encoding;
-  }
-
-  /**
-   *
-   * @param encoding
-   */
-  @Override
-  public void setEncoding(String encoding)
-  {
-    this.encoding = encoding;
-  }
-
-  /**
-   *
-   * @return
-   */
   @Override
   public PlaylistType getPlaylistType()
   {

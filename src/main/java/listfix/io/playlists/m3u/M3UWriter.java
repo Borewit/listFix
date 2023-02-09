@@ -29,6 +29,7 @@ import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A playlist writer capable of saving to M3U or M3U8 format.
@@ -86,7 +87,7 @@ public class M3UWriter extends PlaylistWriter<StringBuilder>
     FileOutputStream outputStream = new FileOutputStream(playListFile);
     if (playlist.isUtfFormat() || playListFile.getName().toLowerCase().endsWith("m3u8"))
     {
-      Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+      Writer osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
       try (BufferedWriter output = new BufferedWriter(osw))
       {
         if (OperatingSystem.isWindows())

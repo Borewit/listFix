@@ -47,7 +47,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
   private boolean _userCancelled = false;
   private static final Logger _logger = LogManager.getLogger(BatchExactMatchesResultsDialog.class);
 
-  private IPlaylistOptions playListOptions;
+  private final IPlaylistOptions playListOptions;
 
   /** Creates new form BatchExactMatchesResultsDialog
    * @param parent

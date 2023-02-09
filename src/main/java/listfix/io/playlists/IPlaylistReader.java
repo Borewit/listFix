@@ -25,6 +25,7 @@ import listfix.model.playlists.PlaylistEntry;
 import listfix.view.support.IProgressObserver;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -34,36 +35,11 @@ import java.util.List;
  */
 public interface IPlaylistReader
 {
-  /**
-   *
-   * @return
-   */
-  String getEncoding();
+  Charset getEncoding();
 
-  /**
-   *
-   * @param encoding
-   */
-  void setEncoding(String encoding);
-
-  /**
-   *
-   * @return
-   */
   PlaylistType getPlaylistType();
 
-  /**
-   *
-   * @param input
-   * @return
-   * @throws IOException
-   */
   List<PlaylistEntry> readPlaylist(IProgressObserver<String> input) throws IOException;
 
-  /**
-   *
-   * @return
-   * @throws IOException
-   */
   List<PlaylistEntry> readPlaylist() throws IOException;
 }
