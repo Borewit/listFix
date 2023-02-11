@@ -48,18 +48,18 @@ public final class ProgressAdapter<T> implements IProgressObserver<T>
 
   private IProgressObserver _observer;
 
-  public int getCompleted()
+  public long getCompleted()
   {
     return _completed;
   }
 
-  public void setCompleted(int completed)
+  public void setCompleted(long completed)
   {
     _completed = completed;
     refreshPercentComplete();
   }
 
-  private int _completed;
+  private long _completed;
 
   public void stepCompleted()
   {
@@ -67,18 +67,18 @@ public final class ProgressAdapter<T> implements IProgressObserver<T>
     refreshPercentComplete();
   }
 
-  public void stepCompleted(int done)
+  public void stepCompleted(long done)
   {
     _completed += done;
     refreshPercentComplete();
   }
 
-  public int getTotal()
+  public long getTotal()
   {
     return _total;
   }
 
-  public void setTotal(int total)
+  public void setTotal(long total)
   {
     boolean report = isValid() && _percentComplete != 0 && total != 0;
     _total = total;
@@ -88,18 +88,18 @@ public final class ProgressAdapter<T> implements IProgressObserver<T>
       reportProgress(_percentComplete);
   }
 
-  private int _total;
+  private long _total;
 
 
   private void refreshPercentComplete()
   {
     if (isValid())
     {
-      int pct = _completed * 100 / _total;
+      double pct = Math.round(((double)_completed * 100.0) / (double)_total);
       if (pct != _percentComplete)
       {
-        _percentComplete = pct;
-        reportProgress(pct);
+        _percentComplete = (int) pct;
+        reportProgress(_percentComplete);
       }
     }
   }
