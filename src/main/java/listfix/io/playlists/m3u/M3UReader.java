@@ -22,6 +22,7 @@ package listfix.io.playlists.m3u;
 
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
+import listfix.io.UnicodeInputStream;
 import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.FilePlaylistEntry;
@@ -53,7 +54,7 @@ public class M3UReader extends PlaylistReader
 {
   private final BufferedReader buffer;
   private final List<PlaylistEntry> results = new ArrayList<>();
-  private long fileLength = 0;
+  private final long fileLength;
   private static final PlaylistType type = PlaylistType.M3U;
   private static final Logger _logger = LogManager.getLogger(M3UReader.class);
 
@@ -66,9 +67,10 @@ public class M3UReader extends PlaylistReader
     File m3uFile = m3uPath.toFile();
 
     encoding = UnicodeUtils.getEncoding(m3uFile);
-    if (encoding.equals(StandardCharsets.UTF_8) || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
+    final Charset defaultEncoding = StandardCharsets.UTF_8;
+    if (encoding.equals(defaultEncoding) || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
     {
-      buffer = new BufferedReader(new InputStreamReader(new FileInputStream(m3uFile), StandardCharsets.UTF_8));
+      buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(m3uFile), defaultEncoding), defaultEncoding));
       encoding = StandardCharsets.UTF_8;
     }
     else
@@ -203,10 +205,6 @@ public class M3UReader extends PlaylistReader
     return results;
   }
 
-  /**
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist() throws IOException
   {
@@ -225,15 +223,11 @@ public class M3UReader extends PlaylistReader
     return line;
   }
 
-  private void processEntry(String L1, String L2) throws IOException
+  private void processEntry(String L1, String L2)
   {
     StringTokenizer pathTokenizer = null;
     StringBuilder path = new StringBuilder();
-    if (L2.contains("://"))
-    {
-      // do nothing, leave tokenizer null
-    }
-    else if (OperatingSystem.isLinux()) // Linux Specific Setup
+    if (OperatingSystem.isLinux()) // Linux Specific Setup
     {
       if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith("/"))
       {
@@ -254,7 +248,6 @@ public class M3UReader extends PlaylistReader
     if (pathTokenizer != null)
     {
       String fileName = "";
-      String extInf = L1;
       if (L2.startsWith("\\\\"))
       {
         path.append("\\\\");
@@ -327,7 +320,7 @@ public class M3UReader extends PlaylistReader
         }
         tokenNumber++;
       }
-      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), extInf, playlistPath));
+      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), L1, playlistPath));
     }
     else
     {
