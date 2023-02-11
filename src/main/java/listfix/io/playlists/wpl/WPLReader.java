@@ -20,27 +20,20 @@
 
 package listfix.io.playlists.wpl;
 
-import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.model.playlists.UriPlaylistEntry;
-import listfix.util.ArrayFunctions;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Reads in a WPL file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
@@ -48,27 +41,17 @@ import java.util.StringTokenizer;
  */
 public class WPLReader extends PlaylistReader
 {
-  private BufferedReader _buffer;
-  private List<PlaylistEntry> results = new ArrayList<>();
+  private final BufferedReader _buffer;
+  private final List<PlaylistEntry> results = new ArrayList<>();
   private final long fileLength;
   private static final PlaylistType type = PlaylistType.WPL;
-  private static final Logger _logger = LogManager.getLogger(WPLReader.class);
-
   private StringBuilder _cache;
 
   public WPLReader(IPlaylistOptions playListOptions, Path wplFile) throws FileNotFoundException
   {
     super(playListOptions, wplFile);
-    try
-    {
-      _buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(wplFile.toFile()), "UTF-8"), "UTF8"));
-    }
-    catch (UnsupportedEncodingException ex)
-    {
-      // this should never happen (utf-8 must be supported) - rethrow as runtime exception
-      _logger.error("Holy shit, ther'e no UTF-8 support on this machine!! " + ex);
-      throw new RuntimeException("Unexpected runtime error: utf-8 not supported", ex);
-    }
+    final Charset defaultEncoding = StandardCharsets.UTF_8;
+    _buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(wplFile.toFile()), defaultEncoding), defaultEncoding));
     encoding = StandardCharsets.UTF_8;
     fileLength = wplFile.toFile().length();
   }
@@ -82,22 +65,12 @@ public class WPLReader extends PlaylistReader
     return s;
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public PlaylistType getPlaylistType()
   {
     return type;
   }
 
-  /**
-   *
-   * @param observer
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
@@ -167,11 +140,6 @@ public class WPLReader extends PlaylistReader
     return results;
   }
 
-  /**
-   *
-   * @return
-   * @throws IOException
-   */
   @Override
   public List<PlaylistEntry> readPlaylist() throws IOException
   {
@@ -189,126 +157,8 @@ public class WPLReader extends PlaylistReader
     return line;
   }
 
-  private void processEntry(String L2, String cid, String tid) throws IOException
+  private void processEntry(String L2, String cid, String tid)
   {
-    StringTokenizer pathTokenizer = null;
-    StringBuilder path = new StringBuilder();
-    if (L2.contains("://"))
-    {
-      // do nothing, leave tokenizer null
-    }
-    else if (Constants.FS.equalsIgnoreCase("/")) // OS Specific Hack
-    {
-      if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith(Constants.FS))
-      {
-        // Need to append ./ on relative entries to load them properly
-        path.append("./");
-      }
-      pathTokenizer = new StringTokenizer(L2, ":\\/");
-    }
-    else if (Constants.FS.equalsIgnoreCase(":")) // OS Specific Hack
-    {
-      pathTokenizer = new StringTokenizer(L2, ":\\/");
-    }
-    else if (Constants.FS.equalsIgnoreCase("\\")) // OS Specific Hack
-    {
-      pathTokenizer = new StringTokenizer(L2, "\\/");
-      if (!L2.startsWith("\\\\") && L2.startsWith("\\"))
-      {
-        path.append("\\");
-      }
-    }
-
-    if (pathTokenizer != null)
-    {
-      String fileName = "";
-      String extInf = "";
-      if (L2.startsWith("\\\\"))
-      {
-        path.append("\\\\");
-      }
-      else if (L2.startsWith(Constants.FS))
-      {
-        // We're about to lose this when we parse, so add it back...
-        path.append(Constants.FS);
-      }
-
-      String firstToken = "";
-      String secondToken = "";
-      int tokenNumber = 0;
-      File firstPathToExist = null;
-      while (pathTokenizer.hasMoreTokens())
-      {
-        String word = pathTokenizer.nextToken();
-        String tempPath = path.toString() + word + Constants.FS;
-        if (tokenNumber == 0)
-        {
-          firstToken = word;
-        }
-        if (tokenNumber == 1)
-        {
-          secondToken = word;
-        }
-        if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + Constants.FS))
-        {
-          // This token is the closest thing we have to the notion of a 'drive' on any OS...
-          // make a file out of this and see if it has any files.
-          File testFile = new File(tempPath);
-          if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
-          {
-            PlaylistEntry.NonExistentDirectories.add(tempPath);
-          }
-        }
-        else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1
-          && !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken + Constants.FS)
-          && !ArrayFunctions.containsStringPrefixingAnotherString(PlaylistEntry.ExistingDirectories, tempPath, true)
-          && !ArrayFunctions.containsStringPrefixingAnotherString(PlaylistEntry.NonExistentDirectories, tempPath, true))
-        {
-          // Handle UNC paths specially
-          File testFile = new File(tempPath);
-          boolean exists = testFile.exists();
-          if (exists)
-          {
-            PlaylistEntry.ExistingDirectories.add(tempPath);
-            if (firstPathToExist == null)
-            {
-              firstPathToExist = testFile;
-            }
-          }
-          if (!exists && pathTokenizer.countTokens() == 1)
-          {
-            PlaylistEntry.NonExistentDirectories.add(tempPath);
-          }
-          if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
-          {
-            // don't want to knock out the whole drive, as other folders might be accessible there...
-            PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken + Constants.FS + secondToken + Constants.FS);
-          }
-        }
-        if (pathTokenizer.hasMoreTokens())
-        {
-          path.append(word);
-          path.append(Constants.FS);
-        }
-        else
-        {
-          fileName = word;
-        }
-        tokenNumber++;
-      }
-      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), extInf, super.playlistPath, cid, tid));
-    }
-    else
-    {
-      try
-      {
-        results.add(new UriPlaylistEntry(new URI(L2.trim()), "", cid, tid));
-      }
-      catch (Exception e)
-      {
-        // eat the error for now.
-        _logger.warn(e);
-      }
-    }
+    super.processEntry(this.results, L2, cid, tid);
   }
 }

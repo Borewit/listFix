@@ -20,16 +20,11 @@
 
 package listfix.io.playlists.m3u;
 
-import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UnicodeInputStream;
 import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.model.playlists.UriPlaylistEntry;
-import listfix.util.ArrayFunctions;
-import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -37,13 +32,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Reads in a M3U/M3U8 file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
@@ -149,7 +142,7 @@ public class M3UReader extends PlaylistReader
         }
 
         // Process the two strings we have into a playlist entry
-        processEntry(line1, line2);
+        processEntry(line2, line1);
 
         // We just processed an entry, update the progress bar w/ the % of the file we've read if we have an observer.
         cacheSize = _cache.toString().getBytes().length;
@@ -223,116 +216,8 @@ public class M3UReader extends PlaylistReader
     return line;
   }
 
-  private void processEntry(String L1, String L2)
+  private void processEntry(String L2, String extInf)
   {
-    StringTokenizer pathTokenizer = null;
-    StringBuilder path = new StringBuilder();
-    if (OperatingSystem.isLinux()) // Linux Specific Setup
-    {
-      if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith("/"))
-      {
-        // Need to append ./ on relative entries to load them properly
-        path.append("./");
-      }
-      pathTokenizer = new StringTokenizer(L2, ":\\/");
-    }
-    else if (OperatingSystem.isMac()) // MacOS Specific Setup
-    {
-      pathTokenizer = new StringTokenizer(L2, ":\\/");
-    }
-    else if (OperatingSystem.isWindows()) // Windows Specific Setup
-    {
-      pathTokenizer = new StringTokenizer(L2, "\\/");
-    }
-
-    if (pathTokenizer != null)
-    {
-      String fileName = "";
-      if (L2.startsWith("\\\\"))
-      {
-        path.append("\\\\");
-      }
-      else if (L2.startsWith(Constants.FS))
-      {
-        // We're about to lose this when we parse, so add it back...
-        path.append(Constants.FS);
-      }
-
-      String firstToken = "";
-      String secondToken = "";
-      int tokenNumber = 0;
-      File firstPathToExist = null;
-      while (pathTokenizer.hasMoreTokens())
-      {
-        String word = pathTokenizer.nextToken();
-        String tempPath = path.toString() + word + Constants.FS;
-        if (tokenNumber == 0)
-        {
-          firstToken = word;
-        }
-        if (tokenNumber == 1)
-        {
-          secondToken = word;
-        }
-        if (tokenNumber == 0 && !L2.startsWith("\\\\") && !PlaylistEntry.NonExistentDirectories.contains(word + Constants.FS))
-        {
-          // This token is the closest thing we have to the notion of a 'drive' on any OS... make a File object out of this and see if it has any files.
-          File testFile = new File(tempPath);
-          if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
-          {
-            PlaylistEntry.NonExistentDirectories.add(tempPath);
-          }
-        }
-        else if (L2.startsWith("\\\\") && pathTokenizer.countTokens() >= 1
-          && !PlaylistEntry.NonExistentDirectories.contains("\\\\" + firstToken + Constants.FS)
-          && !ArrayFunctions.containsStringPrefixingAnotherString(PlaylistEntry.ExistingDirectories, tempPath, true)
-          && !ArrayFunctions.containsStringPrefixingAnotherString(PlaylistEntry.NonExistentDirectories, tempPath, true))
-        {
-          // Handle UNC paths specially
-          File testFile = new File(tempPath);
-          boolean exists = testFile.exists();
-          if (exists)
-          {
-            PlaylistEntry.ExistingDirectories.add(tempPath);
-            if (firstPathToExist == null)
-            {
-              firstPathToExist = testFile;
-            }
-          }
-          if (!exists && pathTokenizer.countTokens() == 1)
-          {
-            PlaylistEntry.NonExistentDirectories.add(tempPath);
-          }
-          if (pathTokenizer.countTokens() == 1 && firstPathToExist == null)
-          {
-            // don't want to knock out the whole drive, as other folders might be accessible there...
-            PlaylistEntry.NonExistentDirectories.add("\\\\" + firstToken + Constants.FS + secondToken + Constants.FS);
-          }
-        }
-        if (pathTokenizer.hasMoreTokens())
-        {
-          path.append(word);
-          path.append(Constants.FS);
-        }
-        else
-        {
-          fileName = word;
-        }
-        tokenNumber++;
-      }
-      results.add(new FilePlaylistEntry(Path.of(path.toString(), fileName), L1, playlistPath));
-    }
-    else
-    {
-      try
-      {
-        results.add(new UriPlaylistEntry(new URI(L2.trim()), L1));
-      }
-      catch (Exception e)
-      {
-        // eat the error for now, it's only one entry.
-        _logger.warn(e);
-      }
-    }
+    super.processEntry(this.results, L2, extInf, null);
   }
 }
