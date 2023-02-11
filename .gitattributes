@@ -20,3 +20,8 @@
 # Force bash scripts to always use LF line endings so that if a repo is accessed
 # in Unix via a file share from Windows, the scripts will work.
 *.sh text eol=lf
+
+
+# Preserve text encoding, bom-fields & line-endings in test playlist files
+src/test/resources/playlists/m3u/*.m3u binary
+src/test/resources/playlists/m3u/*.m3u8 binary

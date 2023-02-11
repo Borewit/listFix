@@ -24,6 +24,7 @@ import listfix.io.UnicodeInputStream;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
@@ -86,7 +87,7 @@ public class UnicodeUtils
 
   public static Charset getEncoding(File input)
   {
-    try (UnicodeInputStream stream = new UnicodeInputStream(new FileInputStream(input), "ASCII"))
+    try (UnicodeInputStream stream = new UnicodeInputStream(new FileInputStream(input), StandardCharsets.UTF_8))
     {
       return Charset.forName(stream.getEncoding());
     }

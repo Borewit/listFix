@@ -25,7 +25,6 @@ import listfix.io.UnicodeInputStream;
 import listfix.io.playlists.PlaylistReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.util.UnicodeUtils;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 import org.apache.logging.log4j.LogManager;
@@ -59,17 +58,11 @@ public class M3UReader extends PlaylistReader
 
     File m3uFile = m3uPath.toFile();
 
-    encoding = UnicodeUtils.getEncoding(m3uFile);
-    final Charset defaultEncoding = StandardCharsets.UTF_8;
-    if (encoding.equals(defaultEncoding) || m3uFile.getName().toLowerCase().endsWith(".m3u8"))
-    {
-      buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(m3uFile), defaultEncoding), defaultEncoding));
-      encoding = StandardCharsets.UTF_8;
-    }
-    else
-    {
-      buffer = new BufferedReader(new FileReader(m3uFile));
-    }
+    // encoding = UnicodeUtils.getEncoding(m3uFile);
+    UnicodeInputStream unicodeInputStream = new UnicodeInputStream(new FileInputStream(m3uFile), StandardCharsets.UTF_8);
+    this.encoding = Charset.forName(unicodeInputStream.getEncoding());
+    _logger.info(String.format("Detected M3U encoding for \"%s\": %s", m3uPath.getFileName().toString(), this.encoding.name()));
+    buffer = new BufferedReader(new InputStreamReader(unicodeInputStream, this.encoding));
     fileLength = m3uFile.length();
   }
 
