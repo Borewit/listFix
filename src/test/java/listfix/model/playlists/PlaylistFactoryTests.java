@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PlaylistFactoryTest
+public class PlaylistFactoryTests
 {
   private IPlaylistOptions playlistOptions;
 
@@ -23,7 +23,7 @@ public class PlaylistFactoryTest
   @Test
   public void readPlaylistM3u() throws IOException
   {
-    File m3uPlaylistFile = TestUtil.createFileFromResource(this, "/playlists/m3u/playlist.m3u");
+    File m3uPlaylistFile = TestUtil.createFileFromResource(this, "/playlists/m3u/playlist-utf8.m3u");
 
     Playlist m3uPlaylist = PlaylistFactory.getPlaylist(m3uPlaylistFile.toPath(), null, playlistOptions);
     assertNotNull(m3uPlaylist, "PlaylistFactory should read and construct M3U playlist");

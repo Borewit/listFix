@@ -1,0 +1,7 @@
+#EXTM3U
+
+#EXTINF:111, Sample artist name - Sample track title
+C:\Music\SampleMusic.mp3
+
+#EXTINF:222,Example Artist name - Example track title
+C:\Music\ExampleMusic.mp3

@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 import java.util.StringTokenizer;
 
 public abstract class PlaylistReader implements IPlaylistReader
@@ -48,7 +47,7 @@ public abstract class PlaylistReader implements IPlaylistReader
   {
     StringTokenizer pathTokenizer = null;
     StringBuilder path = new StringBuilder();
-    if (OperatingSystem.isLinux()) // OS Specific Hack
+     if (OperatingSystem.isLinux()) // OS Specific Hack
     {
       if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith(Constants.FS))
       {
@@ -105,7 +104,7 @@ public abstract class PlaylistReader implements IPlaylistReader
           // This token is the closest thing we have to the notion of a 'drive' on any OS...
           // make a file out of this and see if it has any files.
           File testFile = new File(tempPath);
-          if (testFile.isAbsolute() && !(testFile.isDirectory() && Objects.requireNonNull(testFile.list()).length > 0))
+          if (!(testFile.exists() && testFile.isDirectory() && testFile.list().length > 0) && testFile.isAbsolute())
           {
             PlaylistEntry.NonExistentDirectories.add(tempPath);
           }
