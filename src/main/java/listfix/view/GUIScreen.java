@@ -114,7 +114,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private static final String applicationVersion = Manifests.read("Implementation-Version");
 
-  private final static int keyEventRenameFile = KeyEvent.VK_F2;
+  private static final int keyEventRenameFile = KeyEvent.VK_F2;
 
   /**
    * The components should only be enabled when 1 or more playlists are loaded
@@ -1372,26 +1372,23 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     TreeNodeFile nodeFile;
     if (selRows != null && selRows.length > 0)
     {
-      if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to rename the selected files and folders?"), "Rename Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
+      List<TreePath> selPaths = new ArrayList<>();
+      for (int i : selRows)
       {
-        List<TreePath> selPaths = new ArrayList<>();
-        for (int i : selRows)
+        selPaths.add(_playlistDirectoryTree.getPathForRow(i));
+      }
+      for (TreePath selPath : selPaths)
+      {
+        curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+        nodeFile = (TreeNodeFile) curNode.getUserObject();
+        String str = curNode.toString();
+        String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), "." + FileUtils.getFileExtension(nodeFile.getName()));
+        if (reply != null && !"".equals(reply))
         {
-          selPaths.add(_playlistDirectoryTree.getPathForRow(i));
-        }
-        for (TreePath selPath : selPaths)
-        {
-          curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-          nodeFile = (TreeNodeFile) curNode.getUserObject();
-          String str = curNode.toString();
-          String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), "." + FileUtils.getFileExtension(nodeFile.getName()));
-          if (reply != null && !"".equals(reply))
-          {
-            TreeNodeFile destFile = new TreeNodeFile(nodeFile.getParent() + Constants.FS + reply);
-            nodeFile.renameTo(destFile);
-            curNode.setUserObject(destFile);
-            treeModel.nodeChanged(curNode);
-          }
+          TreeNodeFile destFile = new TreeNodeFile(nodeFile.getParent() + Constants.FS + reply);
+          nodeFile.renameTo(destFile);
+          curNode.setUserObject(destFile);
+          treeModel.nodeChanged(curNode);
         }
       }
     }
