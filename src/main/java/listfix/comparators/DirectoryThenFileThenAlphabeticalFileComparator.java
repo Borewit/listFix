@@ -22,27 +22,12 @@ package listfix.comparators;
 
 import java.io.File;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     DirectoryThenFileThenAlphabeticalFileComparator.java
-= Purpose:  Sorts directories ahead of files, and then sorts files
-=      alphabetically (ignoring case).
-============================================================================
- */
-
 /**
- *
- * @author jcaron
+ * Sorts directories ahead of files, and then sorts files alphabetically (ignoring case).
  */
 public class DirectoryThenFileThenAlphabeticalFileComparator implements java.util.Comparator<File>
 {
-  /**
-   *
-   * @param a
-   * @param b
-   * @return
-   */
+
   @Override
   public int compare(File a, File b)
   {
