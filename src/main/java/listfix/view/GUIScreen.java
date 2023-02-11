@@ -114,6 +114,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private static final String applicationVersion = Manifests.read("Implementation-Version");
 
+  private final static int keyEventRenameFile = KeyEvent.VK_F2;
+
   /**
    * The components should only be enabled when 1 or more playlists are loaded
    */
@@ -651,7 +653,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents()
   {
-
     _playlistTreeRightClickMenu = new javax.swing.JPopupMenu();
     _miRefreshDirectoryTree = new javax.swing.JMenuItem();
     _miOpenSelectedPlaylists = new javax.swing.JMenuItem();
@@ -747,6 +748,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     _playlistTreeRightClickMenu.add(_miDeletePlaylist);
 
     _miRenameSelectedItem.setMnemonic('R');
+    _miRenameSelectedItem.setAccelerator(KeyStroke.getKeyStroke(keyEventRenameFile, 0));
     _miRenameSelectedItem.setText("Rename");
     _miRenameSelectedItem.setToolTipText("Rename selected file or folder");
     _miRenameSelectedItem.addActionListener(evt -> _miRenameSelectedItemActionPerformed(evt));
@@ -2631,9 +2633,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener
 
   private void _playlistDirectoryTreeKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__playlistDirectoryTreeKeyPressed
   {//GEN-HEADEREND:event__playlistDirectoryTreeKeyPressed
-    if (evt.getKeyCode() == KeyEvent.VK_ENTER)
-    {
-      _btnOpenSelectedActionPerformed(null);
+    switch(evt.getKeyCode()) {
+      case KeyEvent.VK_ENTER:
+        this._btnOpenSelectedActionPerformed(null);
+        break;
+      case keyEventRenameFile:
+        this.renameTreeSelectedNode();
+        break;
+
     }
   }//GEN-LAST:event__playlistDirectoryTreeKeyPressed
 
