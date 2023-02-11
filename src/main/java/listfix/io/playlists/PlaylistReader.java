@@ -1,5 +1,6 @@
 package listfix.io.playlists;
 
+import listfix.io.BufferedProgressReader;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.model.playlists.FilePlaylistEntry;
@@ -8,13 +9,16 @@ import listfix.model.playlists.UriPlaylistEntry;
 import listfix.util.ArrayFunctions;
 import listfix.util.OperatingSystem;
 import listfix.view.GUIScreen;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -25,7 +29,7 @@ public abstract class PlaylistReader implements IPlaylistReader
   protected final Path playlistPath;
   protected Charset encoding;
 
-  private final Logger _logger = LogManager.getLogger(GUIScreen.class);
+  private final Logger logger = LogManager.getLogger(GUIScreen.class);
 
   public PlaylistReader(IPlaylistOptions playListOptions, Path playlistPath) {
     this.playListOptions = playListOptions;
@@ -41,6 +45,22 @@ public abstract class PlaylistReader implements IPlaylistReader
   public Charset getEncoding()
   {
     return this.encoding;
+  }
+
+  public BufferedProgressReader openBufferedReader(Path textFile) throws IOException
+  {
+    final BOMInputStream bomInputStream = new BOMInputStream(new FileInputStream(textFile.toFile()),
+      ByteOrderMark.UTF_8,
+      ByteOrderMark.UTF_16BE,
+      ByteOrderMark.UTF_16LE,
+      ByteOrderMark.UTF_32BE,
+      ByteOrderMark.UTF_32LE
+    );
+    final String charsetName = bomInputStream.getBOMCharsetName();
+    this.encoding = charsetName == null ? StandardCharsets.UTF_8 : Charset.forName(charsetName);
+
+    this.logger.info(String.format("Detected playlist file encoding for \"%s\": %s", textFile.getFileName().toString(), this.encoding.name()));
+    return new BufferedProgressReader(new InputStreamReader(bomInputStream, this.encoding));
   }
 
   protected void processEntry(List<PlaylistEntry> results, String L2, String cid, String tid)
@@ -156,7 +176,7 @@ public abstract class PlaylistReader implements IPlaylistReader
       }
       catch (URISyntaxException e)
       {
-        this._logger.warn("While adding URI entry to playlist", e);
+        this.logger.warn("While adding URI entry to playlist", e);
         throw new RuntimeException(e);
       }
     }
