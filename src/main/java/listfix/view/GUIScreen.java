@@ -1447,7 +1447,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener
   private void openPlaylistFoldersFromPlaylistTree()
   {
     this.getSelectedFilesFromTreePlaylists().stream()
-      .map(File :: getParentFile)
+      .map(file -> file.isDirectory() ? file : file.getParentFile())
       .filter(Objects :: nonNull)
       .distinct()
       .forEach(this :: openFolderInExplorerPerformed);
