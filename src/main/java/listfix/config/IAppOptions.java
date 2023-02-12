@@ -17,7 +17,7 @@ public interface IAppOptions extends IPlaylistOptions
   String getPlaylistsDirectory();
 
   /**
-   * @return the appFont
+   * @return configured application font
    */
   Font getAppFont();
 }

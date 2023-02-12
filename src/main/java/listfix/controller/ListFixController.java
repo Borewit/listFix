@@ -41,6 +41,13 @@ public final class ListFixController implements IApplicationConfiguration
       this.mediaLibraryConfiguration = MediaLibraryConfiguration.load();
       this.applicationOptionsConfiguration = ApplicationOptionsConfiguration.load();
 
+      String oldPlaylistDirectory = this.applicationOptionsConfiguration.getConfig().getPlaylistsDirectory();
+      if (this.mediaLibraryConfiguration.getConfig().getPlaylistDirectories().isEmpty() && oldPlaylistDirectory != null && !oldPlaylistDirectory.isEmpty()) {
+        _logger.error(String.format("Migrating playlists directory: %s", oldPlaylistDirectory));
+        this.mediaLibraryConfiguration.getConfig().getPlaylistDirectories().add(oldPlaylistDirectory);
+        this.mediaLibraryConfiguration.writeOnBackground();
+      }
+
       this.history = new PlaylistHistory(this.applicationOptionsConfiguration.getConfig().getMaxPlaylistHistoryEntries());
       this.history.load();
 

@@ -8,28 +8,40 @@ import java.util.TreeSet;
 public class JsonMediaLibrary implements IMediaLibrary
 {
 
-  private final Set<String> directories;
-  private final Set<String> nestedDirectories;
-  private final Set<String> nestedMediaFiles;
+  private final TreeSet<String> directories;
+  private final TreeSet<String> nestedDirectories;
+  private final TreeSet<String> nestedMediaFiles;
+  private final TreeSet<String> playlistDirectories;
 
   public JsonMediaLibrary()
   {
     this.directories = new TreeSet<>();
     this.nestedDirectories = new TreeSet<>();
     this.nestedMediaFiles = new TreeSet<>();
+    this.playlistDirectories = new TreeSet<>();
   }
 
-  public Set<String> getDirectories()
+  @Override
+  public Set<String> getMediaDirectories()
   {
     return this.directories;
   }
 
+  @Override
   public Set<String> getNestedDirectories()
   {
     return this.nestedDirectories;
   }
+
+  @Override
   public Set<String> getNestedMediaFiles()
   {
     return this.nestedMediaFiles;
+  }
+
+  @Override
+  public Set<String> getPlaylistDirectories()
+  {
+    return playlistDirectories;
   }
 }

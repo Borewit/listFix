@@ -1,114 +1,64 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.io;
 
 import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
 import listfix.io.filters.PlaylistFileFilter;
 import listfix.view.support.PlaylistTreeNode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.tree.TreePath;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 
-/**
- *
- * @author jcaron
- */
 public class FileTreeNodeGenerator
 {
-  /** Add nodes from under "dir" into curTop. Highly recursive.
-   * @param curTop
-   * @param dir
-   * @return
-   */
-  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, File dir)
+  private static final Logger logger = LogManager.getLogger(FileTreeNodeGenerator.class);
+
+  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, Collection<File> playlistDirectories)
   {
-    if (dir.exists())
-    {
-      String curPath = dir.getPath();
-      TreeNodeFile file = new TreeNodeFile(curPath);
-      PlaylistTreeNode curDir = new PlaylistTreeNode(file);
-      // curDir.setUserObject(file);
-
-      // if we're creating the root node here, use a regular file to get the full path to show.
-      if (curTop == null)
-      {
-        curDir.setUserObject(new File(curPath));
-      }
-
-      List<File> ol = new ArrayList<>();
-      File[] inodes = dir.listFiles(new PlaylistFileFilter());
-
-      if (inodes != null && inodes.length > 0)
-      {
-                ol.addAll(Arrays.asList(inodes));
-        Collections.sort(ol, new DirectoryThenFileThenAlphabeticalFileComparator());
-        File f;
-        List<File> files = new ArrayList<>();
-        // Make two passes, one for Dirs and one for Files. This is #1.
-        for (File ol1 : ol)
-        {
-          f = ol1;
-          if (f.isDirectory())
-          {
-            File[] tmp = f.listFiles(new PlaylistFileFilter());
-            if (tmp != null && tmp.length > 0)
-            {
-              addNodes(curDir, f);
-            }
-          }
-          else
-          {
-            files.add(f);
-          }
-        }
-        // Pass two: for files.
-        for (File file1 : files)
-        {
-          curDir.add(new PlaylistTreeNode(new TreeNodeFile(file1.getPath())));
-        }
-        if (curDir.children().hasMoreElements() || !((File) curDir.getUserObject()).isDirectory())
-        {
-          if (curTop != null)
-          {
-            curTop.add(curDir);
-          }
-        }
-        return curDir;
-      }
-      return null;
-    }
-    return null;
+    return FileTreeNodeGenerator.addNodes(curTop, playlistDirectories.toArray(new File[]{}));
   }
 
   /**
+   * Add nodes from under "playlistDirectories" into curTop. Highly recursive.
    *
-   * @param node
-   * @return
+   * @param curTop Tree node, to which the provided files will be added as children. Maybe Null.
+   * @param files  Playlist directories or playlist files to add
+   * @return Playlist tree
    */
-  public static String TreePathToFileSystemPath(TreePath node)
+  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, File[] files)
   {
-    return ((File) ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject()).getPath();
+    curTop = curTop == null ? new PlaylistTreeNode(new File("#___root___")) : curTop;
+    Arrays.sort(files, new DirectoryThenFileThenAlphabeticalFileComparator());
+    for (File playlistDir : files)
+    {
+      if (!playlistDir.exists())
+      {
+        logger.warn(String.format("Directory does not exist: %s", playlistDir.getName()));
+        continue;
+      }
+
+      String curPath = playlistDir.getPath();
+      TreeNodeFile file = new TreeNodeFile(curPath);
+      PlaylistTreeNode curDir = new PlaylistTreeNode(file);
+      curTop.add(curDir);
+
+      // if we're creating the root node here, use a regular file to get the full path to show.
+      curDir.setUserObject(new File(curPath));
+
+      File[] inodes = playlistDir.listFiles(new PlaylistFileFilter());
+
+      if (inodes != null && inodes.length > 0)
+      {
+        addNodes(curDir, inodes);
+      }
+    }
+    return curTop;
+  }
+
+  public static File TreePathToFileSystemPath(TreePath node)
+  {
+    return ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject();
   }
 }

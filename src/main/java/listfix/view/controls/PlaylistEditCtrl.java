@@ -130,7 +130,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     chooser.setAcceptAllFileFilterUsed(false);
     chooser.addChoosableFileFilter(new AudioFileFilter());
     chooser.setMultiSelectionEnabled(true);
-    this.getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
+    this.getMediaLibrary().getMediaDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
     if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
     {
       File[] tempFileList = chooser.getSelectedFiles();
@@ -521,7 +521,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       }
       else
       {
-        this.listFixGui.getApplicationConfiguration().getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
+        this.listFixGui.getApplicationConfiguration().getMediaLibrary().getMediaDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
       }
 
       if (entry instanceof FilePlaylistEntry)

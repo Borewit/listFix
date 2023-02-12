@@ -46,14 +46,9 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
     this.jsonPojo.getNestedDirectories().clear();
   }
 
-  /**
-   * @param dir
-   * @return
-   * @throws MediaDirNotFoundException
-   */
   public void removeMediaDir(String dir) throws MediaDirNotFoundException
   {
-    final Set<String> mediaDir = this.jsonPojo.getDirectories();
+    final Set<String> mediaDir = this.jsonPojo.getMediaDirectories();
     final boolean found = mediaDir.remove(dir);
 
     if (found)
@@ -80,7 +75,7 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
 
   public void cleanNonExistingMediaDirectories() throws MediaDirNotFoundException
   {
-    for (String dir : new ArrayList<>(this.jsonPojo.getDirectories()))
+    for (String dir : new ArrayList<>(this.jsonPojo.getMediaDirectories()))
     {
       if (!new File(dir).exists())
       {
@@ -116,6 +111,7 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
    */
   public void writeOnBackground()
   {
+    this.logger.info("Writing media-library-configuration in background");
     WriteMediaLibraryIniTask thisTask = new WriteMediaLibraryIniTask(this);
     thisTask.start();
   }

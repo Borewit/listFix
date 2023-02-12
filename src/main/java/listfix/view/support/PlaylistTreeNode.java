@@ -25,15 +25,20 @@ import java.io.File;
 
 public class PlaylistTreeNode extends DefaultMutableTreeNode
 {
-  public PlaylistTreeNode(Object object)
+  public PlaylistTreeNode(File file)
   {
-    super(object);
+    super(file);
   }
 
   @Override
   public int hashCode()
   {
-    return ((File)this.getUserObject()).getAbsolutePath().hashCode();
+    return this.getUserObject().getAbsolutePath().hashCode();
+  }
+
+  @Override
+  public File getUserObject() {
+    return (File) super.getUserObject();
   }
 
   @Override
@@ -47,6 +52,6 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode
     {
       return false;
     }
-    return hashCode() == ((PlaylistTreeNode)obj).hashCode();
+    return hashCode() == (obj).hashCode();
   }
 }

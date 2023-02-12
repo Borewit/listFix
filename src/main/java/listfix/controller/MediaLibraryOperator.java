@@ -47,7 +47,7 @@ public class MediaLibraryOperator
 
   public void addDirectory(String dir)
   {
-    final Set<String> mediaDir = this.mediaLibraryConfiguration.getConfig().getDirectories();
+    final Set<String> mediaDir = this.mediaLibraryConfiguration.getConfig().getMediaDirectories();
     mediaDir.add(dir);
     DirectoryScanner ds = new DirectoryScanner();
     ds.createMediaLibraryDirectoryAndFileList(mediaDir, _observer);
@@ -79,7 +79,7 @@ public class MediaLibraryOperator
   public void refresh()
   {
     DirectoryScanner ds = new DirectoryScanner();
-    ds.createMediaLibraryDirectoryAndFileList(this.mediaLibraryConfiguration.getConfig().getDirectories(), _observer);
+    ds.createMediaLibraryDirectoryAndFileList(this.mediaLibraryConfiguration.getConfig().getMediaDirectories(), _observer);
     if (!_observer.getCancelled())
     {
       _observer.setMessage("Finishing...");
