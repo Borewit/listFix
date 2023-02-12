@@ -3,6 +3,7 @@ package listfix.swing;
 import javax.swing.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -179,4 +180,16 @@ public class JDocumentTabbedPane extends JTabbedPane
     this.documentChangeListeners.remove(listener);
   }
 
+  public JDocumentComponent getDocumentFor(Path toPath)
+  {
+    for (int i = 0; i < super.getTabCount(); ++i)
+    {
+      JDocumentComponent doc = (JDocumentComponent) super.getComponentAt(i);
+      if (doc.getPath().equals(toPath))
+      {
+        return doc;
+      }
+    }
+    return null;
+  }
 }

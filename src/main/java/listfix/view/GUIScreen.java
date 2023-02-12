@@ -1298,7 +1298,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener
     });
   }
 
-  private List<File> getRecursiveSelectedFilesFromTreePlaylists() {
+  private List<File> getRecursiveSelectedFilesFromTreePlaylists()
+  {
     List<File> files = new ArrayList<>();
     for (File file : this.getSelectedFilesFromTreePlaylists())
     {
@@ -1351,10 +1352,23 @@ public final class GUIScreen extends JFrame implements DropTargetListener
           {
             if (toOpen.canWrite())
             {
-              toOpen.delete();
-              _playlistDirectoryTree.makeVisible(selPath);
-              DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
-              treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
+              if (toOpen.delete())
+              {
+                this._playlistDirectoryTree.makeVisible(selPath);
+                DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
+                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+                treeModel.removeNodeFromParent(treeNode);
+                TreeNodeFile nodeNodeFile = (TreeNodeFile) treeNode.getUserObject();
+                JDocumentComponent playlistTab = this._documentPane.getDocumentFor(nodeNodeFile.getAbsoluteFile().toPath());
+                if (playlistTab != null)
+                {
+                  this._documentPane.remove(playlistTab);
+                }
+              }
+              else
+              {
+                JOptionPane.showMessageDialog(null, String.format("Failed to delete playlist: %s", toOpen.getName()), "Deleting Playlist Failed", JOptionPane.WARNING_MESSAGE);
+              }
             }
           }
         }
