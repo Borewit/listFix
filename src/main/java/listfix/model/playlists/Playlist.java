@@ -41,7 +41,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -67,7 +66,7 @@ public class Playlist
   private int _fixedCount;
   private int _urlCount;
   private int _missingCount;
-  private boolean _isModified;
+  private boolean isModified;
   private boolean _isNew;
   private static final Logger _logger = LogManager.getLogger(Playlist.class);
 
@@ -89,7 +88,7 @@ public class Playlist
     setEntries(sublist);
 
     _type = PlaylistType.M3U;
-    _isModified = false;
+    this.isModified = false;
     refreshStatus();
     quickSave();
   }
@@ -104,7 +103,7 @@ public class Playlist
     _utfFormat = true;
     _file = listFile;
     _type = type;
-    _isModified = false;
+    this.isModified = false;
     setEntries(entries);
     refreshStatus();
   }
@@ -131,7 +130,7 @@ public class Playlist
     _file.deleteOnExit();
     _utfFormat = true;
     _type = PlaylistType.M3U;
-    _isModified = false;
+    this.isModified = false;
     _isNew = true;
     refreshStatus();
   }
@@ -168,7 +167,7 @@ public class Playlist
       // let's override our previous determination in the PLS case so we don't end up saving it out incorrectly
       _utfFormat = false;
     }
-    _isModified = false;
+    this.isModified = false;
     refreshStatus();
   }
 
@@ -215,11 +214,11 @@ public class Playlist
     }
   }
 
-  protected void resetInternalStateAfterSave(IProgressObserver observer)
+  protected void resetInternalStateAfterSave(IProgressObserver<String> observer)
   {
     // change original _entries
     replaceEntryListContents(_entries, _originalEntries);
-    _isModified = false;
+    this.isModified = false;
     _isNew = false;
 
     // set entries unfixed if we're being watched...
@@ -304,9 +303,6 @@ public class Playlist
     }
   }
 
-  /**
-   * @param listener
-   */
   public void removeModifiedListener(IPlaylistModifiedListener listener)
   {
     _listeners.remove(listener);
@@ -348,52 +344,24 @@ public class Playlist
     }
   }
 
-  /**
-   * @return
-   */
   public int size()
   {
     return _entries.size();
   }
 
-  /**
-   *
-   */
   public void updateModifiedStatus()
   {
-    boolean result = false;
-
     // Run a full comparison against the original entry list we created when we were constructed
-    if (_originalEntries.size() != _entries.size())
-    {
-      result = true;
-    }
-    else
-    {
-      for (int i = 0; i < _entries.size(); i++)
-      {
-        PlaylistEntry entryA = _entries.get(i);
-        PlaylistEntry entryB = _originalEntries.get(i);
-
-        if (entryA.isURL() == entryB.isURL() || entryA.equals(entryB))
-        {
-          // Comparable and (comparable & equal)
-          result = true;
-          break;
-        }
-      }
-    }
-
-    _isModified = result;
+    this.isModified = !_entries.equals(_originalEntries);
 
     // if this playlist refers to a file on disk, and aren't a new file, make sure that file still exists...
     if (_file != null && !isNew())
     {
-      _isModified = _isModified || !_file.exists();
+      this.isModified = this.isModified || !_file.exists();
     }
 
     // notify the listeners if we have changed...
-    if (_isModified)
+    if (this.isModified)
     {
       firePlaylistModified();
     }
@@ -442,7 +410,7 @@ public class Playlist
 
   public boolean isModified()
   {
-    return this._isModified;
+    return this.isModified;
   }
 
   public String getFilename()
@@ -548,7 +516,7 @@ public class Playlist
     return entries.size();
   }
 
-  public int add(File[] files, IProgressObserver<String> observer) throws FileNotFoundException, IOException
+  public int add(File[] files, IProgressObserver<String> observer) throws IOException
   {
     List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
     if (newEntries != null)
@@ -766,7 +734,7 @@ public class Playlist
 
   public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, Collection<String> libraryFiles, ProgressWorker<List<BatchMatchItem>, String> observer)
   {
-    List<PlaylistEntry> entrySelection = rowList.stream().map(ix -> this._entries.get(ix)).collect(Collectors.toUnmodifiableList());
+    List<PlaylistEntry> entrySelection = rowList.stream().map(this._entries :: get).collect(Collectors.toUnmodifiableList());
     return findClosestMatches(entrySelection, libraryFiles, observer);
   }
 
@@ -824,7 +792,7 @@ public class Playlist
   {
     switch (sortIx)
     {
-      case Filename, Path, Status -> Collections.sort(_entries, new EntryComparator(sortIx, isDescending));
+      case Filename, Path, Status -> _entries.sort(new EntryComparator(sortIx, isDescending));
       case Random -> Collections.shuffle(_entries);
       case Reverse -> Collections.reverse(_entries);
     }
@@ -847,6 +815,7 @@ public class Playlist
     {
       int rc = 0;
 
+      // Randomly chosen order... Found > Fixed > Missing > URL (seemed reasonable)
       switch (_sortIx)
       {
         case Filename:
@@ -855,7 +824,6 @@ public class Playlist
         case Path:
           rc = lhs.getTrackFolder().compareToIgnoreCase(rhs.getTrackFolder());
           break;
-// Randomly chosen order... Found > Fixed > Missing > URL (seemed reasonable)
         case Status:
           if (lhs.isURL())
           {
@@ -994,7 +962,7 @@ public class Playlist
       _file.deleteOnExit();
       _utfFormat = true;
       _type = PlaylistType.M3U;
-      _isModified = false;
+      this.isModified = false;
       _isNew = true;
       _entries.clear();
       _originalEntries.clear();
