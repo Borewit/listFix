@@ -41,6 +41,9 @@ plugins {
 
     // https://github.com/qoomon/gradle-git-versioning-plugin
     id 'me.qoomon.git-versioning' version '6.3.6'
+
+    // https://jreleaser.org/guide/latest/quick-start/gradle.html
+    id 'org.jreleaser' version '1.4.0'
 }
 
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
@@ -71,6 +74,7 @@ javafx {
     configuration = 'implementation'
 }
 
+
 project.mainClassName = 'listfix.view.GUIScreen'
 
 def manifestAttributes = [
@@ -80,6 +84,27 @@ def manifestAttributes = [
     'SCM-Repository'        : 'https://github.com/Borewit/listFix',
     'Main-Class'            : project.mainClassName
 ]
+
+def fatJarFilePath = "build/libs/${project.name}-${project.version}-all.jar"
+
+jreleaser {
+    project {
+        authors = ['Borewit']
+        license = 'GNU General Public License v3.0'
+        links {
+            homepage = 'https://github.com/Borewit/listFix'
+        }
+        inceptionYear = '2023'
+    }
+
+    distributions {
+        app {
+            artifact {
+                path = fatJarFilePath
+            }
+        }
+    }
+}
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -233,7 +258,7 @@ task checkStyle(type: DefaultTask, dependsOn: [checkstyleMain, checkstyleTest]) 
 task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: [makeIcon, fatJar]) {
     // mandatory
     mainClass = project.mainClassName
-    runnableJar = file("build/libs/${project.name}-${project.version}-all.jar")
+    runnableJar = file(fatJarFilePath)
     // optional
     bundleJre = true
     generateInstaller = true

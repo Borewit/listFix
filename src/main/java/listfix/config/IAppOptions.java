@@ -11,6 +11,7 @@ public interface IAppOptions extends IPlaylistOptions
   int getMaxPlaylistHistoryEntries();
 
   String getLookAndFeel();
+
   boolean getAutoRefreshMediaLibraryOnStartup();
 
   String getPlaylistsDirectory();

@@ -32,6 +32,7 @@ import listfix.model.playlists.*;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.GUIScreen;
+import listfix.view.IListFixGui;
 import listfix.view.dialogs.*;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.ImageIcons;
@@ -85,56 +86,35 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private static final Marker markerRepairWorker = MarkerManager.getMarker("PlaylistCtrl-Repair-Worker").setParents(markerRepair);
   private static final String txtOpenFileLocationSingular = "Open File Location";
   private static final String txtOpenFileLocationPlural = "Open File Locations";
-  private FolderChooser _destDirFileChooser = new FolderChooser();
-
-  private int currentlySelectedRow = 0;
+  private final FolderChooser _destDirFileChooser = new FolderChooser();
   private Playlist _playlist;
+  protected final IListFixGui listFixGui;
 
-  private GUIScreen mainWindow;
+  private final IPlaylistModifiedListener listener = list -> onPlaylistModified(list);
 
-  private final IPlaylistModifiedListener listener = new IPlaylistModifiedListener()
+  public PlaylistEditCtrl(IListFixGui listFixGui)
   {
-    @Override
-    public void playlistModified(Playlist list)
-    {
-      onPlaylistModified(list);
-    }
-  };
-
-  public PlaylistEditCtrl()
-  {
+    this.listFixGui = listFixGui;
     initComponents();
-    initPlaylistTable(null);
-    initFolderChooser();
-    SwingUtilities.updateComponentTreeUI(this);
-  }
-
-  /**
-   *
-   */
-  public PlaylistEditCtrl(GUIScreen mainWindow)
-  {
-    this.mainWindow = mainWindow;
-    initComponents();
-    initPlaylistTable(mainWindow);
+    initPlaylistTable();
     initFolderChooser();
     SwingUtilities.updateComponentTreeUI(this);
   }
 
   protected IPlaylistOptions getPlaylistOptions()
   {
-    return this.mainWindow.getOptions();
+    return this.listFixGui.getApplicationConfiguration().getAppOptions();
   }
 
   private IMediaLibrary getMediaLibrary()
   {
-    return this.mainWindow.getMediaLibrary();
+    return this.listFixGui.getApplicationConfiguration().getMediaLibrary();
   }
 
   private void onPlaylistModified(Playlist list)
   {
     boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-    _btnReload.setEnabled(list == null ? false : list.isModified());
+    _btnReload.setEnabled(list != null && list.isModified());
     _btnSave.setEnabled(_playlist != null);
     _btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
     _btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
@@ -163,10 +143,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
       showWaitCursor(true);
 
-      ProgressWorker worker = new ProgressWorker()
+      ProgressWorker<Void, String> worker = new ProgressWorker<>()
       {
         @Override
-        protected Object doInBackground() throws IOException
+        protected Void doInBackground() throws IOException
         {
           int selected = _uiTable.getSelectedRow();
           int insertIx = selected >= 0 ? _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow()) : -1;
@@ -181,7 +161,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           else
           {
             // Adding at the end...
-            firstIx = _playlist.size() > 0 ? _playlist.size() : 0;
+            firstIx = Math.max(_playlist.size(), 0);
             int numAdded = _playlist.add(files, this);
             lastIx = firstIx + numAdded - 1;
           }
@@ -201,6 +181,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           }
           catch (InterruptedException ex)
           {
+            _logger.info("Cancelled");
           }
           catch (ExecutionException ex)
           {
@@ -473,7 +454,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   public void bulkFindClosestMatches()
   {
-    final Collection<String> libraryFiles = mainWindow.getMediaLibrary().getNestedMediaFiles();
+    final Collection<String> libraryFiles = listFixGui.getApplicationConfiguration().getMediaLibrary().getNestedMediaFiles();
     ProgressWorker<List<BatchMatchItem>, String> worker = new ProgressWorker<>()
     {
       @Override
@@ -540,7 +521,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
       }
       else
       {
-        this.mainWindow.getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
+        this.listFixGui.getApplicationConfiguration().getMediaLibrary().getDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
       }
 
       if (entry instanceof FilePlaylistEntry)
@@ -827,55 +808,25 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _playlistEntryRightClickMenu.add(jSeparator3);
 
     _miFindClosest.setText("Find Closest Matches");
-    _miFindClosest.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onMenuFindClosestActionPerformed(evt);
-      }
-    });
+    _miFindClosest.addActionListener(evt -> onMenuFindClosestActionPerformed(evt));
     _playlistEntryRightClickMenu.add(_miFindClosest);
     _playlistEntryRightClickMenu.add(jSeparator4);
 
     _miRemoveDups.setText("Remove Duplicates");
-    _miRemoveDups.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onMenuRemoveDuplicatesActionPerformed(evt);
-      }
-    });
+    _miRemoveDups.addActionListener(evt -> onMenuRemoveDuplicatesActionPerformed(evt));
     _playlistEntryRightClickMenu.add(_miRemoveDups);
 
     _miRemoveMissing.setText("Remove Missing");
-    _miRemoveMissing.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onMenuRemoveMissingActionPerformed(evt);
-      }
-    });
+    _miRemoveMissing.addActionListener(evt -> onMenuRemoveMissingActionPerformed(evt));
     _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
     _miCopySelectedFiles.setText("Copy Selected Items To...");
     _miCopySelectedFiles.setToolTipText("");
-    _miCopySelectedFiles.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miCopySelectedFilesActionPerformed(evt);
-      }
-    });
+    _miCopySelectedFiles.addActionListener(evt -> _miCopySelectedFilesActionPerformed(evt));
     _playlistEntryRightClickMenu.add(_miCopySelectedFiles);
 
     _miNewPlaylistFromSelected.setText("Create New Playlist with Selected Items...");
-    _miNewPlaylistFromSelected.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        _miNewPlaylistFromSelectedActionPerformed(evt);
-      }
-    });
+    _miNewPlaylistFromSelected.addActionListener(evt -> _miNewPlaylistFromSelectedActionPerformed(evt));
     _playlistEntryRightClickMenu.add(_miNewPlaylistFromSelected);
 
     setLayout(new java.awt.BorderLayout());
@@ -892,13 +843,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnSave.setMinimumSize(new java.awt.Dimension(31, 31));
     _btnSave.setPreferredSize(new java.awt.Dimension(31, 31));
     _btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnSave.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        onBtnSaveActionPerformed(evt);
-      }
-    });
+    _btnSave.addActionListener(evt -> onBtnSaveActionPerformed(evt));
     _uiToolbar.add(_btnSave);
 
     _btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
@@ -1201,7 +1146,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   {//GEN-HEADEREND:event__uiTableMousePressed
     if (SwingUtilities.isLeftMouseButton(evt))
     {
-      currentlySelectedRow = _uiTable.rowAtPoint(evt.getPoint());
+      int currentlySelectedRow = _uiTable.rowAtPoint(evt.getPoint());
       if (evt.getClickCount() == 2)
       {
         if (_uiTable.getSelectedRowCount() == 1 && !_playlist.get(_uiTable.convertRowIndexToModel(_uiTable.getSelectedRow())).isFound()
@@ -1723,7 +1668,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     return false;
   }
 
-  private void initPlaylistTable(final GUIScreen parent)
+  private void initPlaylistTable()
   {
     _uiTable.setDefaultRenderer(Integer.class, new IntRenderer());
     _uiTable.initFillColumnForScrollPane(_uiTableScrollPane);
@@ -1915,12 +1860,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         else if (info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
         {
           // This is the flavor we handle when the user drags any file in from a Windows OS
-          return HandleFileListFlavor(info, dl, parent);
+          return HandleFileListFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
         }
         else
         {
           // This is the flavor we handle when the user drags playlists over from the playlist panel, or when dragging in any file from linux
-          return HandleStringFlavor(info, dl, parent);
+          return HandleStringFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
         }
       }
 
@@ -1959,7 +1904,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         }
       }
 
-      private boolean HandleFileListFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
+      private boolean HandleFileListFlavor(TransferSupport info, final JTable.DropLocation dl, IListFixGui parent)
       {
         int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
           "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
@@ -1973,7 +1918,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             try
             {
-              final List list = (List) t.getTransferData(flavor);
+              final List<File> list = (List<File>) t.getTransferData(flavor);
               ProcessFileListDrop(list, dl);
               resizeAllColumns();
               return true;
@@ -1994,7 +1939,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             try
             {
-              final List list = (List) t.getTransferData(flavor);
+              final List<File> list = (List<File>) t.getTransferData(flavor);
               OpenFileListDrop(list, parent);
               return true;
             }
@@ -2008,7 +1953,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         return false;
       }
 
-      private void ProcessFileListDrop(List list, final JTable.DropLocation dl)
+      private void ProcessFileListDrop(List<File> list, final JTable.DropLocation dl)
       {
         int insertAt = dl.getRow();
         for (Object list1 : list)
@@ -2045,20 +1990,19 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         }
       }
 
-      private void OpenFileListDrop(List list, GUIScreen parent)
+      private void OpenFileListDrop(List<File> list, IListFixGui parent)
       {
-        for (Object list1 : list)
+        for (File file : list)
         {
-          final File tempFile = (File) list1;
-          if (tempFile instanceof File)
+          if (file != null)
           {
-            if (Playlist.isPlaylist(tempFile, PlaylistEditCtrl.this.getPlaylistOptions()))
+            if (Playlist.isPlaylist(file, PlaylistEditCtrl.this.getPlaylistOptions()))
             {
-              parent.openPlaylist(tempFile);
+              parent.openPlaylist(file);
             }
-            else if (tempFile.isDirectory())
+            else if (file.isDirectory())
             {
-              List<File> filesToInsert = PlaylistScanner.getAllPlaylists(tempFile);
+              List<File> filesToInsert = PlaylistScanner.getAllPlaylists(file);
               for (File f : filesToInsert)
               {
                 parent.openPlaylist(f);
@@ -2078,7 +2022,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           protected Playlist doInBackground() throws Exception
           {
             Playlist list = PlaylistFactory.getPlaylist(tempFile, this, PlaylistEditCtrl.this.getPlaylistOptions());
-            if (PlaylistEditCtrl.this.mainWindow.getOptions().getAutoLocateEntriesOnPlaylistLoad())
+            if (PlaylistEditCtrl.this.listFixGui.getApplicationConfiguration().getAppOptions().getAutoLocateEntriesOnPlaylistLoad())
             {
               list.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
             }
@@ -2112,7 +2056,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         return _playlist.size() - plistSize;
       }
 
-      private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl, GUIScreen parent)
+      private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl, IListFixGui parent)
       {
         int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
           "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");

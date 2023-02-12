@@ -42,7 +42,7 @@ public class MediaLibraryOperator
   public MediaLibraryOperator(ProgressWorker observer)
   {
     this._observer = observer;
-    this.mediaLibraryConfiguration = GUIDriver.getInstance().getMediaLibrarConfiguration();
+    this.mediaLibraryConfiguration = ListFixController.getInstance().getMediaLibraryConfiguration();
   }
 
   public void addDirectory(String dir)
