@@ -1,24 +1,7 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.view;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -35,10 +18,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.Locale;
 
-/**
- *
- * @author jcaron
- */
 public class FileEditor extends JFrame
 {
   private Clipboard clipboard = null;
@@ -53,28 +32,19 @@ public class FileEditor extends JFrame
   private JScrollPane scrollPane = null;
   private JTextArea textArea = null;
   private Toolkit toolkit = null;
+  private final Logger _logger = LogManager.getLogger(FileEditor.class);
 
-  /**
-   *
-   * @param title
-   */
   public FileEditor(String title)
   {
     super(title);
     initializeComponents();
   }
 
-  /**
-   *
-   * @param filename
-   * @param title
-   */
   public FileEditor(String filename, String title)
   {
-    super(title);
+    this(title);
     File file = new File(filename);
-    initializeComponents();
-    System.out.println(filename);
+    this._logger.debug(String.format("Opening: %s", filename));
     openDocument(file);
   }
 
@@ -121,74 +91,36 @@ public class FileEditor extends JFrame
 
     final JMenuItem novo = new JMenuItem("New");
     novo.setMnemonic('N');
-    novo.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        newFile();
-
-      }
-    });
+    novo.addActionListener(e -> newFile());
 
     JMenuItem openMenuItem = new JMenuItem("Open");
     openMenuItem.setMnemonic('O');
-    openMenuItem.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        openFile();
-
-      }
-    });
+    openMenuItem.addActionListener(e -> openFile());
 
 
     JMenuItem saveMenuItem = new JMenuItem("Save");
     saveMenuItem.setMnemonic('S');
-    saveMenuItem.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        save();
-
-      }
-    });
+    saveMenuItem.addActionListener(e -> save());
 
 
     JMenuItem saveAsMenuItem = new JMenuItem("Save As");
     saveAsMenuItem.setMnemonic('v');
-    saveAsMenuItem.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        saveAs();
-
-      }
-    });
+    saveAsMenuItem.addActionListener(e -> saveAs());
 
     JMenuItem printMenuItem = new JMenuItem("Print");
     printMenuItem.setMnemonic('P');
-    printMenuItem.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
+    printMenuItem.addActionListener(e -> {
+
+      if (openFile != null)
       {
-
-        if (openFile != null)
-        {
-          print();
-        }
-
+        print();
       }
+
     });
 
     JMenuItem exitMenuItem = new JMenuItem("Exit");
     exitMenuItem.setMnemonic('x');
-    exitMenuItem.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        exit();
-      }
-    });
+    exitMenuItem.addActionListener(e -> exit());
 
     fileMenu.add(novo);
     fileMenu.add(openMenuItem);
@@ -533,8 +465,7 @@ public class FileEditor extends JFrame
   private void paste()
   {
     String toPaste = null;
-    Transferable helper = null;
-    helper = clipboard.getContents(null);
+    Transferable helper = clipboard.getContents(null);
     if (helper.isDataFlavorSupported(DataFlavor.stringFlavor))
     {
       try
@@ -545,7 +476,6 @@ public class FileEditor extends JFrame
       {
         System.out.println("Content type not supprted...");
         e.printStackTrace();
-        toPaste = null;
       }
       catch (IOException e)
       {
@@ -565,18 +495,14 @@ public class FileEditor extends JFrame
     this.dispose();
   }
 
-  /**
-   *
-   * @param args
-   */
   public static void main(String[] args)
   {
     if (args.length > 0)
     {
-      for (int i = 0; i < args.length; i++)
+      for (String arg : args)
       {
-        System.out.println(args[i]);
-        new FileEditor(args[i]);
+        System.out.println(arg);
+        new FileEditor(arg);
       }
     }
     else
