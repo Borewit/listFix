@@ -114,8 +114,9 @@ public class JDocumentTabbedPane extends JTabbedPane
     int index = super.getTabCount();
     this.addTab(document.getTitle(), document.getIcon(), document, document.getPath().toString());
 
-//    JPanel tabComponent = new JButtonTabComponent(this, document.getIcon());
-//    this.setTabComponentAt(index, tabComponent);
+    JPanel tabComponent = new JButtonTabComponent(this, document.getIcon());
+    this.setTabComponentAt(index, tabComponent);
+    this.validate();
   }
 
   public boolean renameDocument(String oldName, String newName)
