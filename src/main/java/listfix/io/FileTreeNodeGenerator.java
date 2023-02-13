@@ -39,16 +39,10 @@ public class FileTreeNodeGenerator
         continue;
       }
 
-      String curPath = playlistDir.getPath();
-      TreeNodeFile file = new TreeNodeFile(curPath);
-      PlaylistTreeNode curDir = new PlaylistTreeNode(file);
+      PlaylistTreeNode curDir = new PlaylistTreeNode(playlistDir);
       curTop.add(curDir);
 
-      // if we're creating the root node here, use a regular file to get the full path to show.
-      curDir.setUserObject(new File(curPath));
-
-      File[] inodes = playlistDir.listFiles(new PlaylistFileFilter());
-
+      final File[] inodes = playlistDir.listFiles(new PlaylistFileFilter());
       if (inodes != null && inodes.length > 0)
       {
         addNodes(curDir, inodes);

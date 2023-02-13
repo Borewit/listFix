@@ -1354,9 +1354,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   private void renameTreeSelectedNode()
   {
     int[] selRows = _playlistDirectoryTree.getSelectionRows();
-    DefaultMutableTreeNode curNode;
     DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
-    TreeNodeFile nodeFile;
     if (selRows != null && selRows.length > 0)
     {
       List<TreePath> selPaths = new ArrayList<>();
@@ -1366,16 +1364,23 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       }
       for (TreePath selPath : selPaths)
       {
-        curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-        nodeFile = (TreeNodeFile) curNode.getUserObject();
+        DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+        File nodeFile = curNode.getUserObject();
         String str = curNode.toString();
-        String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), "." + FileUtils.getFileExtension(nodeFile.getName()));
+        String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), nodeFile.toPath().getFileName().toString());
         if (reply != null && !"".equals(reply))
         {
-          TreeNodeFile destFile = new TreeNodeFile(nodeFile.getParent() + Constants.FS + reply);
-          nodeFile.renameTo(destFile);
-          curNode.setUserObject(destFile);
-          treeModel.nodeChanged(curNode);
+          final File destFile = new File(nodeFile.getParent(), reply);
+          _logger.info(String.format("Rename playlist \"%s\" to \"%s\"", nodeFile, reply));
+          if (nodeFile.renameTo(destFile)) {
+            curNode.setUserObject(destFile);
+            treeModel.nodeChanged(curNode);
+            // ToDo: update tab
+          }
+          else
+          {
+            _logger.warn("Renaming playlist failed");
+          }
         }
       }
     }
@@ -2646,14 +2651,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
 
   private void _playlistDirectoryTreeKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__playlistDirectoryTreeKeyPressed
   {//GEN-HEADEREND:event__playlistDirectoryTreeKeyPressed
-    switch(evt.getKeyCode()) {
-      case KeyEvent.VK_ENTER:
-        this._btnOpenSelectedActionPerformed(null);
-        break;
-      case keyEventRenameFile:
-        this.renameTreeSelectedNode();
-        break;
-
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+    {
+      _btnOpenSelectedActionPerformed(null);
     }
   }//GEN-LAST:event__playlistDirectoryTreeKeyPressed
 
