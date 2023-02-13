@@ -1,46 +1,49 @@
 package listfix.util;
 
-import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
+import listfix.comparators.DirectoryThenFileThenAlphabeticalPathComparator;
 
-import java.io.File;
+
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class FileTypeSearch
 {
-  /**
-   * @param directoryToSearch
-   * @param filter
-   * @return
-   */
-  public List<File> findFiles(File directoryToSearch, FileFilter filter)
-  {
-    if (directoryToSearch.exists())
-    {
-      File[] inodes = directoryToSearch.listFiles(filter);
 
-      if (inodes != null && inodes.length > 0)
+  public List<Path> findFiles(Path directoryToSearch, FileFilter filter)
+  {
+    List<Path> files = new ArrayList<>();
+    this.findFiles(files, directoryToSearch, filter);
+    return files;
+  }
+
+  private void findFiles(List<Path> files, Path directoryToSearch, FileFilter filter)
+  {
+    if (Files.exists(directoryToSearch))
+    {
+      try
       {
-        List<File> ol = new ArrayList<>(Arrays.asList(inodes));
-        ol.sort(new DirectoryThenFileThenAlphabeticalFileComparator());
-        List<File> files = new ArrayList<>();
-        for (File file : ol)
-        {
-          if (file.isDirectory())
-          {
-            files.addAll(findFiles(file, filter));
-          }
-          else
-          {
-            files.add(file);
-          }
-        }
-        return files;
+        Files.list(directoryToSearch)
+          .filter(file -> filter.accept(file.toFile()))
+          .sorted(new DirectoryThenFileThenAlphabeticalPathComparator())
+          .forEach(file -> {
+            if (Files.isDirectory(file))
+            {
+              findFiles(files, file, filter);
+            }
+            else
+            {
+              files.add(file);
+            }
+          });
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException(e);
       }
     }
-    return Collections.emptyList();
   }
 }

@@ -23,7 +23,6 @@ package listfix.view.controls;
 import listfix.config.IMediaLibrary;
 import listfix.io.*;
 import listfix.io.filters.AudioFileFilter;
-import listfix.io.filters.ExtensionFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.PlaylistEntryList;
@@ -31,7 +30,7 @@ import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.*;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
-import listfix.view.GUIScreen;
+
 import listfix.view.IListFixGui;
 import listfix.view.dialogs.*;
 import listfix.view.support.IPlaylistModifiedListener;
@@ -64,6 +63,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.List;
@@ -133,15 +133,17 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     this.getMediaLibrary().getMediaDirectories().stream().findFirst().ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
     if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION)
     {
-      File[] tempFileList = chooser.getSelectedFiles();
-      Arrays.sort(tempFileList);
-      final File[] files = tempFileList;
+      File[] files = chooser.getSelectedFiles();
+      Arrays.sort(files);
       if (files.length == 0)
       {
         return;
       }
 
       showWaitCursor(true);
+
+      final List<Path> pathList = Arrays.stream(files)
+        .map(File :: toPath).collect(Collectors.toList());
 
       ProgressWorker<Void, String> worker = new ProgressWorker<>()
       {
@@ -154,7 +156,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           if (insertIx >= 0)
           {
             // Adding somewhere in the middle
-            int count = _playlist.addAt(insertIx, files, this);
+            int count = _playlist.addAt(insertIx, pathList, this);
             firstIx = insertIx;
             lastIx = firstIx + count - 1;
           }
@@ -162,7 +164,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             // Adding at the end...
             firstIx = Math.max(_playlist.size(), 0);
-            int numAdded = _playlist.add(files, this);
+            int numAdded = _playlist.add(pathList, this);
             lastIx = firstIx + numAdded - 1;
           }
 
@@ -533,7 +535,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         File file = chooser.getSelectedFile();
 
         // make sure the replacement file is not a playlist
-        if (Playlist.isPlaylist(file, PlaylistEditCtrl.this.getPlaylistOptions()))
+        if (Playlist.isPlaylist(file.toPath()))
         {
           JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("You cannot replace a file with a playlist file. Use \"Add File\" instead."), "Replace File Error", JOptionPane.ERROR_MESSAGE);
           return;
@@ -548,7 +550,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   private void removeDuplicates()
   {
-    int dupCount = _playlist.removeDuplicates();
+    int dupCount = this._playlist.removeDuplicates();
     if (dupCount > 0)
     {
       getTableModel().fireTableDataChanged();
@@ -559,7 +561,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   private void removeMissing()
   {
-    int count = _playlist.removeMissing();
+    int count = this._playlist.removeMissing();
     if (count > 0)
     {
       getTableModel().fireTableDataChanged();
@@ -570,111 +572,17 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   private void savePlaylist()
   {
-    if (_playlist.isNew())
+    if (this._playlist.isNew())
     {
-      JFileChooser chooser = new JFileChooser();
-
-      chooser.setAcceptAllFileFilterUsed(false);
-      chooser.addChoosableFileFilter(new ExtensionFilter("m3u", "M3U Playlist (*.m3u)"));
-      chooser.addChoosableFileFilter(new ExtensionFilter("m3u8", "M3U8 Playlist (*.m3u8)"));
-      chooser.addChoosableFileFilter(new ExtensionFilter("pls", "PLS Playlist (*.pls)"));
-      chooser.addChoosableFileFilter(new ExtensionFilter("wpl", "WPL Playlist (*.wpl)"));
-      chooser.addChoosableFileFilter(new ExtensionFilter("xspf", "XSPF Playlist (*.xspf)"));
-      chooser.addChoosableFileFilter(new ExtensionFilter("xml", "iTunes Playlist (*.xml)"));
-
-      chooser.setSelectedFile(_playlist.getFile());
-      int rc = chooser.showSaveDialog(getParentFrame());
-      if (rc == JFileChooser.APPROVE_OPTION)
-      {
-        try
-        {
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-          File playlist = chooser.getSelectedFile();
-
-          // prompt for confirmation if the file already exists...
-          if (playlist.exists())
-          {
-            int result = JOptionPane.showConfirmDialog(this.getParent(), new JTransparentTextArea("You picked a file that already exists, should I really overwrite it?"), "File Exists Warning", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.NO_OPTION)
-            {
-              return;
-            }
-          }
-
-          String extension = ((ExtensionFilter) chooser.getFileFilter()).getExtension();
-
-          // make sure file has correct extension
-          String normalizedName = playlist.getName().trim().toLowerCase();
-          if (!Playlist.isPlaylist(playlist, this.getPlaylistOptions()) || (!normalizedName.endsWith(extension)))
-          {
-            if (extension.equals("m3u") && _playlist.isUtfFormat())
-            {
-              playlist = new File(playlist.getPath() + ".m3u8");
-            }
-            else
-            {
-              playlist = new File(playlist.getPath() + "." + extension);
-            }
-          }
-
-          final File finalPlaylistFile = playlist;
-          ProgressWorker<Void, String> worker = new ProgressWorker<>()
-          {
-            @Override
-            protected Void doInBackground() throws Exception
-            {
-              boolean saveRelative = PlaylistEditCtrl.this.getPlaylistOptions().getSavePlaylistsWithRelativePaths();
-              _playlist.saveAs(finalPlaylistFile, this);
-              return null;
-            }
-          };
-
-          ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...");
-          pd.setVisible(true);
-
-          worker.get();
-
-          if (getParentFrame() instanceof GUIScreen)
-          {
-            ((GUIScreen) getParentFrame()).updateCurrentTab(_playlist);
-          }
-        }
-        catch (InterruptedException | ExecutionException e)
-        {
-          _logger.error("Error saving playlist", e);
-
-          JOptionPane.showMessageDialog(getParentFrame(),
-            new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error saving your playlist.  Please try again, or file a bug report.", e.getCause())),
-            "Save Playlist Error", JOptionPane.ERROR_MESSAGE);
-        }
-        finally
-        {
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-      }
+      this.listFixGui.showPlaylistSaveAsDialog(this._playlist);
     }
     else
     {
       try
       {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        ProgressWorker<Void, String> worker = new ProgressWorker<Void, String>()
-        {
-          @Override
-          protected Void doInBackground() throws Exception
-          {
-            boolean saveRelative = PlaylistEditCtrl.this.getPlaylistOptions().getSavePlaylistsWithRelativePaths();
-            _playlist.save(saveRelative, this);
-            return null;
-          }
-        };
-        ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Saving...", _playlist.getType() == PlaylistType.ITUNES || _playlist.getType() == PlaylistType.XSPF, false);
-        pd.setMessage("Please wait while your playlist is saved to disk.");
-        pd.setVisible(true);
-        worker.get();
+        this.listFixGui.savePlaylist(this._playlist);
       }
-      catch (InterruptedException | ExecutionException ex)
+      catch (InterruptedException | ExecutionException | IOException ex)
       {
         _logger.error("Save playlist error", ex);
 
@@ -1412,27 +1320,24 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   private void _miNewPlaylistFromSelectedActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miNewPlaylistFromSelectedActionPerformed
   {//GEN-HEADEREND:event__miNewPlaylistFromSelectedActionPerformed
-    if (getParentFrame() instanceof GUIScreen)
-    {
-      List<Integer> rowList = new ArrayList<>();
-      int[] uiRows = _uiTable.getSelectedRows();
-      for (int x : uiRows)
-      {
-        rowList.add(_uiTable.convertRowIndexToModel(x));
-      }
-      int[] rows = ArrayFunctions.integerListToArray(rowList);
-      try
-      {
-        // Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
-        Playlist sublist = new Playlist(this.getPlaylistOptions());
-        sublist.addAllAt(0, _playlist.getSublist(rows).getEntries());
-        ((GUIScreen) getParentFrame()).openNewTabForPlaylist(sublist);
-      }
-      catch (Exception e)
-      {
 
-      }
+    List<Integer> rowList = new ArrayList<>();
+    int[] uiRows = _uiTable.getSelectedRows();
+    for (int x : uiRows)
+    {
+      rowList.add(_uiTable.convertRowIndexToModel(x));
     }
+    int[] rows = ArrayFunctions.integerListToArray(rowList);
+    // Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
+    try {
+      Playlist sublist = new Playlist(this.getPlaylistOptions());
+      sublist.addAllAt(0, _playlist.getSublist(rows).getEntries());
+      this.listFixGui.openNewTabForPlaylist(sublist);
+    }
+    catch(Exception e) {
+      throw new RuntimeException("Failed to create new playlist", e);
+    }
+
   }//GEN-LAST:event__miNewPlaylistFromSelectedActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1468,26 +1373,16 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private javax.swing.JToolBar.Separator jSeparator5;
   // End of variables declaration//GEN-END:variables
 
-  /**
-   * @return
-   */
   public Playlist getPlaylist()
   {
     return _playlist;
   }
 
-  /**
-   * @param list
-   */
   public void setPlaylist(Playlist list)
   {
     setPlaylist(list, false);
   }
 
-  /**
-   * @param list
-   * @param force
-   */
   public void setPlaylist(Playlist list, boolean force)
   {
     if (_playlist == list && !force)
@@ -1918,7 +1813,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             try
             {
-              final List<File> list = (List<File>) t.getTransferData(flavor);
+              final List<Path> list = (List<Path>) t.getTransferData(flavor);
               ProcessFileListDrop(list, dl);
               resizeAllColumns();
               return true;
@@ -1939,7 +1834,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             try
             {
-              final List<File> list = (List<File>) t.getTransferData(flavor);
+              final List<Path> list = (List<Path>) t.getTransferData(flavor);
               OpenFileListDrop(list, parent);
               return true;
             }
@@ -1953,22 +1848,22 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         return false;
       }
 
-      private void ProcessFileListDrop(List<File> list, final JTable.DropLocation dl)
+      private void ProcessFileListDrop(List<Path> list, final JTable.DropLocation dl) throws IOException
       {
         int insertAt = dl.getRow();
         for (Object list1 : list)
         {
-          final File tempFile = (File) list1;
-          if (tempFile instanceof File)
+          final Path tempFile = (Path) list1;
+          if (tempFile != null)
           {
-            if (Playlist.isPlaylist(tempFile, PlaylistEditCtrl.this.getPlaylistOptions()))
+            if (Playlist.isPlaylist(tempFile))
             {
               insertAt += ProcessDroppedPlaylist(tempFile, insertAt);
             }
-            else if (tempFile.isDirectory())
+            else if (Files.isDirectory(tempFile))
             {
-              List<File> filesToInsert = PlaylistScanner.getAllPlaylists(tempFile);
-              for (File f : filesToInsert)
+              List<Path> filesToInsert = PlaylistScanner.getAllPlaylists(tempFile);
+              for (Path f : filesToInsert)
               {
                 insertAt += ProcessDroppedPlaylist(f, insertAt);
               }
@@ -1978,7 +1873,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               // addAt it to the playlist!
               try
               {
-                _playlist.addAt(insertAt, new File[]{tempFile}, null);
+                _playlist.addAt(insertAt, Collections.singleton(tempFile), null);
               }
               catch (Exception ex)
               {
@@ -1990,20 +1885,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         }
       }
 
-      private void OpenFileListDrop(List<File> list, IListFixGui parent)
+      private void OpenFileListDrop(List<Path> list, IListFixGui parent) throws IOException
       {
-        for (File file : list)
+        for (Path file : list)
         {
           if (file != null)
           {
-            if (Playlist.isPlaylist(file, PlaylistEditCtrl.this.getPlaylistOptions()))
+            if (Playlist.isPlaylist(file))
             {
               parent.openPlaylist(file);
             }
-            else if (file.isDirectory())
+            else if (Files.isDirectory(file))
             {
-              List<File> filesToInsert = PlaylistScanner.getAllPlaylists(file);
-              for (File f : filesToInsert)
+              List<Path> filesToInsert = PlaylistScanner.getAllPlaylists(file);
+              for (Path f : filesToInsert)
               {
                 parent.openPlaylist(f);
               }
@@ -2012,7 +1907,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
         }
       }
 
-      private int ProcessDroppedPlaylist(final File tempFile, int insertAt)
+      private int ProcessDroppedPlaylist(final Path tempFile, int insertAt)
       {
         final int currentInsertPoint = insertAt;
 
@@ -2050,7 +1945,8 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
             }
           }
         };
-        ProgressDialog pd = new ProgressDialog((GUIScreen) getParentFrame(), true, worker, "Loading '" + (tempFile.getName().length() > 70 ? tempFile.getName().substring(0, 70) : tempFile.getName()) + "'...");
+        String filename = tempFile.toString();
+        ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Loading '" + (filename.length() > 70 ? filename.substring(0, 70) : filename) + "'...");
         int plistSize = _playlist.size();
         pd.setVisible(true);
         return _playlist.size() - plistSize;
@@ -2075,24 +1971,20 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
                 String input = (String) t.getTransferData(flavor);
                 List<String> paths = StringArrayListSerializer.deserialize(input);
                 // Turn this into a list of files, and reuse the processing code above
-                List<File> files = new ArrayList<>();
-                for (String path : paths)
-                {
-                  files.add(new File(path));
-                }
+                List<Path> files = paths.stream().map(Path :: of).collect(Collectors.toList());
                 ProcessFileListDrop(files, dl);
               }
               else
               {
                 if (t.getTransferData(flavor) instanceof InputStreamReader)
                 {
-                  List<File> filesToProcess = new ArrayList<>();
+                  List<Path> filesToProcess = new ArrayList<>();
                   try (InputStreamReader reader = (InputStreamReader) t.getTransferData(flavor); BufferedReader temp = new BufferedReader(reader))
                   {
                     String filePath = temp.readLine();
                     while (filePath != null && !filePath.isEmpty())
                     {
-                      filesToProcess.add(new File(new URI(filePath)));
+                      filesToProcess.add(Path.of(new URI(filePath)));
                       filePath = temp.readLine();
                     }
                   }
@@ -2120,30 +2012,25 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
           {
             try
             {
-              final String data;
               if (t.getTransferData(flavor) instanceof String)
               {
                 // In this case, it's a magically delicious string coming from the playlist panel
                 String input = (String) t.getTransferData(flavor);
                 List<String> paths = StringArrayListSerializer.deserialize(input);
-                List<File> files = new ArrayList<>();
-                for (String path : paths)
-                {
-                  files.add(new File(path));
-                }
+                List<Path> files = paths.stream().map(Path :: of).collect(Collectors.toList());
                 OpenFileListDrop(files, parent);
               }
               else
               {
                 if (t.getTransferData(flavor) instanceof InputStreamReader)
                 {
-                  List<File> filesToProcess = new ArrayList<>();
+                  List<Path> filesToProcess = new ArrayList<>();
                   try (InputStreamReader reader = (InputStreamReader) t.getTransferData(flavor); BufferedReader temp = new BufferedReader(reader))
                   {
                     String filePath = temp.readLine();
                     while (filePath != null && !filePath.isEmpty())
                     {
-                      filesToProcess.add(new File(new URI(filePath)));
+                      filesToProcess.add(Path.of(new URI(filePath)));
                     }
                     OpenFileListDrop(filesToProcess, parent);
                   }

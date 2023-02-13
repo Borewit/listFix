@@ -44,7 +44,7 @@ public class BatchRepairItem
     _path = file.getPath();
     _displayName = file.getName();
     _playlistFile = file;
-    if (Playlist.isPlaylist(file, filePathOptions))
+    if (Playlist.isPlaylist(file.toPath()))
     {
       _displayName = (new FileNameTokenizer(filePathOptions)).removeExtensionFromFileName(_displayName);
     }

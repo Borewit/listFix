@@ -1,44 +1,17 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.io;
 
+import listfix.model.playlists.Playlist;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-/**
- * @author jcaron
- */
 public class FileUtils
 {
-  private static final Set<String> mediaExtension = Stream.of("mp3", "wma", "flac", "ogg", "wav", "midi", "cda", "mpg", "mpeg", "m2v", "avi", "m4v", "flv", "mid", "mp2", "mp1", "aac", "asx", "m4a", "mp4", "m4v", "nsv", "aiff", "au", "wmv", "asf", "mpc")
-    .collect(Collectors.toCollection(HashSet::new));
-
   public static File findDeepestPathToExist(File file)
   {
     if (file == null || file.exists())
@@ -53,12 +26,17 @@ public class FileUtils
     return isMediaFile(file.getName());
   }
 
+  public static boolean isMediaFile(Path file)
+  {
+    return isMediaFile(file.getFileName().toString());
+  }
+
   public static boolean isMediaFile(String filename)
   {
     String extension = getFileExtension(filename);
     if (extension != null)
     {
-      return mediaExtension.contains(extension.toLowerCase());
+      return Playlist.mediaExtensions.contains(extension.toLowerCase());
     }
     return false;
   }
@@ -90,7 +68,7 @@ public class FileUtils
 
   public static Path getRelativePath(Path trackPath, Path playlistPath)
   {
-    Path offset = Files.isDirectory(playlistPath) ? playlistPath :  playlistPath.getParent();
+    Path offset = Files.isDirectory(playlistPath) ? playlistPath : playlistPath.getParent();
     String uncPath = UNCFile.from(offset.normalize().toFile()).getUNCPath();
     try
     {
@@ -119,32 +97,35 @@ public class FileUtils
     return result.toString();
   }
 
-  /**
-   * @param dir
-   */
+  public static void deleteDirectory(Path dirOrFile)
+  {
+    if (Files.isDirectory(dirOrFile))
+    {
+      try
+      {
+        Files.list(dirOrFile).forEach(FileUtils :: deleteDirectory);
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException(e);
+      }
+    }
+    else
+    {
+      try
+      {
+        Files.deleteIfExists(dirOrFile);
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
   public static void deleteDirectory(File dir)
   {
-    if (dir.isDirectory())
-    {
-      File[] files = dir.listFiles();
-      for (File file : files)
-      {
-        if (file.isDirectory())
-        {
-          deleteDirectory(file);
-          file.delete();
-        }
-        else
-        {
-          file.delete();
-        }
-      }
-      dir.delete();
-    }
-    if (dir.exists())
-    {
-      deleteDirectory(dir);
-    }
+    FileUtils.deleteDirectory(dir.toPath());
   }
 
   /**
@@ -158,4 +139,5 @@ public class FileUtils
     int index = filename.lastIndexOf(".");
     return index == -1 ? null : filename.substring(filename.lastIndexOf(".") + 1);
   }
+
 }

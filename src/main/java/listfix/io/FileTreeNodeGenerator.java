@@ -1,23 +1,27 @@
 package listfix.io;
 
-import listfix.comparators.DirectoryThenFileThenAlphabeticalFileComparator;
-import listfix.io.filters.PlaylistFileFilter;
+import listfix.comparators.DirectoryThenFileThenAlphabeticalPathComparator;
+import listfix.model.playlists.Playlist;
 import listfix.view.support.PlaylistTreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.tree.TreePath;
-import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import java.util.Collection;
+import java.util.stream.Stream;
+
 
 public class FileTreeNodeGenerator
 {
   private static final Logger logger = LogManager.getLogger(FileTreeNodeGenerator.class);
 
-  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, Collection<File> playlistDirectories)
+  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, Collection<Path> playlistDirectories)
   {
-    return FileTreeNodeGenerator.addNodes(curTop, playlistDirectories.toArray(new File[]{}));
+    return FileTreeNodeGenerator.addNodes(curTop, playlistDirectories.stream());
   }
 
   /**
@@ -27,31 +31,34 @@ public class FileTreeNodeGenerator
    * @param files  Playlist directories or playlist files to add
    * @return Playlist tree
    */
-  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, File[] files)
+  public static PlaylistTreeNode addNodes(PlaylistTreeNode curTop, Stream<Path> files)
   {
-    curTop = curTop == null ? new PlaylistTreeNode(new File("#___root___")) : curTop;
-    Arrays.sort(files, new DirectoryThenFileThenAlphabeticalFileComparator());
-    for (File playlistDir : files)
-    {
-      if (!playlistDir.exists())
-      {
-        logger.warn(String.format("Directory does not exist: %s", playlistDir.getName()));
-        continue;
-      }
-
-      PlaylistTreeNode curDir = new PlaylistTreeNode(playlistDir);
-      curTop.add(curDir);
-
-      final File[] inodes = playlistDir.listFiles(new PlaylistFileFilter());
-      if (inodes != null && inodes.length > 0)
-      {
-        addNodes(curDir, inodes);
-      }
-    }
-    return curTop;
+    PlaylistTreeNode currentNode = curTop == null ? new PlaylistTreeNode(Path.of("#___root___")) : curTop;
+    files
+      .filter(file -> Files.isDirectory(file) || Playlist.isPlaylist(file))
+      .sorted(new DirectoryThenFileThenAlphabeticalPathComparator())
+      .map(PlaylistTreeNode :: new)
+      .forEach(node -> {
+        Path path = node.getUserObject();
+        if (Files.isDirectory(path))
+        {
+          try
+          {
+            addNodes(node, Files.list(path)); // recursion
+          }
+          catch (IOException e)
+          {
+            logger.error(String.format("Failed to list files in directory: %s", path), e);
+            throw new RuntimeException(e);
+          }
+        }
+        currentNode.add(node);
+      });
+    return currentNode;
   }
 
-  public static File TreePathToFileSystemPath(TreePath node)
+
+  public static Path TreePathToFileSystemPath(TreePath node)
   {
     return ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject();
   }

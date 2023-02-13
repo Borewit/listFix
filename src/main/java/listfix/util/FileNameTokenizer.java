@@ -22,13 +22,13 @@ package listfix.util;
 
 import listfix.io.IPlaylistOptions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *
  * @author jcaron
  */
 public class FileNameTokenizer
@@ -45,16 +45,12 @@ public class FileNameTokenizer
     }
   }
 
-   public int score(String filename1, String filename2)
+  public int score(String filename1, String filename2)
   {
     return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
   }
 
-  /**
-   *
-   * @param name
-   * @return
-   */
+
   public String removeExtensionFromFileName(String name)
   {
     String result = name;
@@ -66,18 +62,20 @@ public class FileNameTokenizer
     return result;
   }
 
-    /**
-   *
-   * @param name
-   * @return
-   */
+  public static File changeExtension(File f, String newExtension)
+  {
+    int i = f.getName().lastIndexOf('.');
+    String name = f.getName().substring(0, i);
+    return new File(f.getParent(), name + newExtension);
+  }
+
   public String getExtensionFromFileName(String name)
   {
-      int ix = name.lastIndexOf('.');
-      if (ix >= 0 && ix < name.length() - 1)
-          return name.substring(ix + 1);
-      else
-          return "";
+    int ix = name.lastIndexOf('.');
+    if (ix >= 0 && ix < name.length() - 1)
+      return name.substring(ix + 1);
+    else
+      return "";
   }
 
   private List<String> splitFileName(String fileName)
@@ -135,11 +133,13 @@ public class FileNameTokenizer
     if (array2Counts.keySet().size() > 0)
     {
       result = array2Counts.keySet().size() == 1 ? 1 : (int) Math.pow(3.0, array2Counts.keySet().size());
-      for (String s : array2Counts.keySet()) {
+      for (String s : array2Counts.keySet())
+      {
         token = s;
         int array1Count = array1Counts.get(token);
         int array2Count = array2Counts.get(token);
-        if (array1Count < array2Count) {
+        if (array1Count < array2Count)
+        {
           result = result + ((token.length() - 1) * array1Count);
         }
         else

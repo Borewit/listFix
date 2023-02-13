@@ -1,71 +1,49 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.io;
 
-import listfix.io.filters.PlaylistFileFilter;
+import listfix.model.playlists.Playlist;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-/*
-============================================================================
-= Author:   Jeremy Caron
-= File:     PlaylistScanner.java
-= Purpose:  To create a list of all of the playlists found in a given
-=           directory and its subdirectories.
-============================================================================
- */
 /**
- *
- * @author jcaron
+ * To create a list of all the playlists found in a given directory and its subdirectories.
  */
 public class PlaylistScanner
 {
-  /**
-   *
-   * @param directory
-   * @return
-   */
-  public static List<File> getAllPlaylists(File directory)
+
+  public static List<Path> getAllPlaylists(Path directory) throws IOException
   {
-    List<File> result = new ArrayList<>();
-    if (directory.exists() && directory.isDirectory())
-    {
-      File[] inodes = directory.listFiles(new PlaylistFileFilter());
-            if (inodes != null)
-            {
-                for (File inode : inodes)
-                {
-                    if (inode.isFile())
-                    {
-                        result.add(inode);
-                    }
-                    else
-                    {
-                        result.addAll(getAllPlaylists(inode));
-                    }
-                }
-            }
-    }
+    List<Path> result = new ArrayList<>();
+    getAllPlaylists(result, Files.list(directory));
     return result;
+  }
+
+  private static void getAllPlaylists(List<Path> result, Stream<Path> directory)
+  {
+    directory
+      .forEach(path -> {
+        if (Files.isDirectory(path))
+        {
+          try
+          {
+            getAllPlaylists(result, Files.list(path));
+          }
+          catch (IOException e)
+          {
+            throw new RuntimeException(e);
+          }
+        }
+        else
+        {
+          if (Playlist.isPlaylist(path))
+          {
+            result.add(path);
+          }
+        }
+      });
   }
 }

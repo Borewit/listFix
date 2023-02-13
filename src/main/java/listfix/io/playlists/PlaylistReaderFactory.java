@@ -37,7 +37,7 @@ public class PlaylistReaderFactory
 
   public static IPlaylistReader getPlaylistReader(Path inputFile, IPlaylistOptions playListOptions) throws IOException
   {
-    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile.toFile(), playListOptions);
+    PlaylistType type = Playlist.determinePlaylistTypeFromExtension(inputFile);
     return switch (type)
       {
         case M3U -> new M3UReader(playListOptions, inputFile);

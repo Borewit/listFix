@@ -18,44 +18,32 @@
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
-package listfix.io.filters;
+package listfix.comparators;
 
-import java.io.FileFilter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
- * A FileFilter that accepts our currently supported playlist types, and directories.
- * @author jcaron
+ * Sorts directories ahead of files, and then sorts files alphabetically (ignoring case).
  */
-public class ExtensionFilter extends FileExtensionFilterBase implements FileFilter
+public class DirectoryThenFileThenAlphabeticalPathComparator implements java.util.Comparator<Path>
 {
-  private String _description;
-
-  /**
-   *
-   * @param extension
-   * @param description
-   */
-  public ExtensionFilter(String extension, String description)
-  {
-    super(extension);
-    _description = description;
-  }
 
   @Override
-  public String getDescription()
+  public int compare(Path a, Path b)
   {
-      return _description;
-  }
-
-  @Override
-  public String toString()
-  {
-    return getDescription();
-  }
-
-  public String getExtension()
-  {
-    return super.getFirstExtension();
+    if (!Files.isDirectory(a) && Files.isDirectory(b))
+    {
+      return 1;
+    }
+    else if (Files.isDirectory(a) && !Files.isDirectory(b))
+    {
+      return -1;
+    }
+    else
+    {
+      // both Files are files or both are directories
+      return a.compareTo(b);
+    }
   }
 }
-

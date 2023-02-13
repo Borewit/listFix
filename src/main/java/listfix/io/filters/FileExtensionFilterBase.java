@@ -1,87 +1,58 @@
 /**
  * listFix() - Fix Broken Playlists!
- *
+ * <p>
  * This file is part of listFix().
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, please see http://www.gnu.org/licenses/
  */
 
 package listfix.io.filters;
 
+import listfix.model.playlists.Playlist;
+
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
-import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.Set;
 
-/**
- *
- * @author jcaron
- */
 public abstract class FileExtensionFilterBase extends FileFilter
 {
-    private TreeSet<String> _extensions = new TreeSet<>();
+  private Set<String> extensions = Playlist.playlistExtensions;
 
-    public String getFirstExtension() {
-      return this._extensions.first();
-    }
+  protected FileExtensionFilterBase(Set<String> extensions)
+  {
+    this.extensions = extensions;
+  }
 
-  /**
-   *
-   * @param extensions
-   */
-  protected FileExtensionFilterBase(TreeSet<String> extensions)
-    {
-        _extensions = extensions;
-    }
-
-  /**
-   *
-   * @param extension
-   */
-  protected FileExtensionFilterBase(String extension)
-    {
-        _extensions.add(extension);
-    }
-
-    @Override
-    public boolean accept(File file)
-    {
-        if (file.isDirectory())
+  @Override
+  public boolean accept(File file)
+  {
+    if (file.isDirectory())
     {
       return true;
     }
 
-        String name = file.getName();
-        int ix = name.lastIndexOf('.');
-        if (ix >= 0 && ix < name.length() - 1)
-        {
-            String ext = name.substring(ix + 1).toLowerCase();
-            return _extensions.contains(ext);
-        }
-        else
+    String name = file.getName();
+    int ix = name.lastIndexOf('.');
+    if (ix >= 0 && ix < name.length() - 1)
+    {
+      String ext = name.substring(ix + 1).toLowerCase();
+      return extensions.contains(ext);
+    }
+    else
     {
       return false;
     }
   }
 
-  /**
-   *
-   * @param extensions
-   * @return
-   */
-  protected static TreeSet<String> createExtensionSet(String... extensions)
-  {
-    return new TreeSet<>(Arrays.asList(extensions));
-  }
 }
