@@ -19,9 +19,4 @@ public interface IMediaLibrary
    * Cached nested files, derived from media-directories
    */
   Set<String> getNestedMediaFiles();
-
-  /**
-   * User configured playlist directories.
-   */
-  Set<String> getPlaylistDirectories();
 }

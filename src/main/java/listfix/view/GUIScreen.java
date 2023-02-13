@@ -2578,13 +2578,19 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       if (new File(path).exists())
       {
         _logger.info(String.format("Add playlist directory to configuration: %s", path));
-        this.getMediaLibrary().getPlaylistDirectories().add(path);
+        this.getApplicationConfig().getPlaylistDirectories().add(path);
       }
       else
       {
         JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
       }
-      this._listFixController.getMediaLibraryConfiguration().writeOnBackground(); // Save
+      try
+      {
+        this._listFixController.getApplicationConfiguration().write();
+      }
+      catch (IOException e) {
+        throw new RuntimeException("Failed to write application configuration", e);
+      }
       this.updatePlaylistDirectoryPanel();
     }
   }//GEN-LAST:event__btnSetPlaylistsDirActionPerformed
@@ -2736,7 +2742,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     {
       this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-      List<File> playListDirFiles = this.getMediaLibrary().getPlaylistDirectories().stream()
+      List<File> playListDirFiles = this.getApplicationConfig().getPlaylistDirectories().stream()
         .map(File :: new)
         .collect(Collectors.toList());
 
@@ -2774,10 +2780,17 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         .map(FileTreeNodeGenerator :: TreePathToFileSystemPath)
         .forEach(playlistDirectory -> {
           _logger.info(String.format("Removing playlist directory from configuration: %s", playlistDirectory));
-          this.getMediaLibrary().getPlaylistDirectories().remove(playlistDirectory.getPath());
+          this.getApplicationConfig().getPlaylistDirectories().remove(playlistDirectory.getPath());
         });
       this.updatePlaylistDirectoryPanel();
-      this._listFixController.getMediaLibraryConfiguration().writeOnBackground();
+      try
+      {
+        this._listFixController.getApplicationConfiguration().write();
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException("Failed to write updated application configuration", e);
+      }
     }
   }
 

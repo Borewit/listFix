@@ -9,6 +9,8 @@ import listfix.util.OperatingSystem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class JsonAppOptions implements IPlaylistOptions, IAppOptions
 {
@@ -19,13 +21,21 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private boolean alwaysUseUNCPaths = false;
   private int maxPlaylistHistoryEntries = 5;
   private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
+
+  @Deprecated // Replaced by playlistDirectories
   private String playlistsDirectory;
+
+  private final TreeSet<String> playlistDirectories;
   @JsonSerialize(using = JsonFontSerializer.class)
   @JsonDeserialize(using = JsonFontDeserializer.class)
   private Font appFont = new Font("SansSerif", Font.PLAIN, 11);
   private int maxClosestResults = 20;
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
+
+  public JsonAppOptions() {
+    this.playlistDirectories = new TreeSet<>();
+  }
 
   public boolean getAutoLocateEntriesOnPlaylistLoad()
   {
@@ -88,6 +98,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
 
+  @Override
   public String getPlaylistsDirectory()
   {
     return this.playlistsDirectory;
@@ -96,6 +107,11 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   public void setPlaylistsDirectory(String playlistsDirectory)
   {
     this.playlistsDirectory = playlistsDirectory;
+  }
+
+  @Override
+  public Set<String> getPlaylistDirectories() {
+    return this.playlistDirectories;
   }
 
   /**

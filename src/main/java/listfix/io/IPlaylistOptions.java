@@ -1,5 +1,7 @@
 package listfix.io;
 
+import java.util.Set;
+
 public interface IPlaylistOptions
 {
   boolean getAlwaysUseUNCPaths();
@@ -17,4 +19,9 @@ public interface IPlaylistOptions
    * @return use case-insensitive / exact path name comparison
    */
   boolean getCaseInsensitiveExactMatching();
+
+  /**
+   * @return List of user defined playlist directories
+   */
+  Set<String> getPlaylistDirectories();
 }
