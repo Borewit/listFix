@@ -1,7 +1,5 @@
 package listfix.swing;
 
-import listfix.view.controls.PlaylistEditCtrl;
-
 import javax.swing.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
@@ -47,7 +45,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     });
   }
 
-  public int getPlaylistCount()
+  public int getDocumentCount()
   {
     return super.getTabCount();
   }
@@ -131,31 +129,31 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
   }
 
   @Deprecated // Use Path instead
-  public JDocumentComponent getDocument(String name)
+  public JDocumentComponent<G> getDocument(String name)
   {
     int i = getPlaylistIndexByName(name);
     return i == -1 ? null : this.getPlaylistAt(i);
   }
 
-  public JDocumentComponent getDocument(Path path)
+  public JDocumentComponent<G> getDocument(Path path)
   {
     int i = getPlaylistIndexByPath(path);
     return i == -1 ? null : this.getPlaylistAt(i);
   }
 
-  public JDocumentComponent openDocument(PlaylistEditCtrl editor, Path path)
+  public JDocumentComponent<G> openDocument(G editor, Path path)
   {
     return this.openDocument(editor, path, null);
   }
 
-  public JDocumentComponent openDocument(PlaylistEditCtrl editor, Path path, ImageIcon icon)
+  public JDocumentComponent<G> openDocument(G editor, Path path, ImageIcon icon)
   {
-    JDocumentComponent<PlaylistEditCtrl> playlist = new JDocumentComponent<>(this, editor, path);
-    playlist.setIcon(icon);
+    JDocumentComponent<G> doc = new JDocumentComponent<G>(this, editor, path);
+    doc.setIcon(icon);
     int index = this.getTabCount();
-    this.addTab(playlist.getTitle(), playlist.getIcon(), playlist, playlist.getPath().toString());
-    this.setTabComponentAt(index, playlist.getTabComponent());
-    return playlist;
+    this.addTab(doc.getTitle(), doc.getIcon(), doc, doc.getPath().toString());
+    this.setTabComponentAt(index, doc.getTabComponent());
+    return doc;
   }
 
   public boolean renameDocument(Path oldPath, Path newPath)
