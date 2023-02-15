@@ -32,7 +32,10 @@ configuration:
     root:
       level: debug
       appender-ref:
-        ref: Console-Appender
+        - ref: Console-Appender
+          level: debug
+        - ref: RollingFile-Appender
+          level: info
 
     logger:
       - name: listfix
