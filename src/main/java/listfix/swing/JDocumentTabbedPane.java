@@ -3,6 +3,8 @@ package listfix.swing;
 import javax.swing.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,9 +64,9 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     return this.getPlaylistAt(index);
   }
 
-  public void setActivePlaylist(String name)
+  public void setActiveDocument(String name)
   {
-    int i = this.getPlaylistIndexByName(name);
+    int i = this.getDocumentIndexByName(name);
     if (i != -1)
     {
       super.setSelectedIndex(i);
@@ -72,9 +74,9 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     }
   }
 
-  public void setActivePlaylist(Path path)
+  public void setActiveDocument(Path path)
   {
-    int i = this.getPlaylistIndexByPath(path);
+    int i = this.getDocumentIndexByPath(path);
     if (i != -1)
     {
       super.setSelectedIndex(i);
@@ -82,7 +84,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     }
   }
 
-  public int getPlaylistIndexByPath(Path path)
+  public int getDocumentIndexByPath(Path path)
   {
     for (int i = 0; i < super.getTabCount(); ++i)
     {
@@ -95,7 +97,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     return -1;
   }
 
-  public int getPlaylistIndexByName(String name)
+  public int getDocumentIndexByName(String name)
   {
     for (int i = 0; i < super.getTabCount(); ++i)
     {
@@ -117,7 +119,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
   @Deprecated // Use Path instead
   public boolean isPlaylistOpened(String name)
   {
-    int i = this.getPlaylistIndexByName(name);
+    int i = this.getDocumentIndexByName(name);
     return i != -1 && i == super.getSelectedIndex();
   }
 
@@ -131,13 +133,13 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
   @Deprecated // Use Path instead
   public JDocumentComponent<G> getDocument(String name)
   {
-    int i = getPlaylistIndexByName(name);
+    int i = getDocumentIndexByName(name);
     return i == -1 ? null : this.getPlaylistAt(i);
   }
 
   public JDocumentComponent<G> getDocument(Path path)
   {
-    int i = getPlaylistIndexByPath(path);
+    int i = getDocumentIndexByPath(path);
     return i == -1 ? null : this.getPlaylistAt(i);
   }
 
@@ -152,7 +154,20 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     doc.setIcon(icon);
     int index = this.getTabCount();
     this.addTab(doc.getTitle(), doc.getIcon(), doc, doc.getPath().toString());
-    this.setTabComponentAt(index, doc.getTabComponent());
+
+    JClosableTabComponent tabComponent = doc.getTabComponent();
+    this.setTabComponentAt(index, tabComponent);
+    tabComponent.addMouseListener(new MouseAdapter()
+    {
+      @Override
+      public void mousePressed(MouseEvent e)
+      {
+        JDocumentTabbedPane.this.setActiveDocument(path);
+      }
+    });
+
+
+
     return doc;
   }
 

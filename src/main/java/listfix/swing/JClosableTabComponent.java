@@ -1,5 +1,8 @@
 package listfix.swing;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
@@ -10,13 +13,16 @@ import java.awt.event.*;
  * Contains a JLabel to show the text and
  * a JButton to close the tab it belongs to
  */
-public class JClosableTabComponent extends JPanel
+public class JClosableTabComponent<G extends JComponent> extends JPanel
 {
-  private final JDocumentTabbedPane pane;
+
+  private final Logger logger = LogManager.getLogger(JClosableTabComponent.class);
+
+  private final JDocumentTabbedPane<G> pane;
 
   private final JLabel label;
 
-  public JClosableTabComponent(final JDocumentTabbedPane pane)
+  public JClosableTabComponent(final JDocumentTabbedPane<G> pane)
   {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -128,6 +134,16 @@ public class JClosableTabComponent extends JPanel
 
   private static final MouseListener buttonMouseListener = new MouseAdapter()
   {
+    public void mouseExited(MouseEvent e)
+    {
+      Component component = e.getComponent();
+      if (component instanceof AbstractButton)
+      {
+        AbstractButton button = (AbstractButton) component;
+        button.setBorderPainted(false);
+      }
+    }
+
     public void mouseEntered(MouseEvent e)
     {
       Component component = e.getComponent();

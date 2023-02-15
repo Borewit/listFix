@@ -1131,22 +1131,22 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
 
     _mainMenuBar.add(_helpMenu);
 
-    _playlistTabbedPane.addDocumentChangeListener(new IDocumentChangeListener()
+    _playlistTabbedPane.addDocumentChangeListener(new IDocumentChangeListener<PlaylistEditCtrl>()
     {
       @Override
-      public boolean tryClosingDocument(JDocumentComponent document)
+      public boolean tryClosingDocument(JDocumentComponent<PlaylistEditCtrl> document)
       {
         return GUIScreen.this.tryCloseTab(document);
       }
 
       @Override
-      public void documentOpened(JDocumentComponent document)
+      public void documentOpened(JDocumentComponent<PlaylistEditCtrl> document)
       {
         updateMenuItemStatuses();
       }
 
       @Override
-      public void documentClosed(JDocumentComponent document)
+      public void documentClosed(JDocumentComponent<PlaylistEditCtrl> document)
       {
         final Playlist playlist = getPlaylistFromDocumentComponent(document);
         cleanupOnTabClose(playlist);
@@ -1485,7 +1485,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     {
       if (list.getPath().equals(playlistFile))
       {
-        _playlistTabbedPane.setActivePlaylist(playlistFile);
+        _playlistTabbedPane.setActiveDocument(playlistFile);
         return;
       }
     }
@@ -1581,7 +1581,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     }
     else
     {
-      _playlistTabbedPane.setActivePlaylist(path);
+      _playlistTabbedPane.setActiveDocument(path);
     }
   }
 
@@ -1595,7 +1595,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     final ImageIcon icon = getIconForPlaylist(editor.getPlaylist());
 
     final JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.openDocument(editor, path, icon);
-    _playlistTabbedPane.setActivePlaylist(path);
+    _playlistTabbedPane.setActiveDocument(path);
 
     // Tie the DocumentComponent and the Playlist in the editor together via listeners, so the former can update when the latter is modified
     playlist.addModifiedListener(
@@ -1914,7 +1914,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   public void runExactMatchOnAllTabs()
   {
     this._playlistTabbedPane.getAllEmbeddedMainComponent().forEach(ctrl -> {
-      this._playlistTabbedPane.setActivePlaylist(ctrl.getPlaylist().getPath());
+      this._playlistTabbedPane.setActiveDocument(ctrl.getPlaylist().getPath());
       ctrl.locateMissingFiles();
     });
   }
@@ -1922,7 +1922,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   public void runClosestMatchOnAllTabs()
   {
     this._playlistTabbedPane.getAllEmbeddedMainComponent().forEach(ctrl -> {
-      this._playlistTabbedPane.setActivePlaylist(ctrl.getPlaylist().getPath());
+      this._playlistTabbedPane.setActiveDocument(ctrl.getPlaylist().getPath());
       ctrl.locateMissingFiles();
       ctrl.bulkFindClosestMatches();
     });
@@ -1932,7 +1932,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   private void reloadAllTabs()
   {
     this._playlistTabbedPane.getAllEmbeddedMainComponent().forEach(ctrl -> {
-      this._playlistTabbedPane.setActivePlaylist(ctrl.getPlaylist().getPath());
+      this._playlistTabbedPane.setActiveDocument(ctrl.getPlaylist().getPath());
       ctrl.reloadPlaylist();
     });
   }
@@ -2375,7 +2375,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
       final JDocumentComponent tempComp = _playlistTabbedPane.openDocument(editor, path);
-      _playlistTabbedPane.setActivePlaylist(path);
+      _playlistTabbedPane.setActiveDocument(path);
 
       _openPlaylists.add(_currentPlaylist);
 

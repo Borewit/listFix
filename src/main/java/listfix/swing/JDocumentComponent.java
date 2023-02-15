@@ -9,15 +9,15 @@ public class JDocumentComponent<M extends JComponent> extends JPanel
 {
   private Path path;
 
-  private JClosableTabComponent closableTabComponent;
+  private JClosableTabComponent<M> closableTabComponent;
 
-  private final JDocumentTabbedPane pane;
+  private final JDocumentTabbedPane<M> pane;
 
-  public JDocumentComponent(final JDocumentTabbedPane pane, M mainComponent, Path path)
+  public JDocumentComponent(final JDocumentTabbedPane<M> pane, M mainComponent, Path path)
   {
     super.add(mainComponent);
     this.pane = pane;
-    this.closableTabComponent = new JClosableTabComponent(pane);
+    this.closableTabComponent = new JClosableTabComponent<M>(pane);
 
     this.setPath(path);
     this.setLayout(new GridLayout(1, 1)); // Use all available tab space
@@ -55,7 +55,7 @@ public class JDocumentComponent<M extends JComponent> extends JPanel
     this.closableTabComponent.setTooltip(path.toString());
   }
 
-  public JClosableTabComponent getTabComponent()
+  public JClosableTabComponent<M> getTabComponent()
   {
     return this.closableTabComponent;
   }
