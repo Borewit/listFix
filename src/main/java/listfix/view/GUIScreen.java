@@ -183,6 +183,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     // drag-n-drop support for the playlist directory tree
     _playlistDirectoryTree.setTransferHandler(createPlaylistTreeTransferHandler());
     _playlistDirectoryTree.setRootVisible(false);
+    // Show tooltips
+    ToolTipManager.sharedInstance().registerComponent(_playlistDirectoryTree);
+    _playlistDirectoryTree.setCellRenderer(new TreeTooltipRenderer());
 
     // A constructor with side-effects, required to support opening playlists that are dragged in...
     // Java... what voodoo/nonsense is this?

@@ -3,7 +3,7 @@ package listfix.view.support;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.nio.file.Path;
 
-public class PlaylistTreeNode extends DefaultMutableTreeNode
+public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltipable
 {
   public PlaylistTreeNode(Path path)
   {
@@ -38,5 +38,10 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode
   @Override
   public String toString() {
     return this.getUserObject().getFileName().toString();
+  }
+
+  @Override
+  public String getToolTip() {
+    return this.getUserObject().toString();
   }
 }
