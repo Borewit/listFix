@@ -2687,7 +2687,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         .map(FileTreeNodeGenerator :: TreePathToFileSystemPath)
         .forEach(playlistDirectory -> {
           _logger.info(String.format("Removing playlist directory from configuration: %s", playlistDirectory));
-          this.getApplicationConfig().getPlaylistDirectories().remove(playlistDirectory);
+          this.getApplicationConfig().getPlaylistDirectories().remove(playlistDirectory.toString());
         });
       this.updatePlaylistDirectoryPanel();
       try
