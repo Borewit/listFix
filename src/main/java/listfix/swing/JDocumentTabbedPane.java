@@ -162,7 +162,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
       @Override
       public void mousePressed(MouseEvent e)
       {
-        JDocumentTabbedPane.this.setActiveDocument(path);
+        JDocumentTabbedPane.this.setActiveDocument(doc.getPath());
       }
     });
 
