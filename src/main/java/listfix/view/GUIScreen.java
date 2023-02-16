@@ -271,7 +271,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         // Advance the selected tab on Ctrl-Tab (make sure Shift isn't pressed)
         if (ctrlTabWasPressed(e) && _playlistTabbedPane.getDocumentCount() > 1)
         {
-          _playlistTabbedPane.nextPlaylist();
+          _playlistTabbedPane.nextDocument();
         }
 
         // Regress the selected tab on Ctrl-Shift-Tab
@@ -1478,26 +1478,21 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   }
 
   @Override
-  public void openPlaylist(final Path playlistFile)
+  public void openPlaylist(final Path playlistPath)
   {
     // do nothing if the file is already open.
     for (Playlist list : _openPlaylists)
     {
-      if (list.getPath().equals(playlistFile))
+      if (list.getPath().equals(playlistPath))
       {
-        _playlistTabbedPane.setActiveDocument(playlistFile);
+        _playlistTabbedPane.setActiveDocument(playlistPath);
         return;
       }
     }
 
-    final String path;
     try
     {
-      if (Files.exists(playlistFile))
-      {
-        path = playlistFile.normalize().toString();
-      }
-      else
+      if (!Files.exists(playlistPath))
       {
         JOptionPane.showMessageDialog(this, new JTransparentTextArea("File Not Found."), "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
         return;
@@ -1511,10 +1506,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       return;
     }
 
-    JDocumentComponent tempComp = _playlistTabbedPane.getDocument(path);
+    JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.getDocument(playlistPath);
     if (tempComp == null)
     {
-      PlaylistType type = Playlist.determinePlaylistTypeFromExtension(playlistFile);
+      PlaylistType type = Playlist.determinePlaylistTypeFromExtension(playlistPath);
 
       ProgressWorker<Playlist, String> worker = new ProgressWorker<>()
       {
@@ -1522,7 +1517,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         protected Playlist doInBackground() throws Exception
         {
           this.setMessage("Please wait while your playlist is opened and analyzed.");
-          Playlist list = PlaylistFactory.getPlaylist(playlistFile, this, GUIScreen.this.getOptions());
+          Playlist list = PlaylistFactory.getPlaylist(playlistPath, this, GUIScreen.this.getOptions());
           if (getApplicationConfig().getAutoLocateEntriesOnPlaylistLoad())
           {
             list.repair(GUIScreen.this.getMediaLibrary(), this);
@@ -1555,7 +1550,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
 
           // update playlist history
           PlaylistHistory history = _listFixController.getHistory();
-          history.add(path);
+          history.add(playlistPath.toString());
           try
           {
             history.write();
@@ -1575,13 +1570,13 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         // Can't show a progress dialog for these as we have no way to track them at present.
         textOnly = true;
       }
-      String filename = path.toString();
+      final String filename = playlistPath.getFileName().toString();
       ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (filename.length() > 70 ? filename.substring(0, 70) : filename) + "'...", textOnly, true);
       pd.setVisible(true);
     }
     else
     {
-      _playlistTabbedPane.setActiveDocument(path);
+      _playlistTabbedPane.setActiveDocument(playlistPath);
     }
   }
 
@@ -2449,7 +2444,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   {//GEN-HEADEREND:event__closeMenuItemActionPerformed
     if (_playlistTabbedPane.getDocumentCount() > 0)
     {
-      _playlistTabbedPane.closeActivePlaylist();
+      _playlistTabbedPane.closeActiveDocument();
     }
   }//GEN-LAST:event__closeMenuItemActionPerformed
 
@@ -2582,7 +2577,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   {//GEN-HEADEREND:event__saveAllMenuItemActionPerformed
     for (int i = 0; i < _playlistTabbedPane.getDocumentCount(); i++)
     {
-      Playlist list = getPlaylistFromDocumentComponent(_playlistTabbedPane.getPlaylistAt(i));
+      Playlist list = getPlaylistFromDocumentComponent(_playlistTabbedPane.getComponentAt(i));
       handlePlaylistSave(list);
     }
   }//GEN-LAST:event__saveAllMenuItemActionPerformed
