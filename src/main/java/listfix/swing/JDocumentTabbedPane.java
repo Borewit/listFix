@@ -142,6 +142,14 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     return this.openDocument(editor, path, null);
   }
 
+  /**
+   * Remove document with corresponding path
+   * @param path Path to remove
+   */
+  public void remove(Path path) {
+    this.remove(this.getDocument(path));
+  }
+
   public JDocumentComponent<G> openDocument(G editor, Path path, ImageIcon icon)
   {
     JDocumentComponent<G> doc = new JDocumentComponent<G>(this, editor, path);

@@ -713,8 +713,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
 
     _miDeletePlaylist.setMnemonic('D');
-    _miDeletePlaylist.setText("Delete Selected");
-    _miDeletePlaylist.setToolTipText("Delete Selected Folders & Playlists");
+    _miDeletePlaylist.setText("Delete file");
+    _miDeletePlaylist.setToolTipText("Delete selected playlist file");
     _miDeletePlaylist.addActionListener(evt -> _miDeletePlaylistActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miDeletePlaylist);
 
@@ -1303,7 +1303,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     int[] selRows = _playlistDirectoryTree.getSelectionRows();
     if (selRows != null && selRows.length > 0)
     {
-      if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected files and folders?"), "Delete Selected Files & Folders?", JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
+      if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected file?"), "Delete Selected File?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
       {
         List<TreePath> selPaths = new ArrayList<>();
         for (int i : selRows)
@@ -1334,6 +1334,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
               _playlistDirectoryTree.makeVisible(selPath);
               DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
               treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
+              this._playlistTabbedPane.remove(toOpen);
             }
             else
             {
