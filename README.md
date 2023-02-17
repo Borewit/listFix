@@ -34,6 +34,13 @@ iTunes fans, see [Using listFix() to fix iTunes playlists](https://sourceforge.n
 ## Requirements
 * UNC paths only supported on Windows (Linux users can smbmount a network drive and then use the mount point as a media directory)
 
+## Run the application
+
+From the command line:
+```shell
+java --add-exports java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED -jar listFix-2.6.0-all.jar
+```
+
 ## Development
 
 ### Build project
