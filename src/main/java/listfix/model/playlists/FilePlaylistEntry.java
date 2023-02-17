@@ -193,7 +193,7 @@ public class FilePlaylistEntry extends PlaylistEntry
 
   public boolean updatePathToMediaLibraryIfFoundOutside(IMediaLibrary dirLists, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
-    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getDirectories(), this.getTrackFolder(), this.isWindows))
+    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getMediaDirectories(), this.getTrackFolder(), this.isWindows))
     {
       return findNewLocationFromFileList(dirLists.getNestedMediaFiles(), caseInsensitiveExactMatching, useRelativePath);
     }

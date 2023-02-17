@@ -1,5 +1,6 @@
 package listfix.json;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import listfix.config.IMediaLibrary;
 
 import java.util.Set;
@@ -8,9 +9,9 @@ import java.util.TreeSet;
 public class JsonMediaLibrary implements IMediaLibrary
 {
 
-  private final Set<String> directories;
-  private final Set<String> nestedDirectories;
-  private final Set<String> nestedMediaFiles;
+  private final TreeSet<String> directories;
+  private final TreeSet<String> nestedDirectories;
+  private final TreeSet<String> nestedMediaFiles;
 
   public JsonMediaLibrary()
   {
@@ -19,15 +20,20 @@ public class JsonMediaLibrary implements IMediaLibrary
     this.nestedMediaFiles = new TreeSet<>();
   }
 
-  public Set<String> getDirectories()
+  @Override
+  @JsonProperty("directories")
+  public Set<String> getMediaDirectories()
   {
     return this.directories;
   }
 
+  @Override
   public Set<String> getNestedDirectories()
   {
     return this.nestedDirectories;
   }
+
+  @Override
   public Set<String> getNestedMediaFiles()
   {
     return this.nestedMediaFiles;

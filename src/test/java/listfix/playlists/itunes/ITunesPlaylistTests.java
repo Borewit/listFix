@@ -37,9 +37,7 @@ import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author jcaron, Borewit
@@ -49,7 +47,6 @@ public class ITunesPlaylistTests
 
   @Rule
   public TemporaryFolder itunesFolder = new TemporaryFolder();
-  private File itunesMusicLibraryFile;
 
   @Test
   public void write_iTunes_music_library() throws Exception
@@ -107,8 +104,12 @@ public class ITunesPlaylistTests
       {
         return true;
       }
+
+      @Override
+      public Set<String> getPlaylistDirectories() {
+        return new TreeSet<>();
+      }
     });
-    myList.getEntries();
   }
 
   private static Playlist convertToListFixPlaylist(ITunesMediaLibrary list, Path playlistPath, IPlaylistOptions playListOptions)

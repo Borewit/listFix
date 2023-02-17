@@ -1,5 +1,8 @@
 package listfix.swing;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
@@ -10,11 +13,16 @@ import java.awt.event.*;
  * Contains a JLabel to show the text and
  * a JButton to close the tab it belongs to
  */
-public class JButtonTabComponent extends JPanel
+public class JClosableTabComponent<G extends JComponent> extends JPanel
 {
-  private final JDocumentTabbedPane pane;
 
-  public JButtonTabComponent(final JDocumentTabbedPane pane, Icon icon)
+  private final Logger logger = LogManager.getLogger(JClosableTabComponent.class);
+
+  private final JDocumentTabbedPane<G> pane;
+
+  private final JLabel label;
+
+  public JClosableTabComponent(final JDocumentTabbedPane<G> pane)
   {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -25,28 +33,36 @@ public class JButtonTabComponent extends JPanel
     this.pane = pane;
     setOpaque(false);
 
-    //make JLabel read titles from JTabbedPane
-    JLabel label = new JLabel(icon)
-    {
-      public String getText()
-      {
-        int index = pane.indexOfTabComponent(JButtonTabComponent.this);
-        if (index != -1)
-        {
-          return pane.getTitleAt(index);
-        }
-        return null;
-      }
-    };
-
-    add(label);
+    label = new JLabel();
     //add more space between the label and the button
-    label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+    this.label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+    add(this.label);
     //tab button
     JButton button = new TabButton();
     add(button);
     //add more space to the top of the component
     setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+  }
+
+  public ImageIcon getIcon()
+  {
+    return (ImageIcon) this.label.getIcon();
+  }
+
+  public void setIcon(ImageIcon icon)
+  {
+    this.label.setIcon(icon);
+  }
+
+  public void setTitle(String title)
+  {
+    super.setName(title);
+    this.label.setText(title);
+  }
+
+  public void setTooltip(String text)
+  {
+    super.setToolTipText(text);
   }
 
   private class TabButton extends JButton implements ActionListener
@@ -55,7 +71,7 @@ public class JButtonTabComponent extends JPanel
     {
       int size = 17;
       setPreferredSize(new Dimension(size, size));
-      setToolTipText("close this tab");
+      setToolTipText("Close this tab");
       //Make the button looks the same for all Laf's
       setUI(new BasicButtonUI());
       //Make it transparent
@@ -74,7 +90,7 @@ public class JButtonTabComponent extends JPanel
 
     public void actionPerformed(ActionEvent e)
     {
-      int i = pane.indexOfTabComponent(JButtonTabComponent.this);
+      int i = pane.indexOfTabComponent(JClosableTabComponent.this);
       if (i != -1)
       {
         pane.tryToClose(i);
@@ -116,18 +132,18 @@ public class JButtonTabComponent extends JPanel
     }
   }
 
-  public void mouseExited(MouseEvent e)
-  {
-    Component component = e.getComponent();
-    if (component instanceof AbstractButton)
-    {
-      AbstractButton button = (AbstractButton) component;
-      button.setBorderPainted(false);
-    }
-  }
-
   private static final MouseListener buttonMouseListener = new MouseAdapter()
   {
+    public void mouseExited(MouseEvent e)
+    {
+      Component component = e.getComponent();
+      if (component instanceof AbstractButton)
+      {
+        AbstractButton button = (AbstractButton) component;
+        button.setBorderPainted(false);
+      }
+    }
+
     public void mouseEntered(MouseEvent e)
     {
       Component component = e.getComponent();

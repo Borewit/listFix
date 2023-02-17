@@ -1,23 +1,3 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.json;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -29,15 +9,11 @@ import listfix.util.OperatingSystem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.util.Set;
+import java.util.TreeSet;
 
-/**
- * @author jcaron
- */
 public class JsonAppOptions implements IPlaylistOptions, IAppOptions
 {
-  private static final String EMPTY_STRING = "None Selected";
-
   // Init default values.
   private boolean savePlaylistsWithRelativePaths = false;
   private boolean autoLocateEntriesOnPlaylistLoad = false;
@@ -45,13 +21,21 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private boolean alwaysUseUNCPaths = false;
   private int maxPlaylistHistoryEntries = 5;
   private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
-  private String playlistsDirectory = EMPTY_STRING;
+
+  @Deprecated // Replaced by playlistDirectories
+  private String playlistsDirectory;
+
+  private final TreeSet<String> playlistDirectories;
   @JsonSerialize(using = JsonFontSerializer.class)
   @JsonDeserialize(using = JsonFontDeserializer.class)
   private Font appFont = new Font("SansSerif", Font.PLAIN, 11);
   private int maxClosestResults = 20;
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
+
+  public JsonAppOptions() {
+    this.playlistDirectories = new TreeSet<>();
+  }
 
   public boolean getAutoLocateEntriesOnPlaylistLoad()
   {
@@ -114,17 +98,20 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
 
+  @Override
   public String getPlaylistsDirectory()
   {
-    return playlistsDirectory;
+    return this.playlistsDirectory;
   }
 
   public void setPlaylistsDirectory(String playlistsDirectory)
   {
-    if (new File(playlistsDirectory).exists())
-    {
-      this.playlistsDirectory = playlistsDirectory;
-    }
+    this.playlistsDirectory = playlistsDirectory;
+  }
+
+  @Override
+  public Set<String> getPlaylistDirectories() {
+    return this.playlistDirectories;
   }
 
   /**

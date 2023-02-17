@@ -20,8 +20,9 @@
 
 package listfix.io.filters;
 
+import listfix.model.playlists.Playlist;
+
 import java.io.FileFilter;
-import java.util.TreeSet;
 
 /**
  * A FileFilter that accepts our currently supported playlist types, and directories.
@@ -29,19 +30,9 @@ import java.util.TreeSet;
  */
 public class PlaylistFileFilter extends FileExtensionFilterBase implements FileFilter
 {
-  private static final TreeSet<String> _extensions;
-
-  static
-  {
-    _extensions = createExtensionSet("m3u", "m3u8", "pls", "wpl", "xspf", "xml");
-  }
-
-  /**
-   *
-   */
   public PlaylistFileFilter()
   {
-      super(_extensions);
+      super(Playlist.playlistExtensions);
   }
 
   @Override

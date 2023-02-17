@@ -22,6 +22,7 @@ package listfix.model.playlists;
 
 import listfix.config.IMediaLibrary;
 import listfix.io.FileLauncher;
+import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UNCFile;
 import listfix.io.playlists.IPlaylistReader;
@@ -30,7 +31,6 @@ import listfix.io.playlists.IPlaylistWriter;
 import listfix.io.playlists.PlaylistWriterFactory;
 import listfix.model.BatchMatchItem;
 import listfix.model.enums.PlaylistType;
-import listfix.util.FileNameTokenizer;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -48,11 +48,20 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Playlist
 {
+  /**
+   * Playlist extensions
+   */
+  public static final HashSet<String> playlistExtensions = Stream.of("m3u", "m3u8", "pls", "wpl", "xspf", "xml")
+    .collect(Collectors.toCollection(HashSet :: new));
   private static final String FS = System.getProperty("file.separator");
   private static final String HOME_DIR = System.getProperty("user.home");
+  public static final Set<String> mediaExtensions = Stream.of("mp3", "wma", "flac", "ogg", "wav", "midi", "cda", "mpg", "mpeg", "m2v", "avi", "m4v", "flv", "mid", "mp2", "mp1", "aac", "asx", "m4a", "mp4", "m4v", "nsv", "aiff", "au", "wmv", "asf", "mpc")
+    .collect(Collectors.toCollection(HashSet :: new));
+
   private static int NEW_LIST_COUNT = -1;
 
   private static final Marker markerPlaylist = MarkerManager.getMarker("Playlist");
@@ -133,6 +142,22 @@ public class Playlist
     this.isModified = false;
     _isNew = true;
     refreshStatus();
+  }
+
+  /**
+   * Determine if the path provided is a playlist
+   *
+   * @param path Path to test
+   * @return True if the path is a file, and ends with a playlist extension
+   */
+  public static boolean isPlaylist(Path path)
+  {
+    if (Files.isRegularFile(path))
+    {
+      String extension = FileUtils.getFileExtension(path.toString());
+      return extension != null && playlistExtensions.contains(extension.toLowerCase());
+    }
+    return false;
   }
 
   public final IPlaylistOptions getPlayListOptions()
@@ -516,7 +541,7 @@ public class Playlist
     return entries.size();
   }
 
-  public int add(File[] files, IProgressObserver<String> observer) throws IOException
+  public int add(Collection<Path> files, IProgressObserver<String> observer) throws IOException
   {
     List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
     if (newEntries != null)
@@ -531,7 +556,7 @@ public class Playlist
     }
   }
 
-  public int addAt(int ix, File[] files, IProgressObserver<String> observer) throws IOException
+  public int addAt(int ix, Collection<Path> files, IProgressObserver<String> observer) throws IOException
   {
     List<PlaylistEntry> newEntries = getEntriesForFiles(files, observer);
     if (newEntries != null)
@@ -546,26 +571,26 @@ public class Playlist
     }
   }
 
-  private List<PlaylistEntry> getEntriesForFiles(File[] files, IProgressObserver<String> observer) throws IOException
+  private List<PlaylistEntry> getEntriesForFiles(Collection<Path> files, IProgressObserver<String> observer) throws IOException
   {
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
-    progress.setTotal(files.length);
+    progress.setTotal(files.size());
 
     List<PlaylistEntry> ents = new ArrayList<>();
-    for (File file : files)
+    for (Path file : files)
     {
       if (observer == null || !observer.getCancelled())
       {
-        if (Playlist.isPlaylist(file, this.playListOptions))
+        if (Playlist.isPlaylist(file))
         {
           // playlist file
-          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file.toPath(), this.playListOptions);
+          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file, this.playListOptions);
           ents.addAll(reader.readPlaylist(progress));
         }
         else
         {
           // regular file
-          ents.add(new FilePlaylistEntry(file.toPath(), null, this._file.toPath()));
+          ents.add(new FilePlaylistEntry(file, null, this._file.toPath()));
         }
       }
       else
@@ -924,7 +949,7 @@ public class Playlist
     // 2014.12.08 - JCaron - Need to make this assignment,
     // so we can determine relativity correctly when saving out entries.
     setFile(destination);
-    _type = determinePlaylistTypeFromExtension(destination, this.playListOptions);
+    _type = determinePlaylistTypeFromExtension(destination);
     this.save(this.playListOptions.getSavePlaylistsWithRelativePaths(), observer);
   }
 
@@ -978,38 +1003,27 @@ public class Playlist
     refreshStatus();
   }
 
-  public static boolean isPlaylist(File input, IPlaylistOptions filePathOptions)
+  public static PlaylistType determinePlaylistTypeFromExtension(File file)
   {
-    return determinePlaylistTypeFromExtension(input, filePathOptions) != PlaylistType.UNKNOWN;
+    return determinePlaylistTypeFromExtension(file.toPath());
   }
 
-  public static PlaylistType determinePlaylistTypeFromExtension(File input, IPlaylistOptions filePathOptions)
+  public static PlaylistType determinePlaylistTypeFromExtension(Path file)
   {
-    if (input != null)
+    if (file != null)
     {
-      String lowerCaseExtension = (new FileNameTokenizer(filePathOptions)).getExtensionFromFileName(input.getName()).toLowerCase();
-      switch (lowerCaseExtension)
+      String extension = FileUtils.getFileExtension(file.getFileName().toString());
+      if (extension != null)
       {
-        case "m3u", "m3u8" ->
-        {
-          return PlaylistType.M3U;
-        }
-        case "pls" ->
-        {
-          return PlaylistType.PLS;
-        }
-        case "wpl" ->
-        {
-          return PlaylistType.WPL;
-        }
-        case "xspf" ->
-        {
-          return PlaylistType.XSPF;
-        }
-        case "xml" ->
-        {
-          return PlaylistType.ITUNES;
-        }
+        return switch (extension.toLowerCase())
+          {
+            case "m3u", "m3u8" -> PlaylistType.M3U;
+            case "pls" -> PlaylistType.PLS;
+            case "wpl" -> PlaylistType.WPL;
+            case "xspf" -> PlaylistType.XSPF;
+            case "xml" -> PlaylistType.ITUNES;
+            default -> PlaylistType.UNKNOWN;
+          };
       }
     }
     return PlaylistType.UNKNOWN;

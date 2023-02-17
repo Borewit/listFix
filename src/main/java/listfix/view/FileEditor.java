@@ -20,6 +20,7 @@ import java.util.Locale;
 
 public class FileEditor extends JFrame
 {
+  private final Logger logger = LogManager.getLogger(FileEditor.class);
   private Clipboard clipboard = null;
   private File openFile = null;
   private JLabel fileStatus = null;
@@ -323,34 +324,27 @@ public class FileEditor extends JFrame
     }
   }
 
-  private void openDocument(File file)
+  private void openDocument(File openFile)
   {
-    if (file.exists())
+    if (openFile.exists())
     {
-      openFile = file;
-      try
-      {
-        BufferedReader reader;
-        System.out.println(openFile.getCanonicalPath());
-        reader = new BufferedReader(new FileReader(openFile));
-        String line = null;
+      try(BufferedReader reader = new BufferedReader(new FileReader(openFile))) {
+        String line;
         while ((line = reader.readLine()) != null)
         {
           textArea.append(line + '\n');
         }
         fileStatus.setText("Open file: " + openFile.getCanonicalPath());
       }
-      catch (FileNotFoundException e)
-      {
-        e.printStackTrace();
-      }
       catch (IOException e)
       {
-        e.printStackTrace();
+        this.logger.error(String.format("Failed to open file: %s", openFile), e);
+        throw new RuntimeException(e);
       }
     }
     else
     {
+      this.logger.warn(String.format("File does not exist: %s", openFile));
       fileStatus.setText(" ");
     }
   }

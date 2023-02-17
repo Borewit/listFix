@@ -714,7 +714,7 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnSetPlaylistsDirActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="_btnAddPlaylistsDirActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="_btnRefresh">

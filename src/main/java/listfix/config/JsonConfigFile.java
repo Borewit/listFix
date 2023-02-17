@@ -13,7 +13,7 @@ import static listfix.io.Constants.DATA_DIR;
 
 public abstract class JsonConfigFile<T>
 {
-  public static final Logger _logger = LogManager.getLogger(JsonConfigFile.class);
+  public final Logger logger = LogManager.getLogger(JsonConfigFile.class);
 
   protected final File jsonFile;
   protected T jsonPojo = null;
