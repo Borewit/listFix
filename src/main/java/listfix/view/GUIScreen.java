@@ -323,7 +323,10 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
             _miClosestMatchesSearch.setEnabled(true);
             _miOpenSelectedPlaylists.setEnabled(true);
             _miDeletePlaylist.setEnabled(true);
-            _miRenameSelectedItem.setEnabled(_playlistDirectoryTree.getSelectionCount() == 1 && !allTopLevel);
+            _miRenameSelectedItem.setEnabled(_playlistDirectoryTree.getSelectionCount() == 1
+                && !allTopLevel
+                && Files.isRegularFile(GUIScreen.this.getSelectedPlaylistTreeNodes().get(0).getUserObject())
+                );
           }
           else
           {
@@ -1326,25 +1329,27 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     }
   }
 
-  private void renameTreeSelectedNode()
+  public List<PlaylistTreeNode> getSelectedPlaylistTreeNodes()
   {
     int[] selRows = _playlistDirectoryTree.getSelectionRows();
-    DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
-    if (selRows == null || selRows.length != 1) {
-      _logger.debug("Will only rename when exactly 1 file is selected.");
+    if (selRows != null) {
+      return Arrays.stream(selRows).mapToObj(i -> (PlaylistTreeNode) _playlistDirectoryTree.getPathForRow(i).getLastPathComponent()).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+  private void renameTreeSelectedNode()
+  {
+    List<PlaylistTreeNode> selectedTreeNodes = getSelectedPlaylistTreeNodes();
+    if (selectedTreeNodes.size() != 1) {
+      _logger.debug(String.format("Will only rename when exactly 1 file is selected, got %s.", selectedTreeNodes.size()));
       return;
     }
 
-    List<TreePath> selPaths = new ArrayList<>();
-    for (int i : selRows)
+    for (PlaylistTreeNode treeNode : selectedTreeNodes)
     {
-      selPaths.add(_playlistDirectoryTree.getPathForRow(i));
-    }
-    for (TreePath selPath : selPaths)
-    {
-      PlaylistTreeNode curNode = (PlaylistTreeNode) selPath.getLastPathComponent();
-      Path nodePath = curNode.getUserObject();
-      String str = curNode.toString();
+      Path nodePath = treeNode.getUserObject();
+      String str = treeNode.toString();
       String reply = JOptionPane.showInputDialog(this, new JTransparentTextArea("Rename " + str), nodePath.getFileName().toString());
       if (reply != null && !"".equals(reply))
       {
@@ -1360,8 +1365,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
           JOptionPane.showMessageDialog(this, new JTransparentTextArea("Failed to rename file."), "File playlist failed", JOptionPane.ERROR_MESSAGE);
           continue;
         }
-        curNode.setUserObject(destPath);
-        treeModel.nodeChanged(curNode);
+        treeNode.setUserObject(destPath);
+        ((DefaultTreeModel) _playlistDirectoryTree.getModel()).nodeChanged(treeNode);
         JDocumentComponent<PlaylistEditCtrl> doc = this._playlistTabbedPane.getDocument(nodePath);
         if (doc != null)
         {
@@ -1545,12 +1550,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         }
       };
 
-      boolean textOnly = false;
-      if (type == PlaylistType.ITUNES || type == PlaylistType.XSPF)
-      {
-        // Can't show a progress dialog for these as we have no way to track them at present.
-        textOnly = true;
-      }
+      boolean textOnly = type == PlaylistType.ITUNES || type == PlaylistType.XSPF;
+      // Can't show a progress dialog for these as we have no way to track them at present.
       final String filename = playlistPath.getFileName().toString();
       ProgressDialog pd = new ProgressDialog(this, true, worker, "Loading '" + (filename.length() > 70 ? filename.substring(0, 70) : filename) + "'...", textOnly, true);
       pd.setVisible(true);
