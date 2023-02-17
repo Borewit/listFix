@@ -155,7 +155,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     JDocumentComponent<G> doc = new JDocumentComponent<G>(this, editor, path);
     doc.setIcon(icon);
     int index = this.getTabCount();
-    this.addTab(doc.getTitle(), doc.getIcon(), doc, doc.getPath().toString());
+    this.addTab(null, null, doc, doc.getPath().toString());
 
     JClosableTabComponent<G> tabComponent = doc.getTabComponent();
     this.setTabComponentAt(index, tabComponent);
