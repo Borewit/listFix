@@ -1,23 +1,3 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.view;
 
 import com.jcabi.manifests.Manifests;
@@ -57,7 +37,6 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -1338,7 +1317,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
             }
             else
             {
-              JOptionPane.showMessageDialog(null, String.format("Failed to delete playlist: %s", toOpen.getName()), "Deleting Playlist Failed", JOptionPane.WARNING_MESSAGE);
+              final String fileShortname = toOpen.getFileName().toString();
+              JOptionPane.showMessageDialog(this, String.format("Failed to delete playlist: %s", fileShortname), "Deleting Playlist Failed", JOptionPane.WARNING_MESSAGE);
             }
           }
         }
