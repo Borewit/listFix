@@ -4,9 +4,9 @@ import listfix.io.IPlaylistOptions;
 import listfix.json.JsonAppOptions;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.TestUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class M3UReaderTests
 {
   private IPlaylistOptions playlistOptions;
 
-  @Before
+  @BeforeEach
   public void initOptions() {
     this.playlistOptions = new JsonAppOptions();
   }
