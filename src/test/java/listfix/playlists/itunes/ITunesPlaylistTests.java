@@ -28,9 +28,8 @@ import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.model.playlists.itunes.*;
 import listfix.util.TestUtil;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,9 +43,6 @@ import java.util.*;
  */
 public class ITunesPlaylistTests
 {
-
-  @Rule
-  public TemporaryFolder itunesFolder = new TemporaryFolder();
 
   @Test
   public void write_iTunes_music_library() throws Exception

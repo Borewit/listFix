@@ -3,8 +3,9 @@ package listfix.model.playlists;
 import listfix.io.IPlaylistOptions;
 import listfix.json.JsonAppOptions;
 import listfix.util.TestUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class PlaylistFactoryTests
 {
   private IPlaylistOptions playlistOptions;
 
-  @Before
+  @BeforeEach
   public void initOptions() {
     this.playlistOptions = new JsonAppOptions();
   }

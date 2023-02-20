@@ -1,6 +1,6 @@
 package listfix.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 import java.util.TreeSet;

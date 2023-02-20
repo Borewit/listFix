@@ -1,12 +1,13 @@
 package listfix.io;
 
 import listfix.util.OperatingSystem;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileUtilsTests
 {
 
-  @Rule
-  public TemporaryFolder mediaFolder = new TemporaryFolder();
+  @TempDir
+  public File mediaFolder;
 
   @Test
   public void getFileExtension()
@@ -37,10 +38,10 @@ public class FileUtilsTests
   @Test
   public void getRelativePath() throws IOException
   {
-    File playlistFolder = this.mediaFolder.newFolder("playlists");
+    File playlistFolder = Files.createDirectory(this.mediaFolder.toPath().resolve("playlists")).toFile();
     File playlistFile = new File(playlistFolder, "playlist.m3u8");
     assertTrue(playlistFile.createNewFile(), "Create playlist.m3u8");
-    File trackFile = Path.of(this.mediaFolder.getRoot().getPath(), "Madonna", "Like a Prayer.mp3").toFile();
+    File trackFile = Path.of(this.mediaFolder.getPath(), "Madonna", "Like a Prayer.mp3").toFile();
     assertEquals(Path.of("..", "Madonna", "Like a Prayer.mp3").toString(), FileUtils.getRelativePath(trackFile, playlistFile));
   }
 
@@ -50,7 +51,8 @@ public class FileUtilsTests
     Path trackPath = Path.of("C:", "music", "track.flac");
     Path playlistFile = Path.of("D:", "playlist", "playlist.m3u8");
     Path result = FileUtils.getRelativePath(trackPath, playlistFile);
-    if (OperatingSystem.isWindows()) {
+    if (OperatingSystem.isWindows())
+    {
       assertEquals(trackPath, result, "getRelativePath() should preserve absolute path of there is no common root");
     }
     // ToDo: check this can be ported to Unix as well

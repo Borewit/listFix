@@ -90,8 +90,6 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13.2'
 
     implementation files('src/lib/net.mariottini.swing.jar')
 
@@ -139,12 +137,14 @@ dependencies {
     // https://mvnrepository.com/artifact/org.codehaus.castor/castor-xml
     implementation 'org.codehaus.castor:castor-xml:1.4.1'
 
-    // JUnit Jupiter using Gradle's native JUnit Platform
-    testImplementation(platform('org.junit:junit-bom:5.9.2'))
-    testImplementation('org.junit.jupiter:junit-jupiter')
-
     // Provide JFontChooser
     implementation 'com.rover12421.opensource:JFontChooser:1.0.5-3'
+
+    // JUnit Jupiter using Gradle's native JUnit Platform
+    testImplementation platform('org.junit:junit-bom:5.9.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testRuntimeOnly 'org.junit.platform:junit-platform-reporting'
 }
 
 application {
@@ -254,6 +254,10 @@ task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, depen
     organizationUrl = 'https://github.com/Borewit'
     url = 'https://github.com/Borewit/listFix'
     additionalModules = ['jdk.incubator.foreign', 'jdk.incubator.jpackage']
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }
 
 applicationDefaultJvmArgs = ['--add-exports=java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED',
