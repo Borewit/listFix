@@ -14,7 +14,7 @@ import java.io.*;
 /**
  * A playlist writer capable of saving to WPL format.
  *
- * @author jcaron & jpeterson
+ * @author jcaron &amp; jpeterson
  */
 public class WPLWriter extends PlaylistWriter<StringBuilder>
 {

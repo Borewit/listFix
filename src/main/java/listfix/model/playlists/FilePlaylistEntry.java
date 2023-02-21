@@ -93,7 +93,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   }
 
   /**
-   * Construct an M3U path & file-name based entry.
+   * Construct an M3U path &amp; file-name based entry.
    *
    * @param trackPath    Actual track path, as it appears in the playlist
    * @param extra        M3U #EXTINF Track information

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reads in a XSPF file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * Reads in a XSPF file and returns a List containing PlaylistEntries that represent the files &map; URIs in the playlist.
  * @author jcaron
  */
 public class XSPFReader extends PlaylistReader

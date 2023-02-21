@@ -36,12 +36,12 @@ import java.util.Hashtable;
  * object that contains a non-<code>String</code> key.
  *
  * <p>
- * The {@link #load(java.io.Reader) load(Reader)} <tt>/</tt>
+ * The {@link #load(java.io.Reader) load(Reader)}
  * {@link #store(java.io.Writer, java.lang.String) store(Writer, String)}
  * methods load and store properties from and to a character based stream
  * in a simple line-oriented format specified below.
  * <p>
- * The {@link #load(java.io.InputStream) load(InputStream)} <tt>/</tt>
+ * The {@link #load(java.io.InputStream) load(InputStream)}
  * {@link #store(java.io.OutputStream, java.lang.String) store(OutputStream, String)}
  * methods work the same way as the load(Reader)/store(Writer, String) pair, except
  * the input/output stream is encoded in ISO 8859-1 character encoding.
@@ -73,16 +73,17 @@ import java.util.Hashtable;
  *    &lt;!ATTLIST entry key CDATA #REQUIRED&gt;
  * </pre>
  *
- * @author Arthur van Hoff
- * @author Michael McCloskey
- * @author Xueming Shen
- * @version 1.96, 08/07/06
  * @see <a href="../../../technotes/tools/solaris/native2ascii.html">native2ascii tool for Solaris</a>
  * @see <a href="../../../technotes/tools/windows/native2ascii.html">native2ascii tool for Windows</a>
  *
  * <p>This class is thread-safe: multiple threads can share a single
- * <tt>Properties</tt> object without the need for external synchronization.
- * @since JDK1.0
+ * <code>Properties</code> object without the need for external synchronization.
+ *
+ * @author  Arthur van Hoff
+ * @author  Michael McCloskey
+ * @author  Xueming Shen
+ * @version 1.96, 08/07/06
+ * @since   JDK1.0
  * <p>
  * JCaron - 2011.03.13 - This straight-up copy/paste was needed to change the way Java's Properties class
  * loads and saves characters such as : and #.  The escaping it performs seriously jacks w/ playback of
@@ -123,15 +124,15 @@ public class PLSProperties extends Hashtable<String, String>
   }
 
   /**
-   * Calls the <tt>Hashtable</tt> method <code>put</code>. Provided for
-   * parallelism with the <tt>getProperty</tt> method. Enforces use of
+   * Calls the <code>Hashtable</code> method <code>put</code>. Provided for
+   * parallelism with the <code>getProperty</code> method. Enforces use of
    * strings for property keys and values. The value returned is the
-   * result of the <tt>Hashtable</tt> call to <code>put</code>.
+   * result of the <code>Hashtable</code> call to <code>put</code>.
    *
    * @param key   the key to be placed into this property list.
    * @param value the value corresponding to <tt>key</tt>.
-   * @return the previous value of the specified key in this property
-   * list, or <code>null</code> if it did not have one.
+   * @return the previous value of the specified key in this property list,
+   *         or <code>null</code> if it did not have one.
    * @see #getProperty
    * @since 1.2
    */
@@ -248,7 +249,6 @@ public class PLSProperties extends Hashtable<String, String>
    * element is the empty string <code>""</code>.<p>
    * <p>
    *
-   * <a name="unicodeescapes"></a>
    * Characters in keys and elements can be represented in escape
    * sequences similar to those used for character and string literals
    * (see <a

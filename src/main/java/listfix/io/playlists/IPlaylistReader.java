@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Represents an entity capable of reading in a playlist file and returning
- * a List containing PlaylistEntries that represent the files & URIs in that playlist.
+ * a List containing PlaylistEntries that represent the files &amp; URIs in that playlist.
  * @author jcaron
  */
 public interface IPlaylistReader
