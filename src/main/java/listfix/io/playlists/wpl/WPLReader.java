@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reads in a WPL file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * Reads in a WPL file and returns a List containing PlaylistEntries that represent the files &amp; URIs in the playlist.
  * @author jcaron, jpeterson
  */
 public class WPLReader extends PlaylistReader

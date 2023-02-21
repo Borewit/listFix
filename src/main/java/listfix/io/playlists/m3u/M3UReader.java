@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reads in a M3U/M3U8 file and returns a List containing PlaylistEntries that represent the files & URIs in the playlist.
+ * Reads in a M3U/M3U8 file and returns a List containing PlaylistEntries that represent the files &amp; URIs in the playlist.
  */
 public class M3UReader extends PlaylistReader
 {
