@@ -355,14 +355,38 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     return new TransferHandler()
     {
       @Override
-      public boolean canImport(TransferHandler.TransferSupport info)
+      public boolean canImport(JComponent comp, DataFlavor[] transferFlavors)
       {
-        return false;
+        return Arrays.stream(transferFlavors).anyMatch(DataFlavor.javaFileListFlavor :: equals);
       }
 
+      /**
+       * Causes a transfer to occur from a clipboard or a drag and drop operation.
+       * @param support the object containing the details of the transfer, not <code>null</code>.
+       * @return true if the data was inserted into the component, false otherwise
+       */
       @Override
-      public boolean importData(TransferHandler.TransferSupport info)
+      public boolean importData(TransferHandler.TransferSupport support)
       {
+        final Transferable transferable = support.getTransferable();
+        if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+        {
+          try
+          {
+            List<File> fileList = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+            return fileList.stream()
+              .filter(File :: isDirectory)
+              .map(folder -> {
+                GUIScreen.this.addPlaylist(folder);
+                return true;
+              })
+              .reduce(false, (t, v) -> true);
+          }
+          catch (Exception e)
+          {
+            _logger.error("Dragging onto playlists directory failed", e);
+          }
+        }
         return false;
       }
 
@@ -2453,25 +2477,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     int response = _jMediaDirChooser.showOpenDialog(this);
     if (response == JFileChooser.APPROVE_OPTION)
     {
-      String path = _jMediaDirChooser.getSelectedFile().getPath();
-      if (new File(path).exists())
-      {
-        _logger.info(String.format("Add playlist directory to configuration: %s", path));
-        this.getApplicationConfig().getPlaylistDirectories().add(path);
-      }
-      else
-      {
-        JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
-      }
-      try
-      {
-        this._listFixController.getApplicationConfiguration().write();
-      }
-      catch (IOException e)
-      {
-        throw new RuntimeException("Failed to write application configuration", e);
-      }
-      this.updatePlaylistDirectoryPanel();
+      this.addPlaylist(_jMediaDirChooser.getSelectedFile().getAbsoluteFile());
     }
   }//GEN-LAST:event__btnSetPlaylistsDirActionPerformed
 
@@ -2805,6 +2811,28 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         _logger.error("Error opening playlists from command line", ex);
       }
     }
+  }
+
+  private void addPlaylist(File playlistFile)
+  {
+    if (playlistFile.exists())
+    {
+      _logger.info(String.format("Add playlist directory to configuration: %s", playlistFile));
+      this.getApplicationConfig().getPlaylistDirectories().add(playlistFile.getAbsolutePath());
+    }
+    else
+    {
+      JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you selected/entered does not exist."));
+    }
+    try
+    {
+      this._listFixController.getApplicationConfiguration().write();
+    }
+    catch (IOException e)
+    {
+      throw new RuntimeException("Failed to write application configuration", e);
+    }
+    this.updatePlaylistDirectoryPanel();
   }
 
   // <editor-fold defaultstate="collapsed" desc="Generated Code">
