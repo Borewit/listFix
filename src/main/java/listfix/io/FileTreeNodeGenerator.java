@@ -58,7 +58,7 @@ public class FileTreeNodeGenerator
   }
 
 
-  public static Path TreePathToFileSystemPath(TreePath node)
+  public static Path treePathToFileSystemPath(TreePath node)
   {
     return ((PlaylistTreeNode) node.getLastPathComponent()).getUserObject();
   }
