@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public class FileUtils
 {
@@ -97,35 +98,17 @@ public class FileUtils
     return result.toString();
   }
 
-  public static void deleteDirectory(Path dirOrFile)
+  /**
+   * Delete recursive
+   * @param directory Folder to delete
+   */
+  public static void deleteDirectory(Path directory) throws IOException
   {
-    if (Files.isDirectory(dirOrFile))
-    {
-      try
-      {
-        Files.list(dirOrFile).forEach(FileUtils :: deleteDirectory);
-      }
-      catch (IOException e)
-      {
-        throw new RuntimeException(e);
-      }
+    try (Stream<Path> walk = Files.walk(directory)) {
+      walk
+        .map(Path::toFile)
+        .forEach(File::delete);
     }
-    else
-    {
-      try
-      {
-        Files.deleteIfExists(dirOrFile);
-      }
-      catch (IOException e)
-      {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  public static void deleteDirectory(File dir)
-  {
-    FileUtils.deleteDirectory(dir.toPath());
   }
 
   /**

@@ -38,7 +38,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
@@ -180,30 +179,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     // addAt popup menu to playlist tree on right-click
     _playlistDirectoryTree.addMouseListener(createPlaylistTreeMouseListener());
 
-    addPlaylistPanelModelListener();
-
-//    _documentPane.setGroupsAllowed(false);
-//    _documentPane.setFloatingAllowed(false);
-//    _documentPane.setTabbedPaneCustomizer(createTabCustomizer());
-//    _documentPane.setTabColorProvider(createTabColorProvider());
-
-    // Load the position the window was in when it was last closed.
-    WindowSaver.getInstance().loadSettings(this);
-
-    // Set the position of the divider in the left split pane.
-    _leftSplitPane.setDividerLocation(.7);
-
-    updateMenuItemStatuses();
-
-    // JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
-    configureGlobalKeyboardListener();
-
-    // Stop showing the loading screen
-    splashScreen.setVisible(false);
-  }
-
-  private void addPlaylistPanelModelListener()
-  {
     _playlistDirectoryTree.getModel().addTreeModelListener(new TreeModelListener()
     {
       @Override
@@ -230,6 +205,20 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         recheckStatusOfOpenPlaylists();
       }
     });
+
+    // Load the position the window was in when it was last closed.
+    WindowSaver.getInstance().loadSettings(this);
+
+    // Set the position of the divider in the left split pane.
+    _leftSplitPane.setDividerLocation(.7);
+
+    updateMenuItemStatuses();
+
+    // JCaron - 2012.05.03 - Global listener for Ctrl-Tab and Ctrl-Shift-Tab
+    configureGlobalKeyboardListener();
+
+    // Stop showing the loading screen
+    splashScreen.setVisible(false);
   }
 
   private void recheckStatusOfOpenPlaylists()
@@ -322,18 +311,19 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
             _miExactMatchesSearch.setEnabled(true);
             _miClosestMatchesSearch.setEnabled(true);
             _miOpenSelectedPlaylists.setEnabled(true);
-            _miDeletePlaylist.setEnabled(true);
-            _miRenameSelectedItem.setEnabled(_playlistDirectoryTree.getSelectionCount() == 1
-                && !allTopLevel
-                && Files.isRegularFile(GUIScreen.this.getSelectedPlaylistTreeNodes().get(0).getUserObject())
-                );
+            boolean singleFileSelected = _playlistDirectoryTree.getSelectionCount() == 1;
+            _miRenameSelectedItem.setEnabled(singleFileSelected
+              && !allTopLevel
+              && Files.isRegularFile(GUIScreen.this.getSelectedPlaylistTreeNodes().get(0).getUserObject())
+            );
+            _miDeleteFile.setEnabled(true);
           }
           else
           {
             _miExactMatchesSearch.setEnabled(false);
             _miClosestMatchesSearch.setEnabled(false);
             _miOpenSelectedPlaylists.setEnabled(false);
-            _miDeletePlaylist.setEnabled(false);
+            _miDeleteFile.setEnabled(false);
             _miRenameSelectedItem.setEnabled(false);
           }
 
@@ -392,7 +382,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
           for (int selRow : _playlistDirectoryTree.getSelectionRows())
           {
             TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
-            paths.add(FileTreeNodeGenerator.TreePathToFileSystemPath(selPath).toString());
+            paths.add(FileTreeNodeGenerator.treePathToFileSystemPath(selPath).toString());
           }
 
           String serializedPaths = StringArrayListSerializer.serialize(paths);
@@ -607,7 +597,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     _miOpenSelectedPlaylistLocation = new javax.swing.JMenuItem();
     _miExactMatchesSearch = new javax.swing.JMenuItem();
     _miClosestMatchesSearch = new javax.swing.JMenuItem();
-    _miDeletePlaylist = new javax.swing.JMenuItem();
+    _miDeleteFile = new javax.swing.JMenuItem();
     _miRenameSelectedItem = new javax.swing.JMenuItem();
     _statusPanel = new javax.swing.JPanel();
     statusLabel = new javax.swing.JLabel();
@@ -671,7 +661,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
 
     _miRemovePlaylistDirectory.setText("Remove Playlist Directory");
     _miRemovePlaylistDirectory.setToolTipText("Remove playlist directory from configuration");
-    _miRemovePlaylistDirectory.addActionListener(evt -> this.removePlaylistDirectory());
+    _miRemovePlaylistDirectory.addActionListener(evt -> this.removePlaylistDirectory(this._playlistDirectoryTree.getSelectionPaths()));
     _playlistTreeRightClickMenu.add(_miRemovePlaylistDirectory);
 
     _miRefreshDirectoryTree.setText("Refresh");
@@ -694,11 +684,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     _miClosestMatchesSearch.addActionListener(evt -> _miClosestMatchesSearchActionPerformed(evt));
     _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
 
-    _miDeletePlaylist.setMnemonic('D');
-    _miDeletePlaylist.setText("Delete file");
-    _miDeletePlaylist.setToolTipText("Delete selected playlist file");
-    _miDeletePlaylist.addActionListener(evt -> _miDeletePlaylistActionPerformed(evt));
-    _playlistTreeRightClickMenu.add(_miDeletePlaylist);
+    _miDeleteFile.setMnemonic('D');
+    _miDeleteFile.setText("Delete file(s)");
+    _miDeleteFile.setToolTipText("Delete selected file(s)");
+    _miDeleteFile.addActionListener(evt -> _miDeletePlaylistActionPerformed(evt));
+    _playlistTreeRightClickMenu.add(_miDeleteFile);
 
     _miRenameSelectedItem.setMnemonic('R');
     _miRenameSelectedItem.setAccelerator(KeyStroke.getKeyStroke(keyEventRenameFile, 0));
@@ -1277,71 +1267,86 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     {
       return Collections.emptyList();
     }
-    return Arrays.stream(paths).map(FileTreeNodeGenerator :: TreePathToFileSystemPath).collect(Collectors.toList());
+    return Arrays.stream(paths).map(FileTreeNodeGenerator :: treePathToFileSystemPath).collect(Collectors.toList());
   }
 
   private void deleteTreeSelectedPlaylists()
   {
     int[] selRows = _playlistDirectoryTree.getSelectionRows();
-    if (selRows != null && selRows.length > 0)
+    if (selRows == null ||
+      selRows.length == 0 ||
+      JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected file?"), "Delete Selected File?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
     {
-      if (JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected file?"), "Delete Selected File?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+      return;
+    }
+    final List<Path> playlistsDirectoriesToRemove = new LinkedList<>();
+    for (TreePath selPath : this.getSelectedPlaylistTreePaths())
+    {
+      PlaylistTreeNode treeNode = (PlaylistTreeNode) selPath.getLastPathComponent();
+      Path toDelete = ((PlaylistTreeNode)selPath.getLastPathComponent()).getUserObject();
+      if (Files.isDirectory(toDelete))
       {
-        List<TreePath> selPaths = new ArrayList<>();
-        for (int i : selRows)
-        {
-          selPaths.add(_playlistDirectoryTree.getPathForRow(i));
+        try {
+          FileUtils.deleteDirectory(toDelete);
+          Files.delete(toDelete);
+        } catch(IOException ioe) {
+          final String message = String.format("Failed to delete folder: %s: %s", toDelete, ioe.getMessage());
+          _logger.error(message, ioe);
+          JOptionPane.showMessageDialog(this, message, "Deleting Playlist Failed", JOptionPane.WARNING_MESSAGE);
         }
-        for (TreePath selPath : selPaths)
+        if (treeNode.getParent() == null)
         {
-          Path toOpen = FileTreeNodeGenerator.TreePathToFileSystemPath(selPath);
-          if (Files.isDirectory(toOpen))
+          // Node is a configured playlist directory
+          playlistsDirectoriesToRemove.add(treeNode.getUserObject());
+        }
+      }
+      else
+      {
+        if (Files.isWritable(toDelete))
+        {
+          try
           {
-            FileUtils.deleteDirectory(toOpen);
-            DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
-            treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
+            Files.delete(toDelete);
           }
-          else
+          catch (IOException e)
           {
-            if (Files.isWritable(toOpen))
-            {
-              try
-              {
-                Files.delete(toOpen);
-              }
-              catch (IOException e)
-              {
-                throw new RuntimeException(e);
-              }
-              _playlistDirectoryTree.makeVisible(selPath);
-              DefaultTreeModel treeModel = (DefaultTreeModel) _playlistDirectoryTree.getModel();
-              treeModel.removeNodeFromParent((MutableTreeNode) selPath.getLastPathComponent());
-              this._playlistTabbedPane.remove(toOpen);
-            }
-            else
-            {
-              final String fileShortname = toOpen.getFileName().toString();
-              JOptionPane.showMessageDialog(this, String.format("Failed to delete playlist: %s", fileShortname), "Deleting Playlist Failed", JOptionPane.WARNING_MESSAGE);
-            }
+            throw new RuntimeException(e);
           }
+          this._playlistDirectoryTree.makeVisible(selPath);
+          DefaultTreeModel treeModel = (DefaultTreeModel) this._playlistDirectoryTree.getModel();
+          treeModel.removeNodeFromParent(treeNode);
+          this._playlistTabbedPane.remove(toDelete);
+        }
+        else
+        {
+          final String fileShortname = toDelete.getFileName().toString();
+          JOptionPane.showMessageDialog(this, String.format("Failed to delete playlist: %s", fileShortname), "Deleting Playlist Failed", JOptionPane.WARNING_MESSAGE);
         }
       }
     }
+    this.removePlaylistDirectory(playlistsDirectoriesToRemove);
+  }
+
+  public List<TreePath> getSelectedPlaylistTreePaths()
+  {
+    int[] selRows = _playlistDirectoryTree.getSelectionRows();
+    if (selRows != null)
+    {
+      return Arrays.stream(selRows).mapToObj(i -> _playlistDirectoryTree.getPathForRow(i)).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   public List<PlaylistTreeNode> getSelectedPlaylistTreeNodes()
   {
-    int[] selRows = _playlistDirectoryTree.getSelectionRows();
-    if (selRows != null) {
-      return Arrays.stream(selRows).mapToObj(i -> (PlaylistTreeNode) _playlistDirectoryTree.getPathForRow(i).getLastPathComponent()).collect(Collectors.toList());
-    }
-    return Collections.emptyList();
+    return this.getSelectedPlaylistTreePaths().stream().map(path -> (PlaylistTreeNode)path.getLastPathComponent()).collect(Collectors.toList());
   }
 
   private void renameTreeSelectedNode()
   {
     List<PlaylistTreeNode> selectedTreeNodes = getSelectedPlaylistTreeNodes();
-    if (selectedTreeNodes.size() != 1) {
+    if (selectedTreeNodes.size() != 1)
+    {
       _logger.debug(String.format("Will only rename when exactly 1 file is selected, got %s.", selectedTreeNodes.size()));
       return;
     }
@@ -1380,7 +1385,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
 
   private void playlistDirectoryTreeNodeDoubleClicked(TreePath selPath)
   {
-    Path toOpen = FileTreeNodeGenerator.TreePathToFileSystemPath(selPath);
+    Path toOpen = FileTreeNodeGenerator.treePathToFileSystemPath(selPath);
     if (Files.isRegularFile(toOpen))
     {
       this.openPlaylist(toOpen);
@@ -2644,7 +2649,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       {
         DefaultTreeModel treeModel = (DefaultTreeModel) this._playlistDirectoryTree.getModel();
         treeModel.setRoot(playlistTreeNode);
-        addPlaylistPanelModelListener();
         loadExpansionState(this._playlistDirectoryTree, treeStateEnum);
       }
       finally
@@ -2658,30 +2662,30 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     }
   }
 
-  private void removePlaylistDirectory()
+  private void removePlaylistDirectory(TreePath[] selectedPath)
   {
-    TreePath[] selectedPath = this._playlistDirectoryTree.getSelectionPaths();
     if (selectedPath != null)
     {
-      for (TreePath treePath : selectedPath)
-      {
-        FileTreeNodeGenerator.TreePathToFileSystemPath(treePath);
-      }
-      Arrays.stream(selectedPath)
-        .map(FileTreeNodeGenerator :: TreePathToFileSystemPath)
-        .forEach(playlistDirectory -> {
-          _logger.info(String.format("Removing playlist directory from configuration: %s", playlistDirectory));
-          this.getApplicationConfig().getPlaylistDirectories().remove(playlistDirectory.toString());
-        });
-      this.updatePlaylistDirectoryPanel();
-      try
-      {
-        this._listFixController.getApplicationConfiguration().write();
-      }
-      catch (IOException e)
-      {
-        throw new RuntimeException("Failed to write updated application configuration", e);
-      }
+      removePlaylistDirectory(Arrays.stream(selectedPath)
+        .map(FileTreeNodeGenerator :: treePathToFileSystemPath)
+        .collect(Collectors.toList()));
+    }
+  }
+
+  private void removePlaylistDirectory(Collection<Path> selectedPath)
+  {
+    selectedPath.forEach(playlistDirectory -> {
+      _logger.info(String.format("Removing playlist directory from configuration: %s", playlistDirectory));
+      this.getApplicationConfig().getPlaylistDirectories().remove(playlistDirectory.toString());
+    });
+    this.updatePlaylistDirectoryPanel();
+    try
+    {
+      this._listFixController.getApplicationConfiguration().write();
+    }
+    catch (IOException e)
+    {
+      throw new RuntimeException("Failed to write updated application configuration", e);
     }
   }
 
@@ -2836,7 +2840,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   private javax.swing.JMenuItem _miBatchRepair;
   private javax.swing.JMenuItem _miClosestMatchRepairOpenPlaylists;
   private javax.swing.JMenuItem _miClosestMatchesSearch;
-  private javax.swing.JMenuItem _miDeletePlaylist;
+  private javax.swing.JMenuItem _miDeleteFile;
   private javax.swing.JMenuItem _miExactMatchRepairOpenPlaylists;
   private javax.swing.JMenuItem _miExactMatchesSearch;
   private javax.swing.JMenuItem _miOpenSelectedPlaylists;
