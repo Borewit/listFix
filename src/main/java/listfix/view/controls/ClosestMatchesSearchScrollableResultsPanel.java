@@ -1,6 +1,7 @@
 package listfix.view.controls;
 
 import listfix.model.BatchMatchItem;
+import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
 import listfix.view.support.ZebraJTable;
 import org.apache.logging.log4j.LogManager;
@@ -10,19 +11,23 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.EventObject;
+import java.awt.event.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.List;
 
-public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPanel
+import javax.annotation.Nonnull;
+
+public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
 {
   private List<BatchMatchItem> _items;
-
   private static final Logger _logger = LogManager.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
   private int _width;
+  private JPopupMenu _playlistEntryRightClickMenu;
+  private JScrollPane _uiScrollPane;
+  private ZebraJTable _uiTable;
+  private BatchMatchItem contextMatchItem = null;
 
   public ClosestMatchesSearchScrollableResultsPanel()
   {
@@ -44,7 +49,6 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   private void initialize()
   {
     TableColumnModel cm = _uiTable.getColumnModel();
-    ButtonRenderer br = new ButtonRenderer();
     cm.getColumn(2).setCellRenderer(new ButtonRenderer());
     cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
     cm.getColumn(3).setCellEditor(new MatchEditor());
@@ -74,6 +78,22 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
     _uiTable.getRowSorter().setSortKeys(keys);
     _uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    this._uiTable.addMouseListener(new MouseAdapter()
+    {
+      @Override
+      public void mousePressed(MouseEvent e)
+      {
+        if (SwingUtilities.isRightMouseButton(e) && ClosestMatchesSearchScrollableResultsPanel.this._uiTable.getSelectedRows().length > 0)
+        {
+          Point p = e.getPoint();
+          int rowNr = ClosestMatchesSearchScrollableResultsPanel.this._uiTable.rowAtPoint(e.getPoint());
+          ClosestMatchesSearchScrollableResultsPanel.this.contextMatchItem = rowNr == -1 ? null : _items.get(rowNr);
+          _logger.debug(String.format("Selected row %d: %s", rowNr, ClosestMatchesSearchScrollableResultsPanel.this.contextMatchItem));
+          ClosestMatchesSearchScrollableResultsPanel.this._playlistEntryRightClickMenu.show(e.getComponent(), p.x, p.y);
+        }
+      }
+    });
   }
 
   public int getSelectedRow()
@@ -107,7 +127,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     return new ZebraJTable()
     {
       @Override
-      public String getToolTipText(MouseEvent event)
+      public String getToolTipText(@Nonnull MouseEvent event)
       {
         Point point = event.getPoint();
         int rawRowIx = rowAtPoint(point);
@@ -149,10 +169,9 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   private void resizeAllColumns()
   {
     // resize columns to fit
-    int cwidth = 0;
-    cwidth += _uiTable.autoResizeColumn(1);
-    cwidth += _uiTable.autoResizeColumn(2);
-    cwidth += _uiTable.autoResizeColumn(3);
+    _uiTable.autoResizeColumn(1);
+    _uiTable.autoResizeColumn(2);
+    _uiTable.autoResizeColumn(3);
     TableColumnModel cm = _uiTable.getColumnModel();
     TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
     Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
@@ -165,16 +184,12 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     _uiTable.setFillerColumnWidth(_uiScrollPane);
   }
 
-  private class ButtonRenderer implements TableCellRenderer
+  private static class ButtonRenderer implements TableCellRenderer
   {
-    private JButton button = new JButton();
+    private final JButton button = new JButton();
 
     @Override
-    public Component getTableCellRendererComponent(JTable table,
-                                                   Object value,
-                                                   boolean isSelected,
-                                                   boolean hasFocus,
-                                                   int row, int column)
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
       button.setText("PLAY");
       return button;
@@ -185,7 +200,6 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   {
     private final JTable table;
     private final JButton button = new JButton();
-    private int clickCountToStart = 1;
 
     ButtonEditor(JTable table)
     {
@@ -216,10 +230,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table,
-                                                 Object value,
-                                                 boolean isSelected,
-                                                 int row, int column)
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
     {
       button.setText("PLAY");
       return button;
@@ -236,6 +247,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     {
       if (anEvent instanceof MouseEvent)
       {
+        int clickCountToStart = 1;
         return ((MouseEvent) anEvent).getClickCount() >= clickCountToStart;
       }
       return true;
@@ -277,53 +289,34 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-      if (rowIndex < _items.size())
+      if (rowIndex >= _items.size())
       {
-        final BatchMatchItem item = _items.get(rowIndex);
-        switch (columnIndex)
-        {
-          case 0:
-            return rowIndex + 1;
-
-          case 1:
-            return item.getEntry().getTrackFileName();
-
-          case 2:
-            return "";
-          case 3:
-            PotentialPlaylistEntryMatch match = item.getSelectedMatch();
-            if (match != null)
-            {
-              return match.getPlaylistFile().getTrackFileName();
-            }
-            else
-            {
-              return "< skip >";
-            }
-
-          default:
-            return null;
-        }
+        return null;
       }
-      return null;
+
+      final BatchMatchItem item = _items.get(rowIndex);
+      return switch (columnIndex)
+        {
+          case 0 -> rowIndex + 1;
+          case 1 -> item.getEntry().getTrackFileName();
+          case 2 -> "";
+          case 3 ->
+            item.getSelectedMatch() == null ? "< skip >" : item.getSelectedMatch().getPlaylistFile().getTrackFileName();
+          default -> null;
+        };
     }
 
     @Override
     public String getColumnName(int column)
     {
-      switch (column)
-      {
-        case 0:
-          return "#";
-        case 1:
-          return "Original Name";
-        case 2:
-          return "Preview";
-        case 3:
-          return "Matched Name";
-        default:
-          return null;
-      }
+      return switch (column)
+        {
+          case 0 -> "#";
+          case 1 -> "Original Name";
+          case 2 -> "Preview";
+          case 3 -> "Matched Name";
+          default -> null;
+        };
     }
 
     @Override
@@ -338,54 +331,54 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
       //return super.isCellEditable(rowIndex, columnIndex);
       return columnIndex == 2 || columnIndex == 3;
     }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex)
-    {
-      if (columnIndex == 3)
-      {
-        int ix = (Integer) aValue;
-        //Log.write("set %d to %d", rowIndex, ix);
-        BatchMatchItem item = _items.get(rowIndex);
-        item.setSelectedIx(ix);
-      }
-    }
   }
 
   private class MatchEditor extends AbstractCellEditor implements TableCellEditor
   {
+    private final JComboBox<PotentialPlaylistEntryMatch> combo;
+    private final MatchComboBoxModel model;
+
     MatchEditor()
     {
-      _model = new MatchComboBoxModel();
-      _combo = new JComboBox(_model);
-      _combo.setRenderer(new MyComboBoxRenderer());
-      _combo.setMaximumRowCount(25);
-      _combo.setFocusable(false);
+      this.model = new MatchComboBoxModel();
+      this.combo = new JComboBox<>(model);
+      this.combo.setRenderer(new MyComboBoxRenderer());
+      this.combo.setMaximumRowCount(25);
+      this.combo.setFocusable(false);
+      this.combo.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mousePressed(MouseEvent e)
+        {
+          if (SwingUtilities.isRightMouseButton(e))
+          {
+            ClosestMatchesSearchScrollableResultsPanel.this.contextMatchItem = MatchEditor.this.model.getMatchItem();
+            ClosestMatchesSearchScrollableResultsPanel.this._playlistEntryRightClickMenu.show(MatchEditor.this.combo, e.getX(), e.getY());
+          }
+        }
+      });
     }
-
-    private final JComboBox _combo;
-    private final MatchComboBoxModel _model;
 
     @Override
     public Object getCellEditorValue()
     {
-      return _combo.getSelectedIndex() - 1;
+      return combo.getSelectedIndex() - 1;
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
     {
       BatchMatchItem item = _items.get(row);
-      _model.setMatches(item.getMatches());
-      _combo.setSelectedIndex(item.getSelectedIx() + 1);
-      return _combo;
+      model.setMatchedItem(item);
+      // _model.setMatches(item);
+      combo.setSelectedIndex(item.getSelectedIx());
+      return combo;
     }
 
     private class MyComboBoxRenderer extends BasicComboBoxRenderer
     {
       @Override
-      public Component getListCellRendererComponent(JList list, Object value,
-                                                    int index, boolean isSelected, boolean cellHasFocus)
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
       {
         JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -393,7 +386,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
         {
           if (index > 0)
           {
-            list.setToolTipText(((PotentialPlaylistEntryMatch) ((MatchComboBoxModel) list.getModel())._matches.get(index - 1)).getPlaylistFile().getTrackFolder());
+            list.setToolTipText(((PotentialPlaylistEntryMatch) value).getPlaylistFile().getTrackFolder());
           }
         }
 
@@ -402,86 +395,84 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     }
   }
 
-  private static class MatchComboBoxModel extends AbstractListModel implements ComboBoxModel
+  private static class MatchComboBoxModel extends DefaultComboBoxModel<PotentialPlaylistEntryMatch>
   {
-    private List<PotentialPlaylistEntryMatch> _matches;
-    private Object _selected;
 
-    public void setMatches(List<PotentialPlaylistEntryMatch> matches)
+    private BatchMatchItem batchMatchItem;
+
+    public void setMatchedItem(BatchMatchItem batchMatchItem)
     {
-      _matches = matches;
-      _selected = null;
-      fireContentsChanged(this, 0, _matches.size());
+      this.batchMatchItem = batchMatchItem;
+      super.removeAllElements();
+      super.addAll(batchMatchItem.getMatches());
     }
 
-    @Override
-    public int getSize()
+    public BatchMatchItem getMatchItem()
     {
-      return _matches != null ? _matches.size() + 1 : 0;
-    }
-
-    @Override
-    public Object getElementAt(int index)
-    {
-      if (_matches != null)
-      {
-        if (index > 0)
-        {
-          PotentialPlaylistEntryMatch match = _matches.get(index - 1);
-          return Integer.toString(match.getScore()) + ": " + match.getPlaylistFile().getTrackFileName();
-        }
-        else
-        {
-          return "< skip >";
-        }
-      }
-      else
-      {
-        return null;
-      }
+      return this.batchMatchItem;
     }
 
     @Override
     public void setSelectedItem(Object anItem)
     {
-      _selected = anItem;
-    }
-
-    @Override
-    public Object getSelectedItem()
-    {
-      return _selected;
+      _logger.info(String.format("Selected: %s ", anItem));
+      this.batchMatchItem.setSelectedMatch((PotentialPlaylistEntryMatch) anItem);
+      super.setSelectedItem(anItem);
     }
   }
 
   /**
    * This method is called from within the constructor to
    * initialize the form.
-   * WARNING: Do NOT modify this code. The content of this method is
-   * always regenerated by the Form Editor.
    */
-  @SuppressWarnings("unchecked")
-  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents()
   {
 
-    _uiScrollPane = new javax.swing.JScrollPane();
+    _uiScrollPane = new JScrollPane();
     _uiTable = createTable();
 
     setLayout(new java.awt.BorderLayout());
 
     _uiTable.setAutoCreateRowSorter(true);
     _uiTable.setModel(new MatchTableModel());
-    _uiTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+    _uiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     _uiScrollPane.setViewportView(_uiTable);
 
     add(_uiScrollPane, java.awt.BorderLayout.CENTER);
-  }// </editor-fold>//GEN-END:initComponents
 
+    _playlistEntryRightClickMenu = new JPopupMenu();
 
-  // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JScrollPane _uiScrollPane;
-  private listfix.view.support.ZebraJTable _uiTable;
-  // End of variables declaration//GEN-END:variables
+    JMenuItem _miOpenFileLocation = new JMenuItem();
+    _miOpenFileLocation.setText("Open match file location");
+    _miOpenFileLocation.addActionListener(evt -> {
+      // Note that the _miOpenFileLocation.location is location of the original mouse click
+      this.openClickedMatchedPlayListEntryLocation();
+    });
+    _playlistEntryRightClickMenu.add(_miOpenFileLocation);
+  }
+
+  private void openClickedMatchedPlayListEntryLocation()
+  {
+    if (this.contextMatchItem != null)
+    {
+      PotentialPlaylistEntryMatch match = contextMatchItem.getSelectedMatch();
+      if (match != null)
+      {
+        _logger.debug(String.format("Selected: %s", match));
+        Path path = ((FilePlaylistEntry) match.getPlaylistFile()).getAbsolutePath();
+        if (path.getParent() != null)
+        {
+          try
+          {
+            Desktop.getDesktop().open(path.getParent().toFile());
+          }
+          catch (IOException e)
+          {
+            throw new RuntimeException(e);
+          }
+        }
+      }
+    }
+  }
 
 }
