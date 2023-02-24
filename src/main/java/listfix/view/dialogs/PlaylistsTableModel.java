@@ -102,13 +102,15 @@ public class PlaylistsTableModel extends AbstractTableModel
       {
         case 0 ->
         {
-          if (list.getMissingCount() > 0)
-          {
-            return ImageIcons.IMG_MISSING;
-          }
-          else if (list.getFixedCount() > 0)
-          {
-            return ImageIcons.IMG_FIXED;
+          if (list != null) {
+            if (list.getMissingCount() > 0)
+            {
+              return ImageIcons.IMG_MISSING;
+            }
+            else if (list.getFixedCount() > 0)
+            {
+              return ImageIcons.IMG_FIXED;
+            }
           }
           else
           {
