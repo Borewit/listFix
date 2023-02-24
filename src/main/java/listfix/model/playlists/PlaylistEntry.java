@@ -150,7 +150,7 @@ public abstract class PlaylistEntry implements Cloneable
   public List<PotentialPlaylistEntryMatch> findClosestMatches(Collection<String> mediaFiles, IProgressObserver<String> observer, IPlaylistOptions playListOptions)
   {
     List<PotentialPlaylistEntryMatch> matches = new ArrayList<>();
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = new ProgressAdapter<>(observer);
     progress.setTotal(mediaFiles.size());
 
     matches.clear();

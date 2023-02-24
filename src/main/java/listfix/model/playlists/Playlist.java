@@ -185,7 +185,7 @@ public class Playlist
 
   public void copySelectedEntries(List<Integer> entryIndexList, File destinationDirectory, IProgressObserver<String> observer)
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(entryIndexList.size());
     PlaylistEntry tempEntry;
     Path fileToCopy;
@@ -553,7 +553,7 @@ public class Playlist
 
   private List<PlaylistEntry> getEntriesForFiles(Collection<Path> files, IProgressObserver<String> observer) throws IOException
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(files.size());
 
     List<PlaylistEntry> ents = new ArrayList<>();
@@ -565,7 +565,7 @@ public class Playlist
         {
           // playlist file
           IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file, this.playListOptions);
-          ents.addAll(reader.readPlaylist(progress));
+          ents.addAll(reader.readPlaylist(null)); // ToDo: nest this progress in overall progress
         }
         else
         {
@@ -604,7 +604,7 @@ public class Playlist
    */
   public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(this._entries.size());
 
     List<Integer> fixed = new ArrayList<>();
@@ -669,7 +669,7 @@ public class Playlist
    */
   public void batchRepair(Collection<String> fileList, IMediaLibrary dirLists, IProgressObserver<String> observer)
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(_entries.size());
 
     final boolean caseInsensitive = this.playListOptions.getCaseInsensitiveExactMatching();
@@ -714,7 +714,7 @@ public class Playlist
 
   public List<BatchMatchItem> findClosestMatches(List<PlaylistEntry> entries, Collection<String> libraryFiles, IProgressObserver<String> observer)
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(entries.size());
 
     List<BatchMatchItem> fixed = new LinkedList<>();
@@ -936,12 +936,8 @@ public class Playlist
   public final void save(boolean saveRelative, IProgressObserver<String> observer) throws Exception
   {
     // avoid resetting total if part of batch operation
-    boolean hasTotal = observer instanceof ProgressAdapter;
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
-    if (!hasTotal)
-    {
-      progress.setTotal(_entries.size());
-    }
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
+    progress.setTotal(_entries.size());
 
     IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.playListOptions);
     writer.save(this, saveRelative, progress);

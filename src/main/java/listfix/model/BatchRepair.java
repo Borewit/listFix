@@ -102,6 +102,7 @@ public class BatchRepair
 
   /**
    * Performs an exact matches search on all entries in multiple playlists.
+   *
    * @param observer The progress observer for this operation.
    */
   public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
@@ -113,19 +114,21 @@ public class BatchRepair
 
   /**
    * Performs a closest matches search on all entries in multiple playlists.
+   *
    * @param observer The progress observer for this operation.
    */
   public void performClosestMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
   {
-    this.performRepair(observer, filePathOptions, (item, list, task) -> {
-      item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), task));
+    this.performRepair(observer, filePathOptions, (item, list, progressObserver) -> {
+      item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), progressObserver));
     });
   }
 
   public void performRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions, IRepairItem repairItem)
   {
-    DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
-    progress.getOverall().setTotal(_items.size() * 2L);
+    final DualProgressAdapter<String> progress = new DualProgressAdapter<>(observer);
+    final ProgressAdapter<String> overallProgress = progress.getOverall();
+    overallProgress.setTotal(_items.size() * 2L);
 
     List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
     for (BatchRepairItem item : _items)
@@ -133,7 +136,6 @@ public class BatchRepair
       if (!observer.getCancelled())
       {
         // load
-        progress.getOverall().stepCompleted();
         progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
         if (item.getPlaylist() == null)
         {
@@ -148,11 +150,11 @@ public class BatchRepair
             toRemoveFromBatch.add(item);
           }
         }
+        overallProgress.stepCompleted();
 
         // repair
         if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0)
         {
-          progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
           repairItem.repair(item, list, progress.getTask());
@@ -162,6 +164,7 @@ public class BatchRepair
           // Don't fix playlists that have nothing to fix... instead remove them from the result set.
           toRemoveFromBatch.add(item);
         }
+        overallProgress.stepCompleted();
       }
       else
       {
@@ -198,7 +201,7 @@ public class BatchRepair
    */
   public void save(IPlaylistOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
 
     // get included items
     int stepCount = 0;
@@ -258,7 +261,7 @@ public class BatchRepair
       {
         item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
       }
-      item.getPlaylist().save(filePathOptions.getSavePlaylistsWithRelativePaths(), progress);
+      item.getPlaylist().save(filePathOptions.getSavePlaylistsWithRelativePaths(), null); // ToDo nest observer
     }
   }
 }

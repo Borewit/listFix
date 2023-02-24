@@ -56,7 +56,7 @@ public class PLSReader extends PlaylistReader
     // Definition of the PLS format can be found @ http://gonze.com/playlists/playlist-format-survey.html#PLS
 
     // Init a progress adapter if we have a progress observer.
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
 
     // Load the PLS file into memory (it's basically a glorified INI | java properties file).
     PLSProperties propBag = new PLSProperties();

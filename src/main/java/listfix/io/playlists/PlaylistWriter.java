@@ -87,7 +87,7 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
   {
     if (adapter == null) {
       // Create a dummy progress-adapter
-      adapter = ProgressAdapter.wrap(null);
+      adapter = ProgressAdapter.make(null);
     }
 
     final int totalSteps = playlist.getEntries().size() + 3;

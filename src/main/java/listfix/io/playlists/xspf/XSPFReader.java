@@ -55,7 +55,7 @@ public class XSPFReader extends PlaylistReader
   public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
     // Init a progress adapter if we have a progress observer.
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
 
     List<PlaylistEntry> entriesList = new ArrayList<>();
     SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());

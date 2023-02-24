@@ -16,12 +16,12 @@ public abstract class DualProgressWorker<T, V> extends SwingWorker<T, DualProgre
 
   public void reportTaskProgress(int percentComplete, V state)
   {
-    publish(new ProgressItem(true, percentComplete, state));
+    publish(new ProgressItem<V>(true, percentComplete, state));
   }
 
   public void reportOverallProgress(int percentComplete, V state)
   {
-    publish(new ProgressItem(false, percentComplete, state));
+    publish(new ProgressItem<V>(false, percentComplete, state));
   }
 
   public boolean getCancelled()
@@ -29,7 +29,7 @@ public abstract class DualProgressWorker<T, V> extends SwingWorker<T, DualProgre
     return this.isCancelled();
   }
 
-  protected static class ProgressItem<V>
+  public static class ProgressItem<V>
   {
     public ProgressItem(boolean isTask, int percentComplete, V state)
     {
