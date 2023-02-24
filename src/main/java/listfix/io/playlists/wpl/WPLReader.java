@@ -56,7 +56,7 @@ public class WPLReader extends PlaylistReader
   @Override
   public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
-    ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal((int) fileLength);
 
     _cache = new StringBuilder();

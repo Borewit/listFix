@@ -53,7 +53,7 @@ public class M3UReader extends PlaylistReader
       // Line1 holds the metadata about the file that we just hang on to, line2 represents the file reference.
 
       //Initialize the progress adapter if we're given an observer.
-      ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
+      ProgressAdapter<String> progress = ProgressAdapter.make(observer);
       progress.setTotal(fileLength);
 
       String line1 = buffer.readLine();

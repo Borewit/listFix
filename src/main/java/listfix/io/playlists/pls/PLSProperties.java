@@ -8,11 +8,10 @@
 package listfix.io.playlists.pls;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Set;
-
 
 /**
  * The <code>Properties</code> class represents a persistent set of
@@ -41,7 +40,7 @@ import java.util.Set;
  * {@link #store(java.io.Writer, java.lang.String) store(Writer, String)}
  * methods load and store properties from and to a character based stream
  * in a simple line-oriented format specified below.
- *
+ * <p>
  * The {@link #load(java.io.InputStream) load(InputStream)} <tt>/</tt>
  * {@link #store(java.io.OutputStream, java.lang.String) store(OutputStream, String)}
  * methods work the same way as the load(Reader)/store(Writer, String) pair, except
@@ -52,8 +51,8 @@ import java.util.Set;
  * sequence. The native2ascii tool can be used to convert property files to and
  * from other character encodings.
  *
- * <p> The {@link #loadFromXML(InputStream)} and {@link
- * #storeToXML(OutputStream, String, String)} methods load and store properties
+ * <p> The {@link #load(InputStream)} and {@link
+ * #store(OutputStream, String) store(OutputStream, String) methods load and store properties
  * in a simple XML format.  By default the UTF-8 character encoding is used,
  * however a specific encoding may be specified if required.  An XML properties
  * document has the following DOCTYPE declaration:
@@ -66,39 +65,32 @@ import java.util.Set;
  * serves as a string to uniquely identify the DTD, which is:
  * <pre>
  *    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
- *
  *    &lt;!-- DTD for properties --&gt;
- *
  *    &lt;!ELEMENT properties ( comment?, entry* ) &gt;
- *
  *    &lt;!ATTLIST properties version CDATA #FIXED "1.0"&gt;
- *
  *    &lt;!ELEMENT comment (#PCDATA) &gt;
- *
  *    &lt;!ELEMENT entry (#PCDATA) &gt;
- *
  *    &lt;!ATTLIST entry key CDATA #REQUIRED&gt;
  * </pre>
  *
+ * @author Arthur van Hoff
+ * @author Michael McCloskey
+ * @author Xueming Shen
+ * @version 1.96, 08/07/06
  * @see <a href="../../../technotes/tools/solaris/native2ascii.html">native2ascii tool for Solaris</a>
  * @see <a href="../../../technotes/tools/windows/native2ascii.html">native2ascii tool for Windows</a>
  *
  * <p>This class is thread-safe: multiple threads can share a single
  * <tt>Properties</tt> object without the need for external synchronization.
- *
- * @author  Arthur van Hoff
- * @author  Michael McCloskey
- * @author  Xueming Shen
- * @version 1.96, 08/07/06
- * @since   JDK1.0
- *
+ * @since JDK1.0
+ * <p>
  * JCaron - 2011.03.13 - This straight-up copy/paste was needed to change the way Java's Properties class
  * loads and saves characters such as : and #.  The escaping it performs seriously jacks w/ playback of
  * file paths by media players...
- *
+ * <p>
  * You can override private methods, but you can't call private methods in the parent class :(
  */
-public class PLSProperties extends Hashtable<Object, Object>
+public class PLSProperties extends Hashtable<String, String>
 {
   /**
    * use serialVersionUID from JDK 1.1.X for interoperability
@@ -123,7 +115,7 @@ public class PLSProperties extends Hashtable<Object, Object>
   /**
    * Creates an empty property list with the specified defaults.
    *
-   * @param   defaults   the defaults.
+   * @param defaults the defaults.
    */
   public PLSProperties(PLSProperties defaults)
   {
@@ -136,12 +128,12 @@ public class PLSProperties extends Hashtable<Object, Object>
    * strings for property keys and values. The value returned is the
    * result of the <tt>Hashtable</tt> call to <code>put</code>.
    *
-   * @param key the key to be placed into this property list.
+   * @param key   the key to be placed into this property list.
    * @param value the value corresponding to <tt>key</tt>.
-   * @return     the previous value of the specified key in this property
-   *             list, or <code>null</code> if it did not have one.
+   * @return the previous value of the specified key in this property
+   * list, or <code>null</code> if it did not have one.
    * @see #getProperty
-   * @since    1.2
+   * @since 1.2
    */
   public synchronized Object setProperty(String key, String value)
   {
@@ -207,7 +199,7 @@ public class PLSProperties extends Hashtable<Object, Object>
    * character; for example,<p>
    *
    * <code>\:\=</code><p>
-   *
+   * <p>
    * would be the two-character key <code>":="</code>.  Line
    * terminator characters can be included using <code>\r</code> and
    * <code>\n</code> escape sequences.  Any white space after the
@@ -264,7 +256,7 @@ public class PLSProperties extends Hashtable<Object, Object>
    * and <a
    * href="http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.6">&sect;3.10.6</a>
    * of the <i>Java Language Specification</i>).
-   *
+   * <p>
    * The differences from the character escape sequences and Unicode
    * escapes used for characters and strings are:
    *
@@ -295,12 +287,12 @@ public class PLSProperties extends Hashtable<Object, Object>
    * <p>
    * The specified stream remains open after this method returns.
    *
-   * @param   reader   the input character stream.
-   * @throws  IOException  if an error occurred when reading from the
-   *          input stream.
-   * @throws  IllegalArgumentException if a malformed Unicode escape
-   *          appears in the input.
-   * @since   1.6
+   * @param reader the input character stream.
+   * @throws IOException              if an error occurred when reading from the
+   *                                  input stream.
+   * @throws IllegalArgumentException if a malformed Unicode escape
+   *                                  appears in the input.
+   * @since 1.6
    */
   public synchronized void load(Reader reader) throws IOException
   {
@@ -319,11 +311,11 @@ public class PLSProperties extends Hashtable<Object, Object>
    * <p>
    * The specified stream remains open after this method returns.
    *
-   * @param      inStream   the input stream.
-   * @exception  IOException  if an error occurred when reading from the
-   *             input stream.
-   * @throws     IllegalArgumentException if the input stream contains a
-   *        malformed Unicode escape sequence.
+   * @param inStream the input stream.
+   * @throws IOException              if an error occurred when reading from the
+   *                                  input stream.
+   * @throws IllegalArgumentException if the input stream contains a
+   *                                  malformed Unicode escape sequence.
    * @since 1.2
    */
   public synchronized void load(InputStream inStream) throws IOException
@@ -401,28 +393,20 @@ public class PLSProperties extends Hashtable<Object, Object>
    * Method returns the char length of the "logical line" and stores
    * the line in "lineBuf".
    */
-
-  class LineReader
+  static class LineReader
   {
-    /**
-     *
-     * @param inStream
-     */
     LineReader(InputStream inStream)
     {
       this.inStream = inStream;
       inByteBuf = new byte[8192];
     }
 
-    /**
-     *
-     * @param reader
-     */
     LineReader(Reader reader)
     {
       this.reader = reader;
       inCharBuf = new char[8192];
     }
+
     private byte[] inByteBuf;
     private char[] inCharBuf;
     private char[] lineBuf = new char[1024];
@@ -431,11 +415,6 @@ public class PLSProperties extends Hashtable<Object, Object>
     private InputStream inStream;
     private Reader reader;
 
-    /**
-     *
-     * @return
-     * @throws IOException
-     */
     int readLine() throws IOException
     {
       int len = 0;
@@ -664,8 +643,8 @@ public class PLSProperties extends Hashtable<Object, Object>
    * special characters with a preceding slash
    */
   private String saveConvert(String theString,
-    boolean escapeSpace,
-    boolean escapeUnicode)
+                             boolean escapeSpace,
+                             boolean escapeUnicode)
   {
     int len = theString.length();
     int bufLen = len * 2;
@@ -802,20 +781,20 @@ public class PLSProperties extends Hashtable<Object, Object>
    * The output stream remains open after this method returns.
    * <p>
    *
-   * @param   writer      an output character stream writer.
-   * @param   comments   a description of the property list.
-   * @exception  IOException if writing this property list to the specified
-   *             output stream throws an <tt>IOException</tt>.
-   * @exception  ClassCastException  if this <code>Properties</code> object
-   *             contains any keys or values that are not <code>Strings</code>.
-   * @exception  NullPointerException  if <code>writer</code> is null.
+   * @param writer   an output character stream writer.
+   * @param comments a description of the property list.
+   * @throws IOException          if writing this property list to the specified
+   *                              output stream throws an <tt>IOException</tt>.
+   * @throws ClassCastException   if this <code>Properties</code> object
+   *                              contains any keys or values that are not <code>Strings</code>.
+   * @throws NullPointerException if <code>writer</code> is null.
    * @since 1.6
    */
   public void store(Writer writer, String comments)
     throws IOException
   {
     store0((writer instanceof BufferedWriter) ? (BufferedWriter) writer
-      : new BufferedWriter(writer),
+        : new BufferedWriter(writer),
       comments,
       false);
   }
@@ -849,19 +828,20 @@ public class PLSProperties extends Hashtable<Object, Object>
    * After the entries have been written, the output stream is flushed.
    * The output stream remains open after this method returns.
    * <p>
-   * @param   out      an output stream.
-   * @param   comments   a description of the property list.
-   * @exception  IOException if writing this property list to the specified
-   *             output stream throws an <tt>IOException</tt>.
-   * @exception  ClassCastException  if this <code>Properties</code> object
-   *             contains any keys or values that are not <code>Strings</code>.
-   * @exception  NullPointerException  if <code>out</code> is null.
+   *
+   * @param out      an output stream.
+   * @param comments a description of the property list.
+   * @throws IOException          if writing this property list to the specified
+   *                              output stream throws an <tt>IOException</tt>.
+   * @throws ClassCastException   if this <code>Properties</code> object
+   *                              contains any keys or values that are not <code>Strings</code>.
+   * @throws NullPointerException if <code>out</code> is null.
    * @since 1.2
    */
   public void store(OutputStream out, String comments)
     throws IOException
   {
-    store0(new BufferedWriter(new OutputStreamWriter(out, "8859_1")),
+    store0(new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.ISO_8859_1)),
       comments,
       true);
   }
@@ -873,14 +853,14 @@ public class PLSProperties extends Hashtable<Object, Object>
     {
       writeComments(bw, comments);
     }
-    bw.write("#" + new Date().toString());
+    bw.write("#" + new Date());
     bw.newLine();
     synchronized (this)
     {
-      for (Enumeration e = keys(); e.hasMoreElements();)
+      for (Enumeration<String> e = keys(); e.hasMoreElements();)
       {
-        String key = (String) e.nextElement();
-        String val = (String) get(key);
+        String key = e.nextElement();
+        String val = this.get(key);
         key = saveConvert(key, true, escUnicode);
         /* No need to escape embedded and trailing spaces for value, hence
          * pass false to flag.
@@ -899,16 +879,15 @@ public class PLSProperties extends Hashtable<Object, Object>
    * and its defaults, recursively, are then checked. The method returns
    * <code>null</code> if the property is not found.
    *
-   * @param   key   the property key.
-   * @return  the value in this property list with the specified key value.
-   * @see     #setProperty
-   * @see     #defaults
+   * @param key the property key.
+   * @return the value in this property list with the specified key value.
+   * @see #setProperty
+   * @see #defaults
    */
   public String getProperty(String key)
   {
-    Object oval = super.get(key);
-    String sval = (oval instanceof String) ? (String) oval : null;
-    return ((sval == null) && (defaults != null)) ? defaults.getProperty(key) : sval;
+    String strValue = super.get(key);
+    return ((strValue == null) && (defaults != null)) ? defaults.getProperty(key) : strValue;
   }
 
   /**
@@ -917,12 +896,11 @@ public class PLSProperties extends Hashtable<Object, Object>
    * and its defaults, recursively, are then checked. The method returns the
    * default value argument if the property is not found.
    *
-   * @param   key            the hashtable key.
-   * @param   defaultValue   a default value.
-   *
-   * @return  the value in this property list with the specified key value.
-   * @see     #setProperty
-   * @see     #defaults
+   * @param key          the hashtable key.
+   * @param defaultValue a default value.
+   * @return the value in this property list with the specified key value.
+   * @see #setProperty
+   * @see #defaults
    */
   public String getProperty(String key, String defaultValue)
   {
@@ -931,159 +909,20 @@ public class PLSProperties extends Hashtable<Object, Object>
   }
 
   /**
-   * Returns an enumeration of all the keys in this property list,
-   * including distinct keys in the default property list if a key
-   * of the same name has not already been found from the main
-   * properties list.
-   *
-   * @return  an enumeration of all the keys in this property list, including
-   *          the keys in the default property list.
-   * @throws  ClassCastException if any key in this property list
-   *          is not a string.
-   * @see     java.util.Enumeration
-   * @see     java.util.Properties#defaults
-   * @see     #stringPropertyNames
-   */
-  public Enumeration<?> propertyNames()
-  {
-    Hashtable h = new Hashtable();
-    enumerate(h);
-    return h.keys();
-  }
-
-  /**
-   * Returns a set of keys in this property list where
-   * the key and its corresponding value are strings,
-   * including distinct keys in the default property list if a key
-   * of the same name has not already been found from the main
-   * properties list.  Properties whose key or value is not
-   * of type <tt>String</tt> are omitted.
-   * <p>
-   * The returned set is not backed by the <tt>Properties</tt> object.
-   * Changes to this <tt>Properties</tt> are not reflected in the set,
-   * or vice versa.
-   *
-   * @return  a set of keys in this property list where
-   *          the key and its corresponding value are strings,
-   *          including the keys in the default property list.
-   * @see     java.util.Properties#defaults
-   * @since   1.6
-   */
-  public Set<String> stringPropertyNames()
-  {
-    Hashtable<String, String> h = new Hashtable<>();
-    enumerateStringProperties(h);
-    return h.keySet();
-  }
-
-  /**
-   * Prints this property list out to the specified output stream.
-   * This method is useful for debugging.
-   *
-   * @param   out   an output stream.
-   * @throws  ClassCastException if any key in this property list
-   *          is not a string.
-   */
-  public void list(PrintStream out)
-  {
-    out.println("-- listing properties --");
-    Hashtable h = new Hashtable();
-    enumerate(h);
-    for (Enumeration e = h.keys(); e.hasMoreElements();)
-    {
-      String key = (String) e.nextElement();
-      String val = (String) h.get(key);
-      if (val.length() > 40)
-      {
-        val = val.substring(0, 37) + "...";
-      }
-      out.println(key + "=" + val);
-    }
-  }
-
-  /**
-   * Prints this property list out to the specified output stream.
-   * This method is useful for debugging.
-   *
-   * @param   out   an output stream.
-   * @throws  ClassCastException if any key in this property list
-   *          is not a string.
-   * @since   JDK1.1
-   */
-  /*
-   * Rather than use an anonymous inner class to share common code, this
-   * method is duplicated in order to ensure that a non-1.1 compiler can
-   * compile this file.
-   */
-  public void list(PrintWriter out)
-  {
-    out.println("-- listing properties --");
-    Hashtable h = new Hashtable();
-    enumerate(h);
-    for (Enumeration e = h.keys(); e.hasMoreElements();)
-    {
-      String key = (String) e.nextElement();
-      String val = (String) h.get(key);
-      if (val.length() > 40)
-      {
-        val = val.substring(0, 37) + "...";
-      }
-      out.println(key + "=" + val);
-    }
-  }
-
-  /**
-   * Enumerates all key/value pairs in the specified hashtable.
-   * @param h the hashtable
-   * @throws ClassCastException if any of the property keys
-   *         is not of String type.
-   */
-  private synchronized void enumerate(Hashtable h)
-  {
-    if (defaults != null)
-    {
-      defaults.enumerate(h);
-    }
-    for (Enumeration e = keys(); e.hasMoreElements();)
-    {
-      String key = (String) e.nextElement();
-      h.put(key, get(key));
-    }
-  }
-
-  /**
-   * Enumerates all key/value pairs in the specified hashtable
-   * and omits the property if the key or value is not a string.
-   * @param h the hashtable
-   */
-  private synchronized void enumerateStringProperties(Hashtable<String, String> h)
-  {
-    if (defaults != null)
-    {
-      defaults.enumerateStringProperties(h);
-    }
-    for (Enumeration e = keys(); e.hasMoreElements();)
-    {
-      Object k = e.nextElement();
-      Object v = get(k);
-      if (k instanceof String && v instanceof String)
-      {
-        h.put((String) k, (String) v);
-      }
-    }
-  }
-
-  /**
    * Convert a nibble to a hex character
-   * @param  nibble  the nibble to convert.
+   *
+   * @param nibble the nibble to convert.
    */
   private static char toHex(int nibble)
   {
     return hexDigit[(nibble & 0xF)];
   }
-  /** A table of hex digits */
+
+  /**
+   * A table of hex digits
+   */
   private static final char[] hexDigit =
-  {
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-  };
+    {
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
 }

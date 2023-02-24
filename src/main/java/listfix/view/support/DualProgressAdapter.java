@@ -1,94 +1,77 @@
-
-
 package listfix.view.support;
 
-public final class DualProgressAdapter<T> implements IDualProgressObserver<T>
+public final class DualProgressAdapter<T>
 {
-  public static <T> DualProgressAdapter<T> wrap(IDualProgressObserver<T> observer)
-  {
-    if (observer instanceof DualProgressAdapter)
-      return (DualProgressAdapter<T>) observer;
-    else
-      return new DualProgressAdapter<>(observer);
-  }
+  private final IDualProgressObserver<T> observer;
+  private final ProgressAdapter<T> overall;
+  private final IProgressObserver<T> task;
+  private int taskPercentageComplete = 0;
 
-  private DualProgressAdapter(IDualProgressObserver<T> observer)
+  public DualProgressAdapter(IDualProgressObserver<T> observer)
   {
-    _observer = observer;
+    this.observer = observer;
 
-    IProgressObserver<T> taskObserver = new IProgressObserver<T>()
+    this.task = new IProgressObserver<T>()
     {
+      @Override
       public void reportProgress(int progress)
       {
-        _observer.reportTaskProgress(progress, null);
+        this.reportProgress(progress, null);
       }
 
+      @Override
       public void reportProgress(int progress, T state)
       {
-        _observer.reportTaskProgress(progress, state);
+        DualProgressAdapter.this.observer.reportTaskProgress(progress, state);
+        // Adjust overall progress
+        DualProgressAdapter.this.taskPercentageComplete = progress;
+        // Trigger total progress
+        DualProgressAdapter.this.overall.setCompleted(DualProgressAdapter.this.overall.getCompleted());
       }
 
       @Override
       public boolean getCancelled()
       {
-        return _observer.getCancelled();
+        return DualProgressAdapter.this.observer.getCancelled();
       }
     };
-    _task = ProgressAdapter.wrap(taskObserver);
 
-    IProgressObserver<T> overallObserver = new IProgressObserver<T>()
+    this.overall = new ProgressAdapter<T>(new IProgressObserver<T>()
     {
+      @Override
       public void reportProgress(int progress)
       {
-        _observer.reportOverallProgress(progress, null);
+        this.reportProgress(progress, null);
       }
 
+      @Override
       public void reportProgress(int progress, T state)
       {
-        _observer.reportOverallProgress(progress, state);
+        DualProgressAdapter.this.observer.reportOverallProgress(progress, state);
       }
 
       @Override
       public boolean getCancelled()
       {
-        return _observer.getCancelled();
+        return DualProgressAdapter.this.observer.getCancelled();
+      }
+    }){
+      @Override
+      protected double calculateProgress(long completed, long total) {
+        double taskPortion = (double)DualProgressAdapter.this.taskPercentageComplete / total;
+        return super.calculateProgress(completed, total) + taskPortion;
       }
     };
-    _overall = ProgressAdapter.wrap(overallObserver);
   }
 
-  public void reportTaskProgress(int percentComplete, T state)
+  public IProgressObserver<T> getTask()
   {
-    if (_observer != null)
-      _observer.reportTaskProgress(percentComplete, state);
+    return this.task;
   }
-
-  public void reportOverallProgress(int percentComplete, T state)
-  {
-    if (_observer != null)
-      _observer.reportOverallProgress(percentComplete, state);
-  }
-
-  IDualProgressObserver<T> _observer;
-
-  public ProgressAdapter<T> getTask()
-  {
-    return _task;
-  }
-
-  ProgressAdapter<T> _task;
 
   public ProgressAdapter<T> getOverall()
   {
-    return _overall;
-  }
-
-  ProgressAdapter<T> _overall;
-
-  @Override
-  public boolean getCancelled()
-  {
-    return _observer.getCancelled();
+    return overall;
   }
 
 }

@@ -31,19 +31,10 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
   private IPlaylistOptions filePathOptions;
 
-  /**
-   * Creates new form MultiListBatchClosestMatchResultsDialog
-   */
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IPlaylistOptions filePathOptions)
-  {
-    super(parent, modal);
-    this.filePathOptions = filePathOptions;
-    initComponents();
-  }
-
   public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlaylistOptions filePathOptions)
   {
     super(parent, br.getDescription(), modal);
+    this.filePathOptions = filePathOptions;
     _batch = br;
     initComponents();
 

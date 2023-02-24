@@ -1,58 +1,61 @@
-
-
 package listfix.view.support;
 
-public final class ProgressAdapter<T> implements IProgressObserver<T>
+public class ProgressAdapter<T>
 {
-  public static <T> ProgressAdapter<T> wrap(IProgressObserver<T> observer)
+  private IProgressObserver<T> observer;
+  private long _total;
+  private long completed;
+  private int percentComplete;
+
+  private static final IProgressObserver<Object> dummyObserver = new IProgressObserver<>()
   {
-    if (observer instanceof ProgressAdapter)
-      return (ProgressAdapter<T>) observer;
-    else
-      return new ProgressAdapter<T>(observer);
+    @Override
+    public void reportProgress(int progress)
+    {
+    }
+
+    @Override
+    public void reportProgress(int progress, Object state)
+    {
+    }
+
+    @Override
+    public boolean getCancelled()
+    {
+      return false;
+    }
+  };
+
+  public static <T> ProgressAdapter<T> make(IProgressObserver<T> observer)
+  {
+   return new ProgressAdapter<>(observer == null ? (IProgressObserver<T>)dummyObserver : observer);
   }
 
-  private ProgressAdapter(IProgressObserver<T> observer)
+  public ProgressAdapter(IProgressObserver<T> observer)
   {
-    _observer = observer;
+    this.observer = observer;
   }
-
-  public void reportProgress(int progress)
-  {
-    if (_observer != null)
-      _observer.reportProgress(progress);
-  }
-
-  public void reportProgress(int progress, T state)
-  {
-    if (_observer != null)
-      _observer.reportProgress(progress, state);
-  }
-
-  private IProgressObserver _observer;
 
   public long getCompleted()
   {
-    return _completed;
+    return this.completed;
   }
 
   public void setCompleted(long completed)
   {
-    _completed = completed;
+    this.completed = completed;
     refreshPercentComplete();
   }
 
-  private long _completed;
-
   public void stepCompleted()
   {
-    _completed += 1;
+    this.completed += 1;
     refreshPercentComplete();
   }
 
   public void stepCompleted(long done)
   {
-    _completed += done;
+    this.completed += done;
     refreshPercentComplete();
   }
 
@@ -63,40 +66,47 @@ public final class ProgressAdapter<T> implements IProgressObserver<T>
 
   public void setTotal(long total)
   {
-    boolean report = isValid() && _percentComplete != 0 && total != 0;
-    _total = total;
-    _completed = 0;
-    _percentComplete = 0;
+    boolean report = isValid() && percentComplete != 0 && total != 0;
+    this._total = total;
+    this.completed = 0;
+    this.percentComplete = 0;
     if (report)
-      reportProgress(_percentComplete);
+      this.observer.reportProgress(percentComplete);
   }
-
-  private long _total;
-
 
   private void refreshPercentComplete()
   {
     if (isValid())
     {
-      double pct = Math.round(((double)_completed * 100.0) / (double)_total);
-      if (pct != _percentComplete)
+      double pct = Math.round(this.calculateProgress(this.completed, this._total));
+      if (pct != this.percentComplete)
       {
-        _percentComplete = (int) pct;
-        reportProgress(_percentComplete);
+        this.percentComplete = (int) pct;
+        this.observer.reportProgress(this.percentComplete);
       }
     }
   }
 
-  private boolean isValid()
-  {
-    return _total > 0 && _observer != null;
+  protected double calculateProgress(long completed, long total) {
+    return (completed * 100.0) / (double) total;
   }
 
-  private int _percentComplete;
+  private boolean isValid()
+  {
+    return this._total > 0 && this.observer != null;
+  }
 
   public boolean getCancelled()
   {
-    return _observer != null ? _observer.getCancelled() : false;
+    return this.observer != null && this.observer.getCancelled();
+  }
+
+//  public IProgressObserver<T> getObserver() {
+//    return this.observer;
+//  }
+
+  public int getPercentComplete() {
+    return this.percentComplete;
   }
 
 }

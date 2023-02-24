@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-/**
- * @author jcaron
- */
-public class WriteMediaLibraryIniTask extends listfix.controller.Task
+public class WriteMediaLibraryIniTask extends Thread
 {
   private static final Logger _logger = LogManager.getLogger(WriteMediaLibraryIniTask.class);
 
