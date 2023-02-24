@@ -1,21 +1,4 @@
-/**
- * listFix() - Fix Broken Playlists!
- * <p>
- * This file is part of listFix().
- * <p>
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
+
 
 package listfix.model;
 
@@ -42,8 +25,6 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Serves to model the batch repair operations on multiple playlists, both closest matches and exact matches.
- *
- * @author jcaron
  */
 
 public class BatchRepair
@@ -61,8 +42,8 @@ public class BatchRepair
   private String _description;
 
   /**
-   * @param mediaLibrary Media library to be considered during the repair
-   * @param rootDirectory
+   * @param mediaLibrary  Media library to be considered during the repair
+   * @param rootDirectory Root directory path
    */
   public BatchRepair(IMediaLibrary mediaLibrary, File rootDirectory)
   {
@@ -74,18 +55,11 @@ public class BatchRepair
     }
   }
 
-  /**
-   * @return
-   */
   public List<BatchRepairItem> getItems()
   {
     return _items;
   }
 
-  /**
-   * @param ix
-   * @return
-   */
   public BatchRepairItem getItem(int ix)
   {
     return _items.get(ix);

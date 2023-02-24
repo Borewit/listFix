@@ -4,9 +4,6 @@ import listfix.json.JsonPlayListHistory;
 
 import java.io.IOException;
 
-/**
- * @author Borewit
- */
 public class PlaylistHistoryConfiguration extends JsonConfigFile<JsonPlayListHistory>
 {
 

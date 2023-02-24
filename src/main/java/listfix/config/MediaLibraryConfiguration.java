@@ -12,9 +12,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 
-/**
- * @author Borewit
- */
 public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
 {
   public MediaLibraryConfiguration()

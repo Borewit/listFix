@@ -1,4 +1,3 @@
-
 package listfix.view.dialogs;
 
 import listfix.model.BatchRepair;
@@ -9,65 +8,36 @@ import listfix.view.support.ImageIcons;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author jcaron
- */
 public class PlaylistsTableModel extends AbstractTableModel
 {
-  /**
-   *
-   * @param items
-   */
+
   public PlaylistsTableModel(BatchRepair items)
   {
     _items = items;
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public int getRowCount()
   {
     return _items == null ? 0 : _items.getItems().size();
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public int getColumnCount()
   {
     return 2;
   }
 
-  /**
-   *
-   * @param column
-   * @return
-   */
   @Override
   public String getColumnName(int column)
   {
-    switch (column)
-    {
-      case 0:
-        return "";
-      case 1:
-        return "Name";
-      default:
-        return null;
-    }
+    return switch (column) {
+      case 0 -> "";
+      case 1 -> "Name";
+      default -> null;
+    };
   }
 
-  /**
-   *
-   * @param columnIndex
-   * @return
-   */
   @Override
   public Class<?> getColumnClass(int columnIndex)
   {
@@ -81,12 +51,6 @@ public class PlaylistsTableModel extends AbstractTableModel
     }
   }
 
-  /**
-   *
-   * @param rowIndex
-   * @param columnIndex
-   * @return
-   */
   @Override
   public Object getValueAt(int rowIndex, int columnIndex)
   {
@@ -102,18 +66,17 @@ public class PlaylistsTableModel extends AbstractTableModel
       {
         case 0 ->
         {
-          if (list.getMissingCount() > 0)
-          {
-            return ImageIcons.IMG_MISSING;
+          if (list != null) {
+            if (list.getMissingCount() > 0)
+            {
+              return ImageIcons.IMG_MISSING;
+            }
+            else if (list.getFixedCount() > 0)
+            {
+              return ImageIcons.IMG_FIXED;
+            }
           }
-          else if (list.getFixedCount() > 0)
-          {
-            return ImageIcons.IMG_FIXED;
-          }
-          else
-          {
-            return ImageIcons.IMG_FOUND;
-          }
+          return ImageIcons.IMG_FOUND;
         }
         case 1 ->
         {

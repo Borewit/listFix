@@ -1644,9 +1644,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     updateRecentMenu();
   }
 
-  /**
-   *
-   */
+
   public void updateRecentMenu()
   {
     recentMenu.removeAll();

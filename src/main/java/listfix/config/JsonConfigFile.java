@@ -40,15 +40,11 @@ public abstract class JsonConfigFile<T>
 
   /**
    * Reads the POJO from disk
-   *
-   * @throws IOException
    */
   public abstract void read() throws IOException;
 
   /**
    * Initialize a default instance of the POJO
-   *
-   * @throws IOException
    */
   public abstract void initPojo();
 
@@ -70,8 +66,6 @@ public abstract class JsonConfigFile<T>
    * Loads the configuration file disk.
    * If it does not exist, it will create an empty file.
    * If required it will also create the direct parent folder.
-   *
-   * @throws IOException
    */
   public void init() throws IOException
   {

@@ -1,29 +1,3 @@
-/*
- *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2014 Jeremy Caron
- *
- *  This file is part of listFix().
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
-/*
- * MultiListBatchClosestMatchResultsDialog.java
- *
- * Created on Mar 28, 2011, 6:26:47 PM
- */
-
 package listfix.view.dialogs;
 
 import listfix.io.IPlaylistOptions;
@@ -47,10 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
- *
- * @author jcaron
  */
-
 public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 {
   private BatchRepair _batch;
@@ -81,7 +52,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
     // load and repair lists
     final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Closest Matches...", "Please wait...", "Overall Progress:");
-    DualProgressWorker dpw = new DualProgressWorker<Void, String>()
+    DualProgressWorker<Void, String> dpw = new DualProgressWorker<>()
     {
       @Override
       protected void process(List<ProgressItem<String>> chunks)
@@ -109,7 +80,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
       }
 
       @Override
-      protected Void doInBackground() throws Exception
+      protected Void doInBackground()
       {
         _batch.performClosestMatchRepair(this, filePathOptions);
         return null;
@@ -133,7 +104,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
       for (BatchRepairItem item : _batch.getItems())
       {
-        IPlaylistModifiedListener listener = this :: onPlaylistModified;
+        IPlaylistModifiedListener listener = this::onPlaylistModified;
         item.getPlaylist().addModifiedListener(listener);
       }
 
@@ -365,9 +336,6 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     _userCancelled = userCancelled;
   }
 
-  /**
-   * @return
-   */
   public boolean getUserCancelled()
   {
     return _userCancelled;
