@@ -1,23 +1,3 @@
-/*
- *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2014 Jeremy Caron
- *
- *  This file is part of listFix().
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
 package listfix.view.controls;
 
 import listfix.model.BatchMatchItem;
@@ -37,9 +17,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-/**
- * @author jcaron
- */
 public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPanel
 {
   private List<BatchMatchItem> _items;
@@ -47,9 +24,6 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   private static final Logger _logger = LogManager.getLogger(ClosestMatchesSearchScrollableResultsPanel.class);
   private int _width;
 
-  /**
-   *
-   */
   public ClosestMatchesSearchScrollableResultsPanel()
   {
     _items = new ArrayList<>();
@@ -59,8 +33,6 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
 
   /**
    * Creates new form ClosestMatchesSearchScrollableResultsPanel
-   *
-   * @param items
    */
   public ClosestMatchesSearchScrollableResultsPanel(List<BatchMatchItem> items)
   {
@@ -104,43 +76,26 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     _uiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
   }
 
-  /**
-   * @return
-   */
   public int getSelectedRow()
   {
     return _uiTable.getSelectedRow();
   }
 
-  /**
-   * @return
-   */
   public int getSelectedColumn()
   {
     return _uiTable.getSelectedColumn();
   }
 
-  /**
-   * @param row
-   * @param column
-   * @return
-   */
   public TableCellEditor getCellEditor(int row, int column)
   {
     return _uiTable.getCellEditor(row, column);
   }
 
-  /**
-   * @return
-   */
   public int getTableWidth()
   {
     return _width;
   }
 
-  /**
-   * @return
-   */
   @Override
   public int getWidth()
   {
@@ -183,9 +138,6 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     };
   }
 
-  /**
-   * @param closestMatches
-   */
   public void setResults(List<BatchMatchItem> closestMatches)
   {
     _items = closestMatches;

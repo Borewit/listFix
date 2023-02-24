@@ -1,21 +1,4 @@
-/**
- * listFix() - Fix Broken Playlists!
- * <p>
- * This file is part of listFix().
- * <p>
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
+
 
 package listfix.model;
 
@@ -42,8 +25,6 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Serves to model the batch repair operations on multiple playlists, both closest matches and exact matches.
- *
- * @author jcaron
  */
 
 public class BatchRepair
@@ -61,31 +42,23 @@ public class BatchRepair
   private String _description;
 
   /**
-   * @param mediaLibrary Media library to be considered during the repair
-   * @param rootDirectory
+   * @param mediaLibrary  Media library to be considered during the repair
+   * @param rootDirectory Root directory path
    */
   public BatchRepair(IMediaLibrary mediaLibrary, File rootDirectory)
   {
     this.mediaLibrary = mediaLibrary;
     _rootDirectory = rootDirectory;
-    if (!rootDirectory.isDirectory())
-    {
+    if (!rootDirectory.isDirectory()) {
       _rootDirectory = _rootDirectory.getParentFile();
     }
   }
 
-  /**
-   * @return
-   */
   public List<BatchRepairItem> getItems()
   {
     return _items;
   }
 
-  /**
-   * @param ix
-   * @return
-   */
   public BatchRepairItem getItem(int ix)
   {
     return _items.get(ix);
@@ -114,8 +87,7 @@ public class BatchRepair
   public List<Playlist> getPlaylists()
   {
     List<Playlist> result = new ArrayList<>();
-    for (BatchRepairItem item : _items)
-    {
+    for (BatchRepairItem item : _items) {
       result.add(item.getPlaylist());
     }
     return result;
@@ -137,49 +109,40 @@ public class BatchRepair
     progress.getOverall().setTotal(_items.size() * 2);
 
     List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
-    for (BatchRepairItem item : _items)
-    {
-      if (!observer.getCancelled())
-      {
+    for (BatchRepairItem item : _items) {
+      if (!observer.getCancelled()) {
         // load
         progress.getOverall().stepCompleted();
         progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
-        if (item.getPlaylist() == null)
-        {
+        if (item.getPlaylist() == null) {
           File file = new File(item.getPath());
-          try
-          {
+          try {
             Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask(), filePathOptions);
             item.setPlaylist(temp);
           }
-          catch (IOException e)
-          {
+          catch (IOException e) {
             toRemoveFromBatch.add(item);
           }
         }
 
         // repair
-        if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0)
-        {
+        if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0) {
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
           list.batchRepair(this.mediaLibrary, progress.getTask());
         }
-        else
-        {
+        else {
           // Don't fix playlists that have nothing to fix... instead remove them from the result set.
           toRemoveFromBatch.add(item);
         }
       }
-      else
-      {
+      else {
         return;
       }
     }
 
-    for (BatchRepairItem item : toRemoveFromBatch)
-    {
+    for (BatchRepairItem item : toRemoveFromBatch) {
       _items.remove(item);
     }
   }
@@ -195,49 +158,40 @@ public class BatchRepair
     progress.getOverall().setTotal(_items.size() * 2);
 
     List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
-    for (BatchRepairItem item : _items)
-    {
-      if (!observer.getCancelled())
-      {
+    for (BatchRepairItem item : _items) {
+      if (!observer.getCancelled()) {
         // load
         progress.getOverall().stepCompleted();
         progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
-        if (item.getPlaylist() == null)
-        {
+        if (item.getPlaylist() == null) {
           File file = new File(item.getPath());
-          try
-          {
+          try {
             Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask(), filePathOptions);
             item.setPlaylist(temp);
           }
-          catch (IOException e)
-          {
+          catch (IOException e) {
             toRemoveFromBatch.add(item);
           }
         }
 
         // repair
-        if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0)
-        {
+        if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0) {
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
           item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), progress.getTask()));
         }
-        else
-        {
+        else {
           // Don't fix playlists that have nothing to fix... instead remove them from the result set.
           toRemoveFromBatch.add(item);
         }
       }
-      else
-      {
+      else {
         return;
       }
     }
 
-    for (BatchRepairItem item : toRemoveFromBatch)
-    {
+    for (BatchRepairItem item : toRemoveFromBatch) {
       _items.remove(item);
     }
   }
@@ -269,11 +223,9 @@ public class BatchRepair
 
     // get included items
     int stepCount = 0;
-    for (BatchRepairItem item : _items)
-    {
+    for (BatchRepairItem item : _items) {
       Playlist list = item.getPlaylist();
-      if (backup)
-      {
+      if (backup) {
         stepCount += list.getFile().length();
       }
       stepCount += list.size();
@@ -282,17 +234,14 @@ public class BatchRepair
     progress.setTotal(stepCount);
 
     // backup to zip file
-    if (backup)
-    {
+    if (backup) {
       URI root = _rootDirectory.toURI();
 
       FileOutputStream file = new FileOutputStream(destination);
-      try (ZipOutputStream zip = new ZipOutputStream(file))
-      {
+      try (ZipOutputStream zip = new ZipOutputStream(file)) {
         byte[] buffer = new byte[4096];
 
-        for (BatchRepairItem item : _items)
-        {
+        for (BatchRepairItem item : _items) {
           File listFile = item.getPlaylist().getFile();
 
           // make playlist entry relative to root directory
@@ -301,13 +250,10 @@ public class BatchRepair
 
           ZipEntry entry = new ZipEntry(name);
           zip.putNextEntry(entry);
-          try (FileInputStream reader = new FileInputStream(listFile))
-          {
-            while (true)
-            {
+          try (FileInputStream reader = new FileInputStream(listFile)) {
+            while (true) {
               int count = reader.read(buffer);
-              if (count == -1)
-              {
+              if (count == -1) {
                 break;
               }
               zip.write(buffer, 0, count);
@@ -319,10 +265,8 @@ public class BatchRepair
     }
 
     // save
-    for (BatchRepairItem item : _items)
-    {
-      if (isClosestMatchesSave)
-      {
+    for (BatchRepairItem item : _items) {
+      if (isClosestMatchesSave) {
         item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
       }
       item.getPlaylist().save(filePathOptions.getSavePlaylistsWithRelativePaths(), progress);

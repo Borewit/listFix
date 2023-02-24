@@ -1,22 +1,4 @@
-/*
- * listFix() - Fix Broken Playlists!
- * Copyright (C) 2001-2014 Jeremy Caron
- *
- * This file is part of listFix().
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, please see http://www.gnu.org/licenses/
- */
+
 
 package listfix.view.dialogs;
 
@@ -29,20 +11,13 @@ import listfix.model.EditFilenameResult;
 
 import java.awt.*;
 
-/**
- *
- * @author jcaron
- */
+
 public class EditFilenameDialog extends javax.swing.JDialog
 {
   private static final long serialVersionUID = 1825443635993970657L;
-  /**
-   *
-   */
+
   public static final int OK = 0;
-  /**
-   *
-   */
+
   public static final int CANCEL = 1;
   private int resultCode = CANCEL;
   private String fileName;
@@ -58,9 +33,7 @@ public class EditFilenameDialog extends javax.swing.JDialog
     this.center();
   }
 
-  /**
-   *
-   */
+
   public EditFilenameDialog()
   {
   }

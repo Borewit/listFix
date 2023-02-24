@@ -1,29 +1,3 @@
-/*
- *  listFix() - Fix Broken Playlists!
- *  Copyright (C) 2001-2014 Jeremy Caron
- *
- *  This file is part of listFix().
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, please see http://www.gnu.org/licenses/
- */
-
-/*
- * MultiListBatchClosestMatchResultsDialog.java
- *
- * Created on Mar 28, 2011, 6:26:47 PM
- */
-
 package listfix.view.dialogs;
 
 import listfix.io.IPlaylistOptions;
@@ -46,9 +20,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
- *
- * @author jcaron
+ * This is the results dialog we display when running a batch closest matches search on all entries in multiple
+ * playlists.
  */
 
 public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
@@ -70,7 +43,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     initComponents();
   }
 
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlaylistOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br,
+                                                 IPlaylistOptions filePathOptions)
   {
     super(parent, br.getDescription(), modal);
     _batch = br;
@@ -80,8 +54,9 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     _txtBackup.setText(_batch.getDefaultBackupName());
 
     // load and repair lists
-    final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Closest Matches...", "Please wait...", "Overall Progress:");
-    DualProgressWorker dpw = new DualProgressWorker<Void, String>()
+    final DualProgressDialog pd = new DualProgressDialog(parent, "Finding Closest Matches...", "Please wait...",
+        "Overall Progress:");
+    DualProgressWorker<Void, String> dpw = new DualProgressWorker<>()
     {
       @Override
       protected void process(List<ProgressItem<String>> chunks)
@@ -90,26 +65,22 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
         ProgressItem<String> oitem = new ProgressItem<>(false, -1, null);
         getEffectiveItems(chunks, titem, oitem);
 
-        if (titem.percentComplete >= 0)
-        {
+        if (titem.percentComplete >= 0) {
           pd.getTaskProgressBar().setValue(titem.percentComplete);
         }
-        if (titem.state != null)
-        {
+        if (titem.state != null) {
           pd.getTaskLabel().setText(titem.state);
         }
-        if (oitem.percentComplete >= 0)
-        {
+        if (oitem.percentComplete >= 0) {
           pd.getOverallProgressBar().setValue(oitem.percentComplete);
         }
-        if (oitem.state != null)
-        {
+        if (oitem.state != null) {
           pd.getOverallLabel().setText(oitem.state);
         }
       }
 
       @Override
-      protected Void doInBackground() throws Exception
+      protected Void doInBackground()
       {
         _batch.performClosestMatchRepair(this, filePathOptions);
         return null;
@@ -117,13 +88,11 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     };
     pd.show(dpw);
 
-    if (!dpw.getCancelled())
-    {
+    if (!dpw.getCancelled()) {
       ListSelectionModel lsm = _pnlList.getSelectionModel();
       lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       lsm.addListSelectionListener(e -> {
-        if (e.getValueIsAdjusting())
-        {
+        if (e.getValueIsAdjusting()) {
           return;
         }
         updateSelectedPlaylist();
@@ -131,25 +100,21 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
 
       _pnlList.initPlaylistsList();
 
-      for (BatchRepairItem item : _batch.getItems())
-      {
-        IPlaylistModifiedListener listener = this :: onPlaylistModified;
+      for (BatchRepairItem item : _batch.getItems()) {
+        IPlaylistModifiedListener listener = this::onPlaylistModified;
         item.getPlaylist().addModifiedListener(listener);
       }
 
       String listCountTxt;
-      if (_batch.getItems().size() == 1)
-      {
+      if (_batch.getItems().size() == 1) {
         listCountTxt = "1 playlist";
       }
-      else
-      {
+      else {
         listCountTxt = String.format("%d playlists", _batch.getItems().size());
       }
       _pnlList.setText(listCountTxt);
     }
-    else
-    {
+    else {
       _userCancelled = true;
     }
   }
@@ -164,8 +129,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     // Keep the table anchored left...
     _pnlList.anchorLeft();
     int selIx = _pnlList.getSelectedModelRow();
-    if (selIx >= 0)
-    {
+    if (selIx >= 0) {
       BatchRepairItem item = _batch.getItem(selIx);
       _pnlResults.setResults(item.getClosestMatches());
     }
@@ -274,9 +238,9 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   {//GEN-HEADEREND:event__btnSaveActionPerformed
     _userAccepted = true;
 
-    if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3)
-    {
-      TableCellEditor cellEditor = _pnlResults.getCellEditor(_pnlResults.getSelectedRow(), _pnlResults.getSelectedColumn());
+    if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3) {
+      TableCellEditor cellEditor = _pnlResults.getCellEditor(_pnlResults.getSelectedRow(),
+          _pnlResults.getSelectedColumn());
       cellEditor.stopCellEditing();
     }
 
@@ -292,19 +256,17 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     ProgressDialog pd = new ProgressDialog(null, true, worker, "Saving playlists...");
     pd.setVisible(true);
 
-    try
-    {
+    try {
       worker.get();
     }
-    catch (InterruptedException ex)
-    {
+    catch (InterruptedException ex) {
       // ignore, these happen when people cancel - should not be logged either.
     }
-    catch (ExecutionException eex)
-    {
+    catch (ExecutionException eex) {
       Throwable ex = eex.getCause();
       String msg = "An error occurred while saving: " + ex.getMessage();
-      JOptionPane.showMessageDialog(MultiListBatchClosestMatchResultsDialog.this, new JTransparentTextArea(msg), "Save Error", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(MultiListBatchClosestMatchResultsDialog.this, new JTransparentTextArea(msg),
+          "Save Error", JOptionPane.ERROR_MESSAGE);
       _logger.error(ex);
       return;
     }
@@ -318,13 +280,13 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     setVisible(false);
   }//GEN-LAST:event__btnCancelActionPerformed
 
-  private void _chkBackuponChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event__chkBackuponChkBackupItemStateChanged
+  private void _chkBackuponChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST
+  // :event__chkBackuponChkBackupItemStateChanged
   {//GEN-HEADEREND:event__chkBackuponChkBackupItemStateChanged
     boolean isChecked = _chkBackup.isSelected();
     _txtBackup.setEnabled(isChecked);
     _btnBrowse.setEnabled(isChecked);
-    if (isChecked)
-    {
+    if (isChecked) {
       _txtBackup.selectAll();
       _txtBackup.requestFocusInWindow();
     }
@@ -333,12 +295,10 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   private void _btnBrowseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnBrowseActionPerformed
   {//GEN-HEADEREND:event__btnBrowseActionPerformed
     JFileChooser dlg = new JFileChooser();
-    if (!_txtBackup.getText().isEmpty())
-    {
+    if (!_txtBackup.getText().isEmpty()) {
       dlg.setSelectedFile(new File(_txtBackup.getText()));
     }
-    if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-    {
+    if (dlg.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
       _txtBackup.setText(dlg.getSelectedFile().getAbsolutePath());
     }
   }//GEN-LAST:event__btnBrowseActionPerformed
@@ -365,9 +325,6 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     _userCancelled = userCancelled;
   }
 
-  /**
-   * @return
-   */
   public boolean getUserCancelled()
   {
     return _userCancelled;

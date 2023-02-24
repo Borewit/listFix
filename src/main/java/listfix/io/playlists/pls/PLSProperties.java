@@ -401,9 +401,7 @@ public class PLSProperties extends Hashtable<Object, Object>
    * Method returns the char length of the "logical line" and stores
    * the line in "lineBuf".
    */
-  /**
-   *
-   */
+
   class LineReader
   {
     /**
