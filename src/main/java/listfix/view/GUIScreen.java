@@ -207,7 +207,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     });
 
     // Load the position the window was in when it was last closed.
-    WindowSaver.getInstance().loadSettings(this);
+    WindowSaver windowSaver = new WindowSaver(this._listFixController.getApplicationState());
+    windowSaver.loadSettings(this);
 
     // Set the position of the divider in the left split pane.
     _leftSplitPane.setDividerLocation(.7);
@@ -2012,7 +2013,14 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       }
     }
 
-    WindowSaver.getInstance().saveSettings();
+    try
+    {
+      this._listFixController.getApplicationConfiguration().write();
+    }
+    catch (IOException e)
+    {
+     _logger.error("Failed to save application settings", e);
+    }
     System.exit(0);
   }
 

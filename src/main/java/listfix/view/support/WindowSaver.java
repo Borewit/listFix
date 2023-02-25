@@ -1,8 +1,7 @@
-
-
 package listfix.view.support;
 
-import listfix.io.Constants;
+import listfix.config.IApplicationState;
+import listfix.json.JsonFrameSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,35 +9,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
 
 public final class WindowSaver implements AWTEventListener
 {
-  private static final String PROP_FILE = Constants.DATA_DIR + "position.ini";
-  private static WindowSaver saver;
-  private Map framemap;
+  private IApplicationState applicationState;
+
   private static final Logger _logger = LogManager.getLogger(WindowSaver.class);
 
-  private WindowSaver()
+  public WindowSaver(IApplicationState applicationState)
   {
-    framemap = new HashMap();
-  }
-
-  public static WindowSaver getInstance()
-  {
-    if (saver == null)
-    {
-      saver = new WindowSaver();
-    }
-    return saver;
+    this.applicationState = applicationState;
   }
 
   @Override
@@ -62,63 +44,66 @@ public final class WindowSaver implements AWTEventListener
     }
   }
 
-  public void loadSettings(JFrame frame)
+  private JsonFrameSettings getFrameSettingsForFrame(Frame frame)
   {
-    Properties settings = new Properties();
-    String name = frame.getName();
-    if ((new File(PROP_FILE)).exists())
+    final String name = frame.getName();
+    JsonFrameSettings frameSettings = applicationState.getFramePositions().get(name);
+    if (frameSettings == null)
     {
-      try
-      {
-        settings.load(new FileInputStream(PROP_FILE));
-        int x = getInt(settings, name + ".x", 100);
-        int y = getInt(settings, name + ".y", 100);
-        int w = getInt(settings, name + ".w", 500);
-        int h = getInt(settings, name + ".h", 500);
-        frame.setLocation(x, y);
-        frame.setSize(new Dimension(w, h));
-      }
-      catch (IOException ex)
-      {
-        _logger.info(ex);
-      }
-      saver.framemap.put(name, frame);
-      frame.validate();
+      // Inialize frame settings with default values;
+      frameSettings = new JsonFrameSettings();
+      frameSettings.x = 250;
+      frameSettings.y = 250;
+      frameSettings.width = 500;
+      frameSettings.height = 500;
+      applicationState.getFramePositions().put(name, frameSettings);
     }
+    return frameSettings;
   }
 
-  public int getInt(Properties props, String name, int value)
+  public void loadSettings(Frame frame)
   {
-    String v = props.getProperty(name);
-    if (v == null)
-    {
-      return value;
-    }
-    return Integer.parseInt(v);
-  }
+    JsonFrameSettings frameSettings = getFrameSettingsForFrame(frame);
+    frame.setLocation(frameSettings.x, frameSettings.y);
+    frame.setSize(new Dimension(frameSettings.width, frameSettings.height));
+    frame.validate();
 
-  public void saveSettings()
-  {
-    Properties settings = new Properties();
+    frame.addComponentListener(new ComponentListener()
+    {
+      @Override
+      public void componentResized(ComponentEvent e)
+      {
+        if (e.getComponent() instanceof Frame)
+        {
+          Frame frame = (Frame) e.getComponent();
+          JsonFrameSettings frameSettings = WindowSaver.this.getFrameSettingsForFrame(frame);
+          frameSettings.width = frame.getWidth();
+          frameSettings.height = frame.getHeight();
+        }
+      }
 
-    Iterator it = saver.framemap.keySet().iterator();
-    while (it.hasNext())
-    {
-      String name = (String) it.next();
-      JFrame frame = (JFrame) saver.framemap.get(name);
-      settings.setProperty(name + ".x", "" + frame.getX());
-      settings.setProperty(name + ".y", "" + frame.getY());
-      settings.setProperty(name + ".w", "" + frame.getWidth());
-      settings.setProperty(name + ".h", "" + frame.getHeight());
-    }
-    try
-    {
-      settings.store(new FileOutputStream(PROP_FILE), null);
-    }
-    catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
+      @Override
+      public void componentMoved(ComponentEvent e)
+      {
+        if (e.getComponent() instanceof Frame)
+        {
+          Frame frame = (Frame) e.getComponent();
+          JsonFrameSettings frameSettings = WindowSaver.this.getFrameSettingsForFrame(frame);
+          frameSettings.x = frame.getX();
+          frameSettings.y = frame.getY();
+        }
+      }
+
+      @Override
+      public void componentShown(ComponentEvent e)
+      {
+      }
+
+      @Override
+      public void componentHidden(ComponentEvent e)
+      {
+      }
+    });
   }
 
 }
