@@ -102,71 +102,30 @@ public class BatchRepair
 
   /**
    * Performs an exact matches search on all entries in multiple playlists.
-   *
    * @param observer The progress observer for this operation.
    */
   public void performExactMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
   {
-    DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
-    progress.getOverall().setTotal(_items.size() * 2);
-
-    List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
-    for (BatchRepairItem item : _items)
-    {
-      if (!observer.getCancelled())
-      {
-        // load
-        progress.getOverall().stepCompleted();
-        progress.getTask().reportProgress(0, "Loading \"" + item.getDisplayName() + "\"");
-        if (item.getPlaylist() == null)
-        {
-          File file = new File(item.getPath());
-          try
-          {
-            Playlist temp = PlaylistFactory.getPlaylist(file, progress.getTask(), filePathOptions);
-            item.setPlaylist(temp);
-          }
-          catch (IOException e)
-          {
-            toRemoveFromBatch.add(item);
-          }
-        }
-
-        // repair
-        if (item.getPlaylist() != null && item.getPlaylist().getMissingCount() > 0)
-        {
-          progress.getOverall().stepCompleted();
-          progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
-          Playlist list = item.getPlaylist();
-          list.batchRepair(this.mediaLibrary, progress.getTask());
-        }
-        else
-        {
-          // Don't fix playlists that have nothing to fix... instead remove them from the result set.
-          toRemoveFromBatch.add(item);
-        }
-      }
-      else
-      {
-        return;
-      }
-    }
-
-    for (BatchRepairItem item : toRemoveFromBatch)
-    {
-      _items.remove(item);
-    }
+    this.performRepair(observer, filePathOptions, (item, list, task) -> {
+      list.batchRepair(this.mediaLibrary, task);
+    });
   }
 
   /**
    * Performs a closest matches search on all entries in multiple playlists.
-   *
    * @param observer The progress observer for this operation.
    */
   public void performClosestMatchRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions)
   {
+    this.performRepair(observer, filePathOptions, (item, list, task) -> {
+      item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), task));
+    });
+  }
+
+  public void performRepair(IDualProgressObserver<String> observer, IPlaylistOptions filePathOptions, IRepairItem repairItem)
+  {
     DualProgressAdapter<String> progress = DualProgressAdapter.wrap(observer);
-    progress.getOverall().setTotal(_items.size() * 2);
+    progress.getOverall().setTotal(_items.size() * 2L);
 
     List<BatchRepairItem> toRemoveFromBatch = new ArrayList<>();
     for (BatchRepairItem item : _items)
@@ -196,7 +155,7 @@ public class BatchRepair
           progress.getOverall().stepCompleted();
           progress.getTask().reportProgress(0, "Repairing \"" + item.getDisplayName() + "\"");
           Playlist list = item.getPlaylist();
-          item.setClosestMatches(list.findClosestMatches(this.mediaLibrary.getNestedMediaFiles(), progress.getTask()));
+          repairItem.repair(item, list, progress.getTask());
         }
         else
         {
