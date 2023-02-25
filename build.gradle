@@ -87,14 +87,18 @@ def fatJarFilePath = "build/libs/${project.name}-${project.version}-all.jar"
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven {
+        url "https://repo1.maven.org/maven2/"
+    }
+    // Staging repository
+    // maven { url 'https://s01.oss.sonatype.org/content/repositories/iogithubborewit-1000/' }
+    // maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
 
-    implementation files('src/lib/net.mariottini.swing.jar')
-
     // Provides christophedelory.playlist.*
-    implementation files('src/lib/lizzy.jar')
+    implementation 'io.github.borewit:lizzy:1.1.2'
 
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
     implementation 'com.jgoodies:jgoodies-common:1.8.0'
@@ -128,14 +132,6 @@ dependencies {
     // Used to read the version number from the manifest
     // https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests/1.2.1
     implementation 'com.jcabi:jcabi-manifests:1.2.1'
-
-    // Required by "src/jar/lizzy.jar"
-    // https://mvnrepository.com/artifact/commons-logging/commons-logging
-    runtimeOnly 'commons-logging:commons-logging:1.2'
-
-    // Required by "src/jar/lizzy.jar"
-    // https://mvnrepository.com/artifact/org.codehaus.castor/castor-xml
-    implementation 'org.codehaus.castor:castor-xml:1.4.1'
 
     // Provide JFontChooser
     implementation 'com.rover12421.opensource:JFontChooser:1.0.5-3'
