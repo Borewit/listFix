@@ -3,6 +3,7 @@ package listfix.json;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import listfix.config.IAppOptions;
+import listfix.config.IApplicationState;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.util.OperatingSystem;
@@ -22,10 +23,12 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private int maxPlaylistHistoryEntries = 5;
   private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
 
+
   @Deprecated // Replaced by playlistDirectories
   private String playlistsDirectory;
 
-  private final TreeSet<String> playlistDirectories;
+  private final TreeSet<String> playlistDirectories = new TreeSet<>();
+
   @JsonSerialize(using = JsonFontSerializer.class)
   @JsonDeserialize(using = JsonFontDeserializer.class)
   private Font appFont = new Font("SansSerif", Font.PLAIN, 11);
@@ -33,9 +36,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
 
-  public JsonAppOptions() {
-    this.playlistDirectories = new TreeSet<>();
-  }
+  private JsonApplicationState applicationState = new JsonApplicationState();
 
   public boolean getAutoLocateEntriesOnPlaylistLoad()
   {
@@ -117,6 +118,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The appFont
    */
+  @Override
   public Font getAppFont()
   {
     return appFont;
@@ -133,6 +135,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The maxClosestResults
    */
+  @Override
   public int getMaxClosestResults()
   {
     return maxClosestResults;
@@ -149,6 +152,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The ignoredSmallWords
    */
+  @Override
   public String getIgnoredSmallWords()
   {
     return ignoredSmallWords;
@@ -165,6 +169,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The caseInsensitiveExactMatching
    */
+  @Override
   public boolean getCaseInsensitiveExactMatching()
   {
     return caseInsensitiveExactMatching;
@@ -176,5 +181,11 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   public void setCaseInsensitiveExactMatching(boolean caseInsensitiveExactMatching)
   {
     this.caseInsensitiveExactMatching = caseInsensitiveExactMatching;
+  }
+
+  @Override
+  public IApplicationState getApplicationState()
+  {
+    return this.applicationState;
   }
 }

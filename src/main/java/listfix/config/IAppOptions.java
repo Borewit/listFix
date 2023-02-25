@@ -20,4 +20,6 @@ public interface IAppOptions extends IPlaylistOptions
    * @return configured application font
    */
   Font getAppFont();
+
+  IApplicationState getApplicationState();
 }

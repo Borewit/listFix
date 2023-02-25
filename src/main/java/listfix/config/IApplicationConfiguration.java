@@ -6,4 +6,7 @@ public interface IApplicationConfiguration
   IAppOptions getAppOptions();
 
   IMediaLibrary getMediaLibrary();
+
+  IApplicationState getApplicationState();
+
 }

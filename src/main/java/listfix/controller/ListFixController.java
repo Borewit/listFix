@@ -18,7 +18,7 @@ public final class ListFixController implements IApplicationConfiguration
 
   public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
 
-  private final Logger _logger = LogManager.getLogger(ListFixController.class);
+  private final Logger logger = LogManager.getLogger(ListFixController.class);
   private static ListFixController _instance;
 
   /**
@@ -43,7 +43,7 @@ public final class ListFixController implements IApplicationConfiguration
 
       String oldPlaylistDirectory = this.applicationOptionsConfiguration.getConfig().getPlaylistsDirectory();
       if (this.applicationOptionsConfiguration.getConfig().getPlaylistDirectories().isEmpty() && oldPlaylistDirectory != null && !oldPlaylistDirectory.isEmpty()) {
-        _logger.error(String.format("Migrating playlists directory: %s", oldPlaylistDirectory));
+        this.logger.error(String.format("Migrating playlists directory: %s", oldPlaylistDirectory));
         this.applicationOptionsConfiguration.getConfig().getPlaylistDirectories().add(oldPlaylistDirectory);
         this.mediaLibraryConfiguration.writeOnBackground();
       }
@@ -60,7 +60,7 @@ public final class ListFixController implements IApplicationConfiguration
       showMediaDirWindow = true;
 
       // This happens by design the first time the app is executed, so to minimize confusion, we disable console logging when we distribute listFix()
-      this._logger.error("Error initializing", e);
+      this.logger.error("Error initializing", e);
     }
   }
 
@@ -84,6 +84,12 @@ public final class ListFixController implements IApplicationConfiguration
   public IMediaLibrary getMediaLibrary()
   {
     return this.mediaLibraryConfiguration.getConfig();
+  }
+
+  @Override
+  public IApplicationState getApplicationState()
+  {
+    return this.applicationOptionsConfiguration.getConfig().getApplicationState();
   }
 
   public MediaLibraryConfiguration getMediaLibraryConfiguration()
