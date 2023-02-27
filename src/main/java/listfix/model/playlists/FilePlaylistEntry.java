@@ -1,6 +1,7 @@
 package listfix.model.playlists;
 
 import listfix.config.IMediaLibrary;
+import listfix.io.FileUtils;
 import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.ArrayFunctions;
 import listfix.util.OperatingSystem;
@@ -182,7 +183,7 @@ public class FilePlaylistEntry extends PlaylistEntry
     {
       this.trackPath = Path.of(fileSearchResult);
       if (useRelativePath) {
-        this.trackPath = this.playlistPath.getParent().relativize(this.trackPath);
+        this.trackPath = FileUtils.getRelativePath(this.trackPath, this.playlistPath);
       }
       this.recheckFoundStatus();
       _isFixed = _status == PlaylistEntryStatus.Found;
@@ -193,7 +194,7 @@ public class FilePlaylistEntry extends PlaylistEntry
 
   public boolean updatePathToMediaLibraryIfFoundOutside(IMediaLibrary dirLists, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
-    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getMediaDirectories(), this.getTrackFolder(), this.isWindows))
+    if (_status == PlaylistEntryStatus.Found && !ArrayFunctions.containsStringPrefixingAnotherString(dirLists.getMediaDirectories(), this.getTrackFolder(), FilePlaylistEntry.isWindows))
     {
       return findNewLocationFromFileList(dirLists.getNestedMediaFiles(), caseInsensitiveExactMatching, useRelativePath);
     }
