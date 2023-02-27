@@ -2,15 +2,15 @@ package listfix.json;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
+import java.awt.*;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.swing.*;
 import listfix.config.IAppOptions;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.util.OperatingSystem;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class JsonAppOptions implements IPlaylistOptions, IAppOptions
 {
@@ -20,7 +20,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private boolean autoRefreshMediaLibraryOnStartup = false;
   private boolean alwaysUseUNCPaths = false;
   private int maxPlaylistHistoryEntries = 5;
-  private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
+  private String lookAndFeel = OperatingSystem.isWindows() ? WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
 
   @Deprecated // Replaced by playlistDirectories
   private String playlistsDirectory;
@@ -37,7 +37,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.playlistDirectories = new TreeSet<>();
   }
 
-  public boolean getAutoLocateEntriesOnPlaylistLoad()
+  @Override public boolean getAutoLocateEntriesOnPlaylistLoad()
   {
     return autoLocateEntriesOnPlaylistLoad;
   }
@@ -47,7 +47,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
   }
 
-  public int getMaxPlaylistHistoryEntries()
+  @Override public int getMaxPlaylistHistoryEntries()
   {
     return maxPlaylistHistoryEntries;
   }
@@ -57,7 +57,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.lookAndFeel = lookAndFeel;
   }
 
-  public String getLookAndFeel()
+  @Override public String getLookAndFeel()
   {
     return lookAndFeel;
   }
@@ -72,12 +72,12 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
   }
 
-  public boolean getAutoRefreshMediaLibraryOnStartup()
+  @Override public boolean getAutoRefreshMediaLibraryOnStartup()
   {
     return autoRefreshMediaLibraryOnStartup;
   }
 
-  public boolean getSavePlaylistsWithRelativePaths()
+  @Override public boolean getSavePlaylistsWithRelativePaths()
   {
     return savePlaylistsWithRelativePaths;
   }
@@ -87,7 +87,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
   }
 
-  public boolean getAlwaysUseUNCPaths()
+  @Override public boolean getAlwaysUseUNCPaths()
   {
     return alwaysUseUNCPaths;
   }
@@ -117,7 +117,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The appFont
    */
-  public Font getAppFont()
+  @Override public Font getAppFont()
   {
     return appFont;
   }
@@ -133,7 +133,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The maxClosestResults
    */
-  public int getMaxClosestResults()
+  @Override public int getMaxClosestResults()
   {
     return maxClosestResults;
   }
@@ -149,7 +149,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The ignoredSmallWords
    */
-  public String getIgnoredSmallWords()
+  @Override public String getIgnoredSmallWords()
   {
     return ignoredSmallWords;
   }
@@ -165,7 +165,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   /**
    * @return The caseInsensitiveExactMatching
    */
-  public boolean getCaseInsensitiveExactMatching()
+  @Override public boolean getCaseInsensitiveExactMatching()
   {
     return caseInsensitiveExactMatching;
   }

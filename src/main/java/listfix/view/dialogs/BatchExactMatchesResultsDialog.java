@@ -2,11 +2,26 @@
 
 package listfix.view.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.BevelBorder;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
 import listfix.view.IListFixGui;
 import listfix.view.controls.JTransparentTextArea;
+import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.controls.PlaylistsList;
 import listfix.view.support.DualProgressWorker;
 import listfix.view.support.IPlaylistModifiedListener;
@@ -14,16 +29,11 @@ import listfix.view.support.ProgressWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 /**
  * This is the dialog we display for an exact matches search on multiple playlists.
  * @author jcaron
  */
-public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
+public class BatchExactMatchesResultsDialog extends JDialog
 {
   private boolean _userCancelled = false;
   private static final Logger _logger = LogManager.getLogger(BatchExactMatchesResultsDialog.class);
@@ -33,7 +43,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
   /**
    * Creates new form BatchExactMatchesResultsDialog
    */
-  public BatchExactMatchesResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair batch, IListFixGui listFixGui)
+  public BatchExactMatchesResultsDialog(Frame parent, boolean modal, BatchRepair batch, IListFixGui listFixGui)
   {
     super(parent, batch.getDescription(), modal);
     this.listFixGui = listFixGui;
@@ -146,97 +156,97 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        _backupPanel = new javax.swing.JPanel();
-        _chkBackup = new javax.swing.JCheckBox();
-        _txtBackup = new javax.swing.JTextField();
-        _btnCancel = new javax.swing.JButton();
-        _btnSave = new javax.swing.JButton();
-        _btnBrowse = new javax.swing.JButton();
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        playlistEditCtrl1 = new listfix.view.controls.PlaylistEditCtrl(this.listFixGui);
+        _backupPanel = new JPanel();
+        _chkBackup = new JCheckBox();
+        _txtBackup = new JTextField();
+        _btnCancel = new JButton();
+        _btnSave = new JButton();
+        _btnBrowse = new JButton();
+        jSplitPane1 = new JSplitPane();
+        jPanel1 = new JPanel();
+        jPanel3 = new JPanel();
+        jLabel1 = new JLabel();
+        playlistEditCtrl1 = new PlaylistEditCtrl(this.listFixGui);
         _pnlList = new PlaylistsList(_batch);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent evt) {
+                formWindowClosing();
             }
         });
 
         _chkBackup.setText("Backup original files to zip file:");
-        _chkBackup.addItemListener(evt -> onChkBackupItemStateChanged(evt));
+        _chkBackup.addItemListener(evt -> onChkBackupItemStateChanged());
 
         _txtBackup.setEnabled(false);
 
         _btnCancel.setText("Cancel");
-        _btnCancel.addActionListener(evt -> onBtnCancelActionPerformed(evt));
+        _btnCancel.addActionListener(evt -> onBtnCancelActionPerformed());
 
         _btnSave.setText("Save All Repairs");
-        _btnSave.addActionListener(evt -> onBtnSaveActionPerformed(evt));
+        _btnSave.addActionListener(evt -> onBtnSaveActionPerformed());
 
         _btnBrowse.setText("...");
         _btnBrowse.setEnabled(false);
-        _btnBrowse.addActionListener(evt -> onBtnBrowseActionPerformed(evt));
+        _btnBrowse.addActionListener(evt -> onBtnBrowseActionPerformed());
 
-        javax.swing.GroupLayout _backupPanelLayout = new javax.swing.GroupLayout(_backupPanel);
+        GroupLayout _backupPanelLayout = new GroupLayout(_backupPanel);
         _backupPanel.setLayout(_backupPanelLayout);
         _backupPanelLayout.setHorizontalGroup(
-            _backupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            _backupPanelLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(_backupPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(_chkBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(_txtBackup, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(_txtBackup, GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(_btnBrowse)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addComponent(_btnSave)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(_btnCancel)
                 .addContainerGap())
         );
         _backupPanelLayout.setVerticalGroup(
-            _backupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            _backupPanelLayout.createParallelGroup(Alignment.LEADING)
             .addGroup(_backupPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(_backupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(_backupPanelLayout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(_chkBackup)
-                    .addComponent(_txtBackup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(_txtBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(_btnCancel)
                     .addComponent(_btnSave)
                     .addComponent(_btnBrowse))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        getContentPane().add(_backupPanel, java.awt.BorderLayout.PAGE_END);
+        getContentPane().add(_backupPanel, BorderLayout.PAGE_END);
 
         jSplitPane1.setDividerLocation(184);
         jSplitPane1.setContinuousLayout(true);
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel1.setLayout(new BorderLayout());
 
-        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel3.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         jLabel1.setText("Playlist details");
         jPanel3.add(jLabel1);
 
-        jPanel1.add(jPanel3, java.awt.BorderLayout.PAGE_START);
+        jPanel1.add(jPanel3, BorderLayout.PAGE_START);
 
-        playlistEditCtrl1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        jPanel1.add(playlistEditCtrl1, java.awt.BorderLayout.CENTER);
+        playlistEditCtrl1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        jPanel1.add(playlistEditCtrl1, BorderLayout.CENTER);
 
         jSplitPane1.setRightComponent(jPanel1);
         jSplitPane1.setLeftComponent(_pnlList);
 
-        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jSplitPane1, BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void onBtnBrowseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnBrowseActionPerformed
+    private void onBtnBrowseActionPerformed()//GEN-FIRST:event_onBtnBrowseActionPerformed
     {//GEN-HEADEREND:event_onBtnBrowseActionPerformed
     JFileChooser dlg = new JFileChooser();
     if (!_txtBackup.getText().isEmpty())
@@ -249,7 +259,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
     }
     }//GEN-LAST:event_onBtnBrowseActionPerformed
 
-    private void onBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnSaveActionPerformed
+    private void onBtnSaveActionPerformed()//GEN-FIRST:event_onBtnSaveActionPerformed
     {//GEN-HEADEREND:event_onBtnSaveActionPerformed
     ProgressWorker<Void, String> worker = new ProgressWorker<>()
     {
@@ -283,13 +293,13 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
     setVisible(false);
     }//GEN-LAST:event_onBtnSaveActionPerformed
 
-    private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
+    private void onBtnCancelActionPerformed()//GEN-FIRST:event_onBtnCancelActionPerformed
     {//GEN-HEADEREND:event_onBtnCancelActionPerformed
     _userCancelled = true;
     setVisible(false);
     }//GEN-LAST:event_onBtnCancelActionPerformed
 
-    private void onChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_onChkBackupItemStateChanged
+    private void onChkBackupItemStateChanged()//GEN-FIRST:event_onChkBackupItemStateChanged
     {//GEN-HEADEREND:event_onChkBackupItemStateChanged
     boolean isChecked = _chkBackup.isSelected();
     _txtBackup.setEnabled(isChecked);
@@ -301,7 +311,7 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
     }
     }//GEN-LAST:event_onChkBackupItemStateChanged
 
-  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  private void formWindowClosing()//GEN-FIRST:event_formWindowClosing
   {//GEN-HEADEREND:event_formWindowClosing
     _userCancelled = true;
   }//GEN-LAST:event_formWindowClosing
@@ -324,17 +334,17 @@ public class BatchExactMatchesResultsDialog extends javax.swing.JDialog
     return _userCancelled;
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel _backupPanel;
-    private javax.swing.JButton _btnBrowse;
-    private javax.swing.JButton _btnCancel;
-    private javax.swing.JButton _btnSave;
-    private javax.swing.JCheckBox _chkBackup;
-    private listfix.view.controls.PlaylistsList _pnlList;
-    private javax.swing.JTextField _txtBackup;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JSplitPane jSplitPane1;
-    private listfix.view.controls.PlaylistEditCtrl playlistEditCtrl1;
+    private JPanel _backupPanel;
+    private JButton _btnBrowse;
+    private JButton _btnCancel;
+    private JButton _btnSave;
+    private JCheckBox _chkBackup;
+    private PlaylistsList _pnlList;
+    private JTextField _txtBackup;
+    private JLabel jLabel1;
+    private JPanel jPanel1;
+    private JPanel jPanel3;
+    private JSplitPane jSplitPane1;
+    private PlaylistEditCtrl playlistEditCtrl1;
     // End of variables declaration//GEN-END:variables
 }

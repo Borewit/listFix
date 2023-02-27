@@ -44,7 +44,8 @@ public class FileTreeNodeGenerator
         {
           try
           {
-            addNodes(node, Files.list(path)); // recursion
+            try (Stream<Path> stream = Files.list(path)) {
+addNodes(node, stream);} // recursion
           }
           catch (IOException e)
           {

@@ -2,24 +2,35 @@
 
 package listfix.view.dialogs;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.swing.*;
 
-public class DualProgressDialog extends javax.swing.JDialog
+public class DualProgressDialog extends JDialog
 {
   /** Creates new form DualProgressDialog
    */
-  public DualProgressDialog(java.awt.Frame parent, String title, boolean modal)
+  public DualProgressDialog(Frame parent, String title, boolean modal)
   {
     super(parent, title, modal);
     initComponents();
   }
 
-  public DualProgressDialog(java.awt.Frame parent, String title, String taskMsg, String overallMsg)
+  public DualProgressDialog(Frame parent, String title, String taskMsg, String overallMsg)
   {
     this(parent, title, true);
 
@@ -44,7 +55,7 @@ public class DualProgressDialog extends javax.swing.JDialog
 
   /**
    *
-   * @param worker
+   * 
    */
   public void show(SwingWorker worker)
   {
@@ -55,7 +66,7 @@ public class DualProgressDialog extends javax.swing.JDialog
     // close dialog when state changes to done
     pcs.addPropertyChangeListener("state", new PropertyChangeListener()
     {
-      public void propertyChange(PropertyChangeEvent evt)
+      @Override public void propertyChange(PropertyChangeEvent evt)
       {
         if (_worker.isDone())
         {
@@ -77,88 +88,88 @@ public class DualProgressDialog extends javax.swing.JDialog
   @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
-        _middlePanel = new javax.swing.JPanel();
-        _taskLabel = new javax.swing.JLabel();
-        _taskProgress = new javax.swing.JProgressBar();
-        _overallLabel = new javax.swing.JLabel();
-        _overallProgress = new javax.swing.JProgressBar();
-        _bottomPanel = new javax.swing.JPanel();
-        _cancelButton = new javax.swing.JButton();
+        _middlePanel = new JPanel();
+        _taskLabel = new JLabel();
+        _taskProgress = new JProgressBar();
+        _overallLabel = new JLabel();
+        _overallProgress = new JProgressBar();
+        _bottomPanel = new JPanel();
+        _cancelButton = new JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent evt) {
+                formWindowClosing();
             }
         });
 
-        _middlePanel.setLayout(new java.awt.GridBagLayout());
+        _middlePanel.setLayout(new GridBagLayout());
 
         _taskLabel.setText("Task Progress");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
+        gridBagConstraints.insets = new Insets(10, 10, 4, 10);
         _middlePanel.add(_taskLabel, gridBagConstraints);
 
-        _taskProgress.setMinimumSize(new java.awt.Dimension(250, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        _taskProgress.setMinimumSize(new Dimension(250, 14));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 10, 10, 10);
         _middlePanel.add(_taskProgress, gridBagConstraints);
 
         _overallLabel.setText("Overall Progress");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 4, 10);
+        gridBagConstraints.insets = new Insets(10, 10, 4, 10);
         _middlePanel.add(_overallLabel, gridBagConstraints);
 
-        _overallProgress.setMinimumSize(new java.awt.Dimension(250, 14));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        _overallProgress.setMinimumSize(new Dimension(250, 14));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 10, 10, 10);
         _middlePanel.add(_overallProgress, gridBagConstraints);
 
-        getContentPane().add(_middlePanel, java.awt.BorderLayout.CENTER);
+        getContentPane().add(_middlePanel, BorderLayout.CENTER);
 
-        _bottomPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        _bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         _cancelButton.setText("Cancel");
-        _cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                _cancelButtonActionPerformed(evt);
+        _cancelButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent evt) {
+                _cancelButtonActionPerformed();
             }
         });
-        _cancelButton.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        _cancelButton.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent evt) {
                 _cancelButtonKeyPressed(evt);
             }
         });
         _bottomPanel.add(_cancelButton);
 
-        getContentPane().add(_bottomPanel, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(_bottomPanel, BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-  private void _cancelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__cancelButtonActionPerformed
+  private void _cancelButtonActionPerformed()//GEN-FIRST:event__cancelButtonActionPerformed
   {//GEN-HEADEREND:event__cancelButtonActionPerformed
     _worker.cancel(true);
   }//GEN-LAST:event__cancelButtonActionPerformed
 
-  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  private void formWindowClosing()//GEN-FIRST:event_formWindowClosing
   {//GEN-HEADEREND:event_formWindowClosing
     _worker.cancel(true);
   }//GEN-LAST:event_formWindowClosing
 
-  private void _cancelButtonKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__cancelButtonKeyPressed
+  private void _cancelButtonKeyPressed(KeyEvent evt)//GEN-FIRST:event__cancelButtonKeyPressed
   {//GEN-HEADEREND:event__cancelButtonKeyPressed
     if (evt.getKeyCode() == evt.VK_ESCAPE)
     {
@@ -168,7 +179,7 @@ public class DualProgressDialog extends javax.swing.JDialog
 
   /**
    *
-   * @return
+   * 
    */
   public JLabel getTaskLabel()
   {
@@ -192,12 +203,12 @@ public class DualProgressDialog extends javax.swing.JDialog
 
   SwingWorker _worker;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel _bottomPanel;
-    private javax.swing.JButton _cancelButton;
-    private javax.swing.JPanel _middlePanel;
-    private javax.swing.JLabel _overallLabel;
-    private javax.swing.JProgressBar _overallProgress;
-    private javax.swing.JLabel _taskLabel;
-    private javax.swing.JProgressBar _taskProgress;
+    private JPanel _bottomPanel;
+    private JButton _cancelButton;
+    private JPanel _middlePanel;
+    private JLabel _overallLabel;
+    private JProgressBar _overallProgress;
+    private JLabel _taskLabel;
+    private JProgressBar _taskProgress;
     // End of variables declaration//GEN-END:variables
 }

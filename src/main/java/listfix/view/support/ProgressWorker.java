@@ -12,12 +12,12 @@ public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements 
 {
   private String _message = "";
 
-  public void reportProgress(int progress)
+  @Override public void reportProgress(int progress)
   {
     setProgress(progress);
   }
 
-   public void reportProgress(int progress, V state)
+   @Override public void reportProgress(int progress, V state)
   {
     setProgress(progress);
     if (state != null)
@@ -26,7 +26,7 @@ public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements 
     }
   }
 
-  public boolean getCancelled()
+  @Override public boolean getCancelled()
   {
     return this.isCancelled();
   }

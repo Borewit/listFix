@@ -34,8 +34,8 @@ public class FontExtensions
 
   /**
    *
-   * @param inputFont
-   * @return
+   * 
+   * 
    */
   public static String serialize(Font inputFont)
   {
@@ -44,8 +44,8 @@ public class FontExtensions
 
   /**
    *
-   * @param csvParams
-   * @return
+   * 
+   * 
    */
   public static Font deserialize(String csvParams)
   {
@@ -85,8 +85,8 @@ public class FontExtensions
 
   /**
    *
-   * @param chosenFont
-   * @return
+   * 
+   * 
    */
   public static String formatFont(Font chosenFont)
   {

@@ -397,16 +397,16 @@ public class PLSProperties extends Hashtable<Object, Object>
 
   /* Read in a "logical line" from an InputStream/Reader, skip all comment
    * and blank lines and filter out those leading whitespace characters
-   * (\u0020, \u0009 and \u000c) from the beginning of a "natural line".
+   * ( , \u0009 and \u000c) from the beginning of a "natural line".
    * Method returns the char length of the "logical line" and stores
    * the line in "lineBuf".
    */
 
-  class LineReader
+  static class LineReader
   {
     /**
      *
-     * @param inStream
+     * 
      */
     LineReader(InputStream inStream)
     {
@@ -416,7 +416,7 @@ public class PLSProperties extends Hashtable<Object, Object>
 
     /**
      *
-     * @param reader
+     * 
      */
     LineReader(Reader reader)
     {
@@ -433,8 +433,8 @@ public class PLSProperties extends Hashtable<Object, Object>
 
     /**
      *
-     * @return
-     * @throws IOException
+     * 
+     * 
      */
     int readLine() throws IOException
     {
@@ -664,7 +664,6 @@ public class PLSProperties extends Hashtable<Object, Object>
    * special characters with a preceding slash
    */
   private String saveConvert(String theString,
-    boolean escapeSpace,
     boolean escapeUnicode)
   {
     int len = theString.length();
@@ -691,7 +690,7 @@ public class PLSProperties extends Hashtable<Object, Object>
         outBuffer.append(aChar);
         continue;
       }
-      if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode)
+      if (((aChar < 0x0020) || (aChar > 0x007e)) && escapeUnicode)
       {
         outBuffer.append('\\');
         outBuffer.append('u');
@@ -881,11 +880,11 @@ public class PLSProperties extends Hashtable<Object, Object>
       {
         String key = (String) e.nextElement();
         String val = (String) get(key);
-        key = saveConvert(key, true, escUnicode);
+        key = saveConvert(key, escUnicode);
         /* No need to escape embedded and trailing spaces for value, hence
          * pass false to flag.
          */
-        val = saveConvert(val, false, escUnicode);
+        val = saveConvert(val, escUnicode);
         bw.write(key + "=" + val);
         bw.newLine();
       }

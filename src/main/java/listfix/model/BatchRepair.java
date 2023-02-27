@@ -194,7 +194,7 @@ public class BatchRepair
    * @param backup               Should we backup the originals to a zip file?
    * @param destination          The path to the backup zip file we'll create if told to backup the originals.
    * @param observer             The progress observer for this operation.
-   * @throws Exception
+   * 
    */
   public void save(IPlaylistOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
   {
@@ -207,7 +207,7 @@ public class BatchRepair
       Playlist list = item.getPlaylist();
       if (backup)
       {
-        stepCount += list.getFile().length();
+        stepCount = (int) (stepCount + list.getFile().length());
       }
       stepCount += list.size();
     }

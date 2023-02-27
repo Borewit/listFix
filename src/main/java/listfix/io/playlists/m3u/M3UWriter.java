@@ -2,6 +2,10 @@
 
 package listfix.io.playlists.m3u;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.io.playlists.PlaylistWriter;
@@ -9,9 +13,6 @@ import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.util.UnicodeUtils;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 /**
  * A playlist writer capable of saving to M3U or M3U8 format.
@@ -46,7 +47,7 @@ public class M3UWriter extends PlaylistWriter<StringBuilder>
   private String serializeEntry(PlaylistEntry entry)
   {
     StringBuilder result = new StringBuilder();
-    if (!(entry.getExtInf() == null) && !(entry.getExtInf().equals("")))
+    if (!(entry.getExtInf() == null) && ! entry.getExtInf().equals(""))
     {
       result.append(entry.getExtInf());
       result.append(Constants.BR);
@@ -86,7 +87,7 @@ public class M3UWriter extends PlaylistWriter<StringBuilder>
     {
       try (BufferedOutputStream output = new BufferedOutputStream(outputStream))
       {
-        output.write(buffer.toString().getBytes());
+        output.write(buffer.toString().getBytes(UTF_8));
       }
       outputStream.close();
       playlist.setUtfFormat(false);

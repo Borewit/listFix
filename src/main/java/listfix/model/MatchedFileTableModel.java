@@ -2,12 +2,12 @@
 
 package listfix.model;
 
+import java.util.List;
+import javax.swing.table.AbstractTableModel;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
-import java.util.List;
 
-
-public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
+public class MatchedFileTableModel extends AbstractTableModel
 {
   private static final long serialVersionUID = -1888652455638101278L;
   private final String[] columnNames =
@@ -21,7 +21,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
   };
   private final Class<?>[] types = new Class<?>[]
   {
-    java.lang.String.class, java.lang.String.class
+    String.class, String.class
   };
 
   private Integer sortCol = 1;
@@ -32,7 +32,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @param input
+   * 
    */
   public MatchedFileTableModel(List<PotentialPlaylistEntryMatch> input)
   {
@@ -42,7 +42,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @param input
+   * 
    */
   public final void updateData(List<PotentialPlaylistEntryMatch> input)
   {
@@ -61,7 +61,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @return
+   * 
    */
   @Override
   public int getColumnCount()
@@ -71,7 +71,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @return
+   * 
    */
   @Override
   public int getRowCount()
@@ -81,8 +81,8 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @param col
-   * @return
+   * 
+   * 
    */
   @Override
   public String getColumnName(int col)
@@ -97,20 +97,20 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @param row
-   * @param col
-   * @return
+   * 
+   * 
+   * 
    */
   @Override
-  public java.lang.Object getValueAt(int row, int col)
+  public Object getValueAt(int row, int col)
   {
     return data[row][col];
   }
 
   /**
    *
-   * @param c
-   * @return
+   * 
+   * 
    */
   @Override
   public Class<?> getColumnClass(int c)
@@ -120,9 +120,9 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @param rowIndex
-   * @param columnIndex
-   * @return
+   * 
+   * 
+   * 
    */
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -132,7 +132,7 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
 
   /**
    *
-   * @return
+   * 
    */
   public Object[] longestValues()
   {

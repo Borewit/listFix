@@ -111,7 +111,8 @@ public class ITunesMediaLibrary
   }
 
   /**
-   * @return the _plist
+   *Returns the _plist.
+ 
    */
   public PlistPlaylist getPlist()
   {

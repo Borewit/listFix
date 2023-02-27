@@ -2,16 +2,16 @@
 
 package listfix.controller.tasks;
 
+import java.io.IOException;
 import listfix.config.MediaLibraryConfiguration;
+import listfix.controller.Task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
 
 /**
  * @author jcaron
  */
-public class WriteMediaLibraryIniTask extends listfix.controller.Task
+public class WriteMediaLibraryIniTask extends Task
 {
   private static final Logger _logger = LogManager.getLogger(WriteMediaLibraryIniTask.class);
 

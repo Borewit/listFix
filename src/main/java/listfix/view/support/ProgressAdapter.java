@@ -17,13 +17,13 @@ public final class ProgressAdapter<T> implements IProgressObserver<T>
     _observer = observer;
   }
 
-  public void reportProgress(int progress)
+  @Override public void reportProgress(int progress)
   {
     if (_observer != null)
       _observer.reportProgress(progress);
   }
 
-  public void reportProgress(int progress, T state)
+  @Override public void reportProgress(int progress, T state)
   {
     if (_observer != null)
       _observer.reportProgress(progress, state);
@@ -94,7 +94,7 @@ public final class ProgressAdapter<T> implements IProgressObserver<T>
 
   private int _percentComplete;
 
-  public boolean getCancelled()
+  @Override public boolean getCancelled()
   {
     return _observer != null ? _observer.getCancelled() : false;
   }

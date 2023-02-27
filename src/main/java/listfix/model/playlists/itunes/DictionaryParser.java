@@ -18,9 +18,9 @@ public class DictionaryParser
 {
   /**
    *
-   * @param dict
-   * @param key
-   * @return
+   * 
+   * 
+   * 
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Dict.
    */
   public static Dict getKeyValueAsDict(Dict dict, String key) throws ClassCastException
@@ -41,9 +41,9 @@ public class DictionaryParser
 
   /**
    *
-   * @param dict
-   * @param key
-   * @return
+   * 
+   * 
+   * 
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Array.
    */
   public static Array getKeyValueAsArray(Dict dict, String key) throws ClassCastException
@@ -58,9 +58,9 @@ public class DictionaryParser
 
   /**
    *
-   * @param dict
-   * @param key
-   * @return
+   * 
+   * 
+   * 
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Integer.
    */
   public static christophedelory.plist.Integer getKeyValueAsInteger(Dict dict, String key) throws ClassCastException
@@ -75,9 +75,9 @@ public class DictionaryParser
 
   /**
    *
-   * @param dict
-   * @param keyName
-   * @return
+   * 
+   * 
+   * 
    * @throws ClassCastException Thrown when the datatype of the given key is not a String.
    */
   public static String getKeyValueAsString(Dict dict, String keyName) throws ClassCastException

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPanel
+public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
 {
   private List<BatchMatchItem> _items;
 
@@ -44,7 +44,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   private void initialize()
   {
     TableColumnModel cm = _uiTable.getColumnModel();
-    ButtonRenderer br = new ButtonRenderer();
+    
     cm.getColumn(2).setCellRenderer(new ButtonRenderer());
     cm.getColumn(2).setCellEditor(new ButtonEditor(_uiTable));
     cm.getColumn(3).setCellEditor(new MatchEditor());
@@ -149,10 +149,10 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   private void resizeAllColumns()
   {
     // resize columns to fit
-    int cwidth = 0;
-    cwidth += _uiTable.autoResizeColumn(1);
-    cwidth += _uiTable.autoResizeColumn(2);
-    cwidth += _uiTable.autoResizeColumn(3);
+    
+    _uiTable.autoResizeColumn(1);
+    _uiTable.autoResizeColumn(2);
+    _uiTable.autoResizeColumn(3);
     TableColumnModel cm = _uiTable.getColumnModel();
     TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
     Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
@@ -165,7 +165,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
     _uiTable.setFillerColumnWidth(_uiScrollPane);
   }
 
-  private class ButtonRenderer implements TableCellRenderer
+  private static class ButtonRenderer implements TableCellRenderer
   {
     private JButton button = new JButton();
 
@@ -465,23 +465,23 @@ public class ClosestMatchesSearchScrollableResultsPanel extends javax.swing.JPan
   private void initComponents()
   {
 
-    _uiScrollPane = new javax.swing.JScrollPane();
+    _uiScrollPane = new JScrollPane();
     _uiTable = createTable();
 
-    setLayout(new java.awt.BorderLayout());
+    setLayout(new BorderLayout());
 
     _uiTable.setAutoCreateRowSorter(true);
     _uiTable.setModel(new MatchTableModel());
-    _uiTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+    _uiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     _uiScrollPane.setViewportView(_uiTable);
 
-    add(_uiScrollPane, java.awt.BorderLayout.CENTER);
+    add(_uiScrollPane, BorderLayout.CENTER);
   }// </editor-fold>//GEN-END:initComponents
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JScrollPane _uiScrollPane;
-  private listfix.view.support.ZebraJTable _uiTable;
+  private JScrollPane _uiScrollPane;
+  private ZebraJTable _uiTable;
   // End of variables declaration//GEN-END:variables
 
 }

@@ -26,7 +26,7 @@ public class PlaylistHistory
   /**
    * Creates a new instance of PlaylistHistory
    *
-   * @param x
+   * 
    */
   public PlaylistHistory(int x)
   {
@@ -34,7 +34,7 @@ public class PlaylistHistory
   }
 
   /**
-   * @param maxPlaylistHistoryEntries
+   * 
    */
   public void setCapacity(int maxPlaylistHistoryEntries)
   {
@@ -46,7 +46,7 @@ public class PlaylistHistory
   }
 
   /**
-   * @return
+   * 
    */
   protected int getLimit() // added to assist testing
   {
@@ -54,7 +54,7 @@ public class PlaylistHistory
   }
 
   /**
-   * @return
+   * 
    */
   protected List<String> getPlaylists() // added to assist testing
   {
@@ -62,7 +62,7 @@ public class PlaylistHistory
   }
 
   /**
-   * @param input
+   * 
    */
   public void initHistory(List<String> input)
   {
@@ -81,7 +81,7 @@ public class PlaylistHistory
   }
 
   /**
-   * @param filename
+   * 
    */
   public void add(String filename)
   {
@@ -110,7 +110,7 @@ public class PlaylistHistory
   }
 
   /**
-   * @return
+   * 
    */
   public String[] getFilenames()
   {
@@ -131,7 +131,7 @@ public class PlaylistHistory
   /**
    * Load last opened playlists from disk
    *
-   * @throws IOException
+   * 
    */
   public void load() throws IOException
   {

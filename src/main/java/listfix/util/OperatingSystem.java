@@ -7,7 +7,7 @@ public class OperatingSystem
 {
   /**
    *
-   * @return
+   * 
    */
   public static boolean isWindows()
   {
@@ -16,7 +16,7 @@ public class OperatingSystem
 
   /**
    *
-   * @return
+   * 
    */
   public static boolean isMac()
   {
@@ -25,7 +25,7 @@ public class OperatingSystem
 
   /**
    *
-   * @return
+   * 
    */
   public static boolean isLinux()
   {

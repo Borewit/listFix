@@ -20,14 +20,14 @@ public class ITunesFilePlaylistEntry extends FilePlaylistEntry implements  IITun
   /**
    * @return the _track
    */
-  public ITunesTrack getTrack()
+  @Override public ITunesTrack getTrack()
   {
     return _track;
   }
 
   /**
    *
-   * @return
+   * 
    */
   @Override
   public ITunesFilePlaylistEntry clone()

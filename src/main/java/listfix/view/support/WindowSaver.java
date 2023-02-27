@@ -66,7 +66,7 @@ public final class WindowSaver implements AWTEventListener
   {
     Properties settings = new Properties();
     String name = frame.getName();
-    if ((new File(PROP_FILE)).exists())
+    if ( new File(PROP_FILE).exists())
     {
       try
       {

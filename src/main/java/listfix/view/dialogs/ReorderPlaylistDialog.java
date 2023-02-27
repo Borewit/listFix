@@ -2,15 +2,30 @@
 
 package listfix.view.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.WindowConstants;
 import listfix.model.playlists.Playlist;
 
-public class ReorderPlaylistDialog extends javax.swing.JDialog
+public class ReorderPlaylistDialog extends JDialog
 {
 
 /**
  * Creates new form ReorderPlaylistDialog
  */
-  public ReorderPlaylistDialog(java.awt.Frame parent, boolean modal, Playlist.SortIx sortIx, boolean isDescending)
+  public ReorderPlaylistDialog(Frame parent, boolean modal, Playlist.SortIx sortIx, boolean isDescending)
   {
     super(parent, modal);
       initComponents();
@@ -43,7 +58,7 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
 
     /**
    *
-   * @return
+   * 
    */
   public Playlist.SortIx getSelectedSortIx()
   {
@@ -81,79 +96,79 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
     private void initComponents()
     {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
-        _rbRandom = new javax.swing.JRadioButton();
-        _rbReverse = new javax.swing.JRadioButton();
-        _rbFilename = new javax.swing.JRadioButton();
-        _rbPath = new javax.swing.JRadioButton();
-        _rbStatus = new javax.swing.JRadioButton();
-        _chkDescending = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        buttonGroup1 = new ButtonGroup();
+        jPanel1 = new JPanel();
+        _rbRandom = new JRadioButton();
+        _rbReverse = new JRadioButton();
+        _rbFilename = new JRadioButton();
+        _rbPath = new JRadioButton();
+        _rbStatus = new JRadioButton();
+        _chkDescending = new JCheckBox();
+        jPanel2 = new JPanel();
+        jButton1 = new JButton();
+        jButton2 = new JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Reorder Playlist");
-        setMinimumSize(new java.awt.Dimension(300, 189));
+        setMinimumSize(new Dimension(300, 189));
         setModal(true);
         setResizable(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Select the new playlist order"));
+        jPanel1.setBorder(BorderFactory.createTitledBorder("Select the new playlist order"));
         jPanel1.setAlignmentX(1.0F);
-        jPanel1.setLayout(new java.awt.GridLayout(6, 1));
+        jPanel1.setLayout(new GridLayout(6, 1));
 
         buttonGroup1.add(_rbRandom);
         _rbRandom.setText("Randomized");
-        _rbRandom.addActionListener(new java.awt.event.ActionListener()
+        _rbRandom.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onUnsortedOptionSelected(evt);
+                onUnsortedOptionSelected();
             }
         });
         jPanel1.add(_rbRandom);
 
         buttonGroup1.add(_rbReverse);
         _rbReverse.setText("Reversed");
-        _rbReverse.addActionListener(new java.awt.event.ActionListener()
+        _rbReverse.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onUnsortedOptionSelected(evt);
+                onUnsortedOptionSelected();
             }
         });
         jPanel1.add(_rbReverse);
 
         buttonGroup1.add(_rbFilename);
         _rbFilename.setText("By Filename");
-        _rbFilename.addActionListener(new java.awt.event.ActionListener()
+        _rbFilename.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onSortedOptionSelected(evt);
+                onSortedOptionSelected();
             }
         });
         jPanel1.add(_rbFilename);
 
         buttonGroup1.add(_rbPath);
         _rbPath.setText("By Location");
-        _rbPath.addActionListener(new java.awt.event.ActionListener()
+        _rbPath.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onSortedOptionSelected(evt);
+                onSortedOptionSelected();
             }
         });
         jPanel1.add(_rbPath);
 
         buttonGroup1.add(_rbStatus);
         _rbStatus.setText("By Status");
-        _rbStatus.addActionListener(new java.awt.event.ActionListener()
+        _rbStatus.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onSortedOptionSelected(evt);
+                onSortedOptionSelected();
             }
         });
         jPanel1.add(_rbStatus);
@@ -162,67 +177,67 @@ public class ReorderPlaylistDialog extends javax.swing.JDialog
         _chkDescending.setEnabled(false);
         jPanel1.add(_chkDescending);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanel1, BorderLayout.CENTER);
 
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel2.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         jButton1.setText("Proceed");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        jButton1.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onBtnOkActionPerformed(evt);
+                onBtnOkActionPerformed();
             }
         });
         jPanel2.add(jButton1);
 
         jButton2.setText("Cancel");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
+        jButton2.addActionListener(new ActionListener()
         {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
+            @Override public void actionPerformed(ActionEvent evt)
             {
-                onBtnCancelActionPerformed(evt);
+                onBtnCancelActionPerformed();
             }
         });
         jPanel2.add(jButton2);
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanel2, BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-  private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
+  private void onBtnCancelActionPerformed()//GEN-FIRST:event_onBtnCancelActionPerformed
   {//GEN-HEADEREND:event_onBtnCancelActionPerformed
     _wasCancelled = true;
     setVisible(false);
   }//GEN-LAST:event_onBtnCancelActionPerformed
 
-  private void onBtnOkActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnOkActionPerformed
+  private void onBtnOkActionPerformed()//GEN-FIRST:event_onBtnOkActionPerformed
   {//GEN-HEADEREND:event_onBtnOkActionPerformed
     setVisible(false);
   }//GEN-LAST:event_onBtnOkActionPerformed
 
-  private void onUnsortedOptionSelected(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onUnsortedOptionSelected
+  private void onUnsortedOptionSelected()//GEN-FIRST:event_onUnsortedOptionSelected
   {//GEN-HEADEREND:event_onUnsortedOptionSelected
     _chkDescending.setEnabled(false);
   }//GEN-LAST:event_onUnsortedOptionSelected
 
-  private void onSortedOptionSelected(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onSortedOptionSelected
+  private void onSortedOptionSelected()//GEN-FIRST:event_onSortedOptionSelected
   {//GEN-HEADEREND:event_onSortedOptionSelected
     _chkDescending.setEnabled(true);
   }//GEN-LAST:event_onSortedOptionSelected
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JCheckBox _chkDescending;
-  private javax.swing.JRadioButton _rbFilename;
-  private javax.swing.JRadioButton _rbPath;
-  private javax.swing.JRadioButton _rbRandom;
-  private javax.swing.JRadioButton _rbReverse;
-  private javax.swing.JRadioButton _rbStatus;
-  private javax.swing.ButtonGroup buttonGroup1;
-  private javax.swing.JButton jButton1;
-  private javax.swing.JButton jButton2;
-  private javax.swing.JPanel jPanel1;
-  private javax.swing.JPanel jPanel2;
+  private JCheckBox _chkDescending;
+  private JRadioButton _rbFilename;
+  private JRadioButton _rbPath;
+  private JRadioButton _rbRandom;
+  private JRadioButton _rbReverse;
+  private JRadioButton _rbStatus;
+  private ButtonGroup buttonGroup1;
+  private JButton jButton1;
+  private JButton jButton2;
+  private JPanel jPanel1;
+  private JPanel jPanel2;
   // End of variables declaration//GEN-END:variables
 }

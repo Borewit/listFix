@@ -38,10 +38,7 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
     return config;
   }
 
-  private void clearMediaLibraryDirectoryList()
-  {
-    this.jsonPojo.getNestedDirectories().clear();
-  }
+  
 
   public void removeMediaDir(String dir) throws MediaDirNotFoundException
   {
@@ -82,7 +79,7 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
   }
   static void normalizeFileSetToUNC(Set<String> paths)
   {
-    Collection<String> iterator = new LinkedList<>(paths);
+    Collection<String> iterator = new ArrayList<>(paths);
     for (String path : iterator) {
       UNCFile file = new UNCFile(path);
       if (file.onNetworkDrive()) {

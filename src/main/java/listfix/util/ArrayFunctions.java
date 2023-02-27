@@ -19,9 +19,9 @@ public class ArrayFunctions
 {
   /**
    *
-   * @param array1
-   * @param constant
-   * @return
+   * 
+   * 
+   * 
    */
   public static float[] multByConstant(int[] array1, float constant)
   {
@@ -35,9 +35,9 @@ public class ArrayFunctions
 
   /**
    *
-   * @param array1
-   * @param constant
-   * @return
+   * 
+   * 
+   * 
    */
   public static float[] multByConstant(float[] array1, int constant)
   {
@@ -51,10 +51,10 @@ public class ArrayFunctions
 
   /**
    *
-   * @param array1
-   * @param array2
-   * @return
-   * @throws Exception
+   * 
+   * 
+   * 
+   * 
    */
   public static float[] addTwoArrays(float[] array1, float[] array2) throws Exception
   {
@@ -75,10 +75,10 @@ public class ArrayFunctions
 
   /**
    *
-   * @param array1
-   * @param array2
-   * @return
-   * @throws Exception
+   * 
+   * 
+   * 
+   * 
    */
   public static int[] addTwoArrays(int[] array1, int[] array2) throws Exception
   {
@@ -99,9 +99,9 @@ public class ArrayFunctions
 
   /**
    *
-   * @param array1
-   * @param value
-   * @return
+   * 
+   * 
+   * 
    */
   public static int[] copyArrayAddOneValue(int[] array1, int value)
   {
@@ -113,9 +113,9 @@ public class ArrayFunctions
 
   /**
    *
-   * @param array1
-   * @param value
-   * @return
+   * 
+   * 
+   * 
    */
   public static String[] copyArrayAddOneValue(String[] array1, String value)
   {
@@ -127,9 +127,9 @@ public class ArrayFunctions
 
   /**
    *
-   * @param array1
-   * @param location
-   * @return
+   * 
+   * 
+   * 
    */
   public static String[] removeItem(String[] array1, int location)
   {
@@ -144,9 +144,9 @@ public class ArrayFunctions
 
   /**
    *
-   * @param a
-   * @param b
-   * @return
+   * 
+   * 
+   * 
    */
   public static String[] mergeArray(String[] a, String[] b)
   {
@@ -162,10 +162,10 @@ public class ArrayFunctions
 
   /**
    *
-   * @param a
-   * @param b
-   * @param ignoreCase
-   * @return
+   * 
+   * 
+   * 
+   * 
    */
   public static boolean containsStringPrefixingAnotherString(String[] a, String b, boolean ignoreCase)
   {
@@ -186,10 +186,10 @@ public class ArrayFunctions
 
   /**
    *
-   * @param a
-   * @param b
-   * @param ignoreCase
-   * @return
+   * 
+   * 
+   * 
+   * 
    */
   public static boolean containsStringPrefixingAnotherString(List<String> a, String b, boolean ignoreCase)
   {
@@ -224,8 +224,8 @@ public class ArrayFunctions
 
   /**
    *
-   * @param v
-   * @return
+   * 
+   * 
    */
   public static String[] convertVectorToStringArray(List<Object> v)
   {
@@ -240,8 +240,8 @@ public class ArrayFunctions
 
   /**
    *
-   * @param list
-   * @return
+   * 
+   * 
    */
   public static int[] integerListToArray(List<Integer> list)
   {

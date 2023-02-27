@@ -18,8 +18,8 @@ public class StringExtensions
 {
   /**
    *
-   * @param inputString
-   * @return
+   * 
+   * 
    */
   public static List<String> splitCamelCase(String inputString)
   {

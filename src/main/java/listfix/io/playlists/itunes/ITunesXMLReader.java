@@ -95,7 +95,7 @@ public class ITunesXMLReader extends PlaylistReader
       else
       {
         // result.setTrackId(track.getTrackId());
-        return new ITunesFilePlaylistEntry(Path.of((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistPath, track);
+        return new ITunesFilePlaylistEntry(Path.of( new URI(track.getLocation()).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistPath, track);
       }
     }
     catch (URISyntaxException ex)
@@ -106,7 +106,8 @@ public class ITunesXMLReader extends PlaylistReader
   }
 
   /**
-   * @return the _library
+   *Returns the _library.
+ 
    */
   public ITunesMediaLibrary getLibrary()
   {

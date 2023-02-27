@@ -2,40 +2,13 @@
 
 package listfix.view.controls;
 
-import listfix.config.IMediaLibrary;
-import listfix.io.*;
-import listfix.io.filters.AudioFileFilter;
-import listfix.model.BatchMatchItem;
-import listfix.model.EditFilenameResult;
-import listfix.model.PlaylistEntryList;
-import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.*;
-import listfix.util.ArrayFunctions;
-import listfix.util.ExStack;
-
-import listfix.view.IListFixGui;
-import listfix.view.dialogs.*;
-import listfix.view.support.IPlaylistModifiedListener;
-import listfix.view.support.ImageIcons;
-import listfix.view.support.ProgressWorker;
-import listfix.view.support.ZebraJTable;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -48,21 +21,48 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.table.*;
+import listfix.config.IMediaLibrary;
+import listfix.io.*;
+import listfix.io.filters.AudioFileFilter;
+import listfix.model.BatchMatchItem;
+import listfix.model.EditFilenameResult;
+import listfix.model.PlaylistEntryList;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.*;
+import listfix.util.ArrayFunctions;
+import listfix.util.ExStack;
+import listfix.view.IListFixGui;
+import listfix.view.dialogs.*;
+import listfix.view.support.IPlaylistModifiedListener;
+import listfix.view.support.ImageIcons;
+import listfix.view.support.ProgressWorker;
+import listfix.view.support.ZebraJTable;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 /**
  * @author jcaron
  */
-public class PlaylistEditCtrl extends javax.swing.JPanel
+public class PlaylistEditCtrl extends JPanel
 {
   private static final Logger _logger = LogManager.getLogger(PlaylistEditCtrl.class);
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
   private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
-  private static final DataFlavor _playlistFlavor = new DataFlavor(Playlist.class, "Playlist");
+  
   private static final Marker markerPlaylistControl = MarkerManager.getMarker("PlaylistCtrl");
   private static final Marker markerRepair = MarkerManager.getMarker("PlaylistCtrl-Repair").setParents(markerPlaylistControl);
   private static final Marker markerRepairWorker = MarkerManager.getMarker("PlaylistCtrl-Repair-Worker").setParents(markerRepair);
@@ -284,7 +284,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     boolean isDescending = false;
     if (!_isSortedByFileIx)
     {
-      RowSorter<? extends javax.swing.table.TableModel> sorter = _uiTable.getRowSorter();
+      RowSorter<? extends TableModel> sorter = _uiTable.getRowSorter();
       List<? extends RowSorter.SortKey> keys = sorter.getSortKeys();
       if (keys.size() > 0)
       {
@@ -642,42 +642,42 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private void initComponents()
   {
 
-    _playlistEntryRightClickMenu = new javax.swing.JPopupMenu();
-    _miEditFilename = new javax.swing.JMenuItem();
-    _miOpenFileLocation = new javax.swing.JMenuItem();
-    _miReplace = new javax.swing.JMenuItem();
+    _playlistEntryRightClickMenu = new JPopupMenu();
+    _miEditFilename = new JMenuItem();
+    _miOpenFileLocation = new JMenuItem();
+    _miReplace = new JMenuItem();
     jSeparator3 = new javax.swing.JPopupMenu.Separator();
-    _miFindClosest = new javax.swing.JMenuItem();
+    _miFindClosest = new JMenuItem();
     jSeparator4 = new javax.swing.JPopupMenu.Separator();
-    _miRemoveDups = new javax.swing.JMenuItem();
-    _miRemoveMissing = new javax.swing.JMenuItem();
-    _miCopySelectedFiles = new javax.swing.JMenuItem();
-    _miNewPlaylistFromSelected = new javax.swing.JMenuItem();
-    _uiToolbar = new javax.swing.JToolBar();
-    _btnSave = new javax.swing.JButton();
-    _btnReload = new javax.swing.JButton();
-    _btnAdd = new javax.swing.JButton();
-    _btnDelete = new javax.swing.JButton();
+    _miRemoveDups = new JMenuItem();
+    _miRemoveMissing = new JMenuItem();
+    _miCopySelectedFiles = new JMenuItem();
+    _miNewPlaylistFromSelected = new JMenuItem();
+    _uiToolbar = new JToolBar();
+    _btnSave = new JButton();
+    _btnReload = new JButton();
+    _btnAdd = new JButton();
+    _btnDelete = new JButton();
     jSeparator1 = new javax.swing.JToolBar.Separator();
-    _btnUp = new javax.swing.JButton();
-    _btnDown = new javax.swing.JButton();
-    _btnInvert = new javax.swing.JButton();
-    _btnReorder = new javax.swing.JButton();
+    _btnUp = new JButton();
+    _btnDown = new JButton();
+    _btnInvert = new JButton();
+    _btnReorder = new JButton();
     jSeparator2 = new javax.swing.JToolBar.Separator();
-    _btnMagicFix = new javax.swing.JButton();
-    _btnLocate = new javax.swing.JButton();
-    _btnPlay = new javax.swing.JButton();
+    _btnMagicFix = new JButton();
+    _btnLocate = new JButton();
+    _btnPlay = new JButton();
     jSeparator5 = new javax.swing.JToolBar.Separator();
-    _btnPrevMissing = new javax.swing.JButton();
-    _btnNextMissing = new javax.swing.JButton();
-    _uiTableScrollPane = new javax.swing.JScrollPane();
+    _btnPrevMissing = new JButton();
+    _btnNextMissing = new JButton();
+    _uiTableScrollPane = new JScrollPane();
     _uiTable = createTable();
 
     _miEditFilename.setText("Edit Filename");
-    _miEditFilename.addActionListener(evt -> onMenuEditFilenameActionPerformed(evt));
+    _miEditFilename.addActionListener(evt -> onMenuEditFilenameActionPerformed());
     _playlistEntryRightClickMenu.add(_miEditFilename);
 
-    _miOpenFileLocation = new javax.swing.JMenuItem();
+    _miOpenFileLocation = new JMenuItem();
     _miOpenFileLocation.setText(txtOpenFileLocationSingular);
     _miOpenFileLocation.addActionListener(evt -> {
       try
@@ -693,326 +693,326 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _playlistEntryRightClickMenu.add(_miOpenFileLocation);
 
     _miReplace.setText("Replace Selected Entry");
-    _miReplace.addActionListener(evt -> onMenuReplaceSelectedEntry(evt));
+    _miReplace.addActionListener(evt -> onMenuReplaceSelectedEntry());
     _playlistEntryRightClickMenu.add(_miReplace);
     _playlistEntryRightClickMenu.add(jSeparator3);
 
     _miFindClosest.setText("Find Closest Matches");
-    _miFindClosest.addActionListener(evt -> onMenuFindClosestActionPerformed(evt));
+    _miFindClosest.addActionListener(evt -> onMenuFindClosestActionPerformed());
     _playlistEntryRightClickMenu.add(_miFindClosest);
     _playlistEntryRightClickMenu.add(jSeparator4);
 
     _miRemoveDups.setText("Remove Duplicates");
-    _miRemoveDups.addActionListener(evt -> onMenuRemoveDuplicatesActionPerformed(evt));
+    _miRemoveDups.addActionListener(evt -> onMenuRemoveDuplicatesActionPerformed());
     _playlistEntryRightClickMenu.add(_miRemoveDups);
 
     _miRemoveMissing.setText("Remove Missing");
-    _miRemoveMissing.addActionListener(evt -> onMenuRemoveMissingActionPerformed(evt));
+    _miRemoveMissing.addActionListener(evt -> onMenuRemoveMissingActionPerformed());
     _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
     _miCopySelectedFiles.setText("Copy Selected Items To...");
     _miCopySelectedFiles.setToolTipText("");
-    _miCopySelectedFiles.addActionListener(evt -> _miCopySelectedFilesActionPerformed(evt));
+    _miCopySelectedFiles.addActionListener(evt -> _miCopySelectedFilesActionPerformed());
     _playlistEntryRightClickMenu.add(_miCopySelectedFiles);
 
     _miNewPlaylistFromSelected.setText("Create New Playlist with Selected Items...");
-    _miNewPlaylistFromSelected.addActionListener(evt -> _miNewPlaylistFromSelectedActionPerformed(evt));
+    _miNewPlaylistFromSelected.addActionListener(evt -> _miNewPlaylistFromSelectedActionPerformed());
     _playlistEntryRightClickMenu.add(_miNewPlaylistFromSelected);
 
-    setLayout(new java.awt.BorderLayout());
+    setLayout(new BorderLayout());
 
     _uiToolbar.setFloatable(false);
     _uiToolbar.setRollover(true);
 
-    _btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
+    _btnSave.setIcon(new ImageIcon(getClass().getResource("/images/save.gif"))); // NOI18N
     _btnSave.setToolTipText("Save");
     _btnSave.setEnabled(_playlist != null);
     _btnSave.setFocusable(false);
-    _btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnSave.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnSave.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnSave.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnSave.addActionListener(evt -> onBtnSaveActionPerformed(evt));
+    _btnSave.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnSave.setMaximumSize(new Dimension(31, 31));
+    _btnSave.setMinimumSize(new Dimension(31, 31));
+    _btnSave.setPreferredSize(new Dimension(31, 31));
+    _btnSave.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnSave.addActionListener(evt -> onBtnSaveActionPerformed());
     _uiToolbar.add(_btnSave);
 
-    _btnReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
+    _btnReload.setIcon(new ImageIcon(getClass().getResource("/images/gtk-refresh.png"))); // NOI18N
     _btnReload.setToolTipText("Reload");
     _btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
     _btnReload.setFocusable(false);
-    _btnReload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnReload.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnReload.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnReload.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnReload.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    _btnReload.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnReload.setMaximumSize(new Dimension(31, 31));
+    _btnReload.setMinimumSize(new Dimension(31, 31));
+    _btnReload.setPreferredSize(new Dimension(31, 31));
+    _btnReload.setVerticalTextPosition(SwingConstants.BOTTOM);
     _btnReload.addMouseListener(new MouseAdapter()
     {
-      public void mouseClicked(java.awt.event.MouseEvent evt)
+      @Override public void mouseClicked(MouseEvent evt)
       {
-        _btnReloadMouseClicked(evt);
+        _btnReloadMouseClicked();
       }
     });
     _uiToolbar.add(_btnReload);
 
-    _btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-add.gif"))); // NOI18N
+    _btnAdd.setIcon(new ImageIcon(getClass().getResource("/images/edit-add.gif"))); // NOI18N
     _btnAdd.setToolTipText("Append/Insert");
     _btnAdd.setEnabled(false);
     _btnAdd.setFocusable(false);
-    _btnAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnAdd.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnAdd.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnAdd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnAdd.addActionListener(new java.awt.event.ActionListener()
+    _btnAdd.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnAdd.setMaximumSize(new Dimension(31, 31));
+    _btnAdd.setPreferredSize(new Dimension(31, 31));
+    _btnAdd.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnAdd.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        onBtnAddActionPerformed(evt);
+        onBtnAddActionPerformed();
       }
     });
     _uiToolbar.add(_btnAdd);
 
-    _btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-delete.gif"))); // NOI18N
+    _btnDelete.setIcon(new ImageIcon(getClass().getResource("/images/edit-delete.gif"))); // NOI18N
     _btnDelete.setToolTipText("Delete");
     _btnDelete.setEnabled(false);
     _btnDelete.setFocusable(false);
-    _btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnDelete.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnDelete.addActionListener(new java.awt.event.ActionListener()
+    _btnDelete.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnDelete.setMaximumSize(new Dimension(31, 31));
+    _btnDelete.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnDelete.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        onBtnDeleteActionPerformed(evt);
+        onBtnDeleteActionPerformed();
       }
     });
     _uiToolbar.add(_btnDelete);
     _uiToolbar.add(jSeparator1);
 
-    _btnUp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow-up.gif"))); // NOI18N
+    _btnUp.setIcon(new ImageIcon(getClass().getResource("/images/arrow-up.gif"))); // NOI18N
     _btnUp.setToolTipText("Move Up");
     _btnUp.setEnabled(false);
     _btnUp.setFocusable(false);
-    _btnUp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnUp.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnUp.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnUp.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnUp.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnUp.addActionListener(new java.awt.event.ActionListener()
+    _btnUp.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnUp.setMaximumSize(new Dimension(31, 31));
+    _btnUp.setMinimumSize(new Dimension(31, 31));
+    _btnUp.setPreferredSize(new Dimension(31, 31));
+    _btnUp.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnUp.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        onBtnUpActionPerformed(evt);
+        onBtnUpActionPerformed();
       }
     });
     _uiToolbar.add(_btnUp);
 
-    _btnDown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/arrow_down.gif"))); // NOI18N
+    _btnDown.setIcon(new ImageIcon(getClass().getResource("/images/arrow_down.gif"))); // NOI18N
     _btnDown.setToolTipText("Move Down");
     _btnDown.setEnabled(false);
     _btnDown.setFocusable(false);
-    _btnDown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnDown.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnDown.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnDown.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnDown.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnDown.addActionListener(new java.awt.event.ActionListener()
+    _btnDown.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnDown.setMaximumSize(new Dimension(31, 31));
+    _btnDown.setMinimumSize(new Dimension(31, 31));
+    _btnDown.setPreferredSize(new Dimension(31, 31));
+    _btnDown.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnDown.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        onBtnDownActionPerformed(evt);
+        onBtnDownActionPerformed();
       }
     });
     _uiToolbar.add(_btnDown);
 
-    _btnInvert.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/invert.png"))); // NOI18N
+    _btnInvert.setIcon(new ImageIcon(getClass().getResource("/images/invert.png"))); // NOI18N
     _btnInvert.setToolTipText("Inverts the current selection");
     _btnInvert.setEnabled(false);
     _btnInvert.setFocusable(false);
-    _btnInvert.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnInvert.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnInvert.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnInvert.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnInvert.addActionListener(new java.awt.event.ActionListener()
+    _btnInvert.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnInvert.setMaximumSize(new Dimension(31, 31));
+    _btnInvert.setMinimumSize(new Dimension(31, 31));
+    _btnInvert.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnInvert.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        _btnInvertActionPerformed(evt);
+        _btnInvertActionPerformed();
       }
     });
     _uiToolbar.add(_btnInvert);
 
-    _btnReorder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reorder.png"))); // NOI18N
+    _btnReorder.setIcon(new ImageIcon(getClass().getResource("/images/reorder.png"))); // NOI18N
     _btnReorder.setToolTipText("Change Playlist Order");
     _btnReorder.setEnabled(false);
     _btnReorder.setFocusable(false);
-    _btnReorder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnReorder.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnReorder.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnReorder.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnReorder.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnReorder.addActionListener(new java.awt.event.ActionListener()
+    _btnReorder.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnReorder.setMaximumSize(new Dimension(31, 31));
+    _btnReorder.setMinimumSize(new Dimension(31, 31));
+    _btnReorder.setPreferredSize(new Dimension(31, 31));
+    _btnReorder.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnReorder.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        onBtnReorderActionPerformed(evt);
+        onBtnReorderActionPerformed();
       }
     });
     _uiToolbar.add(_btnReorder);
     _uiToolbar.add(jSeparator2);
 
-    _btnMagicFix.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magic-fix.png"))); // NOI18N
+    _btnMagicFix.setIcon(new ImageIcon(getClass().getResource("/images/magic-fix.png"))); // NOI18N
     _btnMagicFix.setToolTipText("Fix Everything");
     _btnMagicFix.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
     _btnMagicFix.setFocusable(false);
-    _btnMagicFix.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnMagicFix.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnMagicFix.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnMagicFix.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnMagicFix.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnMagicFix.addActionListener(evt -> _btnMagicFixonBtnLocateActionPerformed(evt));
+    _btnMagicFix.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnMagicFix.setMaximumSize(new Dimension(31, 31));
+    _btnMagicFix.setMinimumSize(new Dimension(31, 31));
+    _btnMagicFix.setPreferredSize(new Dimension(31, 31));
+    _btnMagicFix.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnMagicFix.addActionListener(evt -> _btnMagicFixonBtnLocateActionPerformed());
     _uiToolbar.add(_btnMagicFix);
 
-    _btnLocate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-find.gif"))); // NOI18N
+    _btnLocate.setIcon(new ImageIcon(getClass().getResource("/images/edit-find.gif"))); // NOI18N
     _btnLocate.setToolTipText("Find Exact Matches");
     _btnLocate.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnLocate.setFocusable(false);
-    _btnLocate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnLocate.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnLocate.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnLocate.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnLocate.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnLocate.addActionListener(evt -> onBtnLocateActionPerformed(evt));
+    _btnLocate.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnLocate.setMaximumSize(new Dimension(31, 31));
+    _btnLocate.setMinimumSize(new Dimension(31, 31));
+    _btnLocate.setPreferredSize(new Dimension(31, 31));
+    _btnLocate.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnLocate.addActionListener(evt -> onBtnLocateActionPerformed());
     _uiToolbar.add(_btnLocate);
 
-    _btnPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play.png"))); // NOI18N
+    _btnPlay.setIcon(new ImageIcon(getClass().getResource("/images/play.png"))); // NOI18N
     _btnPlay.setToolTipText("Play Selected");
     _btnPlay.setEnabled(_playlist != null);
     _btnPlay.setFocusable(false);
-    _btnPlay.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnPlay.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnPlay.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnPlay.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnPlay.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    _btnPlay.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnPlay.setMaximumSize(new Dimension(31, 31));
+    _btnPlay.setMinimumSize(new Dimension(31, 31));
+    _btnPlay.setPreferredSize(new Dimension(31, 31));
+    _btnPlay.setVerticalTextPosition(SwingConstants.BOTTOM);
     _btnPlay.addActionListener(this :: onBtnPlayActionPerformed);
     _uiToolbar.add(_btnPlay);
     _uiToolbar.add(jSeparator5);
 
-    _btnPrevMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/prev.png"))); // NOI18N
+    _btnPrevMissing.setIcon(new ImageIcon(getClass().getResource("/images/prev.png"))); // NOI18N
     _btnPrevMissing.setToolTipText("Previous Missing Entry");
     _btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
     _btnPrevMissing.setFocusable(false);
-    _btnPrevMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnPrevMissing.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnPrevMissing.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnPrevMissing.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnPrevMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnPrevMissing.addActionListener(evt -> _btnPrevMissingActionPerformed(evt));
+    _btnPrevMissing.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnPrevMissing.setMaximumSize(new Dimension(31, 31));
+    _btnPrevMissing.setMinimumSize(new Dimension(31, 31));
+    _btnPrevMissing.setPreferredSize(new Dimension(31, 31));
+    _btnPrevMissing.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnPrevMissing.addActionListener(evt -> _btnPrevMissingActionPerformed());
     _uiToolbar.add(_btnPrevMissing);
 
-    _btnNextMissing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/next.png"))); // NOI18N
+    _btnNextMissing.setIcon(new ImageIcon(getClass().getResource("/images/next.png"))); // NOI18N
     _btnNextMissing.setToolTipText("Next Missing Entry");
     _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
     _btnNextMissing.setFocusable(false);
-    _btnNextMissing.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    _btnNextMissing.setMaximumSize(new java.awt.Dimension(31, 31));
-    _btnNextMissing.setMinimumSize(new java.awt.Dimension(31, 31));
-    _btnNextMissing.setPreferredSize(new java.awt.Dimension(31, 31));
-    _btnNextMissing.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    _btnNextMissing.addActionListener(evt -> _btnNextMissingActionPerformed(evt));
+    _btnNextMissing.setHorizontalTextPosition(SwingConstants.CENTER);
+    _btnNextMissing.setMaximumSize(new Dimension(31, 31));
+    _btnNextMissing.setMinimumSize(new Dimension(31, 31));
+    _btnNextMissing.setPreferredSize(new Dimension(31, 31));
+    _btnNextMissing.setVerticalTextPosition(SwingConstants.BOTTOM);
+    _btnNextMissing.addActionListener(evt -> _btnNextMissingActionPerformed());
     _uiToolbar.add(_btnNextMissing);
 
-    add(_uiToolbar, java.awt.BorderLayout.PAGE_START);
+    add(_uiToolbar, BorderLayout.PAGE_START);
 
-    _uiTableScrollPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+    _uiTableScrollPane.setBorder(BorderFactory.createEtchedBorder());
 
     _uiTable.setAutoCreateRowSorter(true);
     _uiTable.setModel(new PlaylistTableModel());
     _uiTable.setDragEnabled(true);
     _uiTable.setFillsViewportHeight(true);
-    _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
-    _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
+    _uiTable.setGridColor(new Color(153, 153, 153));
+    _uiTable.setIntercellSpacing(new Dimension(0, 0));
     _uiTable.setRowHeight(20);
     _uiTable.getTableHeader().setReorderingAllowed(false);
     _uiTable.addMouseListener(new MouseAdapter()
     {
-      public void mousePressed(java.awt.event.MouseEvent evt)
+      @Override public void mousePressed(MouseEvent evt)
       {
         _uiTableMousePressed(evt);
       }
     });
-    _uiTable.addKeyListener(new java.awt.event.KeyAdapter()
+    _uiTable.addKeyListener(new KeyAdapter()
     {
-      public void keyPressed(java.awt.event.KeyEvent evt)
+      @Override public void keyPressed(KeyEvent evt)
       {
         _uiTableKeyPressed(evt);
       }
     });
     _uiTableScrollPane.setViewportView(_uiTable);
 
-    add(_uiTableScrollPane, java.awt.BorderLayout.CENTER);
+    add(_uiTableScrollPane, BorderLayout.CENTER);
   }// </editor-fold>//GEN-END:initComponents
 
-  private void onBtnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnSaveActionPerformed
+  private void onBtnSaveActionPerformed()//GEN-FIRST:event_onBtnSaveActionPerformed
   {//GEN-HEADEREND:event_onBtnSaveActionPerformed
     savePlaylist();
   }//GEN-LAST:event_onBtnSaveActionPerformed
 
-  private void onBtnAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnAddActionPerformed
+  private void onBtnAddActionPerformed()//GEN-FIRST:event_onBtnAddActionPerformed
   {//GEN-HEADEREND:event_onBtnAddActionPerformed
     addItems();
   }//GEN-LAST:event_onBtnAddActionPerformed
 
-  private void onBtnDeleteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnDeleteActionPerformed
+  private void onBtnDeleteActionPerformed()//GEN-FIRST:event_onBtnDeleteActionPerformed
   {//GEN-HEADEREND:event_onBtnDeleteActionPerformed
     deleteSelectedRows();
   }//GEN-LAST:event_onBtnDeleteActionPerformed
 
-  private void onBtnUpActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnUpActionPerformed
+  private void onBtnUpActionPerformed()//GEN-FIRST:event_onBtnUpActionPerformed
   {//GEN-HEADEREND:event_onBtnUpActionPerformed
     moveSelectedRowsUp();
   }//GEN-LAST:event_onBtnUpActionPerformed
 
-  private void onBtnDownActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnDownActionPerformed
+  private void onBtnDownActionPerformed()//GEN-FIRST:event_onBtnDownActionPerformed
   {//GEN-HEADEREND:event_onBtnDownActionPerformed
     moveSelectedRowsDown();
   }//GEN-LAST:event_onBtnDownActionPerformed
 
-  private void onBtnLocateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnLocateActionPerformed
+  private void onBtnLocateActionPerformed()//GEN-FIRST:event_onBtnLocateActionPerformed
   {//GEN-HEADEREND:event_onBtnLocateActionPerformed
     locateMissingFiles();
   }//GEN-LAST:event_onBtnLocateActionPerformed
 
-  private void onBtnReorderActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnReorderActionPerformed
+  private void onBtnReorderActionPerformed()//GEN-FIRST:event_onBtnReorderActionPerformed
   {//GEN-HEADEREND:event_onBtnReorderActionPerformed
     reorderList();
   }//GEN-LAST:event_onBtnReorderActionPerformed
 
-  private void onMenuEditFilenameActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuEditFilenameActionPerformed
+  private void onMenuEditFilenameActionPerformed()//GEN-FIRST:event_onMenuEditFilenameActionPerformed
   {//GEN-HEADEREND:event_onMenuEditFilenameActionPerformed
     editFilenames();
   }//GEN-LAST:event_onMenuEditFilenameActionPerformed
 
-  private void onMenuFindClosestActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuFindClosestActionPerformed
+  private void onMenuFindClosestActionPerformed()//GEN-FIRST:event_onMenuFindClosestActionPerformed
   {//GEN-HEADEREND:event_onMenuFindClosestActionPerformed
     findClosestMatches();
   }//GEN-LAST:event_onMenuFindClosestActionPerformed
 
-  private void onMenuReplaceSelectedEntry(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuReplaceSelectedEntry
+  private void onMenuReplaceSelectedEntry()//GEN-FIRST:event_onMenuReplaceSelectedEntry
   {//GEN-HEADEREND:event_onMenuReplaceSelectedEntry
     replaceSelectedEntries();
   }//GEN-LAST:event_onMenuReplaceSelectedEntry
 
-  private void onMenuRemoveDuplicatesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuRemoveDuplicatesActionPerformed
+  private void onMenuRemoveDuplicatesActionPerformed()//GEN-FIRST:event_onMenuRemoveDuplicatesActionPerformed
   {//GEN-HEADEREND:event_onMenuRemoveDuplicatesActionPerformed
     removeDuplicates();
   }//GEN-LAST:event_onMenuRemoveDuplicatesActionPerformed
 
-  private void onMenuRemoveMissingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onMenuRemoveMissingActionPerformed
+  private void onMenuRemoveMissingActionPerformed()//GEN-FIRST:event_onMenuRemoveMissingActionPerformed
   {//GEN-HEADEREND:event_onMenuRemoveMissingActionPerformed
     removeMissing();
   }//GEN-LAST:event_onMenuRemoveMissingActionPerformed
 
-  private void onBtnPlayActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnPlayActionPerformed
+  private void onBtnPlayActionPerformed(ActionEvent evt)//GEN-FIRST:event_onBtnPlayActionPerformed
   {//GEN-HEADEREND:event_onBtnPlayActionPerformed
     if (_uiTable.getSelectedRowCount() > 0)
     {
@@ -1032,7 +1032,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }//GEN-LAST:event_onBtnPlayActionPerformed
 
-  private void _uiTableMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed
+  private void _uiTableMousePressed(MouseEvent evt)//GEN-FIRST:event__uiTableMousePressed
   {//GEN-HEADEREND:event__uiTableMousePressed
     if (SwingUtilities.isLeftMouseButton(evt))
     {
@@ -1052,15 +1052,15 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }//GEN-LAST:event__uiTableMousePressed
 
-  private void _btnReloadMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event__btnReloadMouseClicked
+  private void _btnReloadMouseClicked()//GEN-FIRST:event__btnReloadMouseClicked
   {//GEN-HEADEREND:event__btnReloadMouseClicked
     reloadPlaylist();
   }//GEN-LAST:event__btnReloadMouseClicked
 
   /**
-   * @param table
-   * @param row
-   * @param column
+   * 
+   * 
+   * 
    */
   public void scrollCellToVisible(JTable table, int row, int column)
   {
@@ -1133,7 +1133,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }
 
-  private void _uiTableKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__uiTableKeyPressed
+  private void _uiTableKeyPressed(KeyEvent evt)//GEN-FIRST:event__uiTableKeyPressed
   {//GEN-HEADEREND:event__uiTableKeyPressed
     int keyVal = evt.getKeyCode();
     if (keyVal == KeyEvent.VK_DELETE && _playlist.getType() != PlaylistType.ITUNES)
@@ -1146,13 +1146,13 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }//GEN-LAST:event__uiTableKeyPressed
 
-  private void _btnMagicFixonBtnLocateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnMagicFixonBtnLocateActionPerformed
+  private void _btnMagicFixonBtnLocateActionPerformed()//GEN-FIRST:event__btnMagicFixonBtnLocateActionPerformed
   {//GEN-HEADEREND:event__btnMagicFixonBtnLocateActionPerformed
     locateMissingFiles();
     bulkFindClosestMatches();
   }//GEN-LAST:event__btnMagicFixonBtnLocateActionPerformed
 
-  private void _btnNextMissingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnNextMissingActionPerformed
+  private void _btnNextMissingActionPerformed()//GEN-FIRST:event__btnNextMissingActionPerformed
   {//GEN-HEADEREND:event__btnNextMissingActionPerformed
     if (_playlist.size() > 0)
     {
@@ -1199,7 +1199,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     return !_playlist.get(modelRow).isFound() && !_playlist.get(modelRow).isURL();
   }
 
-  private void _btnPrevMissingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnPrevMissingActionPerformed
+  private void _btnPrevMissingActionPerformed()//GEN-FIRST:event__btnPrevMissingActionPerformed
   {//GEN-HEADEREND:event__btnPrevMissingActionPerformed
     if (_playlist.size() > 0)
     {
@@ -1235,7 +1235,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }//GEN-LAST:event__btnPrevMissingActionPerformed
 
-  private void _btnInvertActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnInvertActionPerformed
+  private void _btnInvertActionPerformed()//GEN-FIRST:event__btnInvertActionPerformed
   {//GEN-HEADEREND:event__btnInvertActionPerformed
     int[] selectedIndexs = _uiTable.getSelectedRows();
     _uiTable.selectAll();
@@ -1253,7 +1253,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }//GEN-LAST:event__btnInvertActionPerformed
 
-  private void _miCopySelectedFilesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miCopySelectedFilesActionPerformed
+  private void _miCopySelectedFilesActionPerformed()//GEN-FIRST:event__miCopySelectedFilesActionPerformed
   {//GEN-HEADEREND:event__miCopySelectedFilesActionPerformed
     int response = _destDirFileChooser.showOpenDialog(getParentFrame());
     if (response == JFileChooser.APPROVE_OPTION)
@@ -1298,7 +1298,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }//GEN-LAST:event__miCopySelectedFilesActionPerformed
 
-  private void _miNewPlaylistFromSelectedActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__miNewPlaylistFromSelectedActionPerformed
+  private void _miNewPlaylistFromSelectedActionPerformed()//GEN-FIRST:event__miNewPlaylistFromSelectedActionPerformed
   {//GEN-HEADEREND:event__miNewPlaylistFromSelectedActionPerformed
 
     List<Integer> rowList = new ArrayList<>();
@@ -1321,31 +1321,31 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   }//GEN-LAST:event__miNewPlaylistFromSelectedActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton _btnAdd;
-  private javax.swing.JButton _btnDelete;
-  private javax.swing.JButton _btnDown;
-  private javax.swing.JButton _btnInvert;
-  private javax.swing.JButton _btnLocate;
-  private javax.swing.JButton _btnMagicFix;
-  private javax.swing.JButton _btnNextMissing;
-  private javax.swing.JButton _btnPlay;
-  private javax.swing.JButton _btnPrevMissing;
-  private javax.swing.JButton _btnReload;
-  private javax.swing.JButton _btnReorder;
-  private javax.swing.JButton _btnSave;
-  private javax.swing.JButton _btnUp;
-  private javax.swing.JMenuItem _miCopySelectedFiles;
-  private javax.swing.JMenuItem _miEditFilename;
-  private javax.swing.JMenuItem _miOpenFileLocation;
-  private javax.swing.JMenuItem _miFindClosest;
-  private javax.swing.JMenuItem _miNewPlaylistFromSelected;
-  private javax.swing.JMenuItem _miRemoveDups;
-  private javax.swing.JMenuItem _miRemoveMissing;
-  private javax.swing.JMenuItem _miReplace;
-  private javax.swing.JPopupMenu _playlistEntryRightClickMenu;
-  private listfix.view.support.ZebraJTable _uiTable;
-  private javax.swing.JScrollPane _uiTableScrollPane;
-  private javax.swing.JToolBar _uiToolbar;
+  private JButton _btnAdd;
+  private JButton _btnDelete;
+  private JButton _btnDown;
+  private JButton _btnInvert;
+  private JButton _btnLocate;
+  private JButton _btnMagicFix;
+  private JButton _btnNextMissing;
+  private JButton _btnPlay;
+  private JButton _btnPrevMissing;
+  private JButton _btnReload;
+  private JButton _btnReorder;
+  private JButton _btnSave;
+  private JButton _btnUp;
+  private JMenuItem _miCopySelectedFiles;
+  private JMenuItem _miEditFilename;
+  private JMenuItem _miOpenFileLocation;
+  private JMenuItem _miFindClosest;
+  private JMenuItem _miNewPlaylistFromSelected;
+  private JMenuItem _miRemoveDups;
+  private JMenuItem _miRemoveMissing;
+  private JMenuItem _miReplace;
+  private JPopupMenu _playlistEntryRightClickMenu;
+  private ZebraJTable _uiTable;
+  private JScrollPane _uiTableScrollPane;
+  private JToolBar _uiToolbar;
   private javax.swing.JToolBar.Separator jSeparator1;
   private javax.swing.JToolBar.Separator jSeparator2;
   private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -1413,10 +1413,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private void resizeAllColumns()
   {
     // resize columns to fit
-    int cwidth = 0;
-    cwidth += _uiTable.autoResizeColumn(1, true);
-    cwidth += _uiTable.autoResizeColumn(2);
-    cwidth += _uiTable.autoResizeColumn(3);
+    
+    _uiTable.autoResizeColumn(1, true);
+    _uiTable.autoResizeColumn(2);
+    _uiTable.autoResizeColumn(3);
     TableColumnModel cm = _uiTable.getColumnModel();
     TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
     Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
@@ -1425,7 +1425,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     col.setMinWidth(width);
     col.setMaxWidth(width);
     col.setPreferredWidth(width);
-    cwidth += width;
+    
   }
 
   private boolean _isSortedByFileIx;
@@ -1660,7 +1660,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               _uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
             }
             else if ((isOverItem && _uiTable.getSelectedRowCount() == 0)
-              || (!_uiTable.isRowSelected(rowIx)))
+              ||  !_uiTable.isRowSelected(rowIx))
             {
               _uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
             }
@@ -2160,7 +2160,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     }
   }
 
-  private class IntRenderer extends DefaultTableCellRenderer
+  private static class IntRenderer extends DefaultTableCellRenderer
   {
     IntRenderer()
     {

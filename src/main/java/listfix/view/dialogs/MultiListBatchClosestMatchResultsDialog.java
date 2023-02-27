@@ -1,5 +1,19 @@
 package listfix.view.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
 import listfix.io.IPlaylistOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
@@ -13,16 +27,10 @@ import listfix.view.support.ProgressWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 /**
  * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
  */
-public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
+public class MultiListBatchClosestMatchResultsDialog extends JDialog
 {
   private BatchRepair _batch;
   private boolean _userCancelled = false;
@@ -34,14 +42,14 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   /**
    * Creates new form MultiListBatchClosestMatchResultsDialog
    */
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, IPlaylistOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(Frame parent, boolean modal, IPlaylistOptions filePathOptions)
   {
     super(parent, modal);
     this.filePathOptions = filePathOptions;
     initComponents();
   }
 
-  public MultiListBatchClosestMatchResultsDialog(java.awt.Frame parent, boolean modal, BatchRepair br, IPlaylistOptions filePathOptions)
+  public MultiListBatchClosestMatchResultsDialog(Frame parent, boolean modal, BatchRepair br, IPlaylistOptions filePathOptions)
   {
     super(parent, br.getDescription(), modal);
     _batch = br;
@@ -153,24 +161,24 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   private void initComponents()
   {
 
-    jSplitPane1 = new javax.swing.JSplitPane();
+    jSplitPane1 = new JSplitPane();
     _pnlResults = new ClosestMatchesSearchScrollableResultsPanel();
     _pnlList = new PlaylistsList(_batch);
-    _pnlBackup = new javax.swing.JPanel();
-    _pnlRight = new javax.swing.JPanel();
-    _btnSave = new javax.swing.JButton();
-    _btnCancel = new javax.swing.JButton();
-    _pnlLeft = new javax.swing.JPanel();
-    _chkBackup = new javax.swing.JCheckBox();
-    _txtBackup = new javax.swing.JTextField();
-    _btnBrowse = new javax.swing.JButton();
+    _pnlBackup = new JPanel();
+    _pnlRight = new JPanel();
+    _btnSave = new JButton();
+    _btnCancel = new JButton();
+    _pnlLeft = new JPanel();
+    _chkBackup = new JCheckBox();
+    _txtBackup = new JTextField();
+    _btnBrowse = new JButton();
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-    addWindowListener(new java.awt.event.WindowAdapter()
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    addWindowListener(new WindowAdapter()
     {
-      public void windowClosing(java.awt.event.WindowEvent evt)
+      @Override public void windowClosing(WindowEvent evt)
       {
-        formWindowClosing(evt);
+        formWindowClosing();
       }
     });
 
@@ -178,70 +186,70 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     jSplitPane1.setRightComponent(_pnlResults);
     jSplitPane1.setLeftComponent(_pnlList);
 
-    getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+    getContentPane().add(jSplitPane1, BorderLayout.CENTER);
 
-    _pnlBackup.setLayout(new java.awt.BorderLayout());
+    _pnlBackup.setLayout(new BorderLayout());
 
     _btnSave.setText("Save All Repairs");
-    _btnSave.addActionListener(new java.awt.event.ActionListener()
+    _btnSave.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        _btnSaveActionPerformed(evt);
+        _btnSaveActionPerformed();
       }
     });
     _pnlRight.add(_btnSave);
 
     _btnCancel.setText("Cancel");
-    _btnCancel.addActionListener(new java.awt.event.ActionListener()
+    _btnCancel.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        _btnCancelActionPerformed(evt);
+        _btnCancelActionPerformed();
       }
     });
     _pnlRight.add(_btnCancel);
 
-    _pnlBackup.add(_pnlRight, java.awt.BorderLayout.EAST);
+    _pnlBackup.add(_pnlRight, BorderLayout.EAST);
 
     _chkBackup.setText("Backup original files to zip file:");
-    _chkBackup.addItemListener(new java.awt.event.ItemListener()
+    _chkBackup.addItemListener(new ItemListener()
     {
-      public void itemStateChanged(java.awt.event.ItemEvent evt)
+      @Override public void itemStateChanged(ItemEvent evt)
       {
-        _chkBackuponChkBackupItemStateChanged(evt);
+        _chkBackuponChkBackupItemStateChanged();
       }
     });
     _pnlLeft.add(_chkBackup);
 
     _txtBackup.setEnabled(false);
-    _txtBackup.setPreferredSize(new java.awt.Dimension(200, 20));
+    _txtBackup.setPreferredSize(new Dimension(200, 20));
     _pnlLeft.add(_txtBackup);
 
     _btnBrowse.setText("...");
     _btnBrowse.setEnabled(false);
-    _btnBrowse.addActionListener(new java.awt.event.ActionListener()
+    _btnBrowse.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        _btnBrowseActionPerformed(evt);
+        _btnBrowseActionPerformed();
       }
     });
     _pnlLeft.add(_btnBrowse);
 
-    _pnlBackup.add(_pnlLeft, java.awt.BorderLayout.WEST);
+    _pnlBackup.add(_pnlLeft, BorderLayout.WEST);
 
-    getContentPane().add(_pnlBackup, java.awt.BorderLayout.SOUTH);
+    getContentPane().add(_pnlBackup, BorderLayout.SOUTH);
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  private void formWindowClosing()//GEN-FIRST:event_formWindowClosing
   {//GEN-HEADEREND:event_formWindowClosing
     _userCancelled = true;
   }//GEN-LAST:event_formWindowClosing
 
-  private void _btnSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnSaveActionPerformed
+  private void _btnSaveActionPerformed()//GEN-FIRST:event__btnSaveActionPerformed
   {//GEN-HEADEREND:event__btnSaveActionPerformed
     _userAccepted = true;
 
@@ -283,13 +291,13 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     setVisible(false);
   }//GEN-LAST:event__btnSaveActionPerformed
 
-  private void _btnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnCancelActionPerformed
+  private void _btnCancelActionPerformed()//GEN-FIRST:event__btnCancelActionPerformed
   {//GEN-HEADEREND:event__btnCancelActionPerformed
     _userCancelled = true;
     setVisible(false);
   }//GEN-LAST:event__btnCancelActionPerformed
 
-  private void _chkBackuponChkBackupItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event__chkBackuponChkBackupItemStateChanged
+  private void _chkBackuponChkBackupItemStateChanged()//GEN-FIRST:event__chkBackuponChkBackupItemStateChanged
   {//GEN-HEADEREND:event__chkBackuponChkBackupItemStateChanged
     boolean isChecked = _chkBackup.isSelected();
     _txtBackup.setEnabled(isChecked);
@@ -301,7 +309,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     }
   }//GEN-LAST:event__chkBackuponChkBackupItemStateChanged
 
-  private void _btnBrowseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__btnBrowseActionPerformed
+  private void _btnBrowseActionPerformed()//GEN-FIRST:event__btnBrowseActionPerformed
   {//GEN-HEADEREND:event__btnBrowseActionPerformed
     JFileChooser dlg = new JFileChooser();
     if (!_txtBackup.getText().isEmpty())
@@ -315,17 +323,17 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   }//GEN-LAST:event__btnBrowseActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton _btnBrowse;
-  private javax.swing.JButton _btnCancel;
-  private javax.swing.JButton _btnSave;
-  private javax.swing.JCheckBox _chkBackup;
-  private javax.swing.JPanel _pnlBackup;
-  private javax.swing.JPanel _pnlLeft;
-  private listfix.view.controls.PlaylistsList _pnlList;
-  private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
-  private javax.swing.JPanel _pnlRight;
-  private javax.swing.JTextField _txtBackup;
-  private javax.swing.JSplitPane jSplitPane1;
+  private JButton _btnBrowse;
+  private JButton _btnCancel;
+  private JButton _btnSave;
+  private JCheckBox _chkBackup;
+  private JPanel _pnlBackup;
+  private JPanel _pnlLeft;
+  private PlaylistsList _pnlList;
+  private ClosestMatchesSearchScrollableResultsPanel _pnlResults;
+  private JPanel _pnlRight;
+  private JTextField _txtBackup;
+  private JSplitPane jSplitPane1;
   // End of variables declaration//GEN-END:variables
 
   /**
@@ -342,7 +350,8 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
   }
 
   /**
-   * @return the _userAccepted
+   *Returns the _userAccepted.
+ 
    */
   public boolean isUserAccepted()
   {

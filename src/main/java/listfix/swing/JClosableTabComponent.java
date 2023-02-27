@@ -16,7 +16,7 @@ import java.awt.event.*;
 public class JClosableTabComponent<G extends JComponent> extends JPanel
 {
 
-  private final Logger logger = LogManager.getLogger(JClosableTabComponent.class);
+  
 
   private final JDocumentTabbedPane<G> pane;
 
@@ -88,7 +88,7 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
       addActionListener(this);
     }
 
-    public void actionPerformed(ActionEvent e)
+    @Override public void actionPerformed(ActionEvent e)
     {
       int i = pane.indexOfTabComponent(JClosableTabComponent.this);
       if (i != -1)
@@ -98,12 +98,12 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
     }
 
     //we don't want to update UI for this button
-    public void updateUI()
+    @Override public void updateUI()
     {
     }
 
     //paint the cross
-    protected void paintComponent(Graphics g)
+    @Override protected void paintComponent(Graphics g)
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D) g.create();
@@ -134,7 +134,7 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
 
   private static final MouseListener buttonMouseListener = new MouseAdapter()
   {
-    public void mouseExited(MouseEvent e)
+    @Override public void mouseExited(MouseEvent e)
     {
       Component component = e.getComponent();
       if (component instanceof AbstractButton)
@@ -144,7 +144,7 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
       }
     }
 
-    public void mouseEntered(MouseEvent e)
+    @Override public void mouseEntered(MouseEvent e)
     {
       Component component = e.getComponent();
       if (component instanceof AbstractButton)

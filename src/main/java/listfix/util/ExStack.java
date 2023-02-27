@@ -11,8 +11,8 @@ public class ExStack
 {
   /**
    *
-   * @param aThrowable
-   * @return
+   * 
+   * 
    */
   public static String toString(Throwable aThrowable)
   {
@@ -24,9 +24,9 @@ public class ExStack
 
   /**
    *
-   * @param message
-   * @param aThrowable
-   * @return
+   * 
+   * 
+   * 
    */
   public static String htmlFormatErrorForUser(String message, Throwable aThrowable)
   {

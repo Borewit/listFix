@@ -8,6 +8,16 @@
 
 package listfix.view.controls;
 
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.playlists.Playlist;
@@ -16,18 +26,8 @@ import listfix.view.support.ZebraJTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
 
-
-public class PlaylistsList extends javax.swing.JPanel
+public class PlaylistsList extends JPanel
 {
   private BatchRepair _batch;
 
@@ -41,7 +41,7 @@ public class PlaylistsList extends javax.swing.JPanel
 
   /**
    *
-   * @param batch
+   * 
    */
   public PlaylistsList(BatchRepair batch)
   {
@@ -98,9 +98,9 @@ public class PlaylistsList extends javax.swing.JPanel
   private void resizeAllColumns()
   {
     // resize columns to fit
-    int cwidth = 0;
-    cwidth += _uiLists.autoResizeColumn(0, true);
-    cwidth += _uiLists.autoResizeColumn(1, false, 160);
+    
+    _uiLists.autoResizeColumn(0, true);
+    _uiLists.autoResizeColumn(1, false, 160);
     TableColumnModel cm = _uiLists.getColumnModel();
     TableCellRenderer renderer = _uiLists.getDefaultRenderer(Integer.class);
     Component comp = renderer.getTableCellRendererComponent(_uiLists, (_uiLists.getRowCount() + 1) * 10, false, false, 0, 0);
@@ -109,12 +109,12 @@ public class PlaylistsList extends javax.swing.JPanel
     col.setMinWidth(width);
     col.setMaxWidth(width);
     col.setPreferredWidth(width);
-    cwidth += width;
+    
   }
 
   /**
    *
-   * @return
+   * 
    */
   public ListSelectionModel getSelectionModel()
   {
@@ -123,7 +123,7 @@ public class PlaylistsList extends javax.swing.JPanel
 
   /**
    *
-   * @return
+   * 
    */
   public int getSelectedModelRow()
   {
@@ -139,62 +139,62 @@ public class PlaylistsList extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
-        jPanel5 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        _labListCount = new javax.swing.JLabel();
-        _uiScrollLists = new javax.swing.JScrollPane();
+        jPanel5 = new JPanel();
+        jLabel2 = new JLabel();
+        _labListCount = new JLabel();
+        _uiScrollLists = new JScrollPane();
         _uiLists = createTable();
 
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new BorderLayout());
 
-        jPanel5.setLayout(new java.awt.GridBagLayout());
+        jPanel5.setLayout(new GridBagLayout());
 
         jLabel2.setText("Playlists");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
+        gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         jPanel5.add(jLabel2, gridBagConstraints);
 
-        _labListCount.setForeground(javax.swing.UIManager.getDefaults().getColor("controlShadow"));
-        _labListCount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        _labListCount.setForeground(UIManager.getDefaults().getColor("controlShadow"));
+        _labListCount.setHorizontalAlignment(SwingConstants.RIGHT);
         _labListCount.setText("0 lists");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.anchor = GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
+        gridBagConstraints.insets = new Insets(5, 0, 5, 5);
         jPanel5.add(_labListCount, gridBagConstraints);
 
-        add(jPanel5, java.awt.BorderLayout.PAGE_START);
+        add(jPanel5, BorderLayout.PAGE_START);
 
-        _uiScrollLists.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        _uiScrollLists.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
         _uiLists.setAutoCreateRowSorter(true);
         _uiLists.setModel(new PlaylistsTableModel(_batch));
-        _uiLists.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        _uiLists.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         _uiLists.setRowHeight(20);
         _uiLists.getTableHeader().setReorderingAllowed(false);
         _uiScrollLists.setViewportView(_uiLists);
 
-        add(_uiScrollLists, java.awt.BorderLayout.CENTER);
+        add(_uiScrollLists, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel _labListCount;
-    private listfix.view.support.ZebraJTable _uiLists;
-    private javax.swing.JScrollPane _uiScrollLists;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel5;
+    private JLabel _labListCount;
+    private ZebraJTable _uiLists;
+    private JScrollPane _uiScrollLists;
+    private JLabel jLabel2;
+    private JPanel jPanel5;
     // End of variables declaration//GEN-END:variables
 
   /**
    *
-   * @param listCountTxt
+   * 
    */
   public void setText(String listCountTxt)
   {
@@ -203,7 +203,7 @@ public class PlaylistsList extends javax.swing.JPanel
 
   /**
    *
-   * @param list
+   * 
    */
   public void playlistModified(Playlist list)
   {
@@ -212,7 +212,7 @@ public class PlaylistsList extends javax.swing.JPanel
     if (selIx >= 0)
     {
       selIx = _uiLists.convertRowIndexToModel(selIx);
-      BatchRepairItem item = _batch.getItem(selIx);
+      
       try
       {
         ((PlaylistsTableModel) _uiLists.getModel()).fireTableDataChanged();

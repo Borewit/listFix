@@ -153,13 +153,7 @@ public class FilePlaylistEntry extends PlaylistEntry
     return isFound() || ArrayFunctions.containsStringPrefixingAnotherString(emptyPaths, this.getTrackFolder(), false);
   }
 
-  private void resetAbsoluteFile()
-  {
-    if (!trackPath.isAbsolute())
-    {
-      this.trackPath = this.getAbsolutePath();
-    }
-  }
+  
 
   public boolean findNewLocationFromFileList(Collection<String> fileList, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
@@ -272,7 +266,7 @@ public class FilePlaylistEntry extends PlaylistEntry
     return !this.trackPath.isAbsolute();
   }
 
-  public String trackPathToString() {
+  @Override public String trackPathToString() {
     return this.trackPath.toString();
   }
 

@@ -18,12 +18,12 @@ public final class DualProgressAdapter<T> implements IDualProgressObserver<T>
 
     IProgressObserver<T> taskObserver = new IProgressObserver<T>()
     {
-      public void reportProgress(int progress)
+      @Override public void reportProgress(int progress)
       {
         _observer.reportTaskProgress(progress, null);
       }
 
-      public void reportProgress(int progress, T state)
+      @Override public void reportProgress(int progress, T state)
       {
         _observer.reportTaskProgress(progress, state);
       }
@@ -38,12 +38,12 @@ public final class DualProgressAdapter<T> implements IDualProgressObserver<T>
 
     IProgressObserver<T> overallObserver = new IProgressObserver<T>()
     {
-      public void reportProgress(int progress)
+      @Override public void reportProgress(int progress)
       {
         _observer.reportOverallProgress(progress, null);
       }
 
-      public void reportProgress(int progress, T state)
+      @Override public void reportProgress(int progress, T state)
       {
         _observer.reportOverallProgress(progress, state);
       }
@@ -57,13 +57,13 @@ public final class DualProgressAdapter<T> implements IDualProgressObserver<T>
     _overall = ProgressAdapter.wrap(overallObserver);
   }
 
-  public void reportTaskProgress(int percentComplete, T state)
+  @Override public void reportTaskProgress(int percentComplete, T state)
   {
     if (_observer != null)
       _observer.reportTaskProgress(percentComplete, state);
   }
 
-  public void reportOverallProgress(int percentComplete, T state)
+  @Override public void reportOverallProgress(int percentComplete, T state)
   {
     if (_observer != null)
       _observer.reportOverallProgress(percentComplete, state);

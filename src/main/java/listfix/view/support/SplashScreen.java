@@ -48,7 +48,7 @@ public class SplashScreen extends JFrame
 
   /**
    *
-   * @param text
+   * 
    */
   public void setStatusBar(String text)
   {

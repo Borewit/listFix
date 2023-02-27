@@ -10,8 +10,8 @@ public class EditFilenameResult
 
   /**
    *
-   * @param a
-   * @param b
+   * 
+   * 
    */
   public EditFilenameResult(int a, String b)
   {
@@ -21,7 +21,7 @@ public class EditFilenameResult
 
   /**
    *
-   * @return
+   * 
    */
   public String getFileName()
   {
@@ -30,7 +30,7 @@ public class EditFilenameResult
 
   /**
    *
-   * @return
+   * 
    */
   public int getResultCode()
   {

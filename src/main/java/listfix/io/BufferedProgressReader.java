@@ -34,7 +34,8 @@ public class BufferedProgressReader extends BufferedReader
   }
 
   /**
-   * @return Number of characters read
+   *Returns number of characters read.
+ 
    */
   public long getCharactersRead() {
     return this.charsRead;

@@ -598,9 +598,10 @@ public class Playlist
   }
 
   /**
-   * @param mediaLibrary Media library used to reference existing media files
+   *Returns positions of repaired rows.
+ @param mediaLibrary Media library used to reference existing media files
    * @param observer     Progress observer
-   * @return Positions of repaired rows
+   * 
    */
   public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
   {
@@ -717,7 +718,7 @@ public class Playlist
     ProgressAdapter<String> progress = ProgressAdapter.wrap(observer);
     progress.setTotal(entries.size());
 
-    List<BatchMatchItem> fixed = new LinkedList<>();
+    List<BatchMatchItem> fixed = new ArrayList<>();
     int ix = 0;
     for (PlaylistEntry entry : entries)
     {

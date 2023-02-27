@@ -14,17 +14,17 @@ public abstract class DualProgressWorker<T, V> extends SwingWorker<T, DualProgre
   @Override
   protected abstract void process(List<ProgressItem<V>> chunks);
 
-  public void reportTaskProgress(int percentComplete, V state)
+  @Override public void reportTaskProgress(int percentComplete, V state)
   {
     publish(new ProgressItem(true, percentComplete, state));
   }
 
-  public void reportOverallProgress(int percentComplete, V state)
+  @Override public void reportOverallProgress(int percentComplete, V state)
   {
     publish(new ProgressItem(false, percentComplete, state));
   }
 
-  public boolean getCancelled()
+  @Override public boolean getCancelled()
   {
     return this.isCancelled();
   }

@@ -22,7 +22,8 @@ public class ITunesPlaylist extends Playlist
   }
 
   /**
-   * @return the _library
+   *Returns the _library.
+ 
    */
   public ITunesMediaLibrary getLibrary()
   {

@@ -2,19 +2,20 @@
 
 package listfix.io;
 
-import listfix.util.OperatingSystem;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.awt.*;
 import java.io.*;
+import listfix.util.OperatingSystem;
 
 
 public class FileLauncher
 {
   /**
    *
-   * @param toLaunch
-   * @throws IOException
-   * @throws InterruptedException
+   * 
+   * 
+   * 
    */
   public static void launch(File toLaunch) throws IOException, InterruptedException
   {
@@ -30,7 +31,7 @@ public class FileLauncher
       buffer.append("\"\n");
       buffer.append("start \"\" %myvar%");
 
-      try (FileOutputStream outputStream = new FileOutputStream(tempFile); Writer osw = new OutputStreamWriter(outputStream))
+      try (FileOutputStream outputStream = new FileOutputStream(tempFile); Writer osw = new OutputStreamWriter(outputStream, UTF_8))
       {
         osw.write(buffer.toString());
       }
@@ -44,7 +45,7 @@ public class FileLauncher
       }
 
       InputStream stream = proc.getErrorStream();
-      BufferedReader streamTwo = new BufferedReader(new InputStreamReader(stream));
+      BufferedReader streamTwo = new BufferedReader(new InputStreamReader(stream, UTF_8));
       String line = null;
       if (streamTwo.ready())
       {

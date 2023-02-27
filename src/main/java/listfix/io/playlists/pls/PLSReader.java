@@ -70,7 +70,7 @@ public class PLSReader extends PlaylistReader
     }
 
     // Find out how many entries we have to process.
-    int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
+    int entries = Integer.parseInt( propBag.getProperty("NumberOfEntries", "0"));
 
     // Set the total if we have an observer.
     progress.setTotal(entries);
@@ -105,8 +105,8 @@ public class PLSReader extends PlaylistReader
     String file = propBag.getProperty("File" + index, "");
     String title = propBag.getProperty("Title" + index, "");
     String length = propBag.getProperty("Length" + index, "");
-    long duration = -1;
-    duration = Long.parseLong(length) * 1000L;
+    
+    long duration = Long.parseLong(length) * 1000L;
 
     if (file.contains("://"))
     {

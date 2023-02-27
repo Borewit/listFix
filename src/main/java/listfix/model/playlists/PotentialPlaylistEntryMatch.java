@@ -27,7 +27,7 @@ public class PotentialPlaylistEntryMatch
 
   /**
    *
-   * @return
+   * 
    */
   public int getScore()
   {
@@ -36,7 +36,7 @@ public class PotentialPlaylistEntryMatch
 
   /**
    *
-   * @return
+   * 
    */
   public PlaylistEntry getPlaylistFile()
   {

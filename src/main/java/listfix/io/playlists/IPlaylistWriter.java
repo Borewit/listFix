@@ -18,7 +18,7 @@ public interface IPlaylistWriter
    * @param list         The list to persist to disk.
    * @param saveRelative Specifies if the playlist should be written out relatively or not.
    * @param adapter      An optionally null progress adapter which lets other code monitor the progress of this operation.
-   * @throws Exception
+   * 
    */
   void save(Playlist list, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception;
 }
