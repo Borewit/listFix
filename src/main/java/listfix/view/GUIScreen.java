@@ -1978,15 +1978,15 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
             return true;
           }
         }
-        catch (InterruptedException ex)
+        catch (InterruptedException ignored)
         {
+          // Cancelled
         }
         catch (ExecutionException ex)
         {
           _logger.error("Save Error", ex);
           JOptionPane.showMessageDialog(GUIScreen.this, ex.getCause(), "Save Error", JOptionPane.ERROR_MESSAGE);
         }
-
         return false;
       }
       else if (rc == 1)
@@ -1998,15 +1998,9 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         cleanupOnTabClose(playlist);
         return true;
       }
-      else
-      {
-        return false;
-      }
+      return false;
     }
-    else
-    {
-      return true;
-    }
+    return true;
   }
 
   private void cleanupOnTabClose(Playlist list)
