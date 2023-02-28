@@ -13,7 +13,7 @@ buildscript {
         classpath 'io.github.fvarrui:javapackager:1.7.0'
 
         // https://gitlab.com/svg2ico/svg2ico-gradle-plugin
-        classpath('gradle.plugin.com.gitlab.svg2ico:svg2ico-gradle-plugin:0.11') {
+        classpath('gradle.plugin.com.gitlab.svg2ico:svg2ico-gradle-plugin:0.14') {
             exclude module: 'commons-io'
         }
 
