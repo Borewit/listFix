@@ -108,7 +108,7 @@ dependencies {
     implementation 'com.jgoodies:jgoodies-looks:2.7.0'
 
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'com.google.guava:guava:31.1-jre'
 
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
