@@ -16,6 +16,7 @@ categories:
   - title: 🔧 Under the hood
     labels:
       - debt
+      - dev-dependencies
   - title: ⬆️ Dependencies
     labels:
       - dependencies
