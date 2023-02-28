@@ -90,6 +90,7 @@ repositories {
     maven {
         url "https://repo1.maven.org/maven2/"
     }
+    mavenLocal()
     // Staging repository
     // maven { url 'https://s01.oss.sonatype.org/content/repositories/iogithubborewit-1000/' }
     // maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
