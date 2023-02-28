@@ -118,7 +118,7 @@ dependencies {
 
     // Apache SLF4J to Log4j2 Adapter (bridge)
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl
-    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.19.0'
+    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
 
     // Required for log4j yaml configuration files
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
