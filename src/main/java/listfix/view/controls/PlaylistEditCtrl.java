@@ -750,12 +750,12 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnDown.addActionListener(event -> this.moveSelectedRowsDown());
     _uiToolbar.add(_btnDown);
 
-    _btnInvert = makeButton("invert.gif");
+    _btnInvert = makeButton("invert.png");
     _btnInvert.setToolTipText("Inverts the current selection");
     _btnInvert.addActionListener(this::_btnInvertActionPerformed);
     _uiToolbar.add(_btnInvert);
 
-    JButton _btnReorder = makeButton("reorder.png");
+    _btnReorder = makeButton("reorder.png");
     _btnReorder.setToolTipText("Change Playlist Order");
     _btnReorder.addActionListener(event -> this.reorderList());
     _uiToolbar.add(_btnReorder);
@@ -763,14 +763,14 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
     _btnMagicFix = makeButton("magic-fix.png");
     _btnMagicFix.setToolTipText("Fix Everything");
-    _btnMagicFix.setEnabled(_playlist == null ? false : _playlist.getFile().exists());
+    _btnMagicFix.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnMagicFix.addActionListener(evt -> {
       locateMissingFiles();
       bulkFindClosestMatches();
     });
     _uiToolbar.add(_btnMagicFix);
 
-    _btnLocate = makeButton("edit-find.png");
+    _btnLocate = makeButton("edit-find.gif");
     _btnLocate.setToolTipText("Find Exact Matches");
     _btnLocate.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnLocate.addActionListener(evt -> this.locateMissingFiles());
@@ -832,7 +832,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     URL url = getClass().getResource("/images/" + iconName);
     if (url == null)
       throw new RuntimeException(String.format("Image resource not found for: %s", iconName));
-    button.setIcon(new ImageIcon());
+    button.setIcon(new ImageIcon(url));
     button.setEnabled(false);
     button.setFocusable(false);
     button.setHorizontalTextPosition(SwingConstants.CENTER);
