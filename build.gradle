@@ -114,7 +114,7 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
-    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
 
     // Apache SLF4J to Log4j2 Adapter (bridge)
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl
