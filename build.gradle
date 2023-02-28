@@ -102,7 +102,7 @@ dependencies {
     implementation 'io.github.borewit:lizzy:1.1.2'
 
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
-    implementation 'com.jgoodies:jgoodies-common:1.8.0'
+    implementation 'com.jgoodies:jgoodies-common:1.8.1'
 
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
     implementation 'com.jgoodies:jgoodies-looks:2.7.0'
