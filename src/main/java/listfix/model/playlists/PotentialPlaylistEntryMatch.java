@@ -15,7 +15,7 @@ public class PotentialPlaylistEntryMatch
 {
   private final PlaylistEntry thisEntry;
   private final IPlaylistOptions playlistOptions;
-  private int _score = 0;
+  private final int _score;
 
   public PotentialPlaylistEntryMatch(Path track, int score, Path playlist, IPlaylistOptions playlistOptions)
   {
@@ -25,19 +25,11 @@ public class PotentialPlaylistEntryMatch
     this._score = score;
   }
 
-  /**
-   *
-   * @return
-   */
   public int getScore()
   {
     return _score;
   }
 
-  /**
-   *
-   * @return
-   */
   public PlaylistEntry getPlaylistFile()
   {
     return thisEntry;
@@ -46,5 +38,14 @@ public class PotentialPlaylistEntryMatch
   public IPlaylistOptions getPlaylistOptions()
   {
     return playlistOptions;
+  }
+
+  /**
+   * Used to render value in combo-box
+   * @return Matching score & track-file-name
+   */
+  @Override
+  public String toString() {
+    return String.format("%d: %s", this._score, thisEntry.getTrackFileName());
   }
 }

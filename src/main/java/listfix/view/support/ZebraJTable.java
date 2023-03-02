@@ -1,5 +1,3 @@
-
-
 package listfix.view.support;
 
 import javax.swing.*;
@@ -8,38 +6,13 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
-public class ZebraJTable extends javax.swing.JTable
+public class ZebraJTable extends JTable
 {
-  private final java.awt.Color[] rowColors = new java.awt.Color[2];
+  private final Color[] rowColors = new Color[2];
   private boolean drawStripes = false;
 
   public ZebraJTable()
   {
-  }
-
-  public ZebraJTable(int numRows, int numColumns)
-  {
-    super(numRows, numColumns);
-  }
-
- public ZebraJTable(Object[][] rowData, Object[] columnNames)
-  {
-    super(rowData, columnNames);
-  }
-
-   public ZebraJTable(javax.swing.table.TableModel dataModel)
-  {
-    super(dataModel);
-  }
-
-  public ZebraJTable(javax.swing.table.TableModel dataModel, javax.swing.table.TableColumnModel columnModel)
-  {
-    super(dataModel, columnModel);
-  }
-
-  public ZebraJTable(javax.swing.table.TableModel dataModel, javax.swing.table.TableColumnModel columnModel, javax.swing.ListSelectionModel selectionModel)
-  {
-    super(dataModel, columnModel, selectionModel);
   }
 
   /**
@@ -139,17 +112,17 @@ public class ZebraJTable extends javax.swing.JTable
     rowColors[0] = getBackground();
     if (rowColors[0] == null)
     {
-      rowColors[0] = java.awt.Color.white;
-      rowColors[1] = java.awt.Color.white;
+      rowColors[0] = Color.white;
+      rowColors[1] = Color.white;
       return;
     }
-    final java.awt.Color sel = getSelectionBackground();
+    final Color sel = getSelectionBackground();
     if (sel == null)
     {
       rowColors[1] = rowColors[0];
       return;
     }
-    rowColors[1] = new java.awt.Color(240, 240, 240);
+    rowColors[1] = new Color(240, 240, 240);
   }
 
   public int autoResizeColumn(int colIx)

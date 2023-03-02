@@ -11,22 +11,25 @@ import java.util.List;
  */
 public class BatchMatchItem
 {
+  /**
+   * Playlist position
+   */
   private final int _entryIx;
   private final PlaylistEntry _entry;
-  private final List<PotentialPlaylistEntryMatch> _matches;
-
-  private int _selectedIx;
+  private final List<PotentialPlaylistEntryMatch> matches;
+  private PotentialPlaylistEntryMatch selectedMatch;
 
   public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
   {
-    _entryIx = ix;
-    _entry = entry;
-    _matches = matches;
+    this._entryIx = ix;
+    this._entry = entry;
+    this.matches = matches;
+    this.selectedMatch = matches.size() > 0 ? matches.get(0) : null;
   }
 
   public int getEntryIx()
   {
-    return _entryIx;
+    return this._entryIx;
   }
 
   public PlaylistEntry getEntry()
@@ -36,28 +39,27 @@ public class BatchMatchItem
 
   public List<PotentialPlaylistEntryMatch> getMatches()
   {
-    return _matches;
+    return this.matches;
   }
 
   public int getSelectedIx()
   {
-    return _selectedIx;
+    return this.matches.indexOf(this.selectedMatch);
   }
 
+  @Deprecated // Use setSelectedMatch()
   public void setSelectedIx(int ix)
   {
-    _selectedIx = ix;
+    this.selectedMatch = this.matches.get(ix);
+  }
+
+  public void setSelectedMatch(PotentialPlaylistEntryMatch selectedMatch)
+  {
+    this.selectedMatch = selectedMatch;
   }
 
   public PotentialPlaylistEntryMatch getSelectedMatch()
   {
-    if (_selectedIx >= 0)
-    {
-      return _matches.get(_selectedIx);
-    }
-    else
-    {
-      return null;
-    }
+    return this.selectedMatch;
   }
 }
