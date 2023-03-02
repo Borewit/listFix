@@ -1,35 +1,11 @@
 package listfix.view.controls;
 
-import listfix.config.IMediaLibrary;
-import listfix.io.*;
-import listfix.io.filters.AudioFileFilter;
-import listfix.model.BatchMatchItem;
-import listfix.model.EditFilenameResult;
-import listfix.model.PlaylistEntryList;
-import listfix.model.enums.PlaylistType;
-import listfix.model.playlists.*;
-import listfix.util.ArrayFunctions;
-import listfix.util.ExStack;
-
-import listfix.view.IListFixGui;
-import listfix.view.dialogs.*;
-import listfix.view.support.IPlaylistModifiedListener;
-import listfix.view.support.ImageIcons;
-import listfix.view.support.ProgressWorker;
-import listfix.view.support.ZebraJTable;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import javax.swing.*;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -43,13 +19,36 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import javax.swing.*;
+import javax.swing.table.*;
+import listfix.config.IMediaLibrary;
+import listfix.io.*;
+import listfix.io.filters.AudioFileFilter;
+import listfix.model.BatchMatchItem;
+import listfix.model.EditFilenameResult;
+import listfix.model.PlaylistEntryList;
+import listfix.model.enums.PlaylistType;
+import listfix.model.playlists.*;
+import listfix.util.ArrayFunctions;
+import listfix.util.ExStack;
+import listfix.view.IListFixGui;
+import listfix.view.dialogs.*;
+import listfix.view.support.IPlaylistModifiedListener;
+import listfix.view.support.ImageIcons;
+import listfix.view.support.ProgressWorker;
+import listfix.view.support.ZebraJTable;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
-public class PlaylistEditCtrl extends javax.swing.JPanel
+public class PlaylistEditCtrl extends JPanel
 {
   private static final Logger _logger = LogManager.getLogger(PlaylistEditCtrl.class);
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
@@ -275,7 +274,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     boolean isDescending = false;
     if (!_isSortedByFileIx)
     {
-      RowSorter<? extends javax.swing.table.TableModel> sorter = _uiTable.getRowSorter();
+      RowSorter<? extends TableModel> sorter = _uiTable.getRowSorter();
       List<? extends RowSorter.SortKey> keys = sorter.getSortKeys();
       if (keys.size() > 0)
       {
@@ -629,42 +628,42 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private void initComponents()
   {
 
-    _playlistEntryRightClickMenu = new javax.swing.JPopupMenu();
-    _miEditFilename = new javax.swing.JMenuItem();
-    _miOpenFileLocation = new javax.swing.JMenuItem();
-    _miReplace = new javax.swing.JMenuItem();
+    _playlistEntryRightClickMenu = new JPopupMenu();
+    _miEditFilename = new JMenuItem();
+    _miOpenFileLocation = new JMenuItem();
+    _miReplace = new JMenuItem();
     JPopupMenu.Separator jSeparator3 = new JPopupMenu.Separator();
-    _miFindClosest = new javax.swing.JMenuItem();
+    _miFindClosest = new JMenuItem();
     JPopupMenu.Separator jSeparator4 = new JPopupMenu.Separator();
     JMenuItem _miRemoveDups = new JMenuItem();
     JMenuItem _miRemoveMissing = new JMenuItem();
     JMenuItem _miCopySelectedFiles = new JMenuItem();
     JMenuItem _miNewPlaylistFromSelected = new JMenuItem();
     JToolBar _uiToolbar = new JToolBar();
-    _btnSave = new javax.swing.JButton();
-    _btnReload = new javax.swing.JButton();
-    _btnAdd = new javax.swing.JButton();
-    _btnDelete = new javax.swing.JButton();
+    _btnSave = new JButton();
+    _btnReload = new JButton();
+    _btnAdd = new JButton();
+    _btnDelete = new JButton();
     JToolBar.Separator jSeparator1 = new JToolBar.Separator();
-    _btnUp = new javax.swing.JButton();
-    _btnDown = new javax.swing.JButton();
-    _btnInvert = new javax.swing.JButton();
-    _btnReorder = new javax.swing.JButton();
+    _btnUp = new JButton();
+    _btnDown = new JButton();
+    _btnInvert = new JButton();
+    _btnReorder = new JButton();
     JToolBar.Separator jSeparator2 = new JToolBar.Separator();
-    _btnMagicFix = new javax.swing.JButton();
-    _btnLocate = new javax.swing.JButton();
-    _btnPlay = new javax.swing.JButton();
+    _btnMagicFix = new JButton();
+    _btnLocate = new JButton();
+    _btnPlay = new JButton();
     JToolBar.Separator jSeparator5 = new JToolBar.Separator();
-    _btnPrevMissing = new javax.swing.JButton();
-    _btnNextMissing = new javax.swing.JButton();
-    _uiTableScrollPane = new javax.swing.JScrollPane();
+    _btnPrevMissing = new JButton();
+    _btnNextMissing = new JButton();
+    _uiTableScrollPane = new JScrollPane();
     _uiTable = createTable();
 
     _miEditFilename.setText("Edit Filename");
     _miEditFilename.addActionListener(evt -> this.editFilenames());
     _playlistEntryRightClickMenu.add(_miEditFilename);
 
-    _miOpenFileLocation = new javax.swing.JMenuItem();
+    _miOpenFileLocation = new JMenuItem();
     _miOpenFileLocation.setText(txtOpenFileLocationSingular);
     _miOpenFileLocation.addActionListener(evt -> {
       try
@@ -706,7 +705,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _miNewPlaylistFromSelected.addActionListener(evt -> _miNewPlaylistFromSelectedActionPerformed());
     _playlistEntryRightClickMenu.add(_miNewPlaylistFromSelected);
 
-    setLayout(new java.awt.BorderLayout());
+    setLayout(new BorderLayout());
 
     _uiToolbar.setFloatable(false);
     _uiToolbar.setRollover(true);
@@ -722,7 +721,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnReload.setEnabled(_playlist == null ? false : _playlist.isModified());
     _btnReload.addMouseListener(new MouseAdapter()
     {
-      public void mouseClicked(MouseEvent evt)
+      @Override public void mouseClicked(MouseEvent evt)
       {
         reloadPlaylist();
       }
@@ -795,35 +794,35 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     _btnNextMissing.addActionListener(evt -> _btnNextMissingActionPerformed());
     _uiToolbar.add(_btnNextMissing);
 
-    add(_uiToolbar, java.awt.BorderLayout.PAGE_START);
+    add(_uiToolbar, BorderLayout.PAGE_START);
 
-    _uiTableScrollPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+    _uiTableScrollPane.setBorder(BorderFactory.createEtchedBorder());
 
     _uiTable.setAutoCreateRowSorter(true);
     _uiTable.setModel(new PlaylistTableModel());
     _uiTable.setDragEnabled(true);
     _uiTable.setFillsViewportHeight(true);
-    _uiTable.setGridColor(new java.awt.Color(153, 153, 153));
-    _uiTable.setIntercellSpacing(new java.awt.Dimension(0, 0));
+    _uiTable.setGridColor(new Color(153, 153, 153));
+    _uiTable.setIntercellSpacing(new Dimension(0, 0));
     _uiTable.setRowHeight(20);
     _uiTable.getTableHeader().setReorderingAllowed(false);
     _uiTable.addMouseListener(new MouseAdapter()
     {
-      public void mousePressed(java.awt.event.MouseEvent evt)
+      @Override public void mousePressed(MouseEvent evt)
       {
         _uiTableMousePressed(evt);
       }
     });
-    _uiTable.addKeyListener(new java.awt.event.KeyAdapter()
+    _uiTable.addKeyListener(new KeyAdapter()
     {
-      public void keyPressed(java.awt.event.KeyEvent evt)
+      @Override public void keyPressed(KeyEvent evt)
       {
         _uiTableKeyPressed(evt);
       }
     });
     _uiTableScrollPane.setViewportView(_uiTable);
 
-    add(_uiTableScrollPane, java.awt.BorderLayout.CENTER);
+    add(_uiTableScrollPane, BorderLayout.CENTER);
   }
 
   private JButton makeButton(String iconName)
@@ -1136,26 +1135,26 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
 
   }
 
-  private javax.swing.JButton _btnAdd;
-  private javax.swing.JButton _btnDelete;
-  private javax.swing.JButton _btnDown;
-  private javax.swing.JButton _btnInvert;
-  private javax.swing.JButton _btnLocate;
-  private javax.swing.JButton _btnMagicFix;
-  private javax.swing.JButton _btnNextMissing;
-  private javax.swing.JButton _btnPlay;
-  private javax.swing.JButton _btnPrevMissing;
-  private javax.swing.JButton _btnReload;
-  private javax.swing.JButton _btnReorder;
-  private javax.swing.JButton _btnSave;
-  private javax.swing.JButton _btnUp;
-  private javax.swing.JMenuItem _miEditFilename;
-  private javax.swing.JMenuItem _miOpenFileLocation;
-  private javax.swing.JMenuItem _miFindClosest;
-  private javax.swing.JMenuItem _miReplace;
-  private javax.swing.JPopupMenu _playlistEntryRightClickMenu;
-  private listfix.view.support.ZebraJTable _uiTable;
-  private javax.swing.JScrollPane _uiTableScrollPane;
+  private JButton _btnAdd;
+  private JButton _btnDelete;
+  private JButton _btnDown;
+  private JButton _btnInvert;
+  private JButton _btnLocate;
+  private JButton _btnMagicFix;
+  private JButton _btnNextMissing;
+  private JButton _btnPlay;
+  private JButton _btnPrevMissing;
+  private JButton _btnReload;
+  private JButton _btnReorder;
+  private JButton _btnSave;
+  private JButton _btnUp;
+  private JMenuItem _miEditFilename;
+  private JMenuItem _miOpenFileLocation;
+  private JMenuItem _miFindClosest;
+  private JMenuItem _miReplace;
+  private JPopupMenu _playlistEntryRightClickMenu;
+  private ZebraJTable _uiTable;
+  private JScrollPane _uiTableScrollPane;
 
   public Playlist getPlaylist()
   {
@@ -1217,10 +1216,10 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
   private void resizeAllColumns()
   {
     // resize columns to fit
-    int cwidth = 0;
-    cwidth += _uiTable.autoResizeColumn(1, true);
-    cwidth += _uiTable.autoResizeColumn(2);
-    cwidth += _uiTable.autoResizeColumn(3);
+    
+    _uiTable.autoResizeColumn(1, true);
+    _uiTable.autoResizeColumn(2);
+    _uiTable.autoResizeColumn(3);
     TableColumnModel cm = _uiTable.getColumnModel();
     TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
     Component comp = renderer.getTableCellRendererComponent(_uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
@@ -1229,7 +1228,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
     col.setMinWidth(width);
     col.setMaxWidth(width);
     col.setPreferredWidth(width);
-    cwidth += width;
+    
   }
 
   private boolean _isSortedByFileIx;
@@ -1454,7 +1453,7 @@ public class PlaylistEditCtrl extends javax.swing.JPanel
               _uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
             }
             else if ((isOverItem && _uiTable.getSelectedRowCount() == 0)
-              || (!_uiTable.isRowSelected(rowIx)))
+              ||  !_uiTable.isRowSelected(rowIx))
             {
               _uiTable.getSelectionModel().setSelectionInterval(rowIx, rowIx);
             }

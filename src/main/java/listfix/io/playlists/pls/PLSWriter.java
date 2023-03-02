@@ -2,14 +2,15 @@
 
 package listfix.io.playlists.pls;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.*;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 import listfix.io.playlists.PlaylistWriter;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.UnicodeUtils;
-
-import java.io.*;
 
 /**
  * A playlist writer capable of saving to PLS format.
@@ -96,7 +97,7 @@ public class PLSWriter extends PlaylistWriter<StringBuilder>
     {
       try (FileOutputStream outputStream = new FileOutputStream(playlistFile); BufferedOutputStream output = new BufferedOutputStream(outputStream))
       {
-        output.write(buffer.toString().getBytes());
+        output.write(buffer.toString().getBytes(UTF_8));
       }
       playlist.setUtfFormat(false);
     }

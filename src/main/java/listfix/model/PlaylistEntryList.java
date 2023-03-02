@@ -20,7 +20,7 @@ public class PlaylistEntryList implements Transferable
 
   /**
    *
-   * @return
+   * 
    */
   @Override
   public DataFlavor[] getTransferDataFlavors()
@@ -33,8 +33,8 @@ public class PlaylistEntryList implements Transferable
 
   /**
    *
-   * @param flavor
-   * @return
+   * 
+   * 
    */
   @Override
   public boolean isDataFlavorSupported(DataFlavor flavor)
@@ -44,10 +44,10 @@ public class PlaylistEntryList implements Transferable
 
   /**
    *
-   * @param flavor
-   * @return
-   * @throws UnsupportedFlavorException
-   * @throws IOException
+   * 
+   * 
+   * 
+   * 
    */
   @Override
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException
@@ -57,7 +57,7 @@ public class PlaylistEntryList implements Transferable
 
   /**
    *
-   * @param list
+   * 
    */
   public PlaylistEntryList(List<PlaylistEntry> list)
   {
@@ -66,7 +66,7 @@ public class PlaylistEntryList implements Transferable
 
   /**
    *
-   * @return
+   * 
    */
   public List<PlaylistEntry> getList()
   {

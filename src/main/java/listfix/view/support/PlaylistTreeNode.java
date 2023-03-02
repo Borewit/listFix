@@ -24,15 +24,12 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltip
   @Override
   public boolean equals(Object obj)
   {
-    if (obj == null)
+    
+    if (!(obj instanceof PlaylistTreeNode))
     {
       return false;
     }
-    if (getClass() != obj.getClass())
-    {
-      return false;
-    }
-    return hashCode() == (obj).hashCode();
+    return hashCode() ==  obj.hashCode();
   }
 
   @Override

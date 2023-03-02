@@ -20,14 +20,14 @@ public class ITunesUriPlaylistEntry extends UriPlaylistEntry implements IITunesP
   /**
    * @return the _track
    */
-  public ITunesTrack getTrack()
+  @Override public ITunesTrack getTrack()
   {
     return _track;
   }
 
   /**
    *
-   * @return
+   * 
    */
   @Override
   public ITunesUriPlaylistEntry clone()

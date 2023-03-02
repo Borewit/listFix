@@ -1,10 +1,13 @@
 package listfix.view.support;
 
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.*;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
 
 public class ZebraJTable extends JTable
 {
@@ -19,7 +22,7 @@ public class ZebraJTable extends JTable
    * Add stripes between cells and behind non-opaque cells.
    */
   @Override
-  public void paintComponent(java.awt.Graphics g)
+  public void paintComponent(Graphics g)
   {
     drawStripes = isOpaque();
     if (!drawStripes)
@@ -30,7 +33,7 @@ public class ZebraJTable extends JTable
 
     // Paint zebra background stripes
     updateZebraColors();
-    final java.awt.Insets insets = getInsets();
+    final Insets insets = getInsets();
     final int w = getWidth() - insets.left - insets.right;
     final int h = getHeight() - insets.top - insets.bottom;
     final int x = insets.left;
@@ -67,10 +70,10 @@ public class ZebraJTable extends JTable
    * Add background stripes behind rendered cells.
    */
   @Override
-  public java.awt.Component prepareRenderer(
-    javax.swing.table.TableCellRenderer renderer, int row, int col)
+  public Component prepareRenderer(
+    TableCellRenderer renderer, int row, int col)
   {
-    final java.awt.Component c = super.prepareRenderer(renderer, row, col);
+    final Component c = super.prepareRenderer(renderer, row, col);
     if (drawStripes && !isCellSelected(row, col))
     {
       c.setBackground(rowColors[row & 1]);
@@ -82,10 +85,10 @@ public class ZebraJTable extends JTable
    * Add background stripes behind edited cells.
    */
   @Override
-  public java.awt.Component prepareEditor(
-    javax.swing.table.TableCellEditor editor, int row, int col)
+  public Component prepareEditor(
+    TableCellEditor editor, int row, int col)
   {
-    final java.awt.Component c = super.prepareEditor(editor, row, col);
+    final Component c = super.prepareEditor(editor, row, col);
     if (drawStripes && !isCellSelected(row, col))
     {
       c.setBackground(rowColors[row & 1]);
@@ -99,12 +102,12 @@ public class ZebraJTable extends JTable
   @Override
   public boolean getScrollableTracksViewportHeight()
   {
-    final java.awt.Component p = getParent();
-    if (!(p instanceof javax.swing.JViewport))
+    final Component p = getParent();
+    if (!(p instanceof JViewport))
     {
       return false;
     }
-    return (p).getHeight() > getPreferredSize().height;
+    return  p.getHeight() > getPreferredSize().height;
   }
 
   private void updateZebraColors()
@@ -169,10 +172,10 @@ public class ZebraJTable extends JTable
 
   public void initFillColumnForScrollPane(final JScrollPane scroller)
   {
-    scroller.addComponentListener(new java.awt.event.ComponentAdapter()
+    scroller.addComponentListener(new ComponentAdapter()
     {
       @Override
-      public void componentResized(java.awt.event.ComponentEvent evt)
+      public void componentResized(ComponentEvent evt)
       {
         setFillerColumnWidth(scroller);
       }

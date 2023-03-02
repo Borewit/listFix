@@ -431,14 +431,14 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
     _uiScrollPane = new JScrollPane();
     _uiTable = createTable();
 
-    setLayout(new java.awt.BorderLayout());
+    setLayout(new BorderLayout());
 
     _uiTable.setAutoCreateRowSorter(true);
     _uiTable.setModel(new MatchTableModel());
     _uiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     _uiScrollPane.setViewportView(_uiTable);
 
-    add(_uiScrollPane, java.awt.BorderLayout.CENTER);
+    add(_uiScrollPane, BorderLayout.CENTER);
 
     _playlistEntryRightClickMenu = new JPopupMenu();
 

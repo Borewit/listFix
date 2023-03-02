@@ -1,17 +1,17 @@
 package listfix.model.playlists;
 
+import com.google.common.base.Splitter;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.io.IPlaylistOptions;
 import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.FileNameTokenizer;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author jcaron
@@ -56,7 +56,8 @@ public abstract class PlaylistEntry implements Cloneable
   protected String _trackId;
 
   /**
-   * @return the _status
+   *Returns the _status.
+ 
    */
   public PlaylistEntryStatus getStatus()
   {
@@ -168,7 +169,7 @@ public abstract class PlaylistEntry implements Cloneable
         mediaFile = new File(mediaFilePath);
 
         // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
-        score = (new FileNameTokenizer(playListOptions)).score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
+        score =  new FileNameTokenizer(playListOptions).score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
         if (score > 0)
         {
           // Only keep the top X highest-rated matches (default is 20), anything more than that has a good chance of using too much memory
@@ -196,10 +197,11 @@ public abstract class PlaylistEntry implements Cloneable
     return matches;
   }
 
-  public abstract Object clone();
+  @Override public abstract Object clone();
 
   /**
-   * @return the title
+   *Returns the title.
+ 
    */
   public String getTitle()
   {
@@ -207,7 +209,8 @@ public abstract class PlaylistEntry implements Cloneable
   }
 
   /**
-   * @return the length, in milliseconds
+   *Returns the length, in milliseconds.
+ 
    */
   public long getLength()
   {
@@ -221,25 +224,25 @@ public abstract class PlaylistEntry implements Cloneable
       extra = extra.replaceFirst("#EXTINF:", "");
       if (extra.contains(","))
       {
-        String[] split = extra.split(",");
-        if (split.length > 1)
+        List<String> split = Splitter.on(',').splitToList(extra);
+        if (split.size() > 1)
         {
           try
           {
             // extra info comes from M3Us, so this comes in a seconds
             // and needs conversion to milliseconds.
-            _length = Long.parseLong(split[0]) * 1000L;
+            _length = Long.parseLong(split.get(0)) * 1000L;
           }
           catch (Exception e)
           {
             // ignore and move on...
           }
-          _title = split[1];
+          _title = split.get(1);
         }
-        else if (split.length == 1)
+        else if (split.size() == 1)
         {
           // assume it's a _title?
-          _title = split[0];
+          _title = split.get(0);
         }
       }
       else

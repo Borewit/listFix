@@ -16,6 +16,8 @@
 
 package listfix.io;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * A Base64 encoder/decoder.
  *
@@ -77,7 +79,7 @@ public final class Base64Coder
    */
   public static String encodeString(String s)
   {
-    return new String(encode(s.getBytes()));
+    return new String(encode(s.getBytes(UTF_8)));
   }
 
   /**
@@ -190,7 +192,7 @@ public final class Base64Coder
    */
   public static String decodeString(String s)
   {
-    return new String(decode(s));
+    return new String(decode(s), UTF_8);
   }
 
   /**

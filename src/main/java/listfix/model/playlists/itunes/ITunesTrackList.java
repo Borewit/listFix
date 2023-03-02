@@ -24,8 +24,8 @@ public class ITunesTrackList
 
   /**
    * Constructs a new ITunesTrackList object.
-   * @param name
-   * @param tracks
+   * 
+   * 
    */
   public ITunesTrackList(String name, List<ITunesTrack> tracks)
   {
@@ -34,7 +34,8 @@ public class ITunesTrackList
   }
 
   /**
-   * @return the _name
+   *Returns the _name.
+ 
    */
   public String getName()
   {
@@ -50,7 +51,8 @@ public class ITunesTrackList
   }
 
   /**
-   * @return the _tracks
+   *Returns the _tracks.
+ 
    */
   public List<ITunesTrack> getTracks()
   {

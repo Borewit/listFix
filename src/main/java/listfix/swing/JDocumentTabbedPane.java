@@ -1,17 +1,18 @@
 package listfix.swing;
 
-import javax.swing.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.*;
 
 public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
 {
-  private final List<IDocumentChangeListener<G>> documentChangeListeners = new LinkedList<>();
+  private final List<IDocumentChangeListener<G>> documentChangeListeners = new ArrayList<>();
 
   public JDocumentTabbedPane()
   {
@@ -234,7 +235,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
 
   public List<G> getAllEmbeddedMainComponent()
   {
-    List<G> list = new LinkedList<>();
+    List<G> list = new ArrayList<>();
     int tabCount = this.getTabCount();
     for (int i = 0; i < tabCount; ++i)
     {

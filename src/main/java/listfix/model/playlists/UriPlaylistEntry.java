@@ -102,7 +102,7 @@ public class UriPlaylistEntry extends PlaylistEntry
     return false;
   }
 
-  public String trackPathToString() {
+  @Override public String trackPathToString() {
     return this.uri.toString();
   }
 

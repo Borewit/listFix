@@ -1,20 +1,28 @@
 package listfix.view.dialogs;
 
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.jgoodies.looks.plastic.theme.DarkStar;
+import com.jgoodies.looks.plastic.theme.SkyBlue;
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import listfix.json.JsonAppOptions;
 import listfix.util.OperatingSystem;
 import listfix.view.support.FontExtensions;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import say.swing.JFontChooser;
 
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
-public class AppOptionsDialog extends javax.swing.JDialog
+public class AppOptionsDialog extends JDialog
 {
 
   public static final int OK = 0;
@@ -22,7 +30,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
   public static final int CANCEL = 1;
 
   private static final long serialVersionUID = 3409894354485158935L;
-  private static final Logger _logger = LogManager.getLogger(AppOptionsDialog.class);
+  
   public static final String TEXT_FIELD_TRAILING_SPACER = "     ";
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private int _resultCode;
@@ -82,12 +90,12 @@ public class AppOptionsDialog extends javax.swing.JDialog
   }
 
   /** Creates new form EditFilenameDialog
-   * @param parent
-   * @param title
-   * @param modal
-   * @param opts
+   * 
+   * 
+   * 
+   * 
    */
-  public AppOptionsDialog(java.awt.Frame parent, String title, boolean modal, JsonAppOptions opts)
+  public AppOptionsDialog(Frame parent, String title, boolean modal, JsonAppOptions opts)
   {
     super(parent, title, modal);
     if (opts == null)
@@ -154,13 +162,13 @@ public class AppOptionsDialog extends javax.swing.JDialog
       // "Install" the L&Fs we have internally added.
       if (OperatingSystem.isWindows())
       {
-        lafs.add(new LookAndFeelInfo("Windows (Plastic)", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName()));
+        lafs.add(new LookAndFeelInfo("Windows (Plastic)", WindowsLookAndFeel.class.getName()));
       }
-      lafs.add(new LookAndFeelInfo("Plastic - Default", com.jgoodies.looks.plastic.PlasticLookAndFeel.class.getName()));
-      lafs.add(new LookAndFeelInfo("Plastic - DarkStar", com.jgoodies.looks.plastic.theme.DarkStar.class.getName()));
-      lafs.add(new LookAndFeelInfo("Plastic - SkyBlue", com.jgoodies.looks.plastic.theme.SkyBlue.class.getName()));
-      lafs.add(new LookAndFeelInfo("Plastic3D", com.jgoodies.looks.plastic.Plastic3DLookAndFeel.class.getName()));
-      lafs.add(new LookAndFeelInfo("PlasticXP", com.jgoodies.looks.plastic.PlasticXPLookAndFeel.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic - Default", PlasticLookAndFeel.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic - DarkStar", DarkStar.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic - SkyBlue", SkyBlue.class.getName()));
+      lafs.add(new LookAndFeelInfo("Plastic3D", Plastic3DLookAndFeel.class.getName()));
+      lafs.add(new LookAndFeelInfo("PlasticXP", PlasticXPLookAndFeel.class.getName()));
 
       _installedLookAndFeelInfos = lafs.toArray(new LookAndFeelInfo[0]);
     }
@@ -204,7 +212,7 @@ public class AppOptionsDialog extends javax.swing.JDialog
 
   /**
    *
-   * @return
+   * 
    */
   public JsonAppOptions showDialog()
   {
@@ -245,85 +253,85 @@ public class AppOptionsDialog extends javax.swing.JDialog
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents()
   {
-    java.awt.GridBagConstraints gridBagConstraints;
+    GridBagConstraints gridBagConstraints;
 
-    topPanel = new javax.swing.JPanel();
-    optionsPanel = new javax.swing.JPanel();
-    _pnlLookAndFeel = new javax.swing.JPanel();
-    jLabel5 = new javax.swing.JLabel();
-    lookAndFeelComboBox = new javax.swing.JComboBox();
-    _pnlfontChooser = new javax.swing.JPanel();
-    jLabel8 = new javax.swing.JLabel();
-    _fontDisplayLabel = new javax.swing.JLabel();
-    _changeFontButton = new javax.swing.JButton();
-    _pnlNumClosestMatches = new javax.swing.JPanel();
-    jLabel9 = new javax.swing.JLabel();
-    _cbxMaxClosestMatches = new javax.swing.JComboBox();
-    _pnlRecentListLimit = new javax.swing.JPanel();
-    jLabel1 = new javax.swing.JLabel();
-    recentPlaylistLimitComboBox = new javax.swing.JComboBox();
-    _pnlUseUnc = new javax.swing.JPanel();
-    jLabel6 = new javax.swing.JLabel();
-    alwaysUseUNCPathsCheckBox = new javax.swing.JCheckBox();
-    _pnlSaveRelative = new javax.swing.JPanel();
-    jLabel3 = new javax.swing.JLabel();
-    relativePathsCheckBox = new javax.swing.JCheckBox();
-    _pnlAutoLocate = new javax.swing.JPanel();
-    jLabel2 = new javax.swing.JLabel();
-    autoLocateCheckBox = new javax.swing.JCheckBox();
-    _pnRefreshMediaLibraryOnStart = new javax.swing.JPanel();
-    jLabel4 = new javax.swing.JLabel();
-    autoRefreshOnStartupCheckBox = new javax.swing.JCheckBox();
-    _pnlDisableCaseSensitivity = new javax.swing.JPanel();
-    _lblCaseSensitivity = new javax.swing.JLabel();
-    _cbxCaseSensitivity = new javax.swing.JCheckBox();
-    playlistDirectoryBrowseButton = new javax.swing.JButton();
-    _pnlSmallWords = new javax.swing.JPanel();
-    jLabel10 = new javax.swing.JLabel();
-    _smallWordsTxtField = new javax.swing.JTextField();
-    buttonPanel = new javax.swing.JPanel();
-    jButton1 = new javax.swing.JButton();
-    jButton2 = new javax.swing.JButton();
+    topPanel = new JPanel();
+    optionsPanel = new JPanel();
+    _pnlLookAndFeel = new JPanel();
+    jLabel5 = new JLabel();
+    lookAndFeelComboBox = new JComboBox();
+    _pnlfontChooser = new JPanel();
+    jLabel8 = new JLabel();
+    _fontDisplayLabel = new JLabel();
+    _changeFontButton = new JButton();
+    _pnlNumClosestMatches = new JPanel();
+    jLabel9 = new JLabel();
+    _cbxMaxClosestMatches = new JComboBox();
+    _pnlRecentListLimit = new JPanel();
+    jLabel1 = new JLabel();
+    recentPlaylistLimitComboBox = new JComboBox();
+    _pnlUseUnc = new JPanel();
+    jLabel6 = new JLabel();
+    alwaysUseUNCPathsCheckBox = new JCheckBox();
+    _pnlSaveRelative = new JPanel();
+    jLabel3 = new JLabel();
+    relativePathsCheckBox = new JCheckBox();
+    _pnlAutoLocate = new JPanel();
+    jLabel2 = new JLabel();
+    autoLocateCheckBox = new JCheckBox();
+    _pnRefreshMediaLibraryOnStart = new JPanel();
+    jLabel4 = new JLabel();
+    autoRefreshOnStartupCheckBox = new JCheckBox();
+    _pnlDisableCaseSensitivity = new JPanel();
+    _lblCaseSensitivity = new JLabel();
+    _cbxCaseSensitivity = new JCheckBox();
+    
+    _pnlSmallWords = new JPanel();
+    jLabel10 = new JLabel();
+    _smallWordsTxtField = new JTextField();
+    buttonPanel = new JPanel();
+    jButton1 = new JButton();
+    jButton2 = new JButton();
 
-    setMinimumSize(new java.awt.Dimension(480, 385));
+    setMinimumSize(new Dimension(480, 385));
     setModal(true);
-    addWindowListener(new java.awt.event.WindowAdapter()
+    addWindowListener(new WindowAdapter()
     {
-      public void windowClosing(java.awt.event.WindowEvent evt)
+      @Override public void windowClosing(WindowEvent evt)
       {
-        closeDialog(evt);
+        closeDialog();
       }
     });
-    getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
+    getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-    topPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    topPanel.setLayout(new javax.swing.BoxLayout(topPanel, javax.swing.BoxLayout.Y_AXIS));
+    topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
-    optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("General Config"));
-    optionsPanel.setLayout(new java.awt.GridBagLayout());
+    optionsPanel.setBorder(BorderFactory.createTitledBorder("General Config"));
+    optionsPanel.setLayout(new GridBagLayout());
 
-    _pnlLookAndFeel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlLookAndFeel.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel5.setText("Look and Feel:");
-    jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel5.setMinimumSize(new java.awt.Dimension(111, 9));
-    jLabel5.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel5.setVerticalAlignment(SwingConstants.TOP);
+    jLabel5.setMinimumSize(new Dimension(111, 9));
+    jLabel5.setVerticalTextPosition(SwingConstants.TOP);
     _pnlLookAndFeel.add(jLabel5);
 
     lookAndFeelComboBox.setModel(this.getLookAndFeelMenuItems());
     lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(_options.getLookAndFeel()).getName());
     _pnlLookAndFeel.add(lookAndFeelComboBox);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 0;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
     gridBagConstraints.weightx = 0.1;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlLookAndFeel, gridBagConstraints);
 
-    _pnlfontChooser.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlfontChooser.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel8.setText("Font:");
     _pnlfontChooser.add(jLabel8);
@@ -334,48 +342,48 @@ public class AppOptionsDialog extends javax.swing.JDialog
     _changeFontButton.setText("...");
     _changeFontButton.setToolTipText("Choose Font");
     _changeFontButton.setAlignmentY(0.0F);
-    _changeFontButton.setMargin(new java.awt.Insets(2, 3, 2, 3));
-    _changeFontButton.addActionListener(new java.awt.event.ActionListener()
+    _changeFontButton.setMargin(new Insets(2, 3, 2, 3));
+    _changeFontButton.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        _changeFontButtonActionPerformed(evt);
+        _changeFontButtonActionPerformed();
       }
     });
     _pnlfontChooser.add(_changeFontButton);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 1;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
     optionsPanel.add(_pnlfontChooser, gridBagConstraints);
 
-    _pnlNumClosestMatches.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlNumClosestMatches.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel9.setText("Number of closest matches to return when searching:");
     jLabel9.setToolTipText("This value has memory usage implications, if you run out of memory while repairing a list, dial this down to 20 or less.");
-    jLabel9.setMinimumSize(new java.awt.Dimension(257, 20));
+    jLabel9.setMinimumSize(new Dimension(257, 20));
     _pnlNumClosestMatches.add(jLabel9);
 
     _cbxMaxClosestMatches.setModel(new IntegerRangeComboBoxModel(10, 100));
     _cbxMaxClosestMatches.setSelectedItem(_options.getMaxClosestResults());
     _pnlNumClosestMatches.add(_cbxMaxClosestMatches);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 2;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlNumClosestMatches, gridBagConstraints);
 
-    _pnlRecentListLimit.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlRecentListLimit.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel1.setText("Recent Playlist Limit: ");
-    jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel1.setMinimumSize(new java.awt.Dimension(111, 20));
-    jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel1.setVerticalAlignment(SwingConstants.TOP);
+    jLabel1.setMinimumSize(new Dimension(111, 20));
+    jLabel1.setVerticalTextPosition(SwingConstants.TOP);
     _pnlRecentListLimit.add(jLabel1);
 
     recentPlaylistLimitComboBox.setModel(new IntegerRangeComboBoxModel(1, 15));
@@ -385,161 +393,161 @@ public class AppOptionsDialog extends javax.swing.JDialog
     recentPlaylistLimitComboBox.setPreferredSize(null);
     _pnlRecentListLimit.add(recentPlaylistLimitComboBox);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 3;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlRecentListLimit, gridBagConstraints);
 
-    _pnlUseUnc.setMinimumSize(new java.awt.Dimension(165, 20));
-    _pnlUseUnc.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlUseUnc.setMinimumSize(new Dimension(165, 20));
+    _pnlUseUnc.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel6.setText("Media library uses UNC paths for directories on mapped drives:");
-    jLabel6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel6.setMinimumSize(new java.awt.Dimension(111, 20));
-    jLabel6.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel6.setVerticalAlignment(SwingConstants.TOP);
+    jLabel6.setMinimumSize(new Dimension(111, 20));
+    jLabel6.setVerticalTextPosition(SwingConstants.TOP);
     _pnlUseUnc.add(jLabel6);
 
     alwaysUseUNCPathsCheckBox.setSelected(_options.getAlwaysUseUNCPaths());
     _pnlUseUnc.add(alwaysUseUNCPathsCheckBox);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 4;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlUseUnc, gridBagConstraints);
 
-    _pnlSaveRelative.setMinimumSize(new java.awt.Dimension(165, 20));
-    _pnlSaveRelative.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlSaveRelative.setMinimumSize(new Dimension(165, 20));
+    _pnlSaveRelative.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel3.setText("Save playlists with relative file references:");
-    jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel3.setMinimumSize(new java.awt.Dimension(111, 20));
-    jLabel3.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel3.setVerticalAlignment(SwingConstants.TOP);
+    jLabel3.setMinimumSize(new Dimension(111, 20));
+    jLabel3.setVerticalTextPosition(SwingConstants.TOP);
     _pnlSaveRelative.add(jLabel3);
 
     relativePathsCheckBox.setSelected(_options.getSavePlaylistsWithRelativePaths());
     _pnlSaveRelative.add(relativePathsCheckBox);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 5;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlSaveRelative, gridBagConstraints);
 
-    _pnlAutoLocate.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlAutoLocate.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel2.setText("Auto-locate missing playlist entries on load:");
-    jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel2.setMinimumSize(new java.awt.Dimension(111, 20));
-    jLabel2.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel2.setVerticalAlignment(SwingConstants.TOP);
+    jLabel2.setMinimumSize(new Dimension(111, 20));
+    jLabel2.setVerticalTextPosition(SwingConstants.TOP);
     _pnlAutoLocate.add(jLabel2);
 
     autoLocateCheckBox.setSelected(_options.getAutoLocateEntriesOnPlaylistLoad());
     _pnlAutoLocate.add(autoLocateCheckBox);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 6;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlAutoLocate, gridBagConstraints);
 
-    _pnRefreshMediaLibraryOnStart.setMinimumSize(new java.awt.Dimension(165, 20));
-    _pnRefreshMediaLibraryOnStart.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnRefreshMediaLibraryOnStart.setMinimumSize(new Dimension(165, 20));
+    _pnRefreshMediaLibraryOnStart.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel4.setText("Auto refresh media library at startup:");
-    jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel4.setMinimumSize(new java.awt.Dimension(111, 20));
-    jLabel4.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel4.setVerticalAlignment(SwingConstants.TOP);
+    jLabel4.setMinimumSize(new Dimension(111, 20));
+    jLabel4.setVerticalTextPosition(SwingConstants.TOP);
     _pnRefreshMediaLibraryOnStart.add(jLabel4);
 
     autoRefreshOnStartupCheckBox.setSelected(_options.getAutoRefreshMediaLibraryOnStartup());
     _pnRefreshMediaLibraryOnStart.add(autoRefreshOnStartupCheckBox);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 7;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnRefreshMediaLibraryOnStart, gridBagConstraints);
 
-    _pnlDisableCaseSensitivity.setMinimumSize(new java.awt.Dimension(165, 20));
-    _pnlDisableCaseSensitivity.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlDisableCaseSensitivity.setMinimumSize(new Dimension(165, 20));
+    _pnlDisableCaseSensitivity.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     _lblCaseSensitivity.setText("Exact matches ignore upper/lower case:");
-    _lblCaseSensitivity.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    _lblCaseSensitivity.setMinimumSize(new java.awt.Dimension(111, 20));
-    _lblCaseSensitivity.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    _lblCaseSensitivity.setVerticalAlignment(SwingConstants.TOP);
+    _lblCaseSensitivity.setMinimumSize(new Dimension(111, 20));
+    _lblCaseSensitivity.setVerticalTextPosition(SwingConstants.TOP);
     _pnlDisableCaseSensitivity.add(_lblCaseSensitivity);
 
     _cbxCaseSensitivity.setSelected(_options.getCaseInsensitiveExactMatching());
     _pnlDisableCaseSensitivity.add(_cbxCaseSensitivity);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 8;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlDisableCaseSensitivity, gridBagConstraints);
 
-    _pnlSmallWords.setMinimumSize(new java.awt.Dimension(165, 20));
-    _pnlSmallWords.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 0));
+    _pnlSmallWords.setMinimumSize(new Dimension(165, 20));
+    _pnlSmallWords.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel10.setText("Words to ignore while finding closest matches:");
-    jLabel10.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-    jLabel10.setMinimumSize(new java.awt.Dimension(111, 9));
-    jLabel10.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+    jLabel10.setVerticalAlignment(SwingConstants.TOP);
+    jLabel10.setMinimumSize(new Dimension(111, 9));
+    jLabel10.setVerticalTextPosition(SwingConstants.TOP);
     _pnlSmallWords.add(jLabel10);
 
-    _smallWordsTxtField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+    _smallWordsTxtField.setHorizontalAlignment(JTextField.LEFT);
     _smallWordsTxtField.setText(_options.getIgnoredSmallWords() + TEXT_FIELD_TRAILING_SPACER);
-    _smallWordsTxtField.setMinimumSize(new java.awt.Dimension(150, 20));
+    _smallWordsTxtField.setMinimumSize(new Dimension(150, 20));
     _smallWordsTxtField.setPreferredSize(null);
     _pnlSmallWords.add(_smallWordsTxtField);
 
-    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 10;
-    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+    gridBagConstraints.fill = GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
     gridBagConstraints.weighty = 1.0;
-    gridBagConstraints.insets = new java.awt.Insets(3, 0, 3, 0);
+    gridBagConstraints.insets = new Insets(3, 0, 3, 0);
     optionsPanel.add(_pnlSmallWords, gridBagConstraints);
 
     topPanel.add(optionsPanel);
 
     buttonPanel.setMaximumSize(null);
-    buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+    buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
     jButton1.setText("OK");
-    jButton1.setMinimumSize(new java.awt.Dimension(49, 20));
+    jButton1.setMinimumSize(new Dimension(49, 20));
     jButton1.setPreferredSize(null);
-    jButton1.addActionListener(new java.awt.event.ActionListener()
+    jButton1.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        jButton1ActionPerformed(evt);
+        jButton1ActionPerformed();
       }
     });
     buttonPanel.add(jButton1);
 
     jButton2.setText("Cancel");
-    jButton2.setMinimumSize(new java.awt.Dimension(67, 20));
-    jButton2.addActionListener(new java.awt.event.ActionListener()
+    jButton2.setMinimumSize(new Dimension(67, 20));
+    jButton2.addActionListener(new ActionListener()
     {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
+      @Override public void actionPerformed(ActionEvent evt)
       {
-        jButton2ActionPerformed(evt);
+        jButton2ActionPerformed();
       }
     });
     buttonPanel.add(jButton2);
@@ -551,14 +559,14 @@ public class AppOptionsDialog extends javax.swing.JDialog
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)
+  private void jButton2ActionPerformed()
   {//GEN-FIRST:event_jButton2ActionPerformed
     setVisible(false);
     dispose();
     setResultCode(CANCEL);
   }//GEN-LAST:event_jButton2ActionPerformed
 
-  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)
+  private void jButton1ActionPerformed()
   {//GEN-FIRST:event_jButton1ActionPerformed
     setVisible(false);
     dispose();
@@ -566,13 +574,13 @@ public class AppOptionsDialog extends javax.swing.JDialog
   }//GEN-LAST:event_jButton1ActionPerformed
 
   /** Closes the dialog */
-  private void closeDialog(java.awt.event.WindowEvent evt)
+  private void closeDialog()
   {//GEN-FIRST:event_closeDialog
     setVisible(false);
     dispose();
   }//GEN-LAST:event_closeDialog
 
-  private void _changeFontButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__changeFontButtonActionPerformed
+  private void _changeFontButtonActionPerformed()//GEN-FIRST:event__changeFontButtonActionPerformed
   {//GEN-HEADEREND:event__changeFontButtonActionPerformed
     JFontChooser jfc = new JFontChooser();
     jfc.setSelectedFont(_chosenFont);
@@ -582,43 +590,43 @@ public class AppOptionsDialog extends javax.swing.JDialog
   }//GEN-LAST:event__changeFontButtonActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JCheckBox _cbxCaseSensitivity;
-  private javax.swing.JComboBox _cbxMaxClosestMatches;
-  private javax.swing.JButton _changeFontButton;
-  private javax.swing.JLabel _fontDisplayLabel;
-  private javax.swing.JLabel _lblCaseSensitivity;
-  private javax.swing.JPanel _pnRefreshMediaLibraryOnStart;
-  private javax.swing.JPanel _pnlAutoLocate;
-  private javax.swing.JPanel _pnlDisableCaseSensitivity;
-  private javax.swing.JPanel _pnlListsDir;
-  private javax.swing.JPanel _pnlLookAndFeel;
-  private javax.swing.JPanel _pnlNumClosestMatches;
-  private javax.swing.JPanel _pnlRecentListLimit;
-  private javax.swing.JPanel _pnlSaveRelative;
-  private javax.swing.JPanel _pnlSmallWords;
-  private javax.swing.JPanel _pnlUseUnc;
-  private javax.swing.JPanel _pnlfontChooser;
-  private javax.swing.JTextField _smallWordsTxtField;
-  private javax.swing.JCheckBox alwaysUseUNCPathsCheckBox;
-  private javax.swing.JCheckBox autoLocateCheckBox;
-  private javax.swing.JCheckBox autoRefreshOnStartupCheckBox;
-  private javax.swing.JPanel buttonPanel;
-  private javax.swing.JButton jButton1;
-  private javax.swing.JButton jButton2;
-  private javax.swing.JLabel jLabel1;
-  private javax.swing.JLabel jLabel10;
-  private javax.swing.JLabel jLabel2;
-  private javax.swing.JLabel jLabel3;
-  private javax.swing.JLabel jLabel4;
-  private javax.swing.JLabel jLabel5;
-  private javax.swing.JLabel jLabel6;
-  private javax.swing.JLabel jLabel8;
-  private javax.swing.JLabel jLabel9;
-  private javax.swing.JComboBox lookAndFeelComboBox;
-  private javax.swing.JPanel optionsPanel;
-  private javax.swing.JButton playlistDirectoryBrowseButton;
-  private javax.swing.JComboBox recentPlaylistLimitComboBox;
-  private javax.swing.JCheckBox relativePathsCheckBox;
-  private javax.swing.JPanel topPanel;
+  private JCheckBox _cbxCaseSensitivity;
+  private JComboBox _cbxMaxClosestMatches;
+  private JButton _changeFontButton;
+  private JLabel _fontDisplayLabel;
+  private JLabel _lblCaseSensitivity;
+  private JPanel _pnRefreshMediaLibraryOnStart;
+  private JPanel _pnlAutoLocate;
+  private JPanel _pnlDisableCaseSensitivity;
+  
+  private JPanel _pnlLookAndFeel;
+  private JPanel _pnlNumClosestMatches;
+  private JPanel _pnlRecentListLimit;
+  private JPanel _pnlSaveRelative;
+  private JPanel _pnlSmallWords;
+  private JPanel _pnlUseUnc;
+  private JPanel _pnlfontChooser;
+  private JTextField _smallWordsTxtField;
+  private JCheckBox alwaysUseUNCPathsCheckBox;
+  private JCheckBox autoLocateCheckBox;
+  private JCheckBox autoRefreshOnStartupCheckBox;
+  private JPanel buttonPanel;
+  private JButton jButton1;
+  private JButton jButton2;
+  private JLabel jLabel1;
+  private JLabel jLabel10;
+  private JLabel jLabel2;
+  private JLabel jLabel3;
+  private JLabel jLabel4;
+  private JLabel jLabel5;
+  private JLabel jLabel6;
+  private JLabel jLabel8;
+  private JLabel jLabel9;
+  private JComboBox lookAndFeelComboBox;
+  private JPanel optionsPanel;
+  
+  private JComboBox recentPlaylistLimitComboBox;
+  private JCheckBox relativePathsCheckBox;
+  private JPanel topPanel;
   // End of variables declaration//GEN-END:variables
 }

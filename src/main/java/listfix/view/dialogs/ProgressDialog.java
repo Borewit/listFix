@@ -2,41 +2,44 @@
 
 package listfix.view.dialogs;
 
-import listfix.view.support.ProgressWorker;
-
-import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.swing.*;
+import listfix.view.support.ProgressWorker;
 
 
-public class ProgressDialog extends javax.swing.JDialog
+public class ProgressDialog extends JDialog
 {
   /**
    *
-   * @param parent
-   * @param modal
-   * @param worker
-   * @param label
+   * 
+   * 
+   * 
+   * 
    */
-  public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label)
+  public ProgressDialog(Frame parent, boolean modal, ProgressWorker worker, String label)
   {
     this(parent, modal, worker, label, false, true);
   }
 
     /**
    *
-   * @param parent
-   * @param modal
-   * @param worker
-   * @param label
-   * @param textMode
-   * @param canCancel
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
    */
-  public ProgressDialog(java.awt.Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode, boolean canCancel)
+  public ProgressDialog(Frame parent, boolean modal, ProgressWorker worker, String label, boolean textMode, boolean canCancel)
   {
     super(parent, modal);
     initComponents();
@@ -86,7 +89,7 @@ public class ProgressDialog extends javax.swing.JDialog
 
     /**
    *
-   * @return
+   * 
    */
   public JProgressBar getProgressBar()
     {
@@ -95,7 +98,7 @@ public class ProgressDialog extends javax.swing.JDialog
 
     /**
    *
-   * @return
+   * 
    */
   public JLabel getProgressLabel()
     {
@@ -115,7 +118,7 @@ public class ProgressDialog extends javax.swing.JDialog
     // update progress bar when progress changes
     pcs.addPropertyChangeListener("progress", new PropertyChangeListener()
     {
-        public void propertyChange(PropertyChangeEvent evt)
+        @Override public void propertyChange(PropertyChangeEvent evt)
         {
             int progress = (Integer)evt.getNewValue();
             _progressBar.setValue(progress);
@@ -125,7 +128,7 @@ public class ProgressDialog extends javax.swing.JDialog
   // Update progress message when message changes
   pcs.addPropertyChangeListener("message", new PropertyChangeListener()
     {
-        public void propertyChange(PropertyChangeEvent evt)
+        @Override public void propertyChange(PropertyChangeEvent evt)
         {
             _progressMessage.setText(_worker.getMessage());
         }
@@ -134,7 +137,7 @@ public class ProgressDialog extends javax.swing.JDialog
     // close dialog when state changes to done
     pcs.addPropertyChangeListener("state", new PropertyChangeListener()
     {
-        public void propertyChange(PropertyChangeEvent evt)
+        @Override public void propertyChange(PropertyChangeEvent evt)
         {
             if (_worker.isDone())
             {
@@ -154,80 +157,80 @@ public class ProgressDialog extends javax.swing.JDialog
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
-      java.awt.GridBagConstraints gridBagConstraints;
+      GridBagConstraints gridBagConstraints;
 
-      jPanel1 = new javax.swing.JPanel();
-      _progressTitle = new javax.swing.JLabel();
-      _progressBar = new javax.swing.JProgressBar();
-      _pnlMessage = new javax.swing.JPanel();
-      _progressMessage = new javax.swing.JLabel();
-      _pnlSpacer = new javax.swing.JPanel();
-      jPanel2 = new javax.swing.JPanel();
-      _cancelButton = new javax.swing.JButton();
+      jPanel1 = new JPanel();
+      _progressTitle = new JLabel();
+      _progressBar = new JProgressBar();
+      _pnlMessage = new JPanel();
+      _progressMessage = new JLabel();
+      _pnlSpacer = new JPanel();
+      jPanel2 = new JPanel();
+      _cancelButton = new JButton();
 
-      setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       setResizable(false);
-      addWindowListener(new java.awt.event.WindowAdapter() {
-          public void windowClosing(java.awt.event.WindowEvent evt) {
-              formWindowClosing(evt);
+      addWindowListener(new WindowAdapter() {
+          @Override public void windowClosing(WindowEvent evt) {
+              formWindowClosing();
           }
       });
-      getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
+      getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-      jPanel1.setMinimumSize(new java.awt.Dimension(270, 45));
-      jPanel1.setPreferredSize(new java.awt.Dimension(166, 45));
-      jPanel1.setLayout(new java.awt.GridBagLayout());
+      jPanel1.setMinimumSize(new Dimension(270, 45));
+      jPanel1.setPreferredSize(new Dimension(166, 45));
+      jPanel1.setLayout(new GridBagLayout());
 
       _progressTitle.setText("Title");
-      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints = new GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 0;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
       gridBagConstraints.weightx = 1.0;
-      gridBagConstraints.insets = new java.awt.Insets(15, 10, 4, 10);
+      gridBagConstraints.insets = new Insets(15, 10, 4, 10);
       jPanel1.add(_progressTitle, gridBagConstraints);
 
-      _progressBar.setMinimumSize(new java.awt.Dimension(250, 14));
-      gridBagConstraints = new java.awt.GridBagConstraints();
+      _progressBar.setMinimumSize(new Dimension(250, 14));
+      gridBagConstraints = new GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
+      gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.insets = new Insets(0, 10, 10, 10);
       jPanel1.add(_progressBar, gridBagConstraints);
 
-      _pnlMessage.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 5));
+      _pnlMessage.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 5));
 
       _progressMessage.setText("Message");
       _pnlMessage.add(_progressMessage);
 
-      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints = new GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 1;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-      gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-      gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
+      gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+      gridBagConstraints.insets = new Insets(0, 2, 0, 2);
       jPanel1.add(_pnlMessage, gridBagConstraints);
-      gridBagConstraints = new java.awt.GridBagConstraints();
+      gridBagConstraints = new GridBagConstraints();
       gridBagConstraints.gridx = 0;
       gridBagConstraints.gridy = 2;
-      gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+      gridBagConstraints.fill = GridBagConstraints.BOTH;
       jPanel1.add(_pnlSpacer, gridBagConstraints);
 
       getContentPane().add(jPanel1);
 
-      jPanel2.setMinimumSize(new java.awt.Dimension(77, 30));
-      jPanel2.setPreferredSize(new java.awt.Dimension(77, 30));
-      jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 0));
+      jPanel2.setMinimumSize(new Dimension(77, 30));
+      jPanel2.setPreferredSize(new Dimension(77, 30));
+      jPanel2.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
       _cancelButton.setText("Cancel");
       _cancelButton.setAlignmentY(-5.0F);
-      _cancelButton.addActionListener(new java.awt.event.ActionListener() {
-          public void actionPerformed(java.awt.event.ActionEvent evt) {
-              _cancelButtonActionPerformed(evt);
+      _cancelButton.addActionListener(new ActionListener() {
+          @Override public void actionPerformed(ActionEvent evt) {
+              _cancelButtonActionPerformed();
           }
       });
-      _cancelButton.addKeyListener(new java.awt.event.KeyAdapter() {
-          public void keyPressed(java.awt.event.KeyEvent evt) {
+      _cancelButton.addKeyListener(new KeyAdapter() {
+          @Override public void keyPressed(KeyEvent evt) {
               _cancelButtonKeyPressed(evt);
           }
       });
@@ -238,12 +241,12 @@ public class ProgressDialog extends javax.swing.JDialog
       pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void _cancelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event__cancelButtonActionPerformed
+  private void _cancelButtonActionPerformed()//GEN-FIRST:event__cancelButtonActionPerformed
   {//GEN-HEADEREND:event__cancelButtonActionPerformed
     _worker.cancel(true);
   }//GEN-LAST:event__cancelButtonActionPerformed
 
-  private void _cancelButtonKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event__cancelButtonKeyPressed
+  private void _cancelButtonKeyPressed(KeyEvent evt)//GEN-FIRST:event__cancelButtonKeyPressed
   {//GEN-HEADEREND:event__cancelButtonKeyPressed
     if (evt.getKeyCode() == evt.VK_ESCAPE)
     {
@@ -251,21 +254,21 @@ public class ProgressDialog extends javax.swing.JDialog
     }
   }//GEN-LAST:event__cancelButtonKeyPressed
 
-  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  private void formWindowClosing()//GEN-FIRST:event_formWindowClosing
   {//GEN-HEADEREND:event_formWindowClosing
     _worker.cancel(true);
   }//GEN-LAST:event_formWindowClosing
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton _cancelButton;
-  private javax.swing.JPanel _pnlMessage;
-  private javax.swing.JPanel _pnlSpacer;
-  private javax.swing.JProgressBar _progressBar;
-  private javax.swing.JLabel _progressMessage;
-  private javax.swing.JLabel _progressTitle;
-  private javax.swing.JPanel jPanel1;
-  private javax.swing.JPanel jPanel2;
+  private JButton _cancelButton;
+  private JPanel _pnlMessage;
+  private JPanel _pnlSpacer;
+  private JProgressBar _progressBar;
+  private JLabel _progressMessage;
+  private JLabel _progressTitle;
+  private JPanel jPanel1;
+  private JPanel jPanel2;
   // End of variables declaration//GEN-END:variables
 
 }

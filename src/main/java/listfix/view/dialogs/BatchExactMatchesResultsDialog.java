@@ -156,15 +156,15 @@ public class BatchExactMatchesResultsDialog extends JDialog
     JPanel jPanel1 = new JPanel();
     JPanel jPanel3 = new JPanel();
     JLabel jLabel1 = new JLabel();
-    playlistEditCtrl1 = new listfix.view.controls.PlaylistEditCtrl(this.listFixGui);
+    playlistEditCtrl1 = new PlaylistEditCtrl(this.listFixGui);
     _pnlList = new PlaylistsList(_batch);
 
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     addWindowListener(new WindowAdapter()
     {
-      public void windowClosing(WindowEvent evt)
+      @Override public void windowClosing(WindowEvent evt)
       {
-        formWindowClosing(evt);
+        formWindowClosing();
       }
     });
 
@@ -303,7 +303,7 @@ public class BatchExactMatchesResultsDialog extends JDialog
     }
   }
 
-  private void formWindowClosing(WindowEvent ignore)
+  private void formWindowClosing()
   {
     _userCancelled = true;
   }

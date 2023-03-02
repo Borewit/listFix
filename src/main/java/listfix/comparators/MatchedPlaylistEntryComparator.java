@@ -1,8 +1,9 @@
 package listfix.comparators;
 
+import java.util.Comparator;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
-public class MatchedPlaylistEntryComparator implements java.util.Comparator<PotentialPlaylistEntryMatch>
+public class MatchedPlaylistEntryComparator implements Comparator<PotentialPlaylistEntryMatch>
 {
   @Override
   public int compare(PotentialPlaylistEntryMatch aa, PotentialPlaylistEntryMatch bb)

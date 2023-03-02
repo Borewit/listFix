@@ -2,29 +2,34 @@
 
 package listfix.view.dialogs;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import javax.swing.table.TableCellEditor;
 import listfix.model.BatchMatchItem;
 import listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.table.TableCellEditor;
-import java.awt.*;
-import java.util.List;
-
 /**
  * This is the results dialog we display when running a closest matches search on multiple files in a playlist (this operation originally worked only on a single entry)..
  * @author jcaron
  */
-public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
+public class BatchClosestMatchResultsDialog extends JDialog
 {
-  private final Logger _logger = LogManager.getLogger(BatchClosestMatchResultsDialog.class);
+  
 
   /**
    *
-   * @param parent
-   * @param items
+   * 
+   * 
    */
-  public BatchClosestMatchResultsDialog(java.awt.Frame parent, List<BatchMatchItem> items)
+  public BatchClosestMatchResultsDialog(Frame parent, List<BatchMatchItem> items)
   {
     super(parent, true);
     _items = items;
@@ -47,7 +52,7 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
 
   /**
    *
-   * @return
+   * 
    */
   public boolean isAccepted()
   {
@@ -71,39 +76,39 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        _btnOk = new javax.swing.JButton();
-        _btnCancel = new javax.swing.JButton();
+        jPanel1 = new JPanel();
+        _btnOk = new JButton();
+        _btnCancel = new JButton();
         _pnlResults = new ClosestMatchesSearchScrollableResultsPanel(_items);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Select Closest Matches");
 
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel1.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         _btnOk.setText("OK");
-        _btnOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onBtnOkActionPerformed(evt);
+        _btnOk.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent evt) {
+                onBtnOkActionPerformed();
             }
         });
         jPanel1.add(_btnOk);
 
         _btnCancel.setText("Cancel");
-        _btnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onBtnCancelActionPerformed(evt);
+        _btnCancel.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent evt) {
+                onBtnCancelActionPerformed();
             }
         });
         jPanel1.add(_btnCancel);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
-        getContentPane().add(_pnlResults, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanel1, BorderLayout.SOUTH);
+        getContentPane().add(_pnlResults, BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void onBtnOkActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnOkActionPerformed
+    private void onBtnOkActionPerformed()//GEN-FIRST:event_onBtnOkActionPerformed
     {//GEN-HEADEREND:event_onBtnOkActionPerformed
     _isAccepted = true;
     if (_pnlResults.getSelectedRow() > -1 && _pnlResults.getSelectedColumn() == 3)
@@ -114,16 +119,16 @@ public class BatchClosestMatchResultsDialog extends javax.swing.JDialog
     setVisible(false);
     }//GEN-LAST:event_onBtnOkActionPerformed
 
-    private void onBtnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onBtnCancelActionPerformed
+    private void onBtnCancelActionPerformed()//GEN-FIRST:event_onBtnCancelActionPerformed
     {//GEN-HEADEREND:event_onBtnCancelActionPerformed
     _isAccepted = false;
     setVisible(false);
     }//GEN-LAST:event_onBtnCancelActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton _btnCancel;
-    private javax.swing.JButton _btnOk;
-    private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
-    private javax.swing.JPanel jPanel1;
+    private JButton _btnCancel;
+    private JButton _btnOk;
+    private ClosestMatchesSearchScrollableResultsPanel _pnlResults;
+    private JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
 }

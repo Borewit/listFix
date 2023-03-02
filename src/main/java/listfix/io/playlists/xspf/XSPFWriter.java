@@ -76,7 +76,7 @@ public class XSPFWriter extends PlaylistWriter<christophedelory.playlist.Playlis
 
   private Content getContent(PlaylistEntry entry) throws IOException
   {
-    final boolean _saveRelative = this.playListOptions.getSavePlaylistsWithRelativePaths();
+    
     URI mediaURI;
     if (entry.isURL())
     {

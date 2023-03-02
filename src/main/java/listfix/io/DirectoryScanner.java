@@ -20,8 +20,8 @@ public class DirectoryScanner
   private int recursiveCount = 0;
 
   /**
-   * @param baseDirs
-   * @param task
+   * 
+   * 
    */
   public void createMediaLibraryDirectoryAndFileList(Collection<String> baseDirs, ProgressWorker task)
   {
@@ -90,7 +90,7 @@ public class DirectoryScanner
   }
 
   /**
-   * @return
+   * 
    */
   public List<String> getFileList()
   {
@@ -98,7 +98,7 @@ public class DirectoryScanner
   }
 
   /**
-   * @return
+   * 
    */
   public List<String> getDirectoryList()
   {

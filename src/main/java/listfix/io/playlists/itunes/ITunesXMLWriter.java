@@ -2,6 +2,15 @@
 
 package listfix.io.playlists.itunes;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.*;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.TreeMap;
 import listfix.io.IPlaylistOptions;
 import listfix.io.playlists.PlaylistWriter;
 import listfix.model.playlists.FilePlaylistEntry;
@@ -13,12 +22,6 @@ import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.model.playlists.itunes.ITunesTrack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.TreeMap;
 
 
 public class ITunesXMLWriter extends PlaylistWriter<Map<String, ITunesTrack>>
@@ -92,10 +95,10 @@ public class ITunesXMLWriter extends PlaylistWriter<Map<String, ITunesTrack>>
 
     // input
     FileInputStream fis = new FileInputStream(inFile);
-    try (BufferedReader in = new BufferedReader(new InputStreamReader(fis)))
+    try (BufferedReader in = new BufferedReader(new InputStreamReader(fis, UTF_8)))
     {
       FileOutputStream fos = new FileOutputStream(outFile);
-      try (PrintWriter out = new PrintWriter(fos))
+      try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, UTF_8))))
       {
         String thisLine;
         int i = 1;

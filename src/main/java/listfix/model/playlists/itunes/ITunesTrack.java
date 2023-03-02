@@ -28,7 +28,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _location
+   *Returns the _location.
+ 
    */
   public String getLocation()
   {
@@ -41,7 +42,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _artist
+   *Returns the _artist.
+ 
    */
   public String getArtist()
   {
@@ -49,7 +51,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _name
+   *Returns the _name.
+ 
    */
   public String getName()
   {
@@ -57,7 +60,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _album
+   *Returns the _album.
+ 
    */
   public String getAlbum()
   {
@@ -65,7 +69,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _albumArtist
+   *Returns the _albumArtist.
+ 
    */
   public String getAlbumArtist()
   {
@@ -78,7 +83,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _duration
+   *Returns the _duration.
+ 
    */
   public long getDuration()
   {
@@ -93,7 +99,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _trackId
+   *Returns the _trackId.
+ 
    */
   public String getTrackId()
   {
@@ -101,7 +108,8 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _trackDict
+   *Returns the _trackDict.
+ 
    */
   public Dict getTrackDict()
   {

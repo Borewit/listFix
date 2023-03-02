@@ -67,8 +67,8 @@ public class WinampHelper
     {
       final BatchRepair br = new BatchRepair(mediaLibrary, new File(WINAMP_PATH));
       br.setDescription("Batch Repair: Winamp Playlists");
-      List<listfix.model.playlists.winamp.generated.Playlist> winLists = getWinampPlaylists();
-      for (listfix.model.playlists.winamp.generated.Playlist list : winLists)
+      List<Playlist> winLists = getWinampPlaylists();
+      for (Playlist list : winLists)
       {
         br.add(new BatchRepairItem(new File(WINAMP_PATH + list.getFilename()), filePathOptions));
       }
@@ -111,7 +111,7 @@ public class WinampHelper
     return OperatingSystem.isWindows() && !WINAMP_PATH.isEmpty();
   }
 
-  private static List<listfix.model.playlists.winamp.generated.Playlist> getWinampPlaylists() throws JAXBException
+  private static List<Playlist> getWinampPlaylists() throws JAXBException
   {
     String playlistPath = WINAMP_PATH + "playlists.xml";
     File listsFile = new File(playlistPath);

@@ -13,7 +13,7 @@ public class Dates
 
   /**
    *
-   * @return
+   * 
    */
   public static String now()
   {

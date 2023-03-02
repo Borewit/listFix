@@ -11,7 +11,7 @@ import java.beans.PropertyChangeSupport;
  * @param <T> the result type returned by this SwingWorker's doInBackground and get methods
  * @param <V> the type used for carrying out intermediate results by this SwingWorker's publish and process methods
  */
-public class DualProgressDialog<T, V> extends javax.swing.JDialog
+public class DualProgressDialog<T, V> extends JDialog
 {
   private SwingWorker<T, V> _worker;
   private JLabel _overallLabel;
@@ -69,20 +69,20 @@ public class DualProgressDialog<T, V> extends javax.swing.JDialog
     GridBagConstraints gridBagConstraints;
 
     JPanel _middlePanel = new JPanel();
-    _taskLabel = new javax.swing.JLabel();
-    _taskProgress = new javax.swing.JProgressBar();
-    _overallLabel = new javax.swing.JLabel();
-    _overallProgress = new javax.swing.JProgressBar();
+    _taskLabel = new JLabel();
+    _taskProgress = new JProgressBar();
+    _overallLabel = new JLabel();
+    _overallProgress = new JProgressBar();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     JPanel _bottomPanel = new JPanel();
     JButton _cancelButton = new JButton();
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     addWindowListener(new WindowAdapter()
     {
-      public void windowClosing(WindowEvent evt)
+      @Override public void windowClosing(WindowEvent evt)
       {
-        formWindowClosing(evt);
+        formWindowClosing();
       }
     });
 
@@ -126,7 +126,7 @@ public class DualProgressDialog<T, V> extends javax.swing.JDialog
     _cancelButton.addActionListener(this::_cancelButtonActionPerformed);
     _cancelButton.addKeyListener(new KeyAdapter()
     {
-      public void keyPressed(KeyEvent evt)
+      @Override public void keyPressed(KeyEvent evt)
       {
         _cancelButtonKeyPressed(evt);
       }
@@ -143,7 +143,7 @@ public class DualProgressDialog<T, V> extends javax.swing.JDialog
     _worker.cancel(true);
   }
 
-  private void formWindowClosing(WindowEvent ignore)
+  private void formWindowClosing()
   {
     _worker.cancel(true);
   }

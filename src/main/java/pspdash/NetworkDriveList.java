@@ -25,15 +25,16 @@
 
 package pspdash;
 
-import listfix.util.OperatingSystem;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import listfix.util.OperatingSystem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * On Windows systems, this class compiles a list of shared
@@ -112,7 +113,7 @@ public class NetworkDriveList
     {
       subprocess = Runtime.getRuntime().exec("net use");
     }
-    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream(), UTF_8));
     String line;
     boolean sawHeader = false;
     while ((line = in.readLine()) != null)
@@ -166,7 +167,7 @@ public class NetworkDriveList
     {
       subprocess = Runtime.getRuntime().exec("net config workstation");
     }
-    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream(), UTF_8));
     String line;
     String computerName = null;
     while ((line = in.readLine()) != null)
@@ -191,7 +192,7 @@ public class NetworkDriveList
     {
       subprocess = Runtime.getRuntime().exec("net share");
     }
-    in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    in = new BufferedReader(new InputStreamReader(subprocess.getInputStream(), UTF_8));
     boolean sawHeader = false;
     String lastLine = "";
     while ((line = in.readLine()) != null)
@@ -257,7 +258,7 @@ public class NetworkDriveList
    *
    * On non-Windows systems, this will always return false.
    *
-   * @return
+   * 
    */
   public boolean wasSuccessful()
   {
@@ -268,8 +269,8 @@ public class NetworkDriveList
    *
    * If wasSuccessful() returns false, this will generally return false.
    *
-   * @param driveLetter
-   * @return
+   * 
+   * 
    */
   public boolean isNetworkDrive(String driveLetter)
   {
@@ -285,8 +286,8 @@ public class NetworkDriveList
    *
    * If wasSuccessful() returns false, this will generally return false.
    *
-   * @param filename
-   * @return
+   * 
+   * 
    */
   public boolean onNetworkDrive(String filename)
   {
@@ -301,8 +302,8 @@ public class NetworkDriveList
    * If isNetworkDrive() returns false for this drive letter,
    * returns null.
    *
-   * @param driveLetter
-   * @return
+   * 
+   * 
    */
   public String getUNCName(String driveLetter)
   {
@@ -351,7 +352,7 @@ public class NetworkDriveList
 
   /** Convert the given filename (in UNC format) to a drive letter format
    * name.
-   * @param uncName
+   * 
    * @return a filename beginning with a drive letter, or null if
    * the filename could not be translated.
    */

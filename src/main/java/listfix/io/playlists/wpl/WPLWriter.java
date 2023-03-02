@@ -29,7 +29,7 @@ public class WPLWriter extends PlaylistWriter<StringBuilder>
     return new StringBuilder();
   }
 
-  protected void writeHeader(StringBuilder buffer, Playlist playlist) throws Exception
+  @Override protected void writeHeader(StringBuilder buffer, Playlist playlist) throws Exception
   {
     final File playlistFile = playlist.getFile();
     buffer.append(getWPLHead(playlistFile));
