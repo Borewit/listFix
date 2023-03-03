@@ -2,8 +2,7 @@ package listfix.model.playlists.itunes;
 
 import christophedelory.plist.Array;
 import christophedelory.plist.Dict;
-
-import java.util.Hashtable;
+import christophedelory.plist.PlistObject;
 
 /**
  * The ghetto-tastic format used by iTunes (plist in lizzy-speak) has
@@ -16,60 +15,44 @@ import java.util.Hashtable;
 public class DictionaryParser
 {
   /**
+   * Wraps
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Dict.
    */
   public static Dict getKeyValueAsDict(Dict dict, String key) throws ClassCastException
   {
-    Object value = ((Hashtable) dict.getDictionary()).get(new christophedelory.plist.Key(key));
-    if (value != null)
-    {
-      return (Dict) value;
-    }
-    return null;
+    return (Dict) dict.getDictionary().get(new christophedelory.plist.Key(key));
   }
 
-  public static void setKeyValue(Dict dict, String key, Object value) throws ClassCastException
+  public static void setKeyValue(Dict dict, String key, PlistObject value) throws ClassCastException
   {
-    ((Hashtable) dict.getDictionary()).remove(new christophedelory.plist.Key(key));
-    ((Hashtable) dict.getDictionary()).put(new christophedelory.plist.Key(key), value);
+    dict.getDictionary().put(new christophedelory.plist.Key(key), value);
   }
 
   /**
+   * Read an Array from the key-value-pair dict
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Array.
    */
   public static Array getKeyValueAsArray(Dict dict, String key) throws ClassCastException
   {
-    Object value = ((Hashtable) dict.getDictionary()).get(new christophedelory.plist.Key(key));
-    if (value != null)
-    {
-      return (Array) value;
-    }
-    return null;
+    return (Array) dict.getDictionary().get(new christophedelory.plist.Key(key));
   }
 
   /**
+   * Read an Integer from the key-value-pair dict
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Integer.
    */
   public static christophedelory.plist.Integer getKeyValueAsInteger(Dict dict, String key) throws ClassCastException
   {
-    Object value = ((Hashtable) dict.getDictionary()).get(new christophedelory.plist.Key(key));
-    if (value != null)
-    {
-      return (christophedelory.plist.Integer) value;
-    }
-    return null;
+    return (christophedelory.plist.Integer) dict.getDictionary().get(new christophedelory.plist.Key(key));
   }
 
   /**
+   * Read a String from the key-value-pair dict
    * @throws ClassCastException Thrown when the datatype of the given key is not a String.
    */
   public static String getKeyValueAsString(Dict dict, String keyName) throws ClassCastException
   {
-    Object value = ((Hashtable) dict.getDictionary()).get(new christophedelory.plist.Key(keyName));
-    if (value != null)
-    {
-      return ((christophedelory.plist.String) value).getValue();
-    }
-    return null;
+    Object value = dict.getDictionary().get(new christophedelory.plist.Key(keyName));
+    return value == null ? null : ((christophedelory.plist.String) value).getValue();
   }
 }
