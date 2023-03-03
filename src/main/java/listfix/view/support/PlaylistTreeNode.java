@@ -3,7 +3,7 @@ package listfix.view.support;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.nio.file.Path;
 
-public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltipable
+public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltipable, Comparable<PlaylistTreeNode>
 {
   public PlaylistTreeNode(Path path)
   {
@@ -27,15 +27,9 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltip
   {
     if (obj instanceof PlaylistTreeNode)
     {
-      return this.equals((PlaylistTreeNode) obj);
+      return this.compareTo((PlaylistTreeNode) obj) == 0;
     }
     return false;
-  }
-
-  public boolean equals(PlaylistTreeNode obj)
-  {
-    Path path = this.getUserObject();
-    return path != null && path.equals(obj.getUserObject());
   }
 
   @Override
@@ -48,5 +42,17 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltip
   public String getToolTip()
   {
     return this.getUserObject().toString();
+  }
+
+  @Override
+  public int compareTo(PlaylistTreeNode o)
+  {
+    if (o == null) return -1;
+    Path path = this.getUserObject();
+    if (path == null)
+    {
+      return o.getUserObject() == null ? 0 : -1;
+    }
+    return path.compareTo(o.getUserObject());
   }
 }
