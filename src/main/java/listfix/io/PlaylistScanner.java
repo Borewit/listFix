@@ -1,13 +1,17 @@
 package listfix.io;
 
 import listfix.model.playlists.Playlist;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * To create a list of all the playlists found in a given directory and its subdirectories.
@@ -15,41 +19,42 @@ import java.util.stream.Stream;
 public class PlaylistScanner
 {
 
+  private static final Logger logger = LogManager.getLogger(PlaylistScanner.class);
+
   public static List<Path> getAllPlaylists(Path directory) throws IOException
   {
     List<Path> result = new ArrayList<>();
-    try (Stream<Path> stream = Files.list(directory))
+    Files.walkFileTree(directory, new FileVisitor<>()
     {
-      getAllPlaylists(result, stream);
-    }
-    return result;
-  }
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+      {
+        return FileVisitResult.CONTINUE;
+      }
 
-  private static void getAllPlaylists(List<Path> result, Stream<Path> directory)
-  {
-    directory
-      .forEach(path -> {
-        if (Files.isDirectory(path))
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+      {
+        if (Playlist.isPlaylist(file))
         {
-          try
-          {
-            try (Stream<Path> stream = Files.list(path))
-            {
-              getAllPlaylists(result, stream);
-            }
-          }
-          catch (IOException e)
-          {
-            throw new RuntimeException(e);
-          }
+          result.add(file);
         }
-        else
-        {
-          if (Playlist.isPlaylist(path))
-          {
-            result.add(path);
-          }
-        }
-      });
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFileFailed(Path file, IOException exc)
+      {
+        logger.warn(String.format("Failed to access \"%s\"", file));
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+      {
+        return FileVisitResult.CONTINUE;
+      }
+    });
+    return result;
   }
 }

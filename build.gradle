@@ -92,14 +92,14 @@ repositories {
     }
     mavenLocal()
     // Staging repository
-    // maven { url 'https://s01.oss.sonatype.org/content/repositories/iogithubborewit-1000/' }
+    maven { url 'https://s01.oss.sonatype.org/content/groups/staging/' }
     // maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
 
     // Provides christophedelory.playlist.*
-    implementation 'io.github.borewit:lizzy:1.1.2'
+    implementation 'io.github.borewit:lizzy:1.2.0'
 
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
     implementation 'com.jgoodies:jgoodies-common:1.8.1'
