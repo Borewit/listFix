@@ -14,7 +14,10 @@ import org.apache.commons.io.input.BOMInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -31,7 +34,8 @@ public abstract class PlaylistReader implements IPlaylistReader
 
   private final Logger logger = LogManager.getLogger(GUIScreen.class);
 
-  public PlaylistReader(IPlaylistOptions playListOptions, Path playlistPath) {
+  public PlaylistReader(IPlaylistOptions playListOptions, Path playlistPath)
+  {
     this.playListOptions = playListOptions;
     this.playlistPath = playlistPath;
   }
@@ -67,7 +71,7 @@ public abstract class PlaylistReader implements IPlaylistReader
   {
     StringTokenizer pathTokenizer = null;
     StringBuilder path = new StringBuilder();
-     if (OperatingSystem.isLinux()) // OS Specific Hack
+    if (OperatingSystem.isLinux()) // OS Specific Hack
     {
       if (!L2.startsWith("\\\\") && !L2.startsWith(".") && !L2.startsWith(Constants.FS))
       {

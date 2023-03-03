@@ -10,10 +10,8 @@ import javax.swing.tree.TreePath;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.Collection;
 import java.util.stream.Stream;
-
 
 public class FileTreeNodeGenerator
 {
@@ -37,14 +35,15 @@ public class FileTreeNodeGenerator
     files
       .filter(file -> Files.isDirectory(file) || Playlist.isPlaylist(file))
       .sorted(new DirectoryThenFileThenAlphabeticalPathComparator())
-      .map(PlaylistTreeNode :: new)
+      .map(PlaylistTreeNode::new)
       .forEach(node -> {
         Path path = node.getUserObject();
         if (Files.isDirectory(path))
         {
           try
           {
-            try(Stream<Path> children = Files.list(path)) {
+            try (Stream<Path> children = Files.list(path))
+            {
               addNodes(node, children); // recursion
             }
           }

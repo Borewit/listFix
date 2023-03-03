@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Set;
 
 public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
@@ -38,10 +37,6 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
     return config;
   }
 
-  private void clearMediaLibraryDirectoryList()
-  {
-    this.jsonPojo.getNestedDirectories().clear();
-  }
 
   public void removeMediaDir(String dir) throws MediaDirNotFoundException
   {
@@ -80,14 +75,18 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
       }
     }
   }
+
   static void normalizeFileSetToUNC(Set<String> paths)
   {
-    Collection<String> iterator = new LinkedList<>(paths);
-    for (String path : iterator) {
+    Collection<String> iterator = new ArrayList<>(paths);
+    for (String path : iterator)
+    {
       UNCFile file = new UNCFile(path);
-      if (file.onNetworkDrive()) {
+      if (file.onNetworkDrive())
+      {
         String uncPath = file.getUNCPath();
-        if (!uncPath.equals(path)) {
+        if (!uncPath.equals(path))
+        {
           // Replace path with normalized UNC path
           paths.remove(path);
           paths.add(uncPath);

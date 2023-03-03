@@ -1,11 +1,9 @@
-
-
 package listfix.model.playlists;
 
 import listfix.io.IPlaylistOptions;
 import listfix.io.playlists.IPlaylistReader;
-import listfix.io.playlists.itunes.ITunesXMLReader;
 import listfix.io.playlists.PlaylistReaderFactory;
+import listfix.io.playlists.itunes.ITunesXMLReader;
 import listfix.model.enums.PlaylistType;
 import listfix.model.playlists.itunes.ITunesPlaylist;
 import listfix.view.support.IProgressObserver;
@@ -30,7 +28,7 @@ public class PlaylistFactory
 
     if (playlistProcessor.getPlaylistType() == PlaylistType.ITUNES)
     {
-      return new ITunesPlaylist(playlistPath.toFile(), entries, ((ITunesXMLReader)playlistProcessor).getLibrary(), filePathOptions);
+      return new ITunesPlaylist(playlistPath.toFile(), entries, ((ITunesXMLReader) playlistProcessor).getLibrary(), filePathOptions);
     }
     else
     {

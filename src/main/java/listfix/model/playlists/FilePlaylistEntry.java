@@ -73,18 +73,19 @@ public class FilePlaylistEntry extends PlaylistEntry
     }
   }
 
-  private static Path convertPath(Path path) {
+  private static Path convertPath(Path path)
+  {
     String pathAsString = path.toString();
     if (isWindows)
     {
-      if (pathAsString.startsWith("/") || pathAsString.startsWith("../") ||  pathAsString.startsWith("./"))
+      if (pathAsString.startsWith("/") || pathAsString.startsWith("../") || pathAsString.startsWith("./"))
       {
         pathAsString = pathAsString.replace("/", "\\");
       }
     }
     else
     {
-      if (pathAsString.startsWith("\\") || pathAsString.startsWith("..\\") ||  pathAsString.startsWith(".\\"))
+      if (pathAsString.startsWith("\\") || pathAsString.startsWith("..\\") || pathAsString.startsWith(".\\"))
       {
         pathAsString = pathAsString.replace("\\", "/");
       }
@@ -154,19 +155,12 @@ public class FilePlaylistEntry extends PlaylistEntry
     return isFound() || ArrayFunctions.containsStringPrefixingAnotherString(emptyPaths, this.getTrackFolder(), false);
   }
 
-  private void resetAbsoluteFile()
-  {
-    if (!trackPath.isAbsolute())
-    {
-      this.trackPath = this.getAbsolutePath();
-    }
-  }
 
   public boolean findNewLocationFromFileList(Collection<String> fileList, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
     String fileSearchResult = null;
     String trimmedFileName = this.getTrackFileName().trim();
-    boolean caseSensitiveMatching = !this.isWindows && !caseInsensitiveExactMatching;
+    boolean caseSensitiveMatching = !isWindows && !caseInsensitiveExactMatching;
     String candidateFileName;
     for (String file : fileList)
     {
@@ -182,7 +176,8 @@ public class FilePlaylistEntry extends PlaylistEntry
     if (fileSearchResult != null)
     {
       this.trackPath = Path.of(fileSearchResult);
-      if (useRelativePath) {
+      if (useRelativePath)
+      {
         this.trackPath = FileUtils.getRelativePath(this.trackPath, this.playlistPath);
       }
       this.recheckFoundStatus();
@@ -273,7 +268,9 @@ public class FilePlaylistEntry extends PlaylistEntry
     return !this.trackPath.isAbsolute();
   }
 
-  public String trackPathToString() {
+  @Override
+  public String trackPathToString()
+  {
     return this.trackPath.toString();
   }
 

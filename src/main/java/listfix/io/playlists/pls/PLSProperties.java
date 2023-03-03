@@ -22,6 +22,7 @@ import java.util.Hashtable;
  * A property list can contain another property list as its
  * "defaults"; this second property list is searched if
  * the property key is not found in the original property list.
+ * </p>
  * <p>
  * Because <code>Properties</code> inherits from <code>Hashtable</code>, the
  * <code>put</code> and <code>putAll</code> methods can be applied to a
@@ -34,7 +35,7 @@ import java.util.Hashtable;
  * the call to the <code>propertyNames</code> or <code>list</code> method
  * will fail if it is called on a "compromised" <code>Properties</code>
  * object that contains a non-<code>String</code> key.
- *
+ * </p>
  * <p>
  * The {@link #load(java.io.Reader) load(Reader)}
  * {@link #store(java.io.Writer, java.lang.String) store(Writer, String)}
@@ -50,12 +51,14 @@ import java.util.Hashtable;
  * ; only a single 'u' character is allowed in an escape
  * sequence. The native2ascii tool can be used to convert property files to and
  * from other character encodings.
- *
- * <p> The {@link #load(InputStream)} and {@link
- * #store(OutputStream, String) store(OutputStream, String) methods load and store properties
+ * </p>
+ * <p>
+ * The {@link #load(InputStream)} and {@link #store(OutputStream, String)}
+ * store(OutputStream, String) methods load and store properties
  * in a simple XML format.  By default the UTF-8 character encoding is used,
  * however a specific encoding may be specified if required.  An XML properties
  * document has the following DOCTYPE declaration:
+ * </p>
  *
  * <pre>
  * &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
@@ -73,23 +76,25 @@ import java.util.Hashtable;
  *    &lt;!ATTLIST entry key CDATA #REQUIRED&gt;
  * </pre>
  *
+ * @author Arthur van Hoff
+ * @author Michael McCloskey
+ * @author Xueming Shen
+ * @version 1.96, 08/07/06
  * @see <a href="../../../technotes/tools/solaris/native2ascii.html">native2ascii tool for Solaris</a>
  * @see <a href="../../../technotes/tools/windows/native2ascii.html">native2ascii tool for Windows</a>
  *
  * <p>This class is thread-safe: multiple threads can share a single
  * <code>Properties</code> object without the need for external synchronization.
- *
- * @author  Arthur van Hoff
- * @author  Michael McCloskey
- * @author  Xueming Shen
- * @version 1.96, 08/07/06
- * @since   JDK1.0
+ * @since JDK1.0
+ * </p>
  * <p>
  * JCaron - 2011.03.13 - This straight-up copy/paste was needed to change the way Java's Properties class
  * loads and saves characters such as : and #.  The escaping it performs seriously jacks w/ playback of
  * file paths by media players...
+ * </p>
  * <p>
  * You can override private methods, but you can't call private methods in the parent class :(
+ * </p>
  */
 public class PLSProperties extends Hashtable<String, String>
 {
@@ -132,7 +137,7 @@ public class PLSProperties extends Hashtable<String, String>
    * @param key   the key to be placed into this property list.
    * @param value the value corresponding to <tt>key</tt>.
    * @return the previous value of the specified key in this property list,
-   *         or <code>null</code> if it did not have one.
+   * or <code>null</code> if it did not have one.
    * @see #getProperty
    * @since 1.2
    */
@@ -248,7 +253,7 @@ public class PLSProperties extends Hashtable<String, String>
    * specifies that the key is <code>"cheeses"</code> and the associated
    * element is the empty string <code>""</code>.<p>
    * <p>
-   *
+   * <p>
    * Characters in keys and elements can be represented in escape
    * sequences similar to those used for character and string literals
    * (see <a
@@ -389,7 +394,7 @@ public class PLSProperties extends Hashtable<String, String>
 
   /* Read in a "logical line" from an InputStream/Reader, skip all comment
    * and blank lines and filter out those leading whitespace characters
-   * (\u0020, \u0009 and \u000c) from the beginning of a "natural line".
+   * ( , \u0009 and \u000c) from the beginning of a "natural line".
    * Method returns the char length of the "logical line" and stores
    * the line in "lineBuf".
    */
@@ -632,7 +637,7 @@ public class PLSProperties extends Hashtable<String, String>
       }
       else
       {
-        out[outLen++] = (char) aChar;
+        out[outLen++] = aChar;
       }
     }
     return new String(out, 0, outLen);
@@ -643,7 +648,6 @@ public class PLSProperties extends Hashtable<String, String>
    * special characters with a preceding slash
    */
   private String saveConvert(String theString,
-                             boolean escapeSpace,
                              boolean escapeUnicode)
   {
     int len = theString.length();
@@ -670,7 +674,7 @@ public class PLSProperties extends Hashtable<String, String>
         outBuffer.append(aChar);
         continue;
       }
-      if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode)
+      if (((aChar < 0x0020) || (aChar > 0x007e)) && escapeUnicode)
       {
         outBuffer.append('\\');
         outBuffer.append('u');
@@ -857,15 +861,15 @@ public class PLSProperties extends Hashtable<String, String>
     bw.newLine();
     synchronized (this)
     {
-      for (Enumeration<String> e = keys(); e.hasMoreElements();)
+      for (Enumeration<String> e = keys(); e.hasMoreElements(); )
       {
         String key = e.nextElement();
         String val = this.get(key);
-        key = saveConvert(key, true, escUnicode);
+        key = saveConvert(key, escUnicode);
         /* No need to escape embedded and trailing spaces for value, hence
          * pass false to flag.
          */
-        val = saveConvert(val, false, escUnicode);
+        val = saveConvert(val, escUnicode);
         bw.write(key + "=" + val);
         bw.newLine();
       }

@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists.itunes;
 
 import java.util.List;
@@ -9,11 +7,12 @@ import java.util.List;
  * iTunes XML files can contain one or more playlists.  As such, the name of the playlist
  * is not the name of the file it's found in, so the name must be tracked here.
  * Also maintains a list of the ITunesTracks that make up this list.
- *
+ * <p>
  * In the iTunes model, the tracks are stored in a separate section of the XML file, each
  * with an ID, and the playlist is then just a list of the track ids making up the list.
  * Our internal representation denormalizes this so to speak, as ITunesTrack actually has
  * information about the track from the tracks section of the XML.
+ *
  * @author jcaron
  * @see ITunesTrack
  */
@@ -24,8 +23,6 @@ public class ITunesTrackList
 
   /**
    * Constructs a new ITunesTrackList object.
-   * @param name
-   * @param tracks
    */
   public ITunesTrackList(String name, List<ITunesTrack> tracks)
   {
@@ -34,7 +31,7 @@ public class ITunesTrackList
   }
 
   /**
-   * @return the _name
+   * Returns the _name.
    */
   public String getName()
   {
@@ -50,7 +47,7 @@ public class ITunesTrackList
   }
 
   /**
-   * @return the _tracks
+   * Returns the _tracks.
    */
   public List<ITunesTrack> getTracks()
   {

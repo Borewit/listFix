@@ -7,17 +7,20 @@ import listfix.view.support.ZebraJTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
 {
@@ -431,14 +434,14 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
     _uiScrollPane = new JScrollPane();
     _uiTable = createTable();
 
-    setLayout(new java.awt.BorderLayout());
+    setLayout(new BorderLayout());
 
     _uiTable.setAutoCreateRowSorter(true);
     _uiTable.setModel(new MatchTableModel());
     _uiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     _uiScrollPane.setViewportView(_uiTable);
 
-    add(_uiScrollPane, java.awt.BorderLayout.CENTER);
+    add(_uiScrollPane, BorderLayout.CENTER);
 
     _playlistEntryRightClickMenu = new JPopupMenu();
 

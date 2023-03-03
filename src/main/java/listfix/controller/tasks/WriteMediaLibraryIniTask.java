@@ -1,5 +1,3 @@
-
-
 package listfix.controller.tasks;
 
 import listfix.config.MediaLibraryConfiguration;

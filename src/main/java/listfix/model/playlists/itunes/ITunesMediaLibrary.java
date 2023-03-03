@@ -1,10 +1,8 @@
-
-
 package listfix.model.playlists.itunes;
 
 import christophedelory.playlist.plist.PlistPlaylist;
-import christophedelory.plist.*;
 import christophedelory.plist.Integer;
+import christophedelory.plist.*;
 
 import java.util.*;
 
@@ -111,7 +109,7 @@ public class ITunesMediaLibrary
   }
 
   /**
-   * @return the _plist
+   * Returns the _plist.
    */
   public PlistPlaylist getPlist()
   {

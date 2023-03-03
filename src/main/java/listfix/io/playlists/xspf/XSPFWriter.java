@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists.xspf;
 
 import christophedelory.content.Content;
@@ -22,8 +20,6 @@ import java.net.URISyntaxException;
 
 /**
  * A playlist writer capable of saving to XSPF ("spiff") format.
- *
- * @author jcaron
  */
 public class XSPFWriter extends PlaylistWriter<christophedelory.playlist.Playlist>
 {
@@ -76,7 +72,7 @@ public class XSPFWriter extends PlaylistWriter<christophedelory.playlist.Playlis
 
   private Content getContent(PlaylistEntry entry) throws IOException
   {
-    final boolean _saveRelative = this.playListOptions.getSavePlaylistsWithRelativePaths();
+
     URI mediaURI;
     if (entry.isURL())
     {

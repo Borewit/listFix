@@ -1,56 +1,49 @@
-
-
 package listfix.model;
 
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
 
+import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 
-public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
+public class MatchedFileTableModel extends AbstractTableModel
 {
   private static final long serialVersionUID = -1888652455638101278L;
   private final String[] columnNames =
-  {
-    "File Name", "Score"
-  };
+    {
+      "File Name", "Score"
+    };
   private Object[][] data;
   private final boolean[] canEdit = new boolean[]
-  {
-    false, false
-  };
+    {
+      false, false
+    };
   private final Class<?>[] types = new Class<?>[]
-  {
-    java.lang.String.class, java.lang.String.class
-  };
+    {
+      String.class, String.class
+    };
 
-  private Integer sortCol = 1;
+  private final Integer sortCol = 1;
 
-  private Boolean isSortAsc = Boolean.FALSE;
+  private final Boolean isSortAsc = Boolean.FALSE;
 
   private List<PotentialPlaylistEntryMatch> vectorData;
 
-  /**
-   *
-   * @param input
-   */
+
   public MatchedFileTableModel(List<PotentialPlaylistEntryMatch> input)
   {
     vectorData = input;
     updateData(vectorData);
   }
 
-  /**
-   *
-   * @param input
-   */
+
   public final void updateData(List<PotentialPlaylistEntryMatch> input)
   {
     int n = input.size();
     String[][] tempData = new String[n][2];
     for (int i = 0; i < n; i++)
     {
-            PotentialPlaylistEntryMatch entry = input.get(i);
+      PotentialPlaylistEntryMatch entry = input.get(i);
       tempData[i][0] = entry.getPlaylistFile().getTrackFileName();
       tempData[i][1] = entry.getScore() + "";
     }
@@ -59,31 +52,21 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
     this.fireTableDataChanged();
   }
 
-  /**
-   *
-   * @return
-   */
+
   @Override
   public int getColumnCount()
   {
     return columnNames.length;
   }
 
-  /**
-   *
-   * @return
-   */
+
   @Override
   public int getRowCount()
   {
     return data.length;
   }
 
-  /**
-   *
-   * @param col
-   * @return
-   */
+
   @Override
   public String getColumnName(int col)
   {
@@ -95,45 +78,28 @@ public class MatchedFileTableModel extends javax.swing.table.AbstractTableModel
     return columnNames[col] + suffix;
   }
 
-  /**
-   *
-   * @param row
-   * @param col
-   * @return
-   */
+
   @Override
-  public java.lang.Object getValueAt(int row, int col)
+  public Object getValueAt(int row, int col)
   {
     return data[row][col];
   }
 
-  /**
-   *
-   * @param c
-   * @return
-   */
+
   @Override
   public Class<?> getColumnClass(int c)
   {
     return types[c];
   }
 
-  /**
-   *
-   * @param rowIndex
-   * @param columnIndex
-   * @return
-   */
+
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex)
   {
     return canEdit[columnIndex];
   }
 
-  /**
-   *
-   * @return
-   */
+
   public Object[] longestValues()
   {
     String[] result = new String[2];

@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists.wpl;
 
 import listfix.io.Constants;
@@ -10,11 +8,10 @@ import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A playlist writer capable of saving to WPL format.
- *
- * @author jcaron &amp; jpeterson
  */
 public class WPLWriter extends PlaylistWriter<StringBuilder>
 {
@@ -29,6 +26,7 @@ public class WPLWriter extends PlaylistWriter<StringBuilder>
     return new StringBuilder();
   }
 
+  @Override
   protected void writeHeader(StringBuilder buffer, Playlist playlist) throws Exception
   {
     final File playlistFile = playlist.getFile();
@@ -65,7 +63,7 @@ public class WPLWriter extends PlaylistWriter<StringBuilder>
     }
     try (FileOutputStream outputStream = new FileOutputStream(playlistFile))
     {
-      Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+      Writer osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
       try (BufferedWriter output = new BufferedWriter(osw))
       {
         output.write(buffer.toString());
@@ -92,7 +90,7 @@ public class WPLWriter extends PlaylistWriter<StringBuilder>
     boolean newHead = false;
     try
     {
-      try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(listFile), "UTF-8"), "UTF8")))
+      try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new UnicodeInputStream(new FileInputStream(listFile), "UTF-8"), StandardCharsets.UTF_8)))
       {
         String line = buffer.readLine();
         while (line != null)
@@ -132,8 +130,6 @@ public class WPLWriter extends PlaylistWriter<StringBuilder>
 
   private String serializeEntry(PlaylistEntry entry)
   {
-    StringBuilder result = new StringBuilder();
-    result.append(entry.trackPathToString());
-    return result.toString();
+    return entry.trackPathToString();
   }
 }

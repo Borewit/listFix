@@ -17,31 +17,31 @@ public class PlaylistTreeNode extends DefaultMutableTreeNode implements ITooltip
   }
 
   @Override
-  public Path getUserObject() {
+  public Path getUserObject()
+  {
     return (Path) super.getUserObject();
   }
 
   @Override
   public boolean equals(Object obj)
   {
-    if (obj == null)
+
+    if (!(obj instanceof PlaylistTreeNode))
     {
       return false;
     }
-    if (getClass() != obj.getClass())
-    {
-      return false;
-    }
-    return hashCode() == (obj).hashCode();
+    return hashCode() == obj.hashCode();
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return this.getUserObject().getFileName().toString();
   }
 
   @Override
-  public String getToolTip() {
+  public String getToolTip()
+  {
     return this.getUserObject().toString();
   }
 }

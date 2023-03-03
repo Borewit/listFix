@@ -1,5 +1,3 @@
-
-
 package listfix.util;
 
 import listfix.io.IPlaylistOptions;
@@ -10,9 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**
- * @author jcaron
- */
+
 public class FileNameTokenizer
 {
   private static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";

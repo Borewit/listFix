@@ -1,17 +1,16 @@
-
-
 package listfix.util;
 
 import listfix.io.UnicodeInputStream;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-/**
- * @author jcaron
- */
+
 public class UnicodeUtils
 {
   public static String getBOM(String enc) throws UnsupportedEncodingException

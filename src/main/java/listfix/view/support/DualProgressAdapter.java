@@ -55,10 +55,12 @@ public final class DualProgressAdapter<T>
       {
         return DualProgressAdapter.this.observer.getCancelled();
       }
-    }){
+    })
+    {
       @Override
-      protected double calculateProgress(long completed, long total) {
-        double taskPortion = (double)DualProgressAdapter.this.taskPercentageComplete / total;
+      protected double calculateProgress(long completed, long total)
+      {
+        double taskPortion = (double) DualProgressAdapter.this.taskPercentageComplete / total;
         return super.calculateProgress(completed, total) + taskPortion;
       }
     };

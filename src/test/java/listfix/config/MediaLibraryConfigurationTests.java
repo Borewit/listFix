@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MediaLibraryConfigurationTests
 {

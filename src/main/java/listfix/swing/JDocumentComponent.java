@@ -1,6 +1,5 @@
 package listfix.swing;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
@@ -9,14 +8,13 @@ public class JDocumentComponent<M extends JComponent> extends JPanel
 {
   private Path path;
 
-  private JClosableTabComponent<M> closableTabComponent;
+  private final JClosableTabComponent<M> closableTabComponent;
 
-  private final JDocumentTabbedPane<M> pane;
 
   public JDocumentComponent(final JDocumentTabbedPane<M> pane, M mainComponent, Path path)
   {
     super.add(mainComponent);
-    this.pane = pane;
+
     this.closableTabComponent = new JClosableTabComponent<M>(pane);
 
     this.setPath(path);

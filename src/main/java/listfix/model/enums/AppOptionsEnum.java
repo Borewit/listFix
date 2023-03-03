@@ -1,5 +1,3 @@
-
-
 package listfix.model.enums;
 
 

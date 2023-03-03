@@ -47,6 +47,7 @@ public class UriPlaylistEntry extends PlaylistEntry
     this.parseExtraInfo(extra);
     _extInf = extra;
   }
+
   protected UriPlaylistEntry(URI uri)
   {
     this.uri = uri;
@@ -102,18 +103,22 @@ public class UriPlaylistEntry extends PlaylistEntry
     return false;
   }
 
-  public String trackPathToString() {
+  @Override
+  public String trackPathToString()
+  {
     return this.uri.toString();
   }
 
   @Override
-  public boolean equals(Object other) {
+  public boolean equals(Object other)
+  {
     return other instanceof UriPlaylistEntry &&
-      this.uri.equals(((UriPlaylistEntry)other).uri);
+      this.uri.equals(((UriPlaylistEntry) other).uri);
   }
 
   @Override
-  public int hashCode() {
+  public int hashCode()
+  {
     return this.uri.hashCode();
   }
 }

@@ -11,17 +11,17 @@ public interface IPlaylistOptions
   String getIgnoredSmallWords();
 
   /**
-   * @return the maxClosestResults
+   * Returns the maxClosestResults.
    */
   int getMaxClosestResults();
 
   /**
-   * @return use case-insensitive / exact path name comparison
+   * Returns use case-insensitive / exact path name comparison.
    */
   boolean getCaseInsensitiveExactMatching();
 
   /**
-   * @return List of user defined playlist directories
+   * Returns list of user defined playlist directories.
    */
   Set<String> getPlaylistDirectories();
 }

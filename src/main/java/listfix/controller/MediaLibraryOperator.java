@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
-/**
- * @author jcaron
- */
 public class MediaLibraryOperator
 {
   private static final Logger _logger = LogManager.getLogger(MediaLibraryOperator.class);
@@ -48,7 +45,8 @@ public class MediaLibraryOperator
     }
   }
 
-  private static void replaceSetValues(Set<String> set, Collection<String> newValues) {
+  private static void replaceSetValues(Set<String> set, Collection<String> newValues)
+  {
     set.clear();
     set.addAll(newValues);
   }

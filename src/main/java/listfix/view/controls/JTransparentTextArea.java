@@ -4,10 +4,6 @@ import javax.swing.*;
 
 public class JTransparentTextArea extends JTextArea
 {
-  /**
-   *
-   * @param msg
-   */
   public JTransparentTextArea(String msg)
   {
     super(msg);

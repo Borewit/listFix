@@ -4,7 +4,6 @@ import listfix.util.OperatingSystem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

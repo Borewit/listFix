@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists.m3u;
 
 import listfix.io.BufferedProgressReader;
@@ -10,7 +8,7 @@ import listfix.model.playlists.PlaylistEntry;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -104,7 +102,7 @@ public class M3UReader extends PlaylistReader
 
           // We just processed an entry, update the progress bar w/ the % of the file we've read if we have an observer.
           long bytesRead = Math.min(fileLength, buffer.getCharactersRead());
-          progress.setCompleted((int) bytesRead);
+          progress.setCompleted(bytesRead);
 
           // Start processing the next entry.
           line1 = buffer.readLine();
@@ -143,7 +141,7 @@ public class M3UReader extends PlaylistReader
           }
         }
       }
-      progress.setCompleted((int) fileLength);
+      progress.setCompleted(fileLength);
       return results;
     }
   }

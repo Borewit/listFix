@@ -23,12 +23,12 @@ import java.awt.*;
 
 public class SplashScreen extends JFrame
 {
-  private JLabel statusBar;
+  private final JLabel statusBar;
 
   public SplashScreen(String imageResourcePath)
   {
     ClassLoader cl = this.getClass().getClassLoader();
-        ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
+    ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
 
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(new JLabel(image));
@@ -46,10 +46,7 @@ public class SplashScreen extends JFrame
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
   }
 
-  /**
-   *
-   * @param text
-   */
+
   public void setStatusBar(String text)
   {
     statusBar.setText(text);

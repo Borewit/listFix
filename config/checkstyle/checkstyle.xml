@@ -46,11 +46,14 @@
     </module>
 
     <!--Checks for whitespace-->
-    <module name="EmptyForIteratorPad"/>
+    <module name="EmptyForIteratorPad">
+      <property name="option" value="space"/>
+    </module>
     <module name="MethodParamPad"/>
     <module name="NoWhitespaceAfter"/>
     <module name="NoWhitespaceBefore"/>
-    <!--<module name="OperatorWrap"/>-->
+    <module name="EmptyForInitializerPad"/>
+    <!--module name="OperatorWrap"/-->
     <module name="WhitespaceAfter">
       <property name="tokens" value="COMMA, SEMI, LITERAL_IF, LITERAL_ELSE, LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE "/>
     </module>
@@ -103,6 +106,9 @@
     <module name="CyclomaticComplexity">
       <property name="max" value="36"/>
     </module>
+
+    <!-- JavaDoc -->
+    <module name="AtclauseOrder"/>
 
   </module>
 </module>

@@ -1,5 +1,3 @@
-
-
 package listfix.util;
 
 import java.util.ArrayList;
@@ -16,11 +14,7 @@ import java.util.List;
 
 public class StringExtensions
 {
-  /**
-   *
-   * @param inputString
-   * @return
-   */
+
   public static List<String> splitCamelCase(String inputString)
   {
     List<String> result = new ArrayList<>();

@@ -31,11 +31,12 @@ public class PlaylistsTableModel extends AbstractTableModel
   @Override
   public String getColumnName(int column)
   {
-    return switch (column) {
-      case 0 -> "";
-      case 1 -> "Name";
-      default -> null;
-    };
+    return switch (column)
+      {
+        case 0 -> "";
+        case 1 -> "Name";
+        default -> null;
+      };
   }
 
   @Override
@@ -66,7 +67,8 @@ public class PlaylistsTableModel extends AbstractTableModel
       {
         case 0 ->
         {
-          if (list != null) {
+          if (list != null)
+          {
             if (list.getMissingCount() > 0)
             {
               return ImageIcons.IMG_MISSING;
@@ -90,5 +92,5 @@ public class PlaylistsTableModel extends AbstractTableModel
     }
   }
 
-  private BatchRepair _items;
+  private final BatchRepair _items;
 }

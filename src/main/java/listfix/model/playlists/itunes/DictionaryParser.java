@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists.itunes;
 
 import christophedelory.plist.Array;
@@ -12,15 +10,12 @@ import java.util.Hashtable;
  * an awkward in-memory structure; this class provides helper methods
  * for reading the data out of one of these objects based on the
  * datatype stored under the given key.
+ *
  * @author jcaron
  */
 public class DictionaryParser
 {
   /**
-   *
-   * @param dict
-   * @param key
-   * @return
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Dict.
    */
   public static Dict getKeyValueAsDict(Dict dict, String key) throws ClassCastException
@@ -40,10 +35,6 @@ public class DictionaryParser
   }
 
   /**
-   *
-   * @param dict
-   * @param key
-   * @return
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Array.
    */
   public static Array getKeyValueAsArray(Dict dict, String key) throws ClassCastException
@@ -57,10 +48,6 @@ public class DictionaryParser
   }
 
   /**
-   *
-   * @param dict
-   * @param key
-   * @return
    * @throws ClassCastException Thrown when the datatype of the given key is not a christophedelory.plist.Integer.
    */
   public static christophedelory.plist.Integer getKeyValueAsInteger(Dict dict, String key) throws ClassCastException
@@ -74,10 +61,6 @@ public class DictionaryParser
   }
 
   /**
-   *
-   * @param dict
-   * @param keyName
-   * @return
    * @throws ClassCastException Thrown when the datatype of the given key is not a String.
    */
   public static String getKeyValueAsString(Dict dict, String keyName) throws ClassCastException

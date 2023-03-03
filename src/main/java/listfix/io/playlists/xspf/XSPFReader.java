@@ -1,9 +1,8 @@
-
-
 package listfix.io.playlists.xspf;
 
 import christophedelory.playlist.SpecificPlaylist;
 import christophedelory.playlist.SpecificPlaylistFactory;
+import christophedelory.playlist.xspf.Playlist;
 import christophedelory.playlist.xspf.Track;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
@@ -27,17 +26,13 @@ import java.util.List;
 
 /**
  * Reads in a XSPF file and returns a List containing PlaylistEntries that represent the files &map; URIs in the playlist.
- * @author jcaron
  */
 public class XSPFReader extends PlaylistReader
 {
   private static final PlaylistType type = PlaylistType.XSPF;
   private static final Logger _logger = LogManager.getLogger(XSPFReader.class);
 
-  /**
-   *
-   * @param xspfFile
-   */
+
   public XSPFReader(IPlaylistOptions playListOptions, Path xspfFile)
   {
     super(playListOptions, xspfFile);
@@ -61,7 +56,7 @@ public class XSPFReader extends PlaylistReader
     SpecificPlaylist loadedList = SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
     if (loadedList.getProvider().getId().equals("xspf"))
     {
-      christophedelory.playlist.xspf.Playlist xspfList = (christophedelory.playlist.xspf.Playlist)SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
+      Playlist xspfList = (Playlist) SpecificPlaylistFactory.getInstance().readFrom(playlistPath.toFile());
 
       // Set the total if we have an observer.
       progress.setTotal(xspfList.getTracks().size());

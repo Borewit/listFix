@@ -6,12 +6,12 @@ import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
 {
-  private final List<IDocumentChangeListener<G>> documentChangeListeners = new LinkedList<>();
+  private final List<IDocumentChangeListener<G>> documentChangeListeners = new ArrayList<>();
 
   public JDocumentTabbedPane()
   {
@@ -144,9 +144,11 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
 
   /**
    * Remove document with corresponding path
+   *
    * @param path Path to remove
    */
-  public void remove(Path path) {
+  public void remove(Path path)
+  {
     this.remove(this.getDocument(path));
   }
 
@@ -234,7 +236,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
 
   public List<G> getAllEmbeddedMainComponent()
   {
-    List<G> list = new LinkedList<>();
+    List<G> list = new ArrayList<>();
     int tabCount = this.getTabCount();
     for (int i = 0; i < tabCount; ++i)
     {

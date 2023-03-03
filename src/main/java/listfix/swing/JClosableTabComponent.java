@@ -1,8 +1,5 @@
 package listfix.swing;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
@@ -15,9 +12,6 @@ import java.awt.event.*;
  */
 public class JClosableTabComponent<G extends JComponent> extends JPanel
 {
-
-  private final Logger logger = LogManager.getLogger(JClosableTabComponent.class);
-
   private final JDocumentTabbedPane<G> pane;
 
   private final JLabel label;
@@ -88,6 +82,7 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
       addActionListener(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e)
     {
       int i = pane.indexOfTabComponent(JClosableTabComponent.this);
@@ -98,11 +93,13 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
     }
 
     //we don't want to update UI for this button
+    @Override
     public void updateUI()
     {
     }
 
     //paint the cross
+    @Override
     protected void paintComponent(Graphics g)
     {
       super.paintComponent(g);
@@ -134,6 +131,7 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
 
   private static final MouseListener buttonMouseListener = new MouseAdapter()
   {
+    @Override
     public void mouseExited(MouseEvent e)
     {
       Component component = e.getComponent();
@@ -144,6 +142,7 @@ public class JClosableTabComponent<G extends JComponent> extends JPanel
       }
     }
 
+    @Override
     public void mouseEntered(MouseEvent e)
     {
       Component component = e.getComponent();

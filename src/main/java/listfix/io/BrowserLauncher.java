@@ -1,5 +1,3 @@
-
-
 package listfix.io;
 
 import listfix.util.OperatingSystem;
@@ -12,7 +10,6 @@ import java.lang.reflect.Method;
 
 /**
  * A class who's sole responsibility is to launch the default web browser on various OSes.
- * @author jcaron
  */
 public class BrowserLauncher
 {
@@ -22,6 +19,7 @@ public class BrowserLauncher
   /**
    * Attempts to open the given url in the system's default web browser.
    * Logs failure details and silently fails if a browser can't be opened.
+   *
    * @param url The URL to display in the browser, if successfully launched.
    */
   public static void launch(String url)
@@ -42,13 +40,13 @@ public class BrowserLauncher
       {
         //assume Unix or Linux
         String[] possibleBrowsers =
-        {
-          "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"
-        };
+          {
+            "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"
+          };
         String browser = null;
         for (int count = 0; count < possibleBrowsers.length && browser == null; count++)
         {
-          if (Runtime.getRuntime().exec(new String[] {"which", possibleBrowsers[count]}).waitFor() == 0)
+          if (Runtime.getRuntime().exec(new String[]{"which", possibleBrowsers[count]}).waitFor() == 0)
           {
             browser = possibleBrowsers[count];
           }
@@ -59,7 +57,7 @@ public class BrowserLauncher
         }
         else
         {
-          Runtime.getRuntime().exec(new String[] {browser, url});
+          Runtime.getRuntime().exec(new String[]{browser, url});
         }
       }
     }

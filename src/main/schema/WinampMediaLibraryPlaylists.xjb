@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jaxb:bindings
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
-    xmlns:xs="http://www.w3.org/2000/10/XMLSchema-instance"
-    xs:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
-    jaxb:version="2.0">
-  <jaxb:bindings schemaLocation="WinampMediaLibraryPlaylists.xsd">
-    <jaxb:schemaBindings>
-      <jaxb:package name="listfix.model.playlists.winamp.generated"/>
-    </jaxb:schemaBindings>
-  </jaxb:bindings>
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xs="http://www.w3.org/2000/10/XMLSchema-instance"
+        xs:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+        jaxb:version="2.0">
+    <jaxb:bindings schemaLocation="WinampMediaLibraryPlaylists.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="listfix.model.playlists.winamp.generated"/>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
 </jaxb:bindings>

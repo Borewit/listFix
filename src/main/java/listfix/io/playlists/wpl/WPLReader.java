@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists.wpl;
 
 import listfix.io.IPlaylistOptions;
@@ -17,9 +15,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Reads in a WPL file and returns a List containing PlaylistEntries that represent the files &amp; URIs in the playlist.
- * @author jcaron, jpeterson
  */
 public class WPLReader extends PlaylistReader
 {
@@ -57,7 +56,7 @@ public class WPLReader extends PlaylistReader
   public List<PlaylistEntry> readPlaylist(IProgressObserver<String> observer) throws IOException
   {
     ProgressAdapter<String> progress = ProgressAdapter.make(observer);
-    progress.setTotal((int) fileLength);
+    progress.setTotal(fileLength);
 
     _cache = new StringBuilder();
     String line = readLine();
@@ -65,7 +64,7 @@ public class WPLReader extends PlaylistReader
     String cid = "";
     String tid = "";
 
-    int cacheSize = _cache.toString().getBytes().length;
+    int cacheSize = _cache.toString().getBytes(UTF_8).length;
     if (cacheSize < fileLength)
     {
       progress.setCompleted(cacheSize);
@@ -80,7 +79,7 @@ public class WPLReader extends PlaylistReader
           return null;
         }
       }
-      cacheSize = _cache.toString().getBytes().length;
+      cacheSize = _cache.toString().getBytes(UTF_8).length;
       if (cacheSize < fileLength)
       {
         progress.setCompleted(cacheSize);
@@ -112,7 +111,7 @@ public class WPLReader extends PlaylistReader
       cid = "";
       tid = "";
 
-      cacheSize = _cache.toString().getBytes().length;
+      cacheSize = _cache.toString().getBytes(UTF_8).length;
       if (cacheSize < fileLength)
       {
         progress.setCompleted(cacheSize);
