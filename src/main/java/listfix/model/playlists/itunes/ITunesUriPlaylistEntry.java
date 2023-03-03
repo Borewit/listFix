@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists.itunes;
 
 import listfix.model.playlists.UriPlaylistEntry;
@@ -20,15 +18,13 @@ public class ITunesUriPlaylistEntry extends UriPlaylistEntry implements IITunesP
   /**
    * @return the _track
    */
+  @Override
   public ITunesTrack getTrack()
   {
     return _track;
   }
 
-  /**
-   *
-   * @return
-   */
+
   @Override
   public ITunesUriPlaylistEntry clone()
   {

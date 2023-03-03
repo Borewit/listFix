@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists.itunes;
 
 import christophedelory.plist.Dict;
@@ -9,6 +7,7 @@ import java.util.Hashtable;
 /**
  * Wrapper around a christophedelory.plist.Dict to provide easy access to the information about a track
  * in an iTunes library/playlist file for the purposes of conversion to a listFix() PlaylistEntry object.
+ *
  * @author jcaron
  */
 public class ITunesTrack
@@ -20,6 +19,7 @@ public class ITunesTrack
 
   /**
    * Constructor that takes a christophedelory.plist.Dict object.
+   *
    * @param trackDict The christophedelory.plist.Dict object containing information about the track.
    */
   public ITunesTrack(Dict trackDict)
@@ -28,7 +28,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _location
+   * Returns the _location.
    */
   public String getLocation()
   {
@@ -41,7 +41,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _artist
+   * Returns the _artist.
    */
   public String getArtist()
   {
@@ -49,7 +49,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _name
+   * Returns the _name.
    */
   public String getName()
   {
@@ -57,7 +57,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _album
+   * Returns the _album.
    */
   public String getAlbum()
   {
@@ -65,7 +65,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _albumArtist
+   * Returns the _albumArtist.
    */
   public String getAlbumArtist()
   {
@@ -78,12 +78,12 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _duration
+   * Returns the _duration.
    */
   public long getDuration()
   {
     long result = -1;
-    christophedelory.plist.Integer timeInt = ((christophedelory.plist.Integer)((Hashtable)getTrackDict().getDictionary()).get(new christophedelory.plist.Key("Total Time")));
+    christophedelory.plist.Integer timeInt = ((christophedelory.plist.Integer) ((Hashtable) getTrackDict().getDictionary()).get(new christophedelory.plist.Key("Total Time")));
     if (timeInt != null)
     {
       String timeText = timeInt.getValue();
@@ -93,7 +93,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _trackId
+   * Returns the _trackId.
    */
   public String getTrackId()
   {
@@ -101,7 +101,7 @@ public class ITunesTrack
   }
 
   /**
-   * @return the _trackDict
+   * Returns the _trackDict.
    */
   public Dict getTrackDict()
   {

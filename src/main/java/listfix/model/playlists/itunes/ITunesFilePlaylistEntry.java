@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists.itunes;
 
 import listfix.model.playlists.FilePlaylistEntry;
@@ -7,7 +5,7 @@ import listfix.model.playlists.FilePlaylistEntry;
 import java.nio.file.Path;
 
 
-public class ITunesFilePlaylistEntry extends FilePlaylistEntry implements  IITunesPlaylistEntry
+public class ITunesFilePlaylistEntry extends FilePlaylistEntry implements IITunesPlaylistEntry
 {
   private final ITunesTrack _track;
 
@@ -20,15 +18,13 @@ public class ITunesFilePlaylistEntry extends FilePlaylistEntry implements  IITun
   /**
    * @return the _track
    */
+  @Override
   public ITunesTrack getTrack()
   {
     return _track;
   }
 
-  /**
-   *
-   * @return
-   */
+
   @Override
   public ITunesFilePlaylistEntry clone()
   {

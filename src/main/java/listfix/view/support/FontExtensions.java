@@ -1,5 +1,3 @@
-
-
 package listfix.view.support;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,21 +30,13 @@ public class FontExtensions
     }
   }
 
-  /**
-   *
-   * @param inputFont
-   * @return
-   */
+
   public static String serialize(Font inputFont)
   {
     return inputFont.getFamily() + "," + inputFont.getStyle() + "," + inputFont.getSize();
   }
 
-  /**
-   *
-   * @param csvParams
-   * @return
-   */
+
   public static Font deserialize(String csvParams)
   {
     try
@@ -83,11 +73,7 @@ public class FontExtensions
     }
   }
 
-  /**
-   *
-   * @param chosenFont
-   * @return
-   */
+
   public static String formatFont(Font chosenFont)
   {
     return chosenFont.getFamily() + ", " + FontExtensions.getStyle(chosenFont) + ", " + chosenFont.getSize();

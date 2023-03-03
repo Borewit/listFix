@@ -35,6 +35,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * On Windows systems, this class compiles a list of shared
  * directories and drive letters that are mapped to network drives,
@@ -45,11 +47,12 @@ import java.util.TreeMap;
 public class NetworkDriveList
 {
   private volatile boolean successful = false;
-  private Map<String, String> networkDrives = new TreeMap<>();
+  private final Map<String, String> networkDrives = new TreeMap<>();
   private volatile Process subprocess = null;
   private static final Logger _logger = LogManager.getLogger(NetworkDriveList.class);
 
-  /** Get a list of network drives.
+  /**
+   * Get a list of network drives.
    * Uses a default maximum delay of 3 seconds.
    */
   public NetworkDriveList()
@@ -57,11 +60,13 @@ public class NetworkDriveList
     this(3000);
   }
 
-  /** Get a list of network drives.
+  /**
+   * Get a list of network drives.
+   *
    * @param maxDelay the maximum number of milliseconds to spend
-   *    creating the drive list.  If the operation takes longer than
-   *    this, the resulting drive list will be empty, and
-   *    wasSuccessful() will return false.
+   *                 creating the drive list.  If the operation takes longer than
+   *                 this, the resulting drive list will be empty, and
+   *                 wasSuccessful() will return false.
    */
   public NetworkDriveList(int maxDelay)
   {
@@ -103,7 +108,8 @@ public class NetworkDriveList
     }
   }
 
-  /** Find the drives mapped on the current system, and add them to the
+  /**
+   * Find the drives mapped on the current system, and add them to the
    * list.
    */
   private void listMappedDrives() throws Exception
@@ -112,7 +118,7 @@ public class NetworkDriveList
     {
       subprocess = Runtime.getRuntime().exec("net use");
     }
-    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream(), UTF_8));
     String line;
     boolean sawHeader = false;
     while ((line = in.readLine()) != null)
@@ -157,7 +163,8 @@ public class NetworkDriveList
     subprocess.waitFor();
   }
 
-  /** Find the local directories which are shared as networked drives,
+  /**
+   * Find the local directories which are shared as networked drives,
    * and add them to the list.
    */
   private void listSharedDrives() throws Exception
@@ -166,7 +173,7 @@ public class NetworkDriveList
     {
       subprocess = Runtime.getRuntime().exec("net config workstation");
     }
-    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    BufferedReader in = new BufferedReader(new InputStreamReader(subprocess.getInputStream(), UTF_8));
     String line;
     String computerName = null;
     while ((line = in.readLine()) != null)
@@ -191,7 +198,7 @@ public class NetworkDriveList
     {
       subprocess = Runtime.getRuntime().exec("net share");
     }
-    in = new BufferedReader(new InputStreamReader(subprocess.getInputStream()));
+    in = new BufferedReader(new InputStreamReader(subprocess.getInputStream(), UTF_8));
     boolean sawHeader = false;
     String lastLine = "";
     while ((line = in.readLine()) != null)
@@ -249,27 +256,24 @@ public class NetworkDriveList
     }
   }
 
-  /** Return true if this object was able to successfully compile a list
+  /**
+   * Return true if this object was able to successfully compile a list
    * of network drives.
-   *
+   * <p>
    * On Windows systems, this will return false if the operation took
    * too long and was abandoned.
-   *
+   * <p>
    * On non-Windows systems, this will always return false.
-   *
-   * @return
    */
   public boolean wasSuccessful()
   {
     return successful;
   }
 
-  /** Returns true if the given drive letter names a network drive.
-   *
+  /**
+   * Returns true if the given drive letter names a network drive.
+   * <p>
    * If wasSuccessful() returns false, this will generally return false.
-   *
-   * @param driveLetter
-   * @return
    */
   public boolean isNetworkDrive(String driveLetter)
   {
@@ -281,12 +285,10 @@ public class NetworkDriveList
     return networkDrives.containsKey(drivePath);
   }
 
-  /** Returns true if the given file is on a network drive.
-   *
+  /**
+   * Returns true if the given file is on a network drive.
+   * <p>
    * If wasSuccessful() returns false, this will generally return false.
-   *
-   * @param filename
-   * @return
    */
   public boolean onNetworkDrive(String filename)
   {
@@ -297,12 +299,10 @@ public class NetworkDriveList
     return (toUNCName(filename) != null);
   }
 
-  /** Get the UNC name associated with a particular drive letter.
+  /**
+   * Get the UNC name associated with a particular drive letter.
    * If isNetworkDrive() returns false for this drive letter,
    * returns null.
-   *
-   * @param driveLetter
-   * @return
    */
   public String getUNCName(String driveLetter)
   {
@@ -315,7 +315,9 @@ public class NetworkDriveList
     return networkDrives.get(drivePath);
   }
 
-  /** Convert the given filename (in drive letter format) to a UNC name.
+  /**
+   * Convert the given filename (in drive letter format) to a UNC name.
+   *
    * @param filename Filename to convert to UNC notation
    * @return UNC name, or null if the filename could not be translated.
    */
@@ -349,9 +351,10 @@ public class NetworkDriveList
     return null;
   }
 
-  /** Convert the given filename (in UNC format) to a drive letter format
+  /**
+   * Convert the given filename (in UNC format) to a drive letter format
    * name.
-   * @param uncName
+   *
    * @return a filename beginning with a drive letter, or null if
    * the filename could not be translated.
    */
@@ -387,7 +390,9 @@ public class NetworkDriveList
     return null;
   }
 
-  /** Extract the drive letter from a filename */
+  /**
+   * Extract the drive letter from a filename
+   */
   private String getDriveLetter(String filename)
   {
     if (filename == null)
@@ -413,7 +418,9 @@ public class NetworkDriveList
     return filename.substring(0, 1).toUpperCase();
   }
 
-  /** Get the filename path corresponding to a drive letter */
+  /**
+   * Get the filename path corresponding to a drive letter
+   */
   private String getDrivePath(String driveLetter)
   {
     return driveLetter.toUpperCase() + ":\\";

@@ -1,4 +1,3 @@
-
 package listfix.io.playlists.itunes;
 
 import christophedelory.playlist.SpecificPlaylist;
@@ -24,7 +23,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ITunesXMLReader extends PlaylistReader
 {
@@ -64,14 +64,12 @@ public class ITunesXMLReader extends PlaylistReader
     _library = new ITunesMediaLibrary(playlist);
     Map<String, ITunesTrack> tracks = getLibrary().getTracks();
 
-    for (String id : tracks.keySet())
-    {
-      PlaylistEntry convertedTrack = iTunesTrackToPlaylistEntry(tracks.get(id));
-      if (convertedTrack != null)
-      {
-        results.add(convertedTrack);
-      }
-    }
+    results.addAll(
+    getLibrary().getTracks().keySet().stream()
+      .map(id -> iTunesTrackToPlaylistEntry(tracks.get(id)))
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList())
+    );
     return results;
   }
 
@@ -95,7 +93,7 @@ public class ITunesXMLReader extends PlaylistReader
       else
       {
         // result.setTrackId(track.getTrackId());
-        return new ITunesFilePlaylistEntry(Path.of((new URI(track.getLocation())).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistPath, track);
+        return new ITunesFilePlaylistEntry(Path.of(new URI(track.getLocation()).getPath()), track.getArtist() + " - " + track.getName(), track.getDuration(), playlistPath, track);
       }
     }
     catch (URISyntaxException ex)
@@ -106,7 +104,7 @@ public class ITunesXMLReader extends PlaylistReader
   }
 
   /**
-   * @return the _library
+   * Returns the _library.
    */
   public ITunesMediaLibrary getLibrary()
   {

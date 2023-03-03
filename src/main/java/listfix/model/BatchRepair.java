@@ -1,5 +1,3 @@
-
-
 package listfix.model;
 
 import listfix.config.IMediaLibrary;
@@ -17,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +25,6 @@ import java.util.zip.ZipOutputStream;
 /**
  * Serves to model the batch repair operations on multiple playlists, both closest matches and exact matches.
  */
-
 public class BatchRepair
 {
   // The wrappers around the playlists to be repaired.
@@ -197,7 +195,6 @@ public class BatchRepair
    * @param backup               Should we backup the originals to a zip file?
    * @param destination          The path to the backup zip file we'll create if told to backup the originals.
    * @param observer             The progress observer for this operation.
-   * @throws Exception
    */
   public void save(IPlaylistOptions filePathOptions, boolean isClosestMatchesSave, boolean backup, String destination, IProgressObserver<String> observer) throws Exception
   {
@@ -210,7 +207,7 @@ public class BatchRepair
       Playlist list = item.getPlaylist();
       if (backup)
       {
-        stepCount += list.getFile().length();
+        stepCount = (int) (stepCount + list.getFile().length());
       }
       stepCount += list.size();
     }
@@ -233,7 +230,7 @@ public class BatchRepair
 
           // make playlist entry relative to root directory
           URI listUrl = root.relativize(listFile.toURI());
-          String name = URLDecoder.decode(listUrl.toString(), "UTF-8");
+          String name = URLDecoder.decode(listUrl.toString(), StandardCharsets.UTF_8);
 
           ZipEntry entry = new ZipEntry(name);
           zip.putNextEntry(entry);

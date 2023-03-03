@@ -52,7 +52,7 @@ public class FileUtils
       }
       else
       {
-        (new URL(trackText)).toURI();
+        new URL(trackText).toURI();
         return true;
       }
     }
@@ -84,8 +84,9 @@ public class FileUtils
   public static String replaceInvalidWindowsFileSystemCharsWithChar(String input, char replacement)
   {
     StringBuilder result = new StringBuilder();
-    for (char x : input.toCharArray())
+    for (int i = 0; i < input.length(); i++)
     {
+      char x = input.charAt(i);
       if (Constants.INVALID_WINDOWS_FILENAME_CHARACTERS.indexOf(x) > -1)
       {
         result.append(replacement);
@@ -100,11 +101,13 @@ public class FileUtils
 
   /**
    * Delete recursive
+   *
    * @param directory Folder to delete
    */
   public static void deleteDirectory(Path directory) throws IOException
   {
-    try (Stream<Path> walk = Files.walk(directory)) {
+    try (Stream<Path> walk = Files.walk(directory))
+    {
       walk
         .map(Path::toFile)
         .forEach(File::delete);

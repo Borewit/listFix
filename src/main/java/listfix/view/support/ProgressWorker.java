@@ -1,5 +1,3 @@
-
-
 package listfix.view.support;
 
 import javax.swing.*;
@@ -12,12 +10,14 @@ public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements 
 {
   private String _message = "";
 
+  @Override
   public void reportProgress(int progress)
   {
     setProgress(progress);
   }
 
-   public void reportProgress(int progress, V state)
+  @Override
+  public void reportProgress(int progress, V state)
   {
     setProgress(progress);
     if (state != null)
@@ -26,12 +26,13 @@ public abstract class ProgressWorker<T, V> extends SwingWorker<T, V> implements 
     }
   }
 
+  @Override
   public boolean getCancelled()
   {
     return this.isCancelled();
   }
 
-   public void setMessage(String message)
+  public void setMessage(String message)
   {
     if (message.equals(_message))
     {

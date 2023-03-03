@@ -1,5 +1,3 @@
-
-
 package listfix.util;
 
 import java.io.PrintWriter;
@@ -9,11 +7,7 @@ import java.io.Writer;
 
 public class ExStack
 {
-  /**
-   *
-   * @param aThrowable
-   * @return
-   */
+
   public static String toString(Throwable aThrowable)
   {
     final Writer result = new StringWriter();
@@ -22,12 +16,7 @@ public class ExStack
     return result.toString();
   }
 
-  /**
-   *
-   * @param message
-   * @param aThrowable
-   * @return
-   */
+
   public static String htmlFormatErrorForUser(String message, Throwable aThrowable)
   {
     return "<html><body>" + message + "<BR/><BR/>" + getHTMLDetails(aThrowable) + "</body></html>";
@@ -49,12 +38,12 @@ public class ExStack
     while (tempThrow != null)
     {
       // Output Exception name and message, and begin a list
-      b.append(throwable.toString()).append("<br/>");
+      b.append(throwable).append("<br/>");
       for (StackTraceElement ste : throwable.getStackTrace())
       {
         b.append("&nbsp;&nbsp;&nbsp;&nbsp;at ").append(ste.getClassName()).append(".")
-            .append(ste.getMethodName()).append("(").append(ste.getFileName()).append(":")
-            .append(ste.getLineNumber()).append(")<br/>");
+          .append(ste.getMethodName()).append("(").append(ste.getFileName()).append(":")
+          .append(ste.getLineNumber()).append(")<br/>");
       }
       // See if there is a cause for this exception
       tempThrow = null;
@@ -85,12 +74,12 @@ public class ExStack
     while (tempThrow != null)
     {
       // Output Exception name and message, and begin a list
-      b.append(throwable.toString()).append("\n");
+      b.append(throwable).append("\n");
       for (StackTraceElement ste : throwable.getStackTrace())
       {
         b.append("     at ").append(ste.getClassName()).append(".")
-            .append(ste.getMethodName()).append("(").append(ste.getFileName()).append(":")
-            .append(ste.getLineNumber()).append(")\n");
+          .append(ste.getMethodName()).append("(").append(ste.getFileName()).append(":")
+          .append(ste.getLineNumber()).append(")\n");
       }
       // See if there is a cause for this exception
       tempThrow = null;

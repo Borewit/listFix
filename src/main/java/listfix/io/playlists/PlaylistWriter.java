@@ -80,12 +80,13 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
    * @param playlist     The list to persist to disk.
    * @param saveRelative Specifies if the playlist should be written out relatively or not.
    * @param adapter      An optionally null progress adapter which lets other code monitor the progress of this operation.
-   * @throws Exception   If the playlist failed to save
+   * @throws Exception If the playlist failed to save
    */
   @Override
   public void save(Playlist playlist, boolean saveRelative, @Nullable ProgressAdapter<String> adapter) throws Exception
   {
-    if (adapter == null) {
+    if (adapter == null)
+    {
       // Create a dummy progress-adapter
       adapter = ProgressAdapter.make(null);
     }

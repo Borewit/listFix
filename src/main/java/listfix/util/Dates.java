@@ -1,5 +1,3 @@
-
-
 package listfix.util;
 
 import java.text.SimpleDateFormat;
@@ -11,10 +9,7 @@ public class Dates
 
   public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss.SSS";
 
-  /**
-   *
-   * @return
-   */
+
   public static String now()
   {
     Calendar cal = Calendar.getInstance();

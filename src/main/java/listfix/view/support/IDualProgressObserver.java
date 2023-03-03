@@ -1,5 +1,3 @@
-
-
 package listfix.view.support;
 
 public interface IDualProgressObserver<T>

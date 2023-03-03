@@ -27,17 +27,17 @@ import java.util.concurrent.ExecutionException;
 /**
  * This is the results dialog we display when running a batch closest matches search on all entries in multiple playlists.
  */
-public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
+public class MultiListBatchClosestMatchResultsDialog extends JDialog
 {
   private final BatchRepair _batch;
   private boolean _userCancelled = false;
   private static final Logger _logger = LogManager.getLogger(MultiListBatchClosestMatchResultsDialog.class);
 
-  private javax.swing.JButton _btnBrowse;
-  private javax.swing.JButton _btnSave;
-  private javax.swing.JCheckBox _chkBackup;
-  private listfix.view.controls.PlaylistsList _pnlList;
-  private listfix.view.controls.ClosestMatchesSearchScrollableResultsPanel _pnlResults;
+  private JButton _btnBrowse;
+  private JButton _btnSave;
+  private JCheckBox _chkBackup;
+  private PlaylistsList _pnlList;
+  private ClosestMatchesSearchScrollableResultsPanel _pnlResults;
   private JTextField _txtBackup;
   private final IPlaylistOptions filePathOptions;
 
@@ -158,19 +158,20 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     _pnlList = new PlaylistsList(_batch);
     JPanel _pnlBackup = new JPanel();
     JPanel _pnlRight = new JPanel();
-    _btnSave = new javax.swing.JButton();
+    _btnSave = new JButton();
     JButton _btnCancel = new JButton();
     JPanel _pnlLeft = new JPanel();
-    _chkBackup = new javax.swing.JCheckBox();
+    _chkBackup = new JCheckBox();
     _txtBackup = new JTextField();
-    _btnBrowse = new javax.swing.JButton();
+    _btnBrowse = new JButton();
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     addWindowListener(new WindowAdapter()
     {
+      @Override
       public void windowClosing(WindowEvent evt)
       {
-        formWindowClosing(evt);
+        formWindowClosing();
       }
     });
 
@@ -212,7 +213,7 @@ public class MultiListBatchClosestMatchResultsDialog extends javax.swing.JDialog
     pack();
   }
 
-  private void formWindowClosing(WindowEvent ignore)
+  private void formWindowClosing()
   {
     _userCancelled = true;
   }

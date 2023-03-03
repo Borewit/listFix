@@ -13,14 +13,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class M3UReaderTests
 {
   private IPlaylistOptions playlistOptions;
 
   @BeforeEach
-  public void initOptions() {
+  public void initOptions()
+  {
     this.playlistOptions = new JsonAppOptions();
   }
 

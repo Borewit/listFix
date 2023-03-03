@@ -1,5 +1,3 @@
-
-
 package listfix.io;
 
 import java.io.IOException;

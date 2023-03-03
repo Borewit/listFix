@@ -1,5 +1,3 @@
-
-
 package listfix.playlists.itunes;
 
 import christophedelory.playlist.SpecificPlaylist;
@@ -8,9 +6,11 @@ import christophedelory.playlist.plist.PlistPlaylist;
 import listfix.io.IPlaylistOptions;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
-import listfix.model.playlists.itunes.*;
+import listfix.model.playlists.itunes.ITunesFilePlaylistEntry;
+import listfix.model.playlists.itunes.ITunesMediaLibrary;
+import listfix.model.playlists.itunes.ITunesPlaylist;
+import listfix.model.playlists.itunes.ITunesTrack;
 import listfix.util.TestUtil;
-
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -84,7 +84,8 @@ public class ITunesPlaylistTests
       }
 
       @Override
-      public Set<String> getPlaylistDirectories() {
+      public Set<String> getPlaylistDirectories()
+      {
         return new TreeSet<>();
       }
     });

@@ -2,6 +2,7 @@ package listfix.json;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
 import listfix.config.IAppOptions;
 import listfix.config.IApplicationState;
 import listfix.io.Constants;
@@ -21,7 +22,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private boolean autoRefreshMediaLibraryOnStartup = false;
   private boolean alwaysUseUNCPaths = false;
   private int maxPlaylistHistoryEntries = 5;
-  private String lookAndFeel = OperatingSystem.isWindows() ? com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
+  private String lookAndFeel = OperatingSystem.isWindows() ? WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
 
 
   @Deprecated // Replaced by playlistDirectories
@@ -36,8 +37,9 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
 
-  private JsonApplicationState applicationState = new JsonApplicationState();
+  private final JsonApplicationState applicationState = new JsonApplicationState();
 
+  @Override
   public boolean getAutoLocateEntriesOnPlaylistLoad()
   {
     return autoLocateEntriesOnPlaylistLoad;
@@ -48,6 +50,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
   }
 
+  @Override
   public int getMaxPlaylistHistoryEntries()
   {
     return maxPlaylistHistoryEntries;
@@ -58,6 +61,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.lookAndFeel = lookAndFeel;
   }
 
+  @Override
   public String getLookAndFeel()
   {
     return lookAndFeel;
@@ -73,11 +77,13 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
   }
 
+  @Override
   public boolean getAutoRefreshMediaLibraryOnStartup()
   {
     return autoRefreshMediaLibraryOnStartup;
   }
 
+  @Override
   public boolean getSavePlaylistsWithRelativePaths()
   {
     return savePlaylistsWithRelativePaths;
@@ -88,6 +94,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
   }
 
+  @Override
   public boolean getAlwaysUseUNCPaths()
   {
     return alwaysUseUNCPaths;
@@ -111,7 +118,8 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   }
 
   @Override
-  public Set<String> getPlaylistDirectories() {
+  public Set<String> getPlaylistDirectories()
+  {
     return this.playlistDirectories;
   }
 

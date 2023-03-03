@@ -4,7 +4,6 @@ import listfix.io.IPlaylistOptions;
 import listfix.json.JsonAppOptions;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.util.TestUtil;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,8 @@ public class WPLReaderTests
   private IPlaylistOptions playlistOptions;
 
   @BeforeEach
-  public void initOptions() {
+  public void initOptions()
+  {
     this.playlistOptions = new JsonAppOptions();
   }
 

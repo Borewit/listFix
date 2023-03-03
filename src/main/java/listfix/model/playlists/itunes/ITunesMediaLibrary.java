@@ -1,10 +1,8 @@
-
-
 package listfix.model.playlists.itunes;
 
 import christophedelory.playlist.plist.PlistPlaylist;
-import christophedelory.plist.*;
 import christophedelory.plist.Integer;
+import christophedelory.plist.*;
 
 import java.util.*;
 
@@ -37,9 +35,7 @@ public class ITunesMediaLibrary
   }
 
   /**
-   * Gets the "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks.
-   *
-   * @return The "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks
+   * Returns the "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks.
    * @see ITunesTrack
    */
   public Map<java.lang.String, ITunesTrack> getTracks()
@@ -111,7 +107,7 @@ public class ITunesMediaLibrary
   }
 
   /**
-   * @return the _plist
+   * Returns the _plist.
    */
   public PlistPlaylist getPlist()
   {

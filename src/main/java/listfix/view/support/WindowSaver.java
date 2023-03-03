@@ -14,7 +14,7 @@ import java.awt.event.WindowEvent;
 
 public final class WindowSaver implements AWTEventListener
 {
-  private IApplicationState applicationState;
+  private final IApplicationState applicationState;
 
   private static final Logger _logger = LogManager.getLogger(WindowSaver.class);
 

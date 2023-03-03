@@ -1,11 +1,12 @@
 package listfix.comparators;
 
 import java.io.File;
+import java.util.Comparator;
 
 /**
  * Sorts directories ahead of files, and then sorts files alphabetically (ignoring case).
  */
-public class DirectoryThenFileThenAlphabeticalFileComparator implements java.util.Comparator<File>
+public class DirectoryThenFileThenAlphabeticalFileComparator implements Comparator<File>
 {
 
   @Override

@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists.pls;
 
 import listfix.io.Constants;
@@ -29,11 +27,10 @@ import java.util.List;
 
 /**
  * Reads in a PLS file and returns a List containing PlaylistEntries that represent the files &amp; URIs in the playlist.
- * @author jcaron
  */
 public class PLSReader extends PlaylistReader
 {
-  private List<PlaylistEntry> results = new ArrayList<>();
+  private final List<PlaylistEntry> results = new ArrayList<>();
   private static final PlaylistType type = PlaylistType.PLS;
   private static final Logger _logger = LogManager.getLogger(PLSReader.class);
 
@@ -70,7 +67,7 @@ public class PLSReader extends PlaylistReader
     }
 
     // Find out how many entries we have to process.
-    int entries = Integer.parseInt((propBag.getProperty("NumberOfEntries", "0")));
+    int entries = Integer.parseInt(propBag.getProperty("NumberOfEntries", "0"));
 
     // Set the total if we have an observer.
     progress.setTotal(entries);
@@ -105,8 +102,8 @@ public class PLSReader extends PlaylistReader
     String file = propBag.getProperty("File" + index, "");
     String title = propBag.getProperty("Title" + index, "");
     String length = propBag.getProperty("Length" + index, "");
-    long duration = -1;
-    duration = Long.parseLong(length) * 1000L;
+
+    long duration = Long.parseLong(length) * 1000L;
 
     if (file.contains("://"))
     {

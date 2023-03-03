@@ -2,7 +2,7 @@ package listfix.view.support;
 
 public class ProgressAdapter<T>
 {
-  private IProgressObserver<T> observer;
+  private final IProgressObserver<T> observer;
   private long _total;
   private long completed;
   private int percentComplete;
@@ -28,7 +28,7 @@ public class ProgressAdapter<T>
 
   public static <T> ProgressAdapter<T> make(IProgressObserver<T> observer)
   {
-   return new ProgressAdapter<>(observer == null ? (IProgressObserver<T>)dummyObserver : observer);
+    return new ProgressAdapter<>(observer == null ? (IProgressObserver<T>) dummyObserver : observer);
   }
 
   public ProgressAdapter(IProgressObserver<T> observer)
@@ -87,7 +87,8 @@ public class ProgressAdapter<T>
     }
   }
 
-  protected double calculateProgress(long completed, long total) {
+  protected double calculateProgress(long completed, long total)
+  {
     return (completed * 100.0) / (double) total;
   }
 
@@ -105,7 +106,8 @@ public class ProgressAdapter<T>
 //    return this.observer;
 //  }
 
-  public int getPercentComplete() {
+  public int getPercentComplete()
+  {
     return this.percentComplete;
   }
 

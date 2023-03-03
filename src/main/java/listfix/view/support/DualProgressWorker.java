@@ -1,5 +1,3 @@
-
-
 package listfix.view.support;
 
 import javax.swing.*;
@@ -14,16 +12,19 @@ public abstract class DualProgressWorker<T, V> extends SwingWorker<T, DualProgre
   @Override
   protected abstract void process(List<ProgressItem<V>> chunks);
 
+  @Override
   public void reportTaskProgress(int percentComplete, V state)
   {
     publish(new ProgressItem<V>(true, percentComplete, state));
   }
 
+  @Override
   public void reportOverallProgress(int percentComplete, V state)
   {
     publish(new ProgressItem<V>(false, percentComplete, state));
   }
 
+  @Override
   public boolean getCancelled()
   {
     return this.isCancelled();

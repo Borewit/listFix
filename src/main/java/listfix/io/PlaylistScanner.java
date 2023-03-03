@@ -18,7 +18,10 @@ public class PlaylistScanner
   public static List<Path> getAllPlaylists(Path directory) throws IOException
   {
     List<Path> result = new ArrayList<>();
-    getAllPlaylists(result, Files.list(directory));
+    try (Stream<Path> stream = Files.list(directory))
+    {
+      getAllPlaylists(result, stream);
+    }
     return result;
   }
 
@@ -30,7 +33,10 @@ public class PlaylistScanner
         {
           try
           {
-            getAllPlaylists(result, Files.list(path));
+            try (Stream<Path> stream = Files.list(path))
+            {
+              getAllPlaylists(result, stream);
+            }
           }
           catch (IOException e)
           {

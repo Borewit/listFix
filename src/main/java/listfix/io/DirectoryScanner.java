@@ -1,5 +1,3 @@
-
-
 package listfix.io;
 
 import listfix.view.support.ProgressWorker;
@@ -9,8 +7,6 @@ import java.util.*;
 
 /**
  * Creates a list of the indexed files and subdirectories contained in a list of input directories.
- *
- * @author jcaron
  */
 
 public class DirectoryScanner
@@ -19,10 +15,7 @@ public class DirectoryScanner
   private List<String> thisFileList;
   private int recursiveCount = 0;
 
-  /**
-   * @param baseDirs
-   * @param task
-   */
+
   public void createMediaLibraryDirectoryAndFileList(Collection<String> baseDirs, ProgressWorker task)
   {
     this.reset();
@@ -89,17 +82,13 @@ public class DirectoryScanner
     thisFileList = new ArrayList<>();
   }
 
-  /**
-   * @return
-   */
+
   public List<String> getFileList()
   {
     return this.thisFileList;
   }
 
-  /**
-   * @return
-   */
+
   public List<String> getDirectoryList()
   {
     return this.thisDirList;

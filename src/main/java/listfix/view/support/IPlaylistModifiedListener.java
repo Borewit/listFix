@@ -1,5 +1,3 @@
-
-
 package listfix.view.support;
 
 import listfix.model.playlists.Playlist;

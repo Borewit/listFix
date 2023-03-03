@@ -1,5 +1,3 @@
-
-
 package listfix.view.dialogs;
 
 import listfix.model.BatchRepair;
@@ -18,8 +16,10 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.*;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -156,15 +156,16 @@ public class BatchExactMatchesResultsDialog extends JDialog
     JPanel jPanel1 = new JPanel();
     JPanel jPanel3 = new JPanel();
     JLabel jLabel1 = new JLabel();
-    playlistEditCtrl1 = new listfix.view.controls.PlaylistEditCtrl(this.listFixGui);
+    playlistEditCtrl1 = new PlaylistEditCtrl(this.listFixGui);
     _pnlList = new PlaylistsList(_batch);
 
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     addWindowListener(new WindowAdapter()
     {
+      @Override
       public void windowClosing(WindowEvent evt)
       {
-        formWindowClosing(evt);
+        formWindowClosing();
       }
     });
 
@@ -303,7 +304,7 @@ public class BatchExactMatchesResultsDialog extends JDialog
     }
   }
 
-  private void formWindowClosing(WindowEvent ignore)
+  private void formWindowClosing()
   {
     _userCancelled = true;
   }

@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists;
 
 import listfix.io.IPlaylistOptions;
@@ -8,6 +6,7 @@ import java.nio.file.Path;
 
 /**
  * Serves to model a closest match on a single playlist entry.
+ *
  * @author jcaron
  */
 
@@ -42,10 +41,12 @@ public class PotentialPlaylistEntryMatch
 
   /**
    * Used to render value in combo-box
+   *
    * @return Matching score & track-file-name
    */
   @Override
-  public String toString() {
+  public String toString()
+  {
     return String.format("%d: %s", this._score, thisEntry.getTrackFileName());
   }
 }

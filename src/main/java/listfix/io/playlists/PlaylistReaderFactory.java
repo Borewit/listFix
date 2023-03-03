@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists;
 
 import listfix.io.IPlaylistOptions;

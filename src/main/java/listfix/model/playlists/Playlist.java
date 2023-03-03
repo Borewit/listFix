@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists;
 
 import listfix.config.IMediaLibrary;
@@ -8,8 +6,8 @@ import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;
 import listfix.io.UNCFile;
 import listfix.io.playlists.IPlaylistReader;
-import listfix.io.playlists.PlaylistReaderFactory;
 import listfix.io.playlists.IPlaylistWriter;
+import listfix.io.playlists.PlaylistReaderFactory;
 import listfix.io.playlists.PlaylistWriterFactory;
 import listfix.model.BatchMatchItem;
 import listfix.model.enums.PlaylistType;
@@ -38,11 +36,11 @@ public class Playlist
    * Playlist extensions
    */
   public static final HashSet<String> playlistExtensions = Stream.of("m3u", "m3u8", "pls", "wpl", "xspf", "xml")
-    .collect(Collectors.toCollection(HashSet :: new));
+    .collect(Collectors.toCollection(HashSet::new));
   private static final String FS = System.getProperty("file.separator");
   private static final String HOME_DIR = System.getProperty("user.home");
   public static final Set<String> mediaExtensions = Stream.of("mp3", "wma", "flac", "ogg", "wav", "midi", "cda", "mpg", "mpeg", "m2v", "avi", "m4v", "flv", "mid", "mp2", "mp1", "aac", "asx", "m4a", "mp4", "m4v", "nsv", "aiff", "au", "wmv", "asf", "mpc")
-    .collect(Collectors.toCollection(HashSet :: new));
+    .collect(Collectors.toCollection(HashSet::new));
 
   private static int NEW_LIST_COUNT = -1;
 
@@ -598,9 +596,10 @@ public class Playlist
   }
 
   /**
+   * Returns positions of repaired rows.
+   *
    * @param mediaLibrary Media library used to reference existing media files
    * @param observer     Progress observer
-   * @return Positions of repaired rows
    */
   public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
   {
@@ -717,7 +716,7 @@ public class Playlist
     ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(entries.size());
 
-    List<BatchMatchItem> fixed = new LinkedList<>();
+    List<BatchMatchItem> fixed = new ArrayList<>();
     int ix = 0;
     for (PlaylistEntry entry : entries)
     {
@@ -739,7 +738,7 @@ public class Playlist
 
   public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, Collection<String> libraryFiles, ProgressWorker<List<BatchMatchItem>, String> observer)
   {
-    List<PlaylistEntry> entrySelection = rowList.stream().map(this._entries :: get).collect(Collectors.toUnmodifiableList());
+    List<PlaylistEntry> entrySelection = rowList.stream().map(this._entries::get).collect(Collectors.toUnmodifiableList());
     return findClosestMatches(entrySelection, libraryFiles, observer);
   }
 
@@ -882,7 +881,7 @@ public class Playlist
   {
     int removed = 0;
     Set<String> found = new HashSet<>();
-    for (int ix = 0; ix < _entries.size();)
+    for (int ix = 0; ix < _entries.size(); )
     {
       PlaylistEntry entry = _entries.get(ix);
       String name = entry.getTrackFileName();

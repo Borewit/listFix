@@ -1,5 +1,3 @@
-
-
 package listfix.model.playlists.itunes;
 
 import listfix.io.IPlaylistOptions;
@@ -22,7 +20,7 @@ public class ITunesPlaylist extends Playlist
   }
 
   /**
-   * @return the _library
+   * Returns the _library.
    */
   public ITunesMediaLibrary getLibrary()
   {

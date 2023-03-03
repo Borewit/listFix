@@ -4,7 +4,8 @@ import javax.swing.*;
 
 public class FolderChooser extends JFileChooser
 {
-  public FolderChooser() {
+  public FolderChooser()
+  {
     this.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     this.setAcceptAllFileFilterUsed(false);
     this.setApproveButtonText("Select");

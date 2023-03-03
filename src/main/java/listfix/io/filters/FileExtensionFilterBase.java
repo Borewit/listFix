@@ -1,5 +1,3 @@
-
-
 package listfix.io.filters;
 
 import listfix.model.playlists.Playlist;

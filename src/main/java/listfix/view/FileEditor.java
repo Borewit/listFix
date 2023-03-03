@@ -16,7 +16,10 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Locale;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FileEditor extends JFrame
 {
@@ -66,7 +69,7 @@ public class FileEditor extends JFrame
     fileStatus.setBorder(new EtchedBorder());
 
     insertStatus = new JLabel(" ");
-    insertStatus.setPreferredSize((new Dimension(26, 20)));
+    insertStatus.setPreferredSize(new Dimension(26, 20));
     insertStatus.setBorder(new EtchedBorder());
     capslockStatus = new JLabel(" ");
     capslockStatus.setPreferredSize(new Dimension(36, 20));
@@ -135,6 +138,7 @@ public class FileEditor extends JFrame
     cutMenuItem.setMnemonic('u');
     cutMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         cut();
@@ -145,6 +149,7 @@ public class FileEditor extends JFrame
     copyMenuItem.setMnemonic('C');
     copyMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         copy();
@@ -156,6 +161,7 @@ public class FileEditor extends JFrame
     pasteMenuItem.setMnemonic('P');
     pasteMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         paste();
@@ -174,6 +180,7 @@ public class FileEditor extends JFrame
     cutPopupMenuItem.setMnemonic('u');
     cutPopupMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         cut();
@@ -185,6 +192,7 @@ public class FileEditor extends JFrame
     copyPopupMenuItem.setMnemonic('C');
     copyPopupMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         copy();
@@ -196,6 +204,7 @@ public class FileEditor extends JFrame
     pastePopupMenuItem.setMnemonic('P');
     pastePopupMenuItem.addActionListener(new ActionListener()
     {
+      @Override
       public void actionPerformed(ActionEvent e)
       {
         paste();
@@ -226,18 +235,22 @@ public class FileEditor extends JFrame
 
     textArea.addMouseListener(new MouseListener()
     {
+      @Override
       public void mouseClicked(MouseEvent e)
       {
       }
 
+      @Override
       public void mouseEntered(MouseEvent e)
       {
       }
 
+      @Override
       public void mouseExited(MouseEvent e)
       {
       }
 
+      @Override
       public void mousePressed(MouseEvent e)
       {
         if (e.isPopupTrigger())
@@ -247,6 +260,7 @@ public class FileEditor extends JFrame
         }
       }
 
+      @Override
       public void mouseReleased(MouseEvent e)
       {
         if (e.isPopupTrigger())
@@ -259,6 +273,7 @@ public class FileEditor extends JFrame
 
     textArea.addKeyListener(new KeyListener()
     {
+      @Override
       public void keyPressed(KeyEvent e)
       {
         switch (e.getKeyCode())
@@ -286,10 +301,12 @@ public class FileEditor extends JFrame
         }
       }
 
+      @Override
       public void keyReleased(KeyEvent e)
       {
       }
 
+      @Override
       public void keyTyped(KeyEvent e)
       {
       }
@@ -328,7 +345,8 @@ public class FileEditor extends JFrame
   {
     if (openFile.exists())
     {
-      try(BufferedReader reader = new BufferedReader(new FileReader(openFile))) {
+      try (BufferedReader reader = Files.newBufferedReader(openFile.toPath(), UTF_8))
+      {
         String line;
         while ((line = reader.readLine()) != null)
         {
@@ -359,7 +377,7 @@ public class FileEditor extends JFrame
     {
       try
       {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(openFile));
+        BufferedWriter bw = Files.newBufferedWriter(openFile.toPath(), UTF_8);
         bw.write(textArea.getText());
         bw.close();
       }
@@ -382,7 +400,7 @@ public class FileEditor extends JFrame
       try
       {
         openFile = chooser.getSelectedFile();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(openFile));
+        BufferedWriter writer = Files.newBufferedWriter(openFile.toPath(), UTF_8);
         writer.write(textArea.getText());
         writer.close();
       }

@@ -2,13 +2,13 @@ package listfix.util;
 
 import listfix.comparators.DirectoryThenFileThenAlphabeticalPathComparator;
 
-
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FileTypeSearch
 {
@@ -26,19 +26,22 @@ public class FileTypeSearch
     {
       try
       {
-        Files.list(directoryToSearch)
-          .filter(file -> filter.accept(file.toFile()))
-          .sorted(new DirectoryThenFileThenAlphabeticalPathComparator())
-          .forEach(file -> {
-            if (Files.isDirectory(file))
-            {
-              findFiles(files, file, filter);
-            }
-            else
-            {
-              files.add(file);
-            }
-          });
+        try (Stream<Path> stream = Files.list(directoryToSearch))
+        {
+          stream
+            .filter(file -> filter.accept(file.toFile()))
+            .sorted(new DirectoryThenFileThenAlphabeticalPathComparator())
+            .forEach(file -> {
+              if (Files.isDirectory(file))
+              {
+                findFiles(files, file, filter);
+              }
+              else
+              {
+                files.add(file);
+              }
+            });
+        }
       }
       catch (IOException e)
       {

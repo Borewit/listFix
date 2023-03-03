@@ -1,5 +1,3 @@
-
-
 package listfix.io.playlists.pls;
 
 import listfix.io.Constants;
@@ -11,14 +9,16 @@ import listfix.util.UnicodeUtils;
 
 import java.io.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * A playlist writer capable of saving to PLS format.
- * @author jcaron
  */
 public class PLSWriter extends PlaylistWriter<StringBuilder>
 {
 
-  public PLSWriter(IPlaylistOptions options) {
+  public PLSWriter(IPlaylistOptions options)
+  {
     super(options);
   }
 
@@ -84,10 +84,10 @@ public class PLSWriter extends PlaylistWriter<StringBuilder>
     {
       try (FileOutputStream outputStream = new FileOutputStream(playlistFile))
       {
-        Writer osw = new OutputStreamWriter(outputStream, "UTF8");
+        Writer osw = new OutputStreamWriter(outputStream, UTF_8);
         try (BufferedWriter output = new BufferedWriter(osw))
         {
-          output.write(UnicodeUtils.getBOM("UTF-8") + buffer.toString());
+          output.write(UnicodeUtils.getBOM("UTF-8") + buffer);
         }
       }
       playlist.setUtfFormat(true);
@@ -96,7 +96,7 @@ public class PLSWriter extends PlaylistWriter<StringBuilder>
     {
       try (FileOutputStream outputStream = new FileOutputStream(playlistFile); BufferedOutputStream output = new BufferedOutputStream(outputStream))
       {
-        output.write(buffer.toString().getBytes());
+        output.write(buffer.toString().getBytes(UTF_8));
       }
       playlist.setUtfFormat(false);
     }

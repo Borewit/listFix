@@ -4,11 +4,11 @@ package listfix.model.playlists;
 import listfix.util.OperatingSystem;
 import org.junit.jupiter.api.Test;
 
-
 import java.io.File;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PlaylistEntryTests
 {
@@ -19,8 +19,8 @@ public class PlaylistEntryTests
     final String extra = "";
 
     final Path playlistFile = OperatingSystem.isWindows() ?
-        Path.of("\\\\DiskStation\\music\\_playlists\\Broken.m3u8") :
-        Path.of("/volume1/music/_playlists/Broken.m3u8");
+      Path.of("\\\\DiskStation\\music\\_playlists\\Broken.m3u8") :
+      Path.of("/volume1/music/_playlists/Broken.m3u8");
 
     FilePlaylistEntry filePlaylistEntry = new FilePlaylistEntry(trackPath, extra, playlistFile);
     assertEquals(Path.of("..", "_World Music").toString(), filePlaylistEntry.getTrackFolder());

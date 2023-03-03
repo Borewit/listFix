@@ -9,9 +9,7 @@ import java.util.List;
 
 /**
  * Serves to model a batch repair operation on a single playlist, for both exact and closest matches repairs.
- * @author jcaron
  */
-
 public class BatchRepairItem
 {
   private String _path;
@@ -27,7 +25,7 @@ public class BatchRepairItem
     _playlistFile = file;
     if (Playlist.isPlaylist(file.toPath()))
     {
-      _displayName = (new FileNameTokenizer(filePathOptions)).removeExtensionFromFileName(_displayName);
+      _displayName = new FileNameTokenizer(filePathOptions).removeExtensionFromFileName(_displayName);
     }
   }
 
@@ -41,7 +39,7 @@ public class BatchRepairItem
     this._path = path;
   }
 
-   public String getDisplayName()
+  public String getDisplayName()
   {
     return _displayName;
   }
