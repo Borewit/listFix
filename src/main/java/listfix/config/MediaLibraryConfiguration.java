@@ -85,7 +85,7 @@ public class MediaLibraryConfiguration extends JsonConfigFile<JsonMediaLibrary>
       if (file.onNetworkDrive())
       {
         String uncPath = file.getUNCPath();
-        if (!uncPath.equals(path))
+        if (uncPath != null && !uncPath.equals(path))
         {
           // Replace path with normalized UNC path
           paths.remove(path);
