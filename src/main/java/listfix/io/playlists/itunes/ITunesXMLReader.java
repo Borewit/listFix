@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ITunesXMLReader extends PlaylistReader
 {
@@ -62,14 +64,12 @@ public class ITunesXMLReader extends PlaylistReader
     _library = new ITunesMediaLibrary(playlist);
     Map<String, ITunesTrack> tracks = getLibrary().getTracks();
 
-    for (String id : tracks.keySet())
-    {
-      PlaylistEntry convertedTrack = iTunesTrackToPlaylistEntry(tracks.get(id));
-      if (convertedTrack != null)
-      {
-        results.add(convertedTrack);
-      }
-    }
+    results.addAll(
+    getLibrary().getTracks().keySet().stream()
+      .map(id -> iTunesTrackToPlaylistEntry(tracks.get(id)))
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList())
+    );
     return results;
   }
 
