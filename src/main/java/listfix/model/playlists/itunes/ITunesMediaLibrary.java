@@ -35,9 +35,7 @@ public class ITunesMediaLibrary
   }
 
   /**
-   * Gets the "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks.
-   *
-   * @return The "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks
+   * Returns the "Tracks" section of an iTunes library/playlist file as a map of Track IDs to ITunesTracks.
    * @see ITunesTrack
    */
   public Map<java.lang.String, ITunesTrack> getTracks()
