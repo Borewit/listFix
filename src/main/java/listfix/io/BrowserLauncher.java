@@ -6,7 +6,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A class who's sole responsibility is to launch the default web browser on various OSes.
@@ -24,47 +28,15 @@ public class BrowserLauncher
    */
   public static void launch(String url)
   {
+    Desktop desk = Desktop.getDesktop();
     try
     {
-      if (OperatingSystem.isMac())
-      {
-        Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
-        Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
-        openURL.invoke(null, url);
-      }
-      else if (OperatingSystem.isWindows())
-      {
-        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-      }
-      else
-      {
-        //assume Unix or Linux
-        String[] possibleBrowsers =
-          {
-            "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"
-          };
-        String browser = null;
-        for (int count = 0; count < possibleBrowsers.length && browser == null; count++)
-        {
-          if (Runtime.getRuntime().exec(new String[]{"which", possibleBrowsers[count]}).waitFor() == 0)
-          {
-            browser = possibleBrowsers[count];
-          }
-        }
-        if (browser == null)
-        {
-          throw new Exception("Could not find web browser");
-        }
-        else
-        {
-          Runtime.getRuntime().exec(new String[]{browser, url});
-        }
-      }
+      desk.browse(new URI(url));
     }
-    catch (Exception e)
+    catch (IOException | URISyntaxException e)
     {
+      _logger.error(String.format("Failed to open URL: %s", url), e);
       JOptionPane.showMessageDialog(null, new JTransparentTextArea(_errMsg + ": " + e.getLocalizedMessage()));
-      _logger.warn(e);
     }
   }
 }
