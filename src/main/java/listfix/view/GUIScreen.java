@@ -42,19 +42,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -63,9 +54,8 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public final class GUIScreen extends JFrame implements DropTargetListener, IListFixGui
+public final class GUIScreen extends JFrame implements IListFixGui
 {
-
   private final JFileChooser _jOpenPlaylistFileChooser = new JFileChooser();
   private final JFileChooser _jSaveFileChooser = new JFileChooser();
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
@@ -87,6 +77,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
    * The components should only be enabled when 1 or more playlists are loaded
    */
   private Component[] componentsRequireActivePlaylist;
+
+  private PlaylistTransferHandler playlistTransferHandler;
 
   /**
    * Creates new form GUIScreen
@@ -112,6 +104,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     splashScreen.setStatusBar("Loading Media Library & Options...");
     _listFixController = ListFixController.getInstance();
     splashScreen.setStatusBar("Initializing UI...");
+    this.playlistTransferHandler = new PlaylistTransferHandler(this);
   }
 
   private IAppOptions getApplicationConfig()
@@ -130,6 +123,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     this.setLookAndFeel(appConfig.getLookAndFeel());
 
     configureFileAndFolderChoosers();
+
+    _playlistTabbedPane.setTransferHandler(this.playlistTransferHandler);
 
     // Warn the user if no media directories have been defined, and set the
     if (this._listFixController.getShowMediaDirWindow())
@@ -160,15 +155,11 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     }
 
     // drag-n-drop support for the playlist directory tree
-    _playlistDirectoryTree.setTransferHandler(createPlaylistTreeTransferHandler());
+    _playlistDirectoryTree.setTransferHandler(new PlaylistFolderTransferHandler(_playlistDirectoryTree, this));
     _playlistDirectoryTree.setRootVisible(false);
     // Show tooltips
     ToolTipManager.sharedInstance().registerComponent(_playlistDirectoryTree);
     _playlistDirectoryTree.setCellRenderer(new TreeTooltipRenderer());
-
-    // A constructor with side-effects, required to support opening playlists that are dragged in...
-    // Java... what voodoo/nonsense is this?
-    new DropTarget(this, this);
 
     _playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(e -> {
       boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
@@ -352,78 +343,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     };
   }
 
-  private TransferHandler createPlaylistTreeTransferHandler()
-  {
-    return new TransferHandler()
-    {
-      @Override
-      public boolean canImport(JComponent comp, DataFlavor[] transferFlavors)
-      {
-        return Arrays.stream(transferFlavors).anyMatch(DataFlavor.javaFileListFlavor::equals);
-      }
-
-      /**
-       * Causes a transfer to occur from a clipboard or a drag and drop operation.
-       * @param support the object containing the details of the transfer, not <code>null</code>.
-       * @return true if the data was inserted into the component, false otherwise
-       */
-      @Override
-      public boolean importData(TransferHandler.TransferSupport support)
-      {
-        final Transferable transferable = support.getTransferable();
-        if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
-        {
-          try
-          {
-            List<File> fileList = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-            return fileList.stream()
-              .filter(File::isDirectory)
-              .map(folder -> {
-                GUIScreen.this.addPlaylist(folder);
-                return true;
-              })
-              .reduce(false, (t, v) -> true);
-          }
-          catch (Exception e)
-          {
-            _logger.error("Dragging onto playlists directory failed", e);
-          }
-        }
-        return false;
-      }
-
-      @Override
-      public int getSourceActions(JComponent c)
-      {
-        return MOVE;
-      }
-
-      @Override
-      protected Transferable createTransferable(JComponent c)
-      {
-        try
-        {
-          ArrayList<String> paths = new ArrayList<>();
-
-          for (int selRow : _playlistDirectoryTree.getSelectionRows())
-          {
-            TreePath selPath = _playlistDirectoryTree.getPathForRow(selRow);
-            paths.add(FileTreeNodeGenerator.treePathToFileSystemPath(selPath).toString());
-          }
-
-          String serializedPaths = StringArrayListSerializer.serialize(paths);
-          return new StringSelection(serializedPaths);
-        }
-        catch (IOException ex)
-        {
-          _logger.warn(ex);
-          return null;
-        }
-
-      }
-    };
-  }
-
   private void configureFileAndFolderChoosers()
   {
     _jOpenPlaylistFileChooser.setDialogTitle("Choose Playlists...");
@@ -444,121 +363,6 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     _jSaveFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("WPL Playlist (*.wpl)", "wpl"));
     _jSaveFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XSPF Playlist (*.xspf)", "xspf"));
     _jSaveFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("iTunes Playlist (*.xml)", "xml"));
-  }
-
-  @Override
-  public void dragEnter(DropTargetDragEvent dtde)
-  {
-
-  }
-
-  @Override
-  public void dragExit(DropTargetEvent dte)
-  {
-
-  }
-
-  @Override
-  public void dragOver(DropTargetDragEvent dtde)
-  {
-
-  }
-
-  @Override
-  public void dropActionChanged(DropTargetDragEvent dtde)
-  {
-
-  }
-
-  @Override
-  public void drop(DropTargetDropEvent dtde)
-  {
-    try
-    {
-      // Ok, get the dropped object and try to figure out what it is
-      Transferable tr = dtde.getTransferable();
-      DataFlavor[] flavors = tr.getTransferDataFlavors();
-      for (DataFlavor flavor : flavors)
-      {
-        // Check for file lists specifically
-        if (flavor.isFlavorJavaFileListType() || flavor.isFlavorTextType())
-        {
-          // Accept the drop...
-          dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-          Object data = tr.getTransferData(flavor);
-          if (data instanceof List)
-          {
-            // Process the drop, in this case, of file or folder paths from the OS.
-            List list = (List) data;
-            for (Object list1 : list)
-            {
-              if (list1 instanceof Path)
-              {
-                Path tempFile = (Path) list1;
-                if (Playlist.isPlaylist(tempFile))
-                {
-                  openPlaylist(tempFile);
-                }
-                else if (Files.isDirectory(tempFile))
-                {
-                  List<Path> playlists = PlaylistScanner.getAllPlaylists(tempFile);
-                  for (Path f : playlists)
-                  {
-                    openPlaylist(f);
-                  }
-                }
-              }
-            }
-          }
-          else if (data instanceof InputStreamReader)
-          {
-            try (InputStreamReader list = (InputStreamReader) data; BufferedReader temp = new BufferedReader(list))
-            {
-              String filePath = temp.readLine();
-              while (filePath != null && !filePath.isEmpty())
-              {
-                openPlaylist(Path.of(new URI(filePath)));
-                filePath = temp.readLine();
-              }
-            }
-          }
-          else if (data instanceof String)
-          {
-            // Magically delicious string coming from the playlist panel
-            String input = (String) data;
-            List<String> paths = StringArrayListSerializer.deserialize(input);
-
-            // Turn this into a list of files, and reuse the processing code above
-            for (String path : paths)
-            {
-              Path tempFile = Path.of(path);
-              if (Playlist.isPlaylist(tempFile))
-              {
-                openPlaylist(tempFile);
-              }
-              else if (Files.isDirectory(tempFile))
-              {
-                List<Path> playlists = PlaylistScanner.getAllPlaylists(tempFile);
-                for (Path f : playlists)
-                {
-                  openPlaylist(f);
-                }
-              }
-            }
-          }
-          // If we made it this far, everything worked.
-          dtde.dropComplete(true);
-          return;
-        }
-      }
-      // Hmm, the user must not have dropped a file list
-      dtde.rejectDrop();
-    }
-    catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException e)
-    {
-      _logger.warn(e);
-      dtde.rejectDrop();
-    }
   }
 
   public IAppOptions getOptions()
@@ -957,6 +761,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     _verticalPanel.add(_newIconButton);
 
     _gettingStartedPanel.add(_verticalPanel, new GridBagConstraints());
+
+    _gettingStartedPanel.setTransferHandler(this.playlistTransferHandler);
 
     _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
@@ -1502,6 +1308,41 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
   public IApplicationConfiguration getApplicationConfiguration()
   {
     return this._listFixController;
+  }
+
+  @Override
+  public void openFileListDrop(List<File> droppedFiles)
+  {
+    this.openPathListDrop(droppedFiles.stream().map(File::toPath).collect(Collectors.toList()));
+  }
+
+  @Override
+  public void openPathListDrop(List<Path> droppedFiles)
+  {
+    try
+    {
+      for (Path filePath : droppedFiles)
+      {
+        if (Playlist.isPlaylist(filePath))
+        {
+          this.openPlaylist(filePath);
+        }
+        else if (Files.isDirectory(filePath))
+        {
+          List<Path> filesToInsert = PlaylistScanner.getAllPlaylists(filePath);
+          for (Path f : filesToInsert)
+          {
+            this.openPlaylist(f);
+          }
+        }
+      }
+    }
+    catch (IOException ioe)
+    {
+      _logger.warn("Failed to open playlist", ioe);
+      JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected.", ioe.getCause())),
+        "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+    }
   }
 
   @Override
@@ -2491,7 +2332,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     int response = _jMediaDirChooser.showOpenDialog(this);
     if (response == JFileChooser.APPROVE_OPTION)
     {
-      this.addPlaylist(_jMediaDirChooser.getSelectedFile().getAbsoluteFile());
+      this.addPlaylistFolder(_jMediaDirChooser.getSelectedFile().getAbsoluteFile());
     }
   }//GEN-LAST:event__btnSetPlaylistsDirActionPerformed
 
@@ -2821,7 +2662,8 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     }
   }
 
-  private void addPlaylist(File playlistFile)
+  @Override
+  public void addPlaylistFolder(File playlistFile)
   {
     if (playlistFile.exists())
     {

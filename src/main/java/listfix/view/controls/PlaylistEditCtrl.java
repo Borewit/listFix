@@ -1,7 +1,12 @@
 package listfix.view.controls;
 
 import listfix.config.IMediaLibrary;
-import listfix.io.*;
+import listfix.view.PlaylistTransferHandler;
+import listfix.io.datatransfer.PlaylistTransferObject;
+import listfix.io.Constants;
+import listfix.io.FileUtils;
+import listfix.io.IPlaylistOptions;
+import listfix.io.PlaylistScanner;
 import listfix.io.filters.AudioFileFilter;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
@@ -29,12 +34,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1491,7 +1492,8 @@ public class PlaylistEditCtrl extends JPanel
       {
         if (info.isDataFlavorSupported(_playlistEntryListFlavor)
           || info.isDataFlavorSupported(DataFlavor.stringFlavor)
-          || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+          || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+          || info.isDataFlavorSupported(PlaylistTransferObject.M3uPlaylistDataFlavor))
         {
           JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
           if (dl.getRow() == -1)
@@ -1518,21 +1520,22 @@ public class PlaylistEditCtrl extends JPanel
         if (info.isDataFlavorSupported(_playlistEntryListFlavor))
         {
           // This is the flavor we handle when the user is dragging entries around that are already part of the list
-          return HandlePlaylistEntryFlavor(info, dl);
+          return handlePlaylistEntryFlavor(info, dl);
         }
         else if (info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
         {
           // This is the flavor we handle when the user drags any file in from a Windows OS
-          return HandleFileListFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
+          return this.handleFileListFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
         }
-        else
+        else if (info.isDataFlavorSupported(DataFlavor.stringFlavor))
         {
           // This is the flavor we handle when the user drags playlists over from the playlist panel, or when dragging in any file from linux
-          return HandleStringFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
+          return handleStringFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
         }
+        return false;
       }
 
-      private boolean HandlePlaylistEntryFlavor(TransferSupport info, final JTable.DropLocation dl)
+      private boolean handlePlaylistEntryFlavor(TransferSupport info, final JTable.DropLocation dl)
       {
         // Get the entries that are being dropped.
         Transferable t = info.getTransferable();
@@ -1567,115 +1570,88 @@ public class PlaylistEditCtrl extends JPanel
         }
       }
 
-      private boolean HandleFileListFlavor(TransferSupport info, final JTable.DropLocation dl, IListFixGui parent)
+      private boolean handleFileListFlavor(TransferSupport info, final JTable.DropLocation dl, IListFixGui parent)
       {
-        int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
+        List<File> fileList;
+        try
+        {
+          fileList = (List<File>) info.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+        }
+        catch (UnsupportedFlavorException | IOException ex)
+        {
+          _logger.warn("Failed to extract file list from dropped transfer", ex);
+          return false;
+        }
+
+        if (fileList.isEmpty())
+          return false;
+
+        String question = String.format("You dragged %d playlists into this list, would you like to insert them or open them for repair?", fileList.size());
+        int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea(question),
           "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
 
         if (result == JOptionPane.YES_OPTION)
         {
           // Insert
-          Transferable t = info.getTransferable();
-          DataFlavor[] flavors = t.getTransferDataFlavors();
-          for (DataFlavor flavor : flavors)
+          try
           {
-            try
-            {
-              final List<Path> list = (List<Path>) t.getTransferData(flavor);
-              ProcessFileListDrop(list, dl);
-              resizeAllColumns();
-              return true;
-            }
-            catch (UnsupportedFlavorException | IOException ex)
-            {
-              _logger.warn(ex);
-            }
+            this.processFileListDrop(fileList, dl);
           }
-          return false;
+          catch (IOException ioe)
+          {
+            _logger.warn("Failed to process dropped files", ioe);
+            return false;
+          }
+          resizeAllColumns();
         }
         else if (result == JOptionPane.NO_OPTION && parent != null)
         {
           // Open
-          Transferable t = info.getTransferable();
-          DataFlavor[] flavors = t.getTransferDataFlavors();
-          for (DataFlavor flavor : flavors)
+          parent.openFileListDrop(fileList);
+          return true;
+        }
+        return true;
+      }
+
+      private void processFileListDrop(List<File> fileList, final JTable.DropLocation dl) throws IOException
+      {
+        this.processPathListDrop(fileList.stream().map(File::toPath).collect(Collectors.toList()), dl);
+      }
+
+      private void processPathListDrop(List<Path> fileList, final JTable.DropLocation dl) throws IOException
+      {
+        int insertAt = dl.getRow();
+        for (Path filePath : fileList)
+        {
+          if (Playlist.isPlaylist(filePath))
           {
+            insertAt += processDroppedPlaylist(filePath, insertAt);
+          }
+          else if (Files.isDirectory(filePath))
+          {
+            List<Path> filesToInsert = PlaylistScanner.getAllPlaylists(filePath);
+            for (Path f : filesToInsert)
+            {
+              insertAt += processDroppedPlaylist(f, insertAt);
+            }
+          }
+          else if (FileUtils.isMediaFile(filePath))
+          {
+            // addAt it to the playlist!
             try
             {
-              final List<Path> list = (List<Path>) t.getTransferData(flavor);
-              OpenFileListDrop(list, parent);
-              return true;
+              _playlist.addAt(insertAt, Collections.singleton(filePath), null);
             }
-            catch (UnsupportedFlavorException | IOException ex)
+            catch (Exception ex)
             {
               _logger.warn(ex);
             }
-          }
-          return false;
-        }
-        return false;
-      }
-
-      private void ProcessFileListDrop(List<Path> list, final JTable.DropLocation dl) throws IOException
-      {
-        int insertAt = dl.getRow();
-        for (Object list1 : list)
-        {
-          final Path tempFile = (Path) list1;
-          if (tempFile != null)
-          {
-            if (Playlist.isPlaylist(tempFile))
-            {
-              insertAt += ProcessDroppedPlaylist(tempFile, insertAt);
-            }
-            else if (Files.isDirectory(tempFile))
-            {
-              List<Path> filesToInsert = PlaylistScanner.getAllPlaylists(tempFile);
-              for (Path f : filesToInsert)
-              {
-                insertAt += ProcessDroppedPlaylist(f, insertAt);
-              }
-            }
-            else if (FileUtils.isMediaFile(tempFile))
-            {
-              // addAt it to the playlist!
-              try
-              {
-                _playlist.addAt(insertAt, Collections.singleton(tempFile), null);
-              }
-              catch (Exception ex)
-              {
-                _logger.warn(ex);
-              }
-              insertAt++;
-            }
+            insertAt++;
           }
         }
       }
 
-      private void OpenFileListDrop(List<Path> list, IListFixGui parent) throws IOException
-      {
-        for (Path file : list)
-        {
-          if (file != null)
-          {
-            if (Playlist.isPlaylist(file))
-            {
-              parent.openPlaylist(file);
-            }
-            else if (Files.isDirectory(file))
-            {
-              List<Path> filesToInsert = PlaylistScanner.getAllPlaylists(file);
-              for (Path f : filesToInsert)
-              {
-                parent.openPlaylist(f);
-              }
-            }
-          }
-        }
-      }
-
-      private int ProcessDroppedPlaylist(final Path tempFile, int insertAt)
+      private int processDroppedPlaylist(final Path tempFile, int insertAt)
       {
         final int currentInsertPoint = insertAt;
 
@@ -1701,8 +1677,9 @@ public class PlaylistEditCtrl extends JPanel
               list = get();
               _playlist.addAllAt(currentInsertPoint, list.getEntries());
             }
-            catch (CancellationException ex)
+            catch (CancellationException ignore)
             {
+              // Ignore exception
             }
             catch (InterruptedException | ExecutionException ex)
             {
@@ -1720,99 +1697,42 @@ public class PlaylistEditCtrl extends JPanel
         return _playlist.size() - plistSize;
       }
 
-      private boolean HandleStringFlavor(TransferSupport info, final JTable.DropLocation dl, IListFixGui parent)
+      private boolean handleStringFlavor(TransferSupport transferSupport, final JTable.DropLocation dl, IListFixGui parent)
       {
+        List<String> entryList;
+        try
+        {
+          entryList = PlaylistTransferHandler.extractPlaylistsTransfer(transferSupport.getTransferable());
+        }
+        catch (IOException e)
+        {
+          _logger.error("Failed to process dropped text transfer", e);
+          return false;
+        }
+        if (entryList.size() == 0) return false;
+
         int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
           "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
 
+        // ToDo: are we sure these are all files?
+        List<Path> pathList = entryList.stream().map(Path::of).collect(Collectors.toList());
         if (result == JOptionPane.YES_OPTION)
         {
-          Transferable t = info.getTransferable();
-          DataFlavor[] flavors = t.getTransferDataFlavors();
-          for (DataFlavor flavor : flavors)
+          Collections.sort(entryList);
+          // ToDo: are we sure these are all files?
+          try
           {
-            try
-            {
-              if (t.getTransferData(flavor) instanceof String)
-              {
-                // In this case, it's a magically delicious string coming from the playlist panel
-                String input = (String) t.getTransferData(flavor);
-                List<String> paths = StringArrayListSerializer.deserialize(input);
-                // Turn this into a list of files, and reuse the processing code above
-                List<Path> files = paths.stream().map(Path::of).collect(Collectors.toList());
-                ProcessFileListDrop(files, dl);
-              }
-              else
-              {
-                if (t.getTransferData(flavor) instanceof InputStreamReader)
-                {
-                  List<Path> filesToProcess = new ArrayList<>();
-                  try (InputStreamReader reader = (InputStreamReader) t.getTransferData(flavor); BufferedReader temp = new BufferedReader(reader))
-                  {
-                    String filePath = temp.readLine();
-                    while (filePath != null && !filePath.isEmpty())
-                    {
-                      filesToProcess.add(Path.of(new URI(filePath)));
-                      filePath = temp.readLine();
-                    }
-                  }
-                  Collections.sort(filesToProcess);
-                  ProcessFileListDrop(filesToProcess, dl);
-                  // In the linux case, we need to stop here, because the other flavors are different representations of the data we just processed...
-                  return true;
-                }
-              }
-            }
-            catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
-            {
-              _logger.error("Error", ex);
-              return false;
-            }
+            this.processPathListDrop(pathList, dl);
+            return true;
           }
-          return true;
+          catch (IOException e)
+          {
+            throw new RuntimeException("Failed to add pasted text entries to playlist", e);
+          }
         }
         else if (result == JOptionPane.NO_OPTION && parent != null)
         {
-          // We're opening these items rather than inserting them into our playlist...
-          Transferable t = info.getTransferable();
-          DataFlavor[] flavors = t.getTransferDataFlavors();
-          for (DataFlavor flavor : flavors)
-          {
-            try
-            {
-              if (t.getTransferData(flavor) instanceof String)
-              {
-                // In this case, it's a magically delicious string coming from the playlist panel
-                String input = (String) t.getTransferData(flavor);
-                List<String> paths = StringArrayListSerializer.deserialize(input);
-                List<Path> files = paths.stream().map(Path::of).collect(Collectors.toList());
-                OpenFileListDrop(files, parent);
-              }
-              else
-              {
-                if (t.getTransferData(flavor) instanceof InputStreamReader)
-                {
-                  List<Path> filesToProcess = new ArrayList<>();
-                  try (InputStreamReader reader = (InputStreamReader) t.getTransferData(flavor); BufferedReader temp = new BufferedReader(reader))
-                  {
-                    String filePath = temp.readLine();
-                    while (filePath != null && !filePath.isEmpty())
-                    {
-                      filesToProcess.add(Path.of(new URI(filePath)));
-                    }
-                    OpenFileListDrop(filesToProcess, parent);
-                  }
-                  // In the linux case, we need to stop here, because the other flavors are different representations of the data we just processed...
-                  return true;
-                }
-              }
-            }
-            catch (UnsupportedFlavorException | IOException | ClassNotFoundException | URISyntaxException ex)
-            {
-              _logger.error("Error", ex);
-              return false;
-            }
-          }
+          parent.openPathListDrop(pathList);
           return true;
         }
         return false;
