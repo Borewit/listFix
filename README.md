@@ -6,8 +6,6 @@ Have you ever spent some time making a playlist, only to have it break when you 
 
 If a few files are still missing, they were probably renamed.  listFix() has a way of finding these files as well, by scoring the files in your media library with a "similarity" test and offering you a choice of the best potential matches, pre-selecting the matches it deems "best".
 
-iTunes fans, see [Using listFix() to fix iTunes playlists](https://sourceforge.net/apps/mediawiki/listfix/index.php?title=Fix_iTunes_playlists)
-
 ## History
 
 [listFix](https://github.com/Borewit/listFix) is cloned from [sourceforge.net](http://listfix.sourceforge.net/) using [a reposurgeon based script](https://github.com/Borewit/migrate-listFx).
