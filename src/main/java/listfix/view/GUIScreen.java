@@ -255,12 +255,12 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
 
       private boolean ctrlShiftTabWasPressed(KeyEvent e)
       {
-        return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) != 0) && _playlistTabbedPane.getDocumentCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
+        return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0) && ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) != 0) && _playlistTabbedPane.getDocumentCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
       }
 
       private boolean ctrlTabWasPressed(KeyEvent e)
       {
-        return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0) && ((e.getModifiers() & KeyEvent.SHIFT_MASK) == 0) && _playlistTabbedPane.getDocumentCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
+        return (e.getKeyCode() == KeyEvent.VK_TAB) && ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0) && ((e.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) == 0) && _playlistTabbedPane.getDocumentCount() > 0 && e.getID() == KeyEvent.KEY_PRESSED;
       }
     };
 
@@ -290,7 +290,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
         {
           int rowIx = _playlistDirectoryTree.getRowForLocation(p.x, p.y);
           boolean isOverItem = rowIx >= 0;
-          if (isOverItem && (e.getModifiers() & ActionEvent.CTRL_MASK) > 0)
+          if (isOverItem && (e.getModifiersEx() & ActionEvent.CTRL_MASK) > 0)
           {
             _playlistDirectoryTree.addSelectionRow(rowIx);
           }
@@ -620,70 +620,70 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     _miRefreshDirectoryTree = new JMenuItem();
     _miRemovePlaylistDirectory = new JMenuItem();
     _miOpenSelectedPlaylists = new JMenuItem();
-    _miOpenSelectedPlaylistLocation = new JMenuItem();
+    JMenuItem _miOpenSelectedPlaylistLocation = new JMenuItem();
     _miExactMatchesSearch = new JMenuItem();
     _miClosestMatchesSearch = new JMenuItem();
     _miDeleteFile = new JMenuItem();
     _miRenameSelectedItem = new JMenuItem();
-    _statusPanel = new JPanel();
+    JPanel _statusPanel = new JPanel();
     statusLabel = new JLabel();
-    _splitPane = new JSplitPane();
+    JSplitPane _splitPane = new JSplitPane();
     _leftSplitPane = new JSplitPane();
-    _mediaLibraryPanel = new JPanel();
-    _mediaLibraryButtonPanel = new JPanel();
-    _addMediaDirButton = new JButton();
+    JPanel _mediaLibraryPanel = new JPanel();
+    JPanel _mediaLibraryButtonPanel = new JPanel();
+    JButton _addMediaDirButton = new JButton();
     _removeMediaDirButton = new JButton();
     _refreshMediaDirsButton = new JButton();
-    _mediaLibraryScrollPane = new JScrollPane();
+    JScrollPane _mediaLibraryScrollPane = new JScrollPane();
     _lstMediaLibraryDirs = new JList<String>(new String[]{"Please Add A Media Directory..."});
-    _playlistDirectoryPanel = new JPanel();
-    _treeScrollPane = new JScrollPane();
+    JPanel _playlistDirectoryPanel = new JPanel();
+    JScrollPane _treeScrollPane = new JScrollPane();
     _playlistDirectoryTree = new JTree();
-    _playlistsDirectoryButtonPanel = new JPanel();
-    _btnSetPlaylistsDir = new JButton();
-    _btnRefresh = new JButton();
+    JPanel _playlistsDirectoryButtonPanel = new JPanel();
+    JButton _btnSetPlaylistsDir = new JButton();
+    JButton _btnRefresh = new JButton();
     _btnOpenSelected = new JButton();
     _btnQuickRepair = new JButton();
     _btnDeepRepair = new JButton();
     _playlistPanel = new JPanel();
-    _gettingStartedPanel = new JPanel();
-    _verticalPanel = new JPanel();
-    _openIconButton = new JButton();
-    _spacerPanel = new JPanel();
-    _newIconButton = new JButton();
-    _docTabPanel = new JPanel();
-    _playlistTabbedPane = new JDocumentTabbedPane();
-    _mainMenuBar = new JMenuBar();
-    _fileMenu = new JMenu();
-    _newPlaylistMenuItem = new JMenuItem();
-    _loadMenuItem = new JMenuItem();
-    _openPlaylistLocationMenuItem = new JMenuItem();
-    _closeMenuItem = new JMenuItem();
-    _closeAllMenuItem = new JMenuItem();
-    jSeparator1 = new Separator();
-    _saveMenuItem = new JMenuItem();
-    _saveAsMenuItem = new JMenuItem();
-    _saveAllMenuItem = new JMenuItem();
-    jSeparator2 = new Separator();
-    _miReload = new JMenuItem();
-    _miReloadAll = new JMenuItem();
-    jSeparator3 = new Separator();
+    JPanel _gettingStartedPanel = new JPanel();
+    JPanel _verticalPanel = new JPanel();
+    JButton _openIconButton = new JButton();
+    JPanel _spacerPanel = new JPanel();
+    JButton _newIconButton = new JButton();
+    JPanel _docTabPanel = new JPanel();
+    _playlistTabbedPane = new JDocumentTabbedPane<>();
+    JMenuBar _mainMenuBar = new JMenuBar();
+    JMenu _fileMenu = new JMenu();
+    JMenuItem _newPlaylistMenuItem = new JMenuItem();
+    JMenuItem _loadMenuItem = new JMenuItem();
+    JMenuItem _openPlaylistLocationMenuItem = new JMenuItem();
+    JMenuItem _closeMenuItem = new JMenuItem();
+    JMenuItem _closeAllMenuItem = new JMenuItem();
+    Separator jSeparator1 = new Separator();
+    JMenuItem _saveMenuItem = new JMenuItem();
+    JMenuItem _saveAsMenuItem = new JMenuItem();
+    JMenuItem _saveAllMenuItem = new JMenuItem();
+    Separator jSeparator2 = new Separator();
+    JMenuItem _miReload = new JMenuItem();
+    JMenuItem _miReloadAll = new JMenuItem();
+    Separator jSeparator3 = new Separator();
     recentMenu = new JMenu();
-    _clearHistoryMenuItem = new JMenuItem();
-    jSeparator4 = new Separator();
-    _appOptionsMenuItem = new JMenuItem();
-    jSeparator5 = new Separator();
-    _exitMenuItem = new JMenuItem();
-    _repairMenu = new JMenu();
-    _miBatchRepair = new JMenuItem();
-    _miExactMatchRepairOpenPlaylists = new JMenuItem();
-    _miClosestMatchRepairOpenPlaylists = new JMenuItem();
+    JMenuItem _clearHistoryMenuItem = new JMenuItem();
+    Separator jSeparator4 = new Separator();
+    JMenuItem _appOptionsMenuItem = new JMenuItem();
+    Separator jSeparator5 = new Separator();
+    JMenuItem _exitMenuItem = new JMenuItem();
+    JMenu _repairMenu = new JMenu();
+    JMenuItem _miBatchRepair = new JMenuItem();
+    JMenuItem _miExactMatchRepairOpenPlaylists = new JMenuItem();
+    JMenuItem _miClosestMatchRepairOpenPlaylists = new JMenuItem();
     _batchRepairWinampMenuItem = new JMenuItem();
     _extractPlaylistsMenuItem = new JMenuItem();
-    _helpMenu = new JMenu();
-    _helpMenuItem = new JMenuItem();
-    _updateCheckMenuItem = new JMenuItem();
-    _aboutMenuItem = new JMenuItem();
+    JMenu _helpMenu = new JMenu();
+    JMenuItem _helpMenuItem = new JMenuItem();
+    JMenuItem _updateCheckMenuItem = new JMenuItem();
+    JMenuItem _aboutMenuItem = new JMenuItem();
 
     _miRemovePlaylistDirectory.setText("Remove Playlist Directory");
     _miRemovePlaylistDirectory.setToolTipText("Remove playlist directory from configuration");
@@ -1164,7 +1164,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       }
 
       @Override
-      public void documentActivated(JDocumentComponent doc)
+      public void documentActivated(JDocumentComponent<PlaylistEditCtrl> doc)
       {
         GUIScreen.this.currentTabChanged(doc);
       }
@@ -1718,7 +1718,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     SwingUtilities.updateComponentTreeUI(_playlistTabbedPane);
   }
 
-  private Playlist getPlaylistFromDocumentComponent(JDocumentComponent ctrl)
+  private Playlist getPlaylistFromDocumentComponent(JDocumentComponent<PlaylistEditCtrl> ctrl)
   {
     return ((PlaylistEditCtrl) ctrl.getComponent()).getPlaylist();
   }
@@ -1858,7 +1858,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     this.currentTabChanged(_playlistTabbedPane.getActiveTab());
   }
 
-  private void currentTabChanged(JDocumentComponent documentComponent)
+  private void currentTabChanged(JDocumentComponent<PlaylistEditCtrl> documentComponent)
   {
     Playlist list = documentComponent != null ? ((PlaylistEditCtrl) documentComponent.getComponent()).getPlaylist() : null;
     if (list == _currentPlaylist)
@@ -1913,7 +1913,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     }
   }
 
-  private void updateTabTitleForPlaylist(Playlist list, JDocumentComponent comp)
+  private void updateTabTitleForPlaylist(Playlist list, JDocumentComponent<PlaylistEditCtrl> comp)
   {
     comp.setPath(list.getPath());
   }
@@ -2392,7 +2392,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
       Path path = _currentPlaylist.getPath();
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
-      final JDocumentComponent tempComp = _playlistTabbedPane.openDocument(editor, path);
+      final JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.openDocument(editor, path);
       _playlistTabbedPane.setActiveDocument(path);
 
       _openPlaylists.add(_currentPlaylist);
@@ -2788,9 +2788,7 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     // EDT Exception
     SwingUtilities.invokeAndWait(() -> {
       // We are in the event dispatching thread
-      Thread.currentThread().setUncaughtExceptionHandler((thread, e) -> {
-        _logger.error("Uncaught Exception", e);
-      });
+      Thread.currentThread().setUncaughtExceptionHandler((thread, e) -> _logger.error("Uncaught Exception", e));
     });
 
     IAppOptions tempOptions = ApplicationOptionsConfiguration.load().getConfig();
@@ -2845,76 +2843,26 @@ public final class GUIScreen extends JFrame implements DropTargetListener, IList
     this.updatePlaylistDirectoryPanel();
   }
 
-  // <editor-fold defaultstate="collapsed" desc="Generated Code">
-  // Variables declaration - do not modify//GEN-BEGIN:variables
-  private JMenuItem _aboutMenuItem;
-  private JButton _addMediaDirButton;
-  private JMenuItem _appOptionsMenuItem;
   private JMenuItem _batchRepairWinampMenuItem;
   private JButton _btnDeepRepair;
   private JButton _btnOpenSelected;
   private JButton _btnQuickRepair;
-  private JButton _btnRefresh;
-  private JButton _btnSetPlaylistsDir;
-  private JMenuItem _clearHistoryMenuItem;
-  private JMenuItem _closeAllMenuItem;
-  private JMenuItem _closeMenuItem;
-  private JPanel _docTabPanel;
   private JDocumentTabbedPane<PlaylistEditCtrl> _playlistTabbedPane;
-  private JMenuItem _exitMenuItem;
   private JMenuItem _extractPlaylistsMenuItem;
-  private JMenu _fileMenu;
-  private JPanel _gettingStartedPanel;
-  private JMenu _helpMenu;
-  private JMenuItem _helpMenuItem;
   private JSplitPane _leftSplitPane;
-  private JMenuItem _loadMenuItem;
-  private JMenuItem _openPlaylistLocationMenuItem;
   private JList<String> _lstMediaLibraryDirs;
-  private JMenuBar _mainMenuBar;
-  private JPanel _mediaLibraryButtonPanel;
-  private JPanel _mediaLibraryPanel;
-  private JScrollPane _mediaLibraryScrollPane;
-  private JMenuItem _miBatchRepair;
-  private JMenuItem _miClosestMatchRepairOpenPlaylists;
   private JMenuItem _miClosestMatchesSearch;
   private JMenuItem _miDeleteFile;
-  private JMenuItem _miExactMatchRepairOpenPlaylists;
   private JMenuItem _miExactMatchesSearch;
   private JMenuItem _miOpenSelectedPlaylists;
-  private JMenuItem _miOpenSelectedPlaylistLocation;
   private JMenuItem _miRefreshDirectoryTree;
   private JMenuItem _miRemovePlaylistDirectory;
-  private JMenuItem _miReload;
-  private JMenuItem _miReloadAll;
   private JMenuItem _miRenameSelectedItem;
-  private JButton _newIconButton;
-  private JMenuItem _newPlaylistMenuItem;
-  private JButton _openIconButton;
-  private JPanel _playlistDirectoryPanel;
   private JTree _playlistDirectoryTree;
   private JPanel _playlistPanel;
   private JPopupMenu _playlistTreeRightClickMenu;
-  private JPanel _playlistsDirectoryButtonPanel;
   private JButton _refreshMediaDirsButton;
   private JButton _removeMediaDirButton;
-  private JMenu _repairMenu;
-  private JMenuItem _saveAllMenuItem;
-  private JMenuItem _saveAsMenuItem;
-  private JMenuItem _saveMenuItem;
-  private JPanel _spacerPanel;
-  private JSplitPane _splitPane;
-  private JPanel _statusPanel;
-  private JScrollPane _treeScrollPane;
-  private JMenuItem _updateCheckMenuItem;
-  private JPanel _verticalPanel;
-  private Separator jSeparator1;
-  private Separator jSeparator2;
-  private Separator jSeparator3;
-  private Separator jSeparator4;
-  private Separator jSeparator5;
   private JMenu recentMenu;
   private JLabel statusLabel;
-  // End of variables declaration//GEN-END:variables
-  // </editor-fold>
 }
