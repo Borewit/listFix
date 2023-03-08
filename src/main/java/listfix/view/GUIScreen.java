@@ -213,6 +213,15 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     // Stop showing the loading screen
     splashScreen.setVisible(false);
+
+    _logger.info("post init");
+
+    EventQueue.invokeLater(() ->
+        // Restore previous opened playlists
+        _listFixController.getApplicationConfiguration().getConfig().getApplicationState().getPlaylistsOpened().stream()
+            .map(Path::of)
+            .filter(Files::exists)
+            .forEach(GUIScreen.this::openPlaylist));
   }
 
   private void recheckStatusOfOpenPlaylists()
@@ -1819,8 +1828,18 @@ public final class GUIScreen extends JFrame implements IListFixGui
       }
     }
 
+    // Store open playlists
+    List<String> openPlaylists = this._playlistTabbedPane.getAllEmbeddedMainComponent().stream()
+        .map(playlistEditCtrl -> playlistEditCtrl.getPlaylist().getPath().toString())
+        .collect(Collectors.toList());
+
+    Set<String> playlistPaths = this._listFixController.getApplicationConfiguration().getConfig().getApplicationState().getPlaylistsOpened();
+    playlistPaths.clear();
+    playlistPaths.addAll(openPlaylists);
+
     try
     {
+      // Write application settings to config file
       this._listFixController.getApplicationConfiguration().write();
     }
     catch (IOException e)
