@@ -1,5 +1,7 @@
 package listfix.model.playlists;
 
+import io.github.borewit.lizzy.content.Content;
+import io.github.borewit.lizzy.playlist.Media;
 import listfix.config.IMediaLibrary;
 import listfix.io.FileUtils;
 import listfix.model.enums.PlaylistEntryStatus;
@@ -18,14 +20,11 @@ public class FilePlaylistEntry extends PlaylistEntry
   protected Path trackPath;
   protected Path playlistPath;
 
-  protected FilePlaylistEntry()
+  public FilePlaylistEntry(Playlist playlist, Media media)
   {
-  }
-
-  public FilePlaylistEntry(Path trackPath, Path playlistPath)
-  {
-    this.trackPath = convertPath(trackPath);
-    this.playlistPath = playlistPath;
+    super(playlist, media);
+    this.trackPath = convertPath(Path.of(media.getSource().toString()));
+    this.playlistPath = playlist.getPath();
     // should we skip the exists check?
     if (this.skipExistsCheck())
     {
@@ -94,20 +93,6 @@ public class FilePlaylistEntry extends PlaylistEntry
   }
 
   /**
-   * Construct an M3U path &amp; file-name based entry.
-   *
-   * @param trackPath    Actual track path, as it appears in the playlist
-   * @param extra        M3U #EXTINF Track information
-   * @param playlistPath Playlist path
-   */
-  public FilePlaylistEntry(Path trackPath, String extra, Path playlistPath)
-  {
-    this(trackPath, playlistPath);
-    _extInf = extra;
-    parseExtraInfo(extra);
-  }
-
-  /**
    * Update the filename portion of the track path
    *
    * @param filename New filename to assign
@@ -116,26 +101,6 @@ public class FilePlaylistEntry extends PlaylistEntry
   {
     this.trackPath = this.trackPath.getParent().resolve(filename);
     this.recheckFoundStatus();
-  }
-
-  /**
-   * WPL constructor to hang on to random WPL-specific bits
-   */
-  public FilePlaylistEntry(Path trackPath, String extra, Path playlistPath, String cid, String tid)
-  {
-    this(trackPath, extra, playlistPath);
-    _cid = cid;
-    _tid = tid;
-  }
-
-  /**
-   * PLS constructor, which has file references, a title, and a length
-   */
-  public FilePlaylistEntry(Path trackPath, String title, long length, Path playlistPath)
-  {
-    this(trackPath, "#EXTINF:" + convertDurationToSeconds(length) + "," + title, playlistPath);
-    _title = title;
-    _length = length;
   }
 
   /**
@@ -211,6 +176,13 @@ public class FilePlaylistEntry extends PlaylistEntry
     return this.playlistPath;
   }
 
+  public void update(Path track)
+  {
+    this.trackPath = track;
+    Content content = new Content(track.toString());
+    this.media.setSource(content);
+  }
+
   @Override
   protected boolean exists()
   {
@@ -232,7 +204,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   @Override
   public FilePlaylistEntry clone()
   {
-    FilePlaylistEntry clone = new FilePlaylistEntry();
+    FilePlaylistEntry clone = new FilePlaylistEntry(this.playlist, this.media);
     this.copyTo(clone);
     return clone;
   }

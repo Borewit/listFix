@@ -1,39 +1,54 @@
 package listfix.io.filters;
 
-import listfix.model.playlists.Playlist;
+import listfix.io.FileUtils;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class FileExtensionFilterBase extends FileFilter
 {
-  private Set<String> extensions = Playlist.playlistExtensions;
+  private final String description;
+  private final Set<String> extensions;
 
-  protected FileExtensionFilterBase(Set<String> extensions)
+  protected FileExtensionFilterBase(String description, Collection<String> extensions)
   {
-    this.extensions = extensions;
+    this.description = description;
+    this.extensions = extensions.stream()
+        .map(extension -> extension.startsWith(".") ? extension.substring(1) : extension)
+        .map(String::toLowerCase)
+        .collect(Collectors.toSet());
+  }
+
+  protected FileExtensionFilterBase(String description, String[] extensions)
+  {
+    this(description, List.of(extensions));
   }
 
   @Override
   public boolean accept(File file)
   {
-    if (file.isDirectory())
-    {
-      return true;
-    }
-
-    String name = file.getName();
-    int ix = name.lastIndexOf('.');
-    if (ix >= 0 && ix < name.length() - 1)
-    {
-      String ext = name.substring(ix + 1).toLowerCase();
-      return extensions.contains(ext);
-    }
-    else
+    if (!file.isFile())
     {
       return false;
     }
+
+    Optional<String> extension = FileUtils.getExtension(file.getName());
+    return extension.filter(s -> extensions.contains(s.toLowerCase())).isPresent();
+  }
+
+  @Override
+  public String getDescription()
+  {
+    return description;
+  }
+
+  @Override
+  // Fixes display in linux
+  public String toString()
+  {
+    return getDescription();
   }
 
 }

@@ -1,0 +1,4 @@
+build = "gradle"
+jdkVersion = "15"
+
+ignoreRules = ["PATH_TRAVERSAL_IN", "YodaCondition"]

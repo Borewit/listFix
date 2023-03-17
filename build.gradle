@@ -33,9 +33,6 @@ plugins {
     // https://github.com/openjfx/javafx-gradle-plugin
     id 'org.openjfx.javafxplugin' version '0.0.13'
 
-    // Generate Java code from XSD
-    id 'org.unbroken-dome.xjc' version '2.0.0'
-
     id 'checkstyle'
 
     // https://github.com/qoomon/gradle-git-versioning-plugin
@@ -92,13 +89,13 @@ repositories {
     mavenLocal()
     // Staging repository
     maven { url 'https://s01.oss.sonatype.org/content/groups/staging/' }
-    // maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
 
     // Provides christophedelory.playlist.*
-    implementation 'io.github.borewit:lizzy:1.2.0'
+    implementation 'io.github.borewit:lizzy:2.0.0'
 
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-common
     implementation 'com.jgoodies:jgoodies-common:1.8.1'
@@ -106,15 +103,14 @@ dependencies {
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
     implementation 'com.jgoodies:jgoodies-looks:2.7.0'
 
-    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
-
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
 
     // Apache SLF4J to Log4j2 Adapter (bridge)
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl
     runtimeOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
+
+    implementation 'jakarta.activation:jakarta.activation-api:2.1.1';
 
     // Required for log4j yaml configuration files
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
@@ -159,7 +155,7 @@ def generatedImages = "$generatedResources/images"
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', "$generatedSources/xjc/java/main"]
+            srcDirs = ['src/main/java']
         }
         resources {
             srcDirs = ['src/main/resources', generatedResources]
@@ -212,10 +208,6 @@ task makeIcon (type: Svg2IcoTask) {
         source = file('src/main/svg/listFix() icon.svg')
     }
     destination = file('website/favicon.ico')
-}
-
-tasks.withType(JavaCompile).configureEach {
-    compileTask -> compileTask.dependsOn xjcGenerate
 }
 
 tasks.withType(Checkstyle).configureEach {

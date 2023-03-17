@@ -1,7 +1,7 @@
 package listfix.io;
 
 import listfix.comparators.DirectoryThenFileThenAlphabeticalPathComparator;
-import listfix.model.playlists.Playlist;
+import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.view.support.PlaylistTreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +33,7 @@ public class FileTreeNodeGenerator
   {
     PlaylistTreeNode currentNode = curTop == null ? new PlaylistTreeNode(Path.of("#___root___")) : curTop;
     files
-      .filter(file -> Files.isDirectory(file) || Playlist.isPlaylist(file))
+      .filter(file -> Files.isDirectory(file) || LizzyPlaylistUtil.isPlaylist(file))
       .sorted(new DirectoryThenFileThenAlphabeticalPathComparator())
       .map(PlaylistTreeNode::new)
       .forEach(node -> {

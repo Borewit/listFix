@@ -1,56 +1,27 @@
 package listfix.model.playlists;
 
+import io.github.borewit.lizzy.playlist.Media;
 import listfix.model.enums.PlaylistEntryStatus;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class UriPlaylistEntry extends PlaylistEntry
 {
   // The entry's URI (for URLs).
   private final URI uri;
 
-  /**
-   * Copy constructor for a URI entry
-   */
-  public UriPlaylistEntry(URI uri, String title, long length, Playlist list)
+  public UriPlaylistEntry(Playlist playlist, Media media)
   {
-    this(uri);
-    _length = length;
-    _extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
-    _playlist = list;
-  }
-
-  /**
-   * Construct a PLS/XSPF URL entry.
-   */
-  public UriPlaylistEntry(URI uri, String title, long length)
-  {
-    this(uri);
-    _title = title;
-    _length = length;
-    _extInf = "#EXTINF:" + convertDurationToSeconds(length) + "," + title;
-  }
-
-  /**
-   * Construct a WPL URL entry
-   */
-  public UriPlaylistEntry(URI uri, String extra, String cid, String tid)
-  {
-    this(uri, extra);
-    _cid = cid;
-    _tid = tid;
-  }
-
-  public UriPlaylistEntry(URI uri, String extra)
-  {
-    this(uri);
-    this.parseExtraInfo(extra);
-    _extInf = extra;
-  }
-
-  protected UriPlaylistEntry(URI uri)
-  {
-    this.uri = uri;
+    super(playlist, media);
+    try
+    {
+      this.uri = media.getSource().getURI();
+    }
+    catch (URISyntaxException e)
+    {
+      throw new RuntimeException(e);
+    }
   }
 
   public URI getURI()
@@ -61,7 +32,7 @@ public class UriPlaylistEntry extends PlaylistEntry
   @Override
   public UriPlaylistEntry clone()
   {
-    UriPlaylistEntry urlPlayListEntry = new UriPlaylistEntry(this.uri);
+    UriPlaylistEntry urlPlayListEntry = new UriPlaylistEntry(this.playlist, this.media);
     this.copyTo(urlPlayListEntry);
     return urlPlayListEntry;
   }

@@ -44,7 +44,7 @@ public class MatchedFileTableModel extends AbstractTableModel
     for (int i = 0; i < n; i++)
     {
       PotentialPlaylistEntryMatch entry = input.get(i);
-      tempData[i][0] = entry.getPlaylistFile().getTrackFileName();
+      tempData[i][0] = entry.getTrack().getFileName().toString();
       tempData[i][1] = entry.getScore() + "";
     }
     data = tempData;

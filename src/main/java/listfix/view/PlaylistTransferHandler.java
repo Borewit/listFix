@@ -1,10 +1,10 @@
 package listfix.view;
 
+import io.github.borewit.lizzy.playlist.Playlist;
 import listfix.io.datatransfer.PlaylistTransferObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.activation.DataHandler;
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -12,9 +12,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
 public class PlaylistTransferHandler extends TransferHandler
 {
@@ -51,8 +50,6 @@ public class PlaylistTransferHandler extends TransferHandler
           throw new RuntimeException(e);
         }
       }
-      List<String> mediaList = extractPlaylistsTransfer(transferable);
-      // ToDo: Add M3U List
     }
     catch (IOException e)
     {
@@ -61,7 +58,7 @@ public class PlaylistTransferHandler extends TransferHandler
     return false;
   }
 
-  public static List<String> extractPlaylistsTransfer(Transferable transferable) throws IOException
+  public static Playlist extractPlaylistsTransfer(Transferable transferable) throws IOException
   {
     try
     {
@@ -90,16 +87,7 @@ public class PlaylistTransferHandler extends TransferHandler
       logger.warn("Trying to extract M3U flavor transfer failed", ufe);
     }
     // No results
-    return Collections.emptyList();
-  }
-
-  public static Transferable toTransferableFromPaths(Collection<Path> droppedFiles) {
-    return toTransferableFromFiles(droppedFiles.stream().map(Path::toFile).collect(Collectors.toList()));
-  }
-
-  public static Transferable toTransferableFromFiles(Collection<File> droppedFiles) {
-    List<File> immutable = new ArrayList<>(droppedFiles);
-    return new DataHandler(immutable, DataFlavor.javaJVMLocalObjectMimeType);
+    return null;
   }
 
 }

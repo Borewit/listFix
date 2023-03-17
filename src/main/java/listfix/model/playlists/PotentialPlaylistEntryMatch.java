@@ -1,26 +1,25 @@
 package listfix.model.playlists;
 
-import listfix.io.IPlaylistOptions;
-
 import java.nio.file.Path;
 
 /**
- * Serves to model a closest match on a single playlist entry.
+ * Serves to model the closest match on a single playlist entry.
  *
  * @author jcaron
  */
 
 public class PotentialPlaylistEntryMatch
 {
-  private final PlaylistEntry thisEntry;
-  private final IPlaylistOptions playlistOptions;
+  private final Path track;
+  private final String trackFolder;
+  private final String trackFilename;
   private final int _score;
 
-  public PotentialPlaylistEntryMatch(Path track, int score, Path playlist, IPlaylistOptions playlistOptions)
+  public PotentialPlaylistEntryMatch(Path track, int score)
   {
-    this.thisEntry = new FilePlaylistEntry(track, playlist);
-    this.playlistOptions = playlistOptions;
-    this.thisEntry.setFixed(true);
+    this.track = track;
+    this.trackFilename = track.getFileName().toString();
+    this.trackFolder = track.getParent() == null ? "" : track.getParent().toString();
     this._score = score;
   }
 
@@ -29,14 +28,9 @@ public class PotentialPlaylistEntryMatch
     return _score;
   }
 
-  public PlaylistEntry getPlaylistFile()
+  public Path getTrack()
   {
-    return thisEntry;
-  }
-
-  public IPlaylistOptions getPlaylistOptions()
-  {
-    return playlistOptions;
+    return this.track;
   }
 
   /**
@@ -47,6 +41,11 @@ public class PotentialPlaylistEntryMatch
   @Override
   public String toString()
   {
-    return String.format("%d: %s", this._score, thisEntry.getTrackFileName());
+    return String.format("%d: %s", this._score, trackFilename);
+  }
+
+  public String getTrackFolder()
+  {
+    return this.trackFolder;
   }
 }
