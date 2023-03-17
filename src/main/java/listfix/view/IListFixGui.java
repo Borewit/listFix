@@ -1,5 +1,6 @@
 package listfix.view;
 
+import io.github.borewit.lizzy.playlist.PlaylistFormat;
 import listfix.config.IApplicationConfiguration;
 import listfix.model.playlists.Playlist;
 
@@ -27,7 +28,7 @@ public interface IListFixGui
 
   void savePlaylist(Playlist playlist) throws InterruptedException, IOException, ExecutionException;
 
-  void savePlaylistAs(Playlist playlist, File saveAsPath) throws InterruptedException, IOException, ExecutionException;
+  void savePlaylist(Playlist playlist, File saveAsPath, PlaylistFormat format) throws InterruptedException, IOException, ExecutionException;
 
   boolean showPlaylistSaveAsDialog(Playlist list);
 

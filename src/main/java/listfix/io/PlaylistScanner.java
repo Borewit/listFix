@@ -1,6 +1,6 @@
 package listfix.io;
 
-import listfix.model.playlists.Playlist;
+import listfix.io.playlists.LizzyPlaylistUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,7 +35,7 @@ public class PlaylistScanner
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
       {
-        if (Playlist.isPlaylist(file))
+        if (LizzyPlaylistUtil.isPlaylist(file))
         {
           result.add(file);
         }

@@ -150,7 +150,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
               PotentialPlaylistEntryMatch match = item.getSelectedMatch();
               if (match != null)
               {
-                return match.getPlaylistFile().getTrackFolder();
+                return match.getTrackFolder();
               }
             }
           }
@@ -219,11 +219,8 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
 
       try
       {
-        match.getPlaylistFile().play(match.getPlaylistOptions());
-      }
-      catch (InterruptedException ex)
-      {
-        // ignore, these happen when people cancel - should not be logged either.
+        // ToDo match.getTrack().play(match.getPlaylistOptions());
+        throw new UnsupportedOperationException("ToDo");
       }
       catch (Exception ex)
       {
@@ -303,7 +300,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
           case 1 -> item.getEntry().getTrackFileName();
           case 2 -> "";
           case 3 ->
-            item.getSelectedMatch() == null ? "< skip >" : item.getSelectedMatch().getPlaylistFile().getTrackFileName();
+            item.getSelectedMatch() == null ? "< skip >" : item.getSelectedMatch().getTrack().getFileName().toString();
           default -> null;
         };
     }
@@ -388,7 +385,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
         {
           if (index > 0)
           {
-            list.setToolTipText(((PotentialPlaylistEntryMatch) value).getPlaylistFile().getTrackFolder());
+            list.setToolTipText(((PotentialPlaylistEntryMatch) value).getTrackFolder());
           }
         }
 
@@ -461,7 +458,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
       if (match != null)
       {
         _logger.debug(String.format("Selected: %s", match));
-        Path path = ((FilePlaylistEntry) match.getPlaylistFile()).getAbsolutePath();
+        Path path = ((FilePlaylistEntry) match.getTrack()).getAbsolutePath();
         if (path.getParent() != null)
         {
           try

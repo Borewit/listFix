@@ -258,7 +258,7 @@ public class BatchRepair
       {
         item.getPlaylist().applyClosestMatchSelections(item.getClosestMatches());
       }
-      item.getPlaylist().save(filePathOptions.getSavePlaylistsWithRelativePaths(), null); // ToDo nest observer
+      item.getPlaylist().save(item.getPlaylist().getType(), null); // ToDo nest observer
     }
   }
 }

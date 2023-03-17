@@ -1,7 +1,5 @@
 package listfix.io;
 
-import listfix.model.playlists.Playlist;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -9,10 +7,17 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtils
 {
+  public static final Set<String> mediaExtensions = Stream.of("mp3", "wma", "flac", "ogg", "wav", "midi", "cda", "mpg", "mpeg", "m2v", "avi", "m4v", "flv", "mid", "mp2", "mp1", "aac", "asx", "m4a", "mp4", "m4v", "nsv", "aiff", "au", "wmv", "asf", "mpc")
+    .collect(Collectors.toCollection(HashSet::new));
+
   public static File findDeepestPathToExist(File file)
   {
     if (file == null || file.exists())
@@ -37,9 +42,19 @@ public class FileUtils
     String extension = getFileExtension(filename);
     if (extension != null)
     {
-      return Playlist.mediaExtensions.contains(extension.toLowerCase());
+      return mediaExtensions.contains(extension.toLowerCase());
     }
     return false;
+  }
+
+  public static Optional<String> getExtension(String name)
+  {
+    int ix = name.lastIndexOf('.');
+    if (ix >= 0 && ix < name.length() - 1)
+    {
+      return Optional.of(name.substring(ix + 1));
+    }
+    return Optional.empty();
   }
 
   public static boolean isURL(String trackText)

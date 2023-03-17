@@ -1,6 +1,7 @@
 package listfix.model;
 
 import listfix.io.IPlaylistOptions;
+import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.model.playlists.Playlist;
 import listfix.util.FileNameTokenizer;
 
@@ -23,7 +24,7 @@ public class BatchRepairItem
     _path = file.getPath();
     _displayName = file.getName();
     _playlistFile = file;
-    if (Playlist.isPlaylist(file.toPath()))
+    if (LizzyPlaylistUtil.isPlaylist(file.toPath()))
     {
       _displayName = new FileNameTokenizer(filePathOptions).removeExtensionFromFileName(_displayName);
     }

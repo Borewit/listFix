@@ -1,16 +1,14 @@
 package listfix.model.playlists;
 
+import io.github.borewit.lizzy.content.Content;
+import io.github.borewit.lizzy.playlist.*;
 import listfix.config.IMediaLibrary;
 import listfix.io.FileLauncher;
-import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;
-import listfix.io.UNCFile;
-import listfix.io.playlists.IPlaylistReader;
-import listfix.io.playlists.IPlaylistWriter;
-import listfix.io.playlists.PlaylistReaderFactory;
-import listfix.io.playlists.PlaylistWriterFactory;
+import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.model.BatchMatchItem;
-import listfix.model.enums.PlaylistType;
+import listfix.util.ObservableInputStream;
+import listfix.util.ObservableOutputStream;
 import listfix.view.support.IPlaylistModifiedListener;
 import listfix.view.support.IProgressObserver;
 import listfix.view.support.ProgressAdapter;
@@ -22,36 +20,28 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Playlist
 {
-  /**
-   * Playlist extensions
-   */
-  public static final HashSet<String> playlistExtensions = Stream.of("m3u", "m3u8", "pls", "wpl", "xspf", "xml")
-    .collect(Collectors.toCollection(HashSet::new));
-  private static final String FS = System.getProperty("file.separator");
   private static final String HOME_DIR = System.getProperty("user.home");
-  public static final Set<String> mediaExtensions = Stream.of("mp3", "wma", "flac", "ogg", "wav", "midi", "cda", "mpg", "mpeg", "m2v", "avi", "m4v", "flv", "mid", "mp2", "mp1", "aac", "asx", "m4a", "mp4", "m4v", "nsv", "aiff", "au", "wmv", "asf", "mpc")
-    .collect(Collectors.toCollection(HashSet::new));
 
   private static int NEW_LIST_COUNT = -1;
 
   private static final Marker markerPlaylist = MarkerManager.getMarker("Playlist");
   private static final Marker markerPlaylistRepair = MarkerManager.getMarker("Playlist-Repair").setParents(markerPlaylist);
 
-  private File _file;
+  private Path playlistPath;
+  private SpecificPlaylist specificPlaylist;
   private final List<PlaylistEntry> _entries = new ArrayList<>();
   private final List<PlaylistEntry> _originalEntries = new ArrayList<>();
-  private boolean _utfFormat = false;
-  private PlaylistType _type = PlaylistType.UNKNOWN;
   private int _fixedCount;
   private int _urlCount;
   private int _missingCount;
@@ -63,118 +53,153 @@ public class Playlist
 
   private final List<IPlaylistModifiedListener> _listeners = new ArrayList<>();
 
+  private static final PlaylistFormat defaultPlaylistFormat = PlaylistFormat.m3u;
 
-  /**
-   * This constructor creates a temp-file backed playlist from a list of entries, only intended to be used for playback.
-   */
-  public Playlist(IPlaylistOptions playListOptions, List<PlaylistEntry> sublist) throws Exception
+  public static Playlist load(Path playlistPath, IProgressObserver<String> observer, IPlaylistOptions playListOptions) throws IOException
   {
-    this.playListOptions = playListOptions;
-    _utfFormat = true;
-    _file = File.createTempFile("yay", ".m3u8");
-    _file.deleteOnExit();
+    SpecificPlaylist specificPlaylist = LizzyPlaylistUtil.readPlaylist(playlistPath);
+    Playlist playlist = new Playlist(playlistPath, playListOptions, specificPlaylist);
+    playlist.load(observer);
+    playlist._isNew = false;
+    return playlist;
+  }
 
-    setEntries(sublist);
-
-    _type = PlaylistType.M3U;
+  private void load(IProgressObserver<String> observer) throws IOException
+  {
+    final List<PlaylistEntry> playlistEntries = new ArrayList<>();
+    this.loadPlaylistEntries(playlistEntries, playlistPath, observer);
+    this.setEntries(playlistEntries);
     this.isModified = false;
-    refreshStatus();
-    quickSave();
+    this.refreshStatus();
+
+  }
+
+  public static Playlist makeTemporaryPlaylist(IPlaylistOptions playListOptions, io.github.borewit.lizzy.playlist.Playlist playlist) throws IOException
+  {
+    String extension = LizzyPlaylistUtil.getPreferredExtensionFor(defaultPlaylistFormat);
+
+    // Create temporary file
+    Path tempFile = Files.createTempFile("yay", extension);
+
+    // Generate empty playlist file, which will be deleted upon exiting application
+    SpecificPlaylist specificPlaylist = LizzyPlaylistUtil.writeNewPlaylist(playlist, tempFile, defaultPlaylistFormat,
+      StandardOpenOption.DELETE_ON_CLOSE);
+
+    Playlist newPlaylist = new Playlist(tempFile, playListOptions, specificPlaylist);
+    newPlaylist.isModified = false;
+    newPlaylist.refreshStatus();
+    newPlaylist.quickSave();
+    return newPlaylist;
+  }
+
+  public static Playlist makeNewPersistentPlaylist(IPlaylistOptions playListOptions) throws IOException
+  {
+    final Path path = getNewPlaylistFilename();
+    final io.github.borewit.lizzy.playlist.Playlist playlist = new io.github.borewit.lizzy.playlist.Playlist();
+    SpecificPlaylist specificPlaylist = LizzyPlaylistUtil.writeNewPlaylist(playlist, path, defaultPlaylistFormat);
+    return new Playlist(path, playListOptions, specificPlaylist);
   }
 
   /**
    * Initializes a playlist with an externally created set of entries.
    * Currently used when reading playlists with external code.
    */
-  public Playlist(IPlaylistOptions playListOptions, File listFile, PlaylistType type, List<PlaylistEntry> entries)
+  public Playlist(Path playlistPath, IPlaylistOptions playListOptions, SpecificPlaylist playlist)
   {
+    assert playlistPath != null;
+    this.playlistPath = playlistPath;
     this.playListOptions = playListOptions;
-    _utfFormat = true;
-    _file = listFile;
-    _type = type;
+    this.specificPlaylist = playlist;
     this.isModified = false;
-    setEntries(entries);
+    toPlaylistEntries(this._entries, playlist.toPlaylist().getRootSequence());
     refreshStatus();
   }
 
-  /**
-   * Initializes a playlist using internal listFix() I/O model.
-   */
-  public Playlist(IPlaylistOptions playListOptions, File playlist, IProgressObserver<String> observer) throws IOException
+  private List<PlaylistEntry> getEntriesForFiles(Collection<Path> files, IProgressObserver<String> observer) throws IOException
   {
-    this.playListOptions = playListOptions;
-    init(playlist, observer);
-  }
+    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
+    progress.setTotal(files.size());
 
-  /**
-   * Creates an empty, untitled playlist.  The name of the list is auto-generated,
-   * Untitled-#.m3u8 by default, where # is the number of lists you have created with this
-   * method in the current session.
-   */
-  public Playlist(IPlaylistOptions playListOptions) throws IOException
-  {
-    this.playListOptions = playListOptions;
-    NEW_LIST_COUNT++;
-    _file = new File(HOME_DIR + FS + "Untitled-" + NEW_LIST_COUNT + ".m3u8");
-    _file.deleteOnExit();
-    _utfFormat = true;
-    _type = PlaylistType.M3U;
-    this.isModified = false;
-    _isNew = true;
-    refreshStatus();
-  }
-
-  /**
-   * Determine if the path provided is a playlist
-   *
-   * @param path Path to test
-   * @return True if the path is a file, and ends with a playlist extension
-   */
-  public static boolean isPlaylist(Path path)
-  {
-    if (Files.isRegularFile(path))
+    final List<PlaylistEntry> ents = new ArrayList<>();
+    for (Path trackPath : files)
     {
-      String extension = FileUtils.getFileExtension(path.toString());
-      return extension != null && playlistExtensions.contains(extension.toLowerCase());
-    }
-    return false;
-  }
-
-  public final IPlaylistOptions getPlayListOptions()
-  {
-    return this.playListOptions;
-  }
-
-  private void init(File playlist, IProgressObserver<String> observer) throws IOException
-  {
-    _file = playlist;
-    IPlaylistReader playlistProcessor = PlaylistReaderFactory.getPlaylistReader(playlist.toPath(), playListOptions);
-    if (observer != null)
-    {
-      List<PlaylistEntry> tempEntries = playlistProcessor.readPlaylist(observer);
-      if (tempEntries != null)
+      if (observer == null || !observer.getCancelled())
       {
-        this.setEntries(tempEntries);
+        if (LizzyPlaylistUtil.isPlaylist(trackPath))
+        {
+          // playlist file
+          loadPlaylistEntries(ents, trackPath, null); // ToDo: nest observable
+        }
+        else
+        {
+          ents.add(makeEntry(trackPath));
+        }
       }
       else
       {
-        return;
+        return null;
+      }
+
+      if (progress.getCompleted() != progress.getTotal())
+      {
+        progress.stepCompleted();
       }
     }
-    else
-    {
-      this.setEntries(playlistProcessor.readPlaylist());
-    }
-    _utfFormat = playlistProcessor.getEncoding().equals(StandardCharsets.UTF_8);
-    _type = playlistProcessor.getPlaylistType();
-    if (_type == PlaylistType.PLS)
-    {
-      // let's override our previous determination in the PLS case so we don't end up saving it out incorrectly
-      _utfFormat = false;
-    }
-    this.isModified = false;
-    refreshStatus();
+
+    return ents;
   }
+
+  private FilePlaylistEntry makeEntry(Path trackPath)
+  {
+    return new FilePlaylistEntry(this, new Media(new Content(normalizeTrackPath(trackPath).toString())));
+  }
+
+  private void loadPlaylistEntries(List<PlaylistEntry> playlistEntries, Path playlistPath, IProgressObserver<String> observer) throws IOException
+  {
+    List<SpecificPlaylistProvider> specificPlaylistProviders = SpecificPlaylistFactory.getInstance().findProvidersByExtension(playlistPath.toString());
+
+    for (SpecificPlaylistProvider specificPlaylistProvider : specificPlaylistProviders)
+    {
+      try (InputStream is = Files.newInputStream(playlistPath))
+      {
+        final InputStream observableInputStream = observer == null ? is : new ObservableInputStream(is, Files.size(playlistPath), observer);
+        try
+        {
+          this.specificPlaylist = specificPlaylistProvider.readFrom(observableInputStream, null);
+          if (this.specificPlaylist != null)
+          {
+            toPlaylistEntries(playlistEntries, this.specificPlaylist.toPlaylist().getRootSequence());
+            break;
+          }
+        }
+        catch (Exception e)
+        {
+          throw new IOException(String.format("Failed to read from %s", playlistPath.getFileName()), e);
+        }
+      }
+    }
+  }
+
+  private void toPlaylistEntries(List<PlaylistEntry> playlistEntries, Sequence sequence)
+  {
+    sequence.getComponents().forEach(component -> {
+      if (component instanceof Media)
+      {
+        Media media = (Media) component;
+        PlaylistEntry playlistEntry = PlaylistEntry.makePlaylistEntry(this, media);
+        playlistEntries.add(playlistEntry);
+      }
+      else if (component instanceof Sequence)
+      {
+        toPlaylistEntries(playlistEntries, (Sequence) component);
+      }
+      else
+      {
+        _logger.warn(String.format("Unsupport playlist entry type %s", component.getClass().getName()));
+      }
+    });
+  }
+
 
   public List<PlaylistEntry> getEntries()
   {
@@ -251,12 +276,15 @@ public class Playlist
 
   public Playlist getSublist(int[] rows) throws Exception
   {
-    List<PlaylistEntry> tempList = new ArrayList<>();
+    final io.github.borewit.lizzy.playlist.Playlist newPlaylist = new io.github.borewit.lizzy.playlist.Playlist();
+    final Sequence rootSequence = newPlaylist.getRootSequence();
     for (int i : rows)
     {
-      tempList.add(_entries.get(i));
+      Media media = _entries.get(i).getMedia();
+      rootSequence.addComponent(media);
     }
-    return new Playlist(this.playListOptions, tempList);
+
+    return makeTemporaryPlaylist(this.playListOptions, newPlaylist);
   }
 
   public List<PlaylistEntry> getSelectedEntries(int[] rows) throws IOException
@@ -269,32 +297,25 @@ public class Playlist
     return tempList;
   }
 
-  public PlaylistType getType()
+  public PlaylistFormat getType()
   {
-    return _type;
-  }
-
-  public void setType(PlaylistType type)
-  {
-    _type = type;
+    return PlaylistFormat.valueOf(this.specificPlaylist.getProvider().getId());
   }
 
   public File getFile()
   {
-    return _file;
+    return this.playlistPath.toFile();
   }
 
   public Path getPath()
   {
-    return _file.toPath();
+    return this.playlistPath;
   }
 
-  public void setFile(File file)
+  public void setPath(Path playlistPath)
   {
-    UNCFile uncFile = new UNCFile(file);
-    // if we're in "use UNC" mode, flip the file to a UNC representation
-    String fileName = this.playListOptions.getAlwaysUseUNCPaths() ? uncFile.getUNCPath() : uncFile.getDrivePath();
-    this._file = new File(fileName);
+    assert playlistPath != null;
+    this.playlistPath = playlistPath;
   }
 
   public void addModifiedListener(IPlaylistModifiedListener listener)
@@ -313,11 +334,6 @@ public class Playlist
     _listeners.remove(listener);
   }
 
-  public List<IPlaylistModifiedListener> getModifiedListeners()
-  {
-    return _listeners;
-  }
-
   private void firePlaylistModified()
   {
     for (IPlaylistModifiedListener listener : _listeners)
@@ -331,11 +347,6 @@ public class Playlist
 
   private void setEntries(List<PlaylistEntry> aEntries)
   {
-    for (PlaylistEntry entry : aEntries)
-    {
-      entry.setPlaylist(this);
-    }
-
     replaceEntryListContents(aEntries, _originalEntries);
     replaceEntryListContents(aEntries, _entries);
   }
@@ -360,9 +371,9 @@ public class Playlist
     this.isModified = !_entries.equals(_originalEntries);
 
     // if this playlist refers to a file on disk, and aren't a new file, make sure that file still exists...
-    if (_file != null && !isNew())
+    if (this.playlistPath != null && !isNew())
     {
-      this.isModified = this.isModified || !_file.exists();
+      this.isModified = this.isModified || !Files.exists(this.playlistPath);
     }
 
     // notify the listeners if we have changed...
@@ -420,11 +431,7 @@ public class Playlist
 
   public String getFilename()
   {
-    if (this._file == null)
-    {
-      return "";
-    }
-    return this._file.getName();
+    return this.playlistPath == null ? "" : this.playlistPath.getFileName().toString();
   }
 
   public boolean isEmpty()
@@ -437,23 +444,13 @@ public class Playlist
   {
     try
     {
-      _logger.debug(String.format("Launching file: %s", _file));
-      FileLauncher.launch(this._file);
+      _logger.debug(String.format("Launching file: %s", this.playlistPath));
+      FileLauncher.launch(this.playlistPath.toFile());
     }
     catch (IOException | InterruptedException e)
     {
-      _logger.warn(String.format("Launching file: %s", _file), e);
+      _logger.warn(String.format("Launching file: %s", this.playlistPath), e);
     }
-  }
-
-  public boolean isUtfFormat()
-  {
-    return _utfFormat;
-  }
-
-  public void setUtfFormat(boolean utfFormat)
-  {
-    this._utfFormat = utfFormat;
   }
 
   public boolean isNew()
@@ -547,42 +544,6 @@ public class Playlist
     {
       return 0;
     }
-  }
-
-  private List<PlaylistEntry> getEntriesForFiles(Collection<Path> files, IProgressObserver<String> observer) throws IOException
-  {
-    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
-    progress.setTotal(files.size());
-
-    List<PlaylistEntry> ents = new ArrayList<>();
-    for (Path file : files)
-    {
-      if (observer == null || !observer.getCancelled())
-      {
-        if (Playlist.isPlaylist(file))
-        {
-          // playlist file
-          IPlaylistReader reader = PlaylistReaderFactory.getPlaylistReader(file, this.playListOptions);
-          ents.addAll(reader.readPlaylist(null)); // ToDo: nest this progress in overall progress
-        }
-        else
-        {
-          // regular file
-          ents.add(new FilePlaylistEntry(file, null, this._file.toPath()));
-        }
-      }
-      else
-      {
-        return null;
-      }
-
-      if (progress.getCompleted() != progress.getTotal())
-      {
-        progress.stepCompleted();
-      }
-    }
-
-    return ents;
   }
 
   public void changeEntryFileName(int ix, String newName)
@@ -750,7 +711,15 @@ public class Playlist
       if (item.getSelectedIx() >= 0)
       {
         int ix = item.getEntryIx();
-        _entries.set(ix, item.getSelectedMatch().getPlaylistFile());
+        PlaylistEntry playlistEntry = _entries.get(ix);
+        if (playlistEntry instanceof FilePlaylistEntry)
+        {
+          ((FilePlaylistEntry) playlistEntry).update(item.getSelectedMatch().getTrack());
+        }
+        else
+        {
+          throw new UnsupportedOperationException("ToDo");
+        }
         PlaylistEntry tempEntry = _entries.get(ix);
         tempEntry.recheckFoundStatus();
         tempEntry.markFixedIfFound();
@@ -923,23 +892,78 @@ public class Playlist
     return removed;
   }
 
-  public void saveAs(File destination, IProgressObserver<String> observer) throws Exception
+  public void saveAs(Path destination, PlaylistFormat format, IProgressObserver<String> observer) throws Exception
   {
     // 2014.12.08 - JCaron - Need to make this assignment,
     // so we can determine relativity correctly when saving out entries.
-    setFile(destination);
-    _type = determinePlaylistTypeFromExtension(destination);
-    this.save(this.playListOptions.getSavePlaylistsWithRelativePaths(), observer);
+    setPath(destination);
+    this.save(format, observer);
   }
 
-  public final void save(boolean saveRelative, IProgressObserver<String> observer) throws Exception
+  /**
+   * Sync all changes tot his.specificPlaylist
+   */
+  protected void syncEntriesToSpecificPlaylist(PlaylistFormat format) throws IOException
   {
-    // avoid resetting total if part of batch operation
-    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
-    progress.setTotal(_entries.size());
+    io.github.borewit.lizzy.playlist.Playlist playlist = new io.github.borewit.lizzy.playlist.Playlist();
+    Sequence sequence = playlist.getRootSequence();
+    this._entries.forEach(entry -> {
+      Media media = entry.getMedia();
+      if (entry.isURL())
+      {
+        media.getSource().setURI(((UriPlaylistEntry) entry).getURI());
+      }
+      else
+      {
+        FilePlaylistEntry fileEntry = (FilePlaylistEntry) entry;
+        fileEntry.trackPath = normalizeTrackPath(fileEntry.trackPath);
+        media.getSource().setURL(fileEntry.trackPath.toString());
+      }
+      sequence.addComponent(media);
+    });
+    this.specificPlaylist = LizzyPlaylistUtil.getProvider(format).toSpecificPlaylist(playlist);
+  }
 
-    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.playListOptions);
-    writer.save(this, saveRelative, progress);
+  private Path normalizeTrackPath(Path trackPath)
+  {
+    if (this.playListOptions.getSavePlaylistsWithRelativePaths())
+    {
+      if (trackPath.isAbsolute() && this.playlistPath.getParent() != null)
+      {
+        return this.playlistPath.getParent().relativize(trackPath);
+      }
+      return trackPath;
+    }
+    else
+    {
+      if (!trackPath.isAbsolute() && this.playlistPath.getParent() != null)
+      {
+        return this.playlistPath.getParent().resolve(trackPath);
+      }
+      return trackPath;
+    }
+  }
+
+  public final void save(PlaylistFormat format, IProgressObserver<String> observer) throws IOException
+  {
+    this.syncEntriesToSpecificPlaylist(format);
+    _logger.debug(String.format("Writing playlist to %s", this.playlistPath));
+    // avoid resetting total if part of batch operation
+
+    // Guess the future file length, to have progress indication
+    long currentFileSize = Files.isRegularFile(this.playlistPath) ? Files.size(this.playlistPath) : this._entries.size() * 65L;
+    try (OutputStream os = Files.newOutputStream(this.playlistPath))
+    {
+      OutputStream observableOutputStream = observer == null ? os : new ObservableOutputStream(os, currentFileSize, observer);
+      try
+      {
+        this.specificPlaylist.writeTo(observableOutputStream, null);
+      }
+      catch (Exception e)
+      {
+        throw new IOException(String.format("Failed to save \"%s\"", this.playlistPath), e);
+      }
+    }
 
     resetInternalStateAfterSave(observer);
 
@@ -947,29 +971,25 @@ public class Playlist
     firePlaylistModified();
   }
 
-  private void quickSave() throws Exception
+  private void quickSave() throws IOException
   {
-    IPlaylistWriter writer = PlaylistWriterFactory.getPlaylistWriter(_file, this.playListOptions);
-    _logger.debug(String.format("Writing playlist to %s", _file.getName()));
-    writer.save(this, false, null);
+    this.save(this.getType(), null);
   }
 
   public void reload(IProgressObserver<String> observer) throws IOException
   {
     if (_isNew)
     {
-      _file = new File(HOME_DIR + FS + "Untitled-" + NEW_LIST_COUNT + ".m3u8");
-      _file.deleteOnExit();
-      _utfFormat = true;
-      _type = PlaylistType.M3U;
+      this.playlistPath = getNewPlaylistFilename();
+      this.playlistPath.toFile().deleteOnExit();
       this.isModified = false;
       _isNew = true;
       _entries.clear();
       _originalEntries.clear();
     }
-    else if (_file.exists())
+    else if (Files.exists(this.playlistPath))
     {
-      init(_file, observer);
+      this.load(observer);
     }
     else
     {
@@ -978,29 +998,16 @@ public class Playlist
     refreshStatus();
   }
 
-  public static PlaylistType determinePlaylistTypeFromExtension(File file)
+  public static synchronized Path getNewPlaylistFilename()
   {
-    return determinePlaylistTypeFromExtension(file.toPath());
+    Path path;
+    do
+    {
+      ++NEW_LIST_COUNT;
+      path = Path.of(HOME_DIR, "Untitled-" + NEW_LIST_COUNT + ".m3u8");
+    }
+    while (Files.exists(path));
+    return path;
   }
 
-  public static PlaylistType determinePlaylistTypeFromExtension(Path file)
-  {
-    if (file != null)
-    {
-      String extension = FileUtils.getFileExtension(file.getFileName().toString());
-      if (extension != null)
-      {
-        return switch (extension.toLowerCase())
-          {
-            case "m3u", "m3u8" -> PlaylistType.M3U;
-            case "pls" -> PlaylistType.PLS;
-            case "wpl" -> PlaylistType.WPL;
-            case "xspf" -> PlaylistType.XSPF;
-            case "xml" -> PlaylistType.ITUNES;
-            default -> PlaylistType.UNKNOWN;
-          };
-      }
-    }
-    return PlaylistType.UNKNOWN;
-  }
 }

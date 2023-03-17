@@ -1,17 +1,19 @@
 package listfix.view.controls;
 
+import io.github.borewit.lizzy.content.Content;
+import io.github.borewit.lizzy.playlist.Media;
 import listfix.config.IMediaLibrary;
-import listfix.view.PlaylistTransferHandler;
 import listfix.io.datatransfer.PlaylistTransferObject;
 import listfix.io.Constants;
 import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;
 import listfix.io.PlaylistScanner;
 import listfix.io.filters.AudioFileFilter;
+import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.model.BatchMatchItem;
 import listfix.model.EditFilenameResult;
 import listfix.model.PlaylistEntryList;
-import listfix.model.enums.PlaylistType;
+
 import listfix.model.playlists.*;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
@@ -505,17 +507,18 @@ public class PlaylistEditCtrl extends JPanel
         File file = chooser.getSelectedFile();
 
         // make sure the replacement file is not a playlist
-        if (Playlist.isPlaylist(file.toPath()))
+        if (LizzyPlaylistUtil.isPlaylist(file.toPath()))
         {
           JOptionPane.showMessageDialog(getParentFrame(), new JTransparentTextArea("You cannot replace a file with a playlist file. Use \"Add File\" instead."), "Replace File Error", JOptionPane.ERROR_MESSAGE);
           return;
         }
-        PlaylistEntry newEntry = new FilePlaylistEntry(file.toPath(), null, _playlist.getFile().toPath());
+        Media media = new Media();
+        media.setSource(new Content(file.getPath()));
+        PlaylistEntry newEntry = new FilePlaylistEntry(_playlist, media);
         _playlist.replace(rowIx, newEntry);
         getTableModel().fireTableRowsUpdated(rowIx, rowIx);
       }
     }
-
   }
 
   private void removeDuplicates()
@@ -938,11 +941,6 @@ public class PlaylistEditCtrl extends JPanel
           }
         };
 
-        boolean textOnly = _playlist.getType() == PlaylistType.ITUNES || _playlist.getType() == PlaylistType.XSPF;
-        // Can't show a progress dialog for these as we have no way to track them at present.
-        ProgressDialog pd = new ProgressDialog(this.getParentFrame(), true, worker, "Reloading '" + _playlist.getFilename() + "'...", textOnly, true);
-        pd.setVisible(true);
-
         showWaitCursor(false);
       }
     }
@@ -951,7 +949,7 @@ public class PlaylistEditCtrl extends JPanel
   private void _uiTableKeyPressed(KeyEvent evt)
   {
     int keyVal = evt.getKeyCode();
-    if (keyVal == KeyEvent.VK_DELETE && _playlist.getType() != PlaylistType.ITUNES)
+    if (keyVal == KeyEvent.VK_DELETE)
     {
       deleteSelectedRows();
     }
@@ -1120,7 +1118,7 @@ public class PlaylistEditCtrl extends JPanel
     // Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
     try
     {
-      Playlist sublist = new Playlist(this.getPlaylistOptions());
+      Playlist sublist = Playlist.makeNewPersistentPlaylist(this.getPlaylistOptions());
       sublist.addAllAt(0, _playlist.getSublist(rows).getEntries());
       this.listFixGui.openNewTabForPlaylist(sublist);
     }
@@ -1174,12 +1172,12 @@ public class PlaylistEditCtrl extends JPanel
 
     boolean hasPlaylist = _playlist != null;
 
-    _btnAdd.setEnabled(hasPlaylist && _playlist.getType() != PlaylistType.ITUNES);
+    _btnAdd.setEnabled(hasPlaylist);
     _btnLocate.setEnabled(hasPlaylist);
     _btnMagicFix.setEnabled(hasPlaylist);
-    _btnReorder.setEnabled(hasPlaylist && _playlist.getType() != PlaylistType.ITUNES && _playlist.size() > 1);
+    _btnReorder.setEnabled(hasPlaylist && _playlist.size() > 1);
     _btnReload.setEnabled(hasPlaylist && _playlist.isModified());
-    _btnPlay.setEnabled(hasPlaylist && _playlist.getType() != PlaylistType.ITUNES);
+    _btnPlay.setEnabled(hasPlaylist);
     _btnNextMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
     _btnPrevMissing.setEnabled(hasPlaylist && _playlist.getMissingCount() > 0);
     _btnSave.setEnabled(_playlist != null);
@@ -1194,7 +1192,7 @@ public class PlaylistEditCtrl extends JPanel
       _playlist.addModifiedListener(listener);
     }
 
-    _uiTable.setDragEnabled(_playlist.getType() != PlaylistType.ITUNES);
+    _uiTable.setDragEnabled(true);
   }
 
   private void showWaitCursor(boolean isWaiting)
@@ -1366,15 +1364,15 @@ public class PlaylistEditCtrl extends JPanel
       }
 
       boolean hasSelected = _uiTable.getSelectedRowCount() > 0;
-      _btnDelete.setEnabled(hasSelected && _playlist.getType() != PlaylistType.ITUNES);
-      _btnUp.setEnabled(_isSortedByFileIx && hasSelected && _playlist.getType() != PlaylistType.ITUNES && _uiTable.getSelectedRow() > 0);
-      _btnDown.setEnabled(_isSortedByFileIx && hasSelected && _playlist.getType() != PlaylistType.ITUNES && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-      _btnPlay.setEnabled(_playlist != null && _playlist.getType() != PlaylistType.ITUNES && (_uiTable.getSelectedRow() < 0 || (_uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry())));
+      _btnDelete.setEnabled(hasSelected);
+      _btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
+      _btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
+      _btnPlay.setEnabled(_playlist != null && (_uiTable.getSelectedRow() < 0 || (_uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry())));
       _btnReload.setEnabled(_playlist != null && _playlist.isModified());
       _btnSave.setEnabled(_playlist != null);
       _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
       _btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
-      _btnReorder.setEnabled(_playlist != null && _playlist.getType() != PlaylistType.ITUNES && _playlist.size() > 1);
+      _btnReorder.setEnabled(_playlist != null && _playlist.size() > 1);
       _btnInvert.setEnabled(hasSelected);
       if (_isSortedByFileIx)
       {
@@ -1527,11 +1525,6 @@ public class PlaylistEditCtrl extends JPanel
           // This is the flavor we handle when the user drags any file in from a Windows OS
           return this.handleFileListFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
         }
-        else if (info.isDataFlavorSupported(DataFlavor.stringFlavor))
-        {
-          // This is the flavor we handle when the user drags playlists over from the playlist panel, or when dragging in any file from linux
-          return handleStringFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
-        }
         return false;
       }
 
@@ -1586,7 +1579,7 @@ public class PlaylistEditCtrl extends JPanel
         if (fileList.isEmpty())
           return false;
 
-        String question = String.format("You dragged %d playlists into this list, would you like to insert them or open them for repair?", fileList.size());
+        String question = String.format("You dragged %d files into this list, would you like to insert them or open them for repair?", fileList.size());
         int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea(question),
           "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
 
@@ -1623,7 +1616,7 @@ public class PlaylistEditCtrl extends JPanel
         int insertAt = dl.getRow();
         for (Path filePath : fileList)
         {
-          if (Playlist.isPlaylist(filePath))
+          if (LizzyPlaylistUtil.isPlaylist(filePath))
           {
             insertAt += processDroppedPlaylist(filePath, insertAt);
           }
@@ -1695,47 +1688,6 @@ public class PlaylistEditCtrl extends JPanel
         int plistSize = _playlist.size();
         pd.setVisible(true);
         return _playlist.size() - plistSize;
-      }
-
-      private boolean handleStringFlavor(TransferSupport transferSupport, final JTable.DropLocation dl, IListFixGui parent)
-      {
-        List<String> entryList;
-        try
-        {
-          entryList = PlaylistTransferHandler.extractPlaylistsTransfer(transferSupport.getTransferable());
-        }
-        catch (IOException e)
-        {
-          _logger.error("Failed to process dropped text transfer", e);
-          return false;
-        }
-        if (entryList.size() == 0) return false;
-
-        int result = JOptionPane.showOptionDialog(getParentFrame(), new JTransparentTextArea("You dragged one or more playlists into this list, would you like to insert them or open them for repair?"),
-          "Insert or Open?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[]{"Insert", "Open", "Cancel"}, "Insert");
-
-        // ToDo: are we sure these are all files?
-        List<Path> pathList = entryList.stream().map(Path::of).collect(Collectors.toList());
-        if (result == JOptionPane.YES_OPTION)
-        {
-          Collections.sort(entryList);
-          // ToDo: are we sure these are all files?
-          try
-          {
-            this.processPathListDrop(pathList, dl);
-            return true;
-          }
-          catch (IOException e)
-          {
-            throw new RuntimeException("Failed to add pasted text entries to playlist", e);
-          }
-        }
-        else if (result == JOptionPane.NO_OPTION && parent != null)
-        {
-          parent.openPathListDrop(pathList);
-          return true;
-        }
-        return false;
       }
 
       @Override

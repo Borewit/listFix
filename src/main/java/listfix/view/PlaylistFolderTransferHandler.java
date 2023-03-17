@@ -79,6 +79,6 @@ public class PlaylistFolderTransferHandler extends TransferHandler
       return FileTreeNodeGenerator.treePathToFileSystemPath(selPath).toFile();
     }).collect(Collectors.toList());
 
-    return PlaylistTransferHandler.toTransferableFromFiles(fileList);
+    return null; // ToDO?
   }
 }
