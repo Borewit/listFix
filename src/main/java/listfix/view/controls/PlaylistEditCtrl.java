@@ -901,12 +901,8 @@ public class PlaylistEditCtrl extends JPanel
         };
       int rc = JOptionPane.showOptionDialog(this.getParentFrame(), new JTransparentTextArea("The current list is modified, do you really want to discard these changes and reload from source?"), "Confirm Reload",
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-      if (rc == JOptionPane.NO_OPTION)
+      if (rc == JOptionPane.YES_NO_OPTION)
       {
-      }
-      else
-      {
-        showWaitCursor(true);
         ProgressWorker<Void, String> worker = new ProgressWorker<>()
         {
           @Override
@@ -920,6 +916,7 @@ public class PlaylistEditCtrl extends JPanel
           @Override
           protected void done()
           {
+            showWaitCursor(false);
             try
             {
               get();
@@ -930,7 +927,6 @@ public class PlaylistEditCtrl extends JPanel
             }
             catch (ExecutionException ex)
             {
-              showWaitCursor(false);
               _logger.error("Reload error", ex);
               JOptionPane.showMessageDialog(PlaylistEditCtrl.this.getParentFrame(), ex, "Reload Error", JOptionPane.ERROR_MESSAGE);
               return;
@@ -940,8 +936,8 @@ public class PlaylistEditCtrl extends JPanel
             resizeAllColumns();
           }
         };
-
-        showWaitCursor(false);
+        showWaitCursor(true);
+        worker.execute();
       }
     }
   }
