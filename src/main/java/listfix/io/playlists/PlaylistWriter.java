@@ -9,7 +9,6 @@ import listfix.model.playlists.PlaylistEntry;
 import listfix.util.OperatingSystem;
 import listfix.view.support.ProgressAdapter;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -83,7 +82,7 @@ public abstract class PlaylistWriter<C> implements IPlaylistWriter
    * @throws Exception If the playlist failed to save
    */
   @Override
-  public void save(Playlist playlist, boolean saveRelative, @Nullable ProgressAdapter<String> adapter) throws Exception
+  public void save(Playlist playlist, boolean saveRelative, ProgressAdapter<String> adapter) throws Exception
   {
     if (adapter == null)
     {
