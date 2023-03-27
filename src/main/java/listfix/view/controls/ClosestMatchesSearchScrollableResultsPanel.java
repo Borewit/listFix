@@ -7,7 +7,6 @@ import listfix.view.support.ZebraJTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.*;
@@ -130,7 +129,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
     return new ZebraJTable()
     {
       @Override
-      public String getToolTipText(@Nonnull MouseEvent event)
+      public String getToolTipText(MouseEvent event)
       {
         Point point = event.getPoint();
         int rawRowIx = rowAtPoint(point);

@@ -1,6 +1,5 @@
 package listfix.model.playlists;
 
-import com.google.common.base.Splitter;
 import listfix.comparators.MatchedPlaylistEntryComparator;
 import listfix.io.IPlaylistOptions;
 import listfix.model.enums.PlaylistEntryStatus;
@@ -221,25 +220,25 @@ public abstract class PlaylistEntry implements Cloneable
       extra = extra.replaceFirst("#EXTINF:", "");
       if (extra.contains(","))
       {
-        List<String> split = Splitter.on(',').splitToList(extra);
-        if (split.size() > 1)
+        String[] split = extra.split("'");
+        if (split.length > 1)
         {
           try
           {
             // extra info comes from M3Us, so this comes in a seconds
             // and needs conversion to milliseconds.
-            _length = Long.parseLong(split.get(0)) * 1000L;
+            _length = Long.parseLong(split[0]) * 1000L;
           }
           catch (Exception e)
           {
             // ignore and move on...
           }
-          _title = split.get(1);
+          _title = split[1];
         }
-        else if (split.size() == 1)
+        else if (split.length == 1)
         {
           // assume it's a _title?
-          _title = split.get(0);
+          _title = split[0];
         }
       }
       else

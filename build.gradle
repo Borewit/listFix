@@ -3,7 +3,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
         maven { url 'https://plugins.gradle.org/m2/' }
     }
@@ -107,9 +106,6 @@ dependencies {
     // https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks
     implementation 'com.jgoodies:jgoodies-looks:2.7.0'
 
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:31.1-jre'
-
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
@@ -179,7 +175,7 @@ task fatJar(type: Jar) {
     setDuplicatesStrategy(DuplicatesStrategy.WARN)
     archiveBaseName = 'listFix'
     archiveClassifier = 'all'
-    from { configurations.compileClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.runtimeClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
