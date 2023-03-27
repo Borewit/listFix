@@ -1,4 +1,4 @@
-package listfix.util;
+package listfix.io.progress;
 
 import listfix.view.support.IProgressObserver;
 
@@ -62,8 +62,9 @@ public class ObservableInputStream extends InputStream
     if (readCount != -1)
     {
       sumRead += readCount;
-      percent = sumRead * 1.0 / length;
+      percent = sumRead * 100.0 / length;
+      int progress = (int) Math.round(percent);
+      this.observer.reportProgress(progress);
     }
-    this.observer.reportProgress((int) Math.round(percent));
   }
 }
