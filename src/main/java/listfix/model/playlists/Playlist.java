@@ -976,6 +976,9 @@ public class Playlist
     this.save(this.getType(), null);
   }
 
+  /**
+   * Reload playlist and reset unsaved user changes
+   */
   public void reload(IProgressObserver<String> observer) throws IOException
   {
     if (_isNew)
