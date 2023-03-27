@@ -274,13 +274,31 @@ public class Playlist
     Reverse
   }
 
-  public Playlist getSublist(int[] rows) throws Exception
+  /**
+   * Used to generate a temporary playlist to play selected entries
+   *
+   * @param rows Row index numbers of selected entries
+   * @return Playlist which contains selected entries
+   */
+  public Playlist getSublist(int[] rows) throws IOException
   {
     final io.github.borewit.lizzy.playlist.Playlist newPlaylist = new io.github.borewit.lizzy.playlist.Playlist();
     final Sequence rootSequence = newPlaylist.getRootSequence();
     for (int i : rows)
     {
-      Media media = _entries.get(i).getMedia();
+      String srcUri;
+      if (_entries.get(i) instanceof FilePlaylistEntry)
+      {
+        // Normalize to absolute path
+        Path trackPath = ((FilePlaylistEntry) _entries.get(i)).trackPath;
+        srcUri = trackPath.isAbsolute() ? trackPath.toString() : this.playlistPath.getParent().resolve(trackPath).toString();
+      }
+      else
+      {
+        srcUri = _entries.get(i).getMedia().getSource().toString();
+      }
+      Media media = new Media(new Content(srcUri));
+      _entries.get(i).getMedia();
       rootSequence.addComponent(media);
     }
 
