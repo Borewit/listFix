@@ -1,4 +1,4 @@
-package listfix.util;
+package listfix.io.progress;
 
 import listfix.view.support.IProgressObserver;
 
@@ -37,9 +37,10 @@ public class ObservableOutputStream extends OutputStream
         if (writeCount != -1)
         {
             sumWrite += writeCount;
-            percent = sumWrite * 1.0 / length;
+            percent = sumWrite * 100.0 / length;
+            int progress = Math.min((int)Math.round(percent), 100);
+            this.observer.reportProgress(progress);
         }
-        this.observer.reportProgress(Math.min((int)Math.round(percent), 100));
     }
 
     @Override
