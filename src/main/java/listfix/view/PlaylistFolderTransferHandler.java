@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Used to drag playlist from playlists-directories pane to editor
+ */
 public class PlaylistFolderTransferHandler extends TransferHandler
 {
   private final IListFixGui listFixGui;
@@ -34,6 +37,7 @@ public class PlaylistFolderTransferHandler extends TransferHandler
 
   /**
    * Causes a transfer to occur from a clipboard or a drag and drop operation.
+   *
    * @param support the object containing the details of the transfer, not <code>null</code>.
    * @return true if the data was inserted into the component, false otherwise
    */
@@ -71,14 +75,19 @@ public class PlaylistFolderTransferHandler extends TransferHandler
   @Override
   protected Transferable createTransferable(JComponent c)
   {
-    int[] rows = playlistDirectoryTree.getSelectionRows();
-    if (rows == null)
-      return null;
-    List<File> fileList = Arrays.stream(rows).mapToObj(selRow -> {
-      TreePath selPath = playlistDirectoryTree.getPathForRow(selRow);
-      return FileTreeNodeGenerator.treePathToFileSystemPath(selPath).toFile();
-    }).collect(Collectors.toList());
+    if (c instanceof JTree)
+    {
+      int[] rows = playlistDirectoryTree.getSelectionRows();
+      if (rows == null)
+        return null;
+      List<File> fileList = Arrays.stream(rows).mapToObj(selRow -> {
+        TreePath selPath = playlistDirectoryTree.getPathForRow(selRow);
+        return FileTreeNodeGenerator.treePathToFileSystemPath(selPath).toFile();
+      }).collect(Collectors.toList());
 
-    return null; // ToDO?
+      return new FileListTransferable(fileList);
+    }
+    _logger.warn(String.format("JComponent type not supported for transfer %s", c.getClass().getName()));
+    return null;
   }
 }
