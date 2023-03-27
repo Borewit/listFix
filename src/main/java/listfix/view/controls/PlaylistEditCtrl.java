@@ -387,43 +387,7 @@ public class PlaylistEditCtrl extends JPanel
         return _playlist.findClosestMatchesForSelectedEntries(rowList, libraryFiles, this);
       }
     };
-    ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches for all selected files...");
-    pd.setVisible(true);
-
-    final List<BatchMatchItem> items;
-    try
-    {
-      items = worker.get();
-      if (items.isEmpty())
-      {
-        return;
-      }
-    }
-    catch (CancellationException ex)
-    {
-      // do nothing, the user cancelled
-      return;
-    }
-    catch (Exception ex)
-    {
-      _logger.error("Error finding closest matches", ex);
-      JOptionPane.showMessageDialog(this.getParentFrame(), ex);
-      return;
-    }
-
-    BatchClosestMatchResultsDialog dlg = new BatchClosestMatchResultsDialog(getParentFrame(), items);
-    dlg.setLocationRelativeTo(getParentFrame());
-    dlg.setVisible(true);
-    if (dlg.isAccepted())
-    {
-      _uiTable.clearSelection();
-      List<Integer> fixed = _playlist.applyClosestMatchSelections(items);
-      for (Integer fixIx : fixed)
-      {
-        int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
-        _uiTable.addRowSelectionInterval(viewIx, viewIx);
-      }
-    }
+    this.findClosestMatches(worker);
   }
 
   public void bulkFindClosestMatches()
@@ -437,7 +401,12 @@ public class PlaylistEditCtrl extends JPanel
         return _playlist.findClosestMatches(libraryFiles, this);
       }
     };
-    ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches for all missing files...");
+    this.findClosestMatches(worker);
+  }
+
+  private void findClosestMatches(ProgressWorker<List<BatchMatchItem>, String> worker)
+  {
+    ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Finding closest matches for all selected files...");
     pd.setVisible(true);
 
     final List<BatchMatchItem> items;
