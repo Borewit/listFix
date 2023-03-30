@@ -1,7 +1,6 @@
 package listfix.view.controls;
 
 import listfix.model.BatchMatchItem;
-import listfix.model.playlists.FilePlaylistEntry;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
 import listfix.view.support.ZebraJTable;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +32,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
 
   public ClosestMatchesSearchScrollableResultsPanel()
   {
-    _items = new ArrayList<>();
-    initComponents();
-    initialize();
+    this(new ArrayList<>());
   }
 
   /**
@@ -219,8 +216,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
 
       try
       {
-        // ToDo match.getTrack().play(match.getPlaylistOptions());
-        throw new UnsupportedOperationException("ToDo");
+        Desktop.getDesktop().open(match.getTrack().toFile());
       }
       catch (Exception ex)
       {
