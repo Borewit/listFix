@@ -439,7 +439,7 @@ public class PlaylistEditCtrl extends JPanel
       List<Integer> fixed = _playlist.applyClosestMatchSelections(items);
       for (Integer fixIx : fixed)
       {
-        int viewIx = _uiTable.convertRowIndexToView(fixIx.intValue());
+        int viewIx = _uiTable.convertRowIndexToView(fixIx);
         _uiTable.addRowSelectionInterval(viewIx, viewIx);
       }
     }
