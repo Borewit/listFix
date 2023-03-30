@@ -458,7 +458,7 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
       if (match != null)
       {
         _logger.debug(String.format("Selected: %s", match));
-        Path path = ((FilePlaylistEntry) match.getTrack()).getAbsolutePath();
+        Path path = match.getTrack().toAbsolutePath();
         if (path.getParent() != null)
         {
           try
