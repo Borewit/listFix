@@ -13,6 +13,11 @@ public class JsonApplicationState implements IApplicationState
   private final ArrayList<String> playlistsOpened = new ArrayList<>();
 
   /**
+   * Index of active playlist
+   */
+  private Integer activePlaylistIndex = null;
+
+  /**
    * Keep track of frame positions
    */
 
@@ -28,5 +33,15 @@ public class JsonApplicationState implements IApplicationState
   public TreeMap<String, JsonFrameSettings> getFramePositions()
   {
     return this.framePositions;
+  }
+
+  public Integer getActivePlaylistIndex()
+  {
+    return activePlaylistIndex;
+  }
+
+  public void setActivePlaylistIndex(Integer activePlaylistIndex)
+  {
+    this.activePlaylistIndex =  activePlaylistIndex;
   }
 }

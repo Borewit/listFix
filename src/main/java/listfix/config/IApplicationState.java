@@ -10,4 +10,8 @@ public interface IApplicationState
   List<String> getPlaylistsOpened();
 
   TreeMap<String, JsonFrameSettings> getFramePositions();
+
+  Integer getActivePlaylistIndex();
+
+  void setActivePlaylistIndex(Integer activePlaylistIndex);
 }
