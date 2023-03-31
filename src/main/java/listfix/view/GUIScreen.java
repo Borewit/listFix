@@ -18,7 +18,6 @@ import listfix.json.JsonAppOptions;
 import listfix.model.BatchRepair;
 import listfix.model.BatchRepairItem;
 import listfix.model.PlaylistHistory;
-
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
 import listfix.swing.IDocumentChangeListener;
@@ -132,10 +131,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
     if (this._listFixController.getShowMediaDirWindow())
     {
       JOptionPane.showMessageDialog(
-          this,
-          new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."),
-          "Reminder",
-          JOptionPane.INFORMATION_MESSAGE);
+        this,
+        new JTransparentTextArea("You need to add a media directory before you can find the new locations of your files.  See help for more information."),
+        "Reminder",
+        JOptionPane.INFORMATION_MESSAGE);
     }
     else
     {
@@ -211,12 +210,19 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _logger.info("post init");
 
-    EventQueue.invokeLater(() ->
-        // Restore previous opened playlists
-        _listFixController.getApplicationConfiguration().getConfig().getApplicationState().getPlaylistsOpened().stream()
-            .map(Path::of)
-            .filter(Files::exists)
-            .forEach(GUIScreen.this::openPlaylist));
+    EventQueue.invokeLater(() -> {
+      IApplicationState appState = _listFixController.getApplicationConfiguration().getConfig().getApplicationState();
+      // Restore previous opened playlists
+      appState.getPlaylistsOpened().stream()
+        .map(Path::of)
+        .filter(Files::exists)
+        .forEach(GUIScreen.this::openPlaylist);
+
+      if (appState.getActivePlaylistIndex() != null)
+      {
+        _playlistTabbedPane.setSelectedIndex(appState.getActivePlaylistIndex());
+      }
+    });
   }
 
   private void recheckStatusOfOpenPlaylists()
@@ -300,7 +306,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
           final TreePath[] selectPath = _playlistDirectoryTree.getSelectionPaths();
           final boolean allTopLevel = selectPath != null && Arrays.stream(selectPath)
-              .allMatch(path -> path.getParentPath() != null && path.getParentPath().getParentPath() == null);
+            .allMatch(path -> path.getParentPath() != null && path.getParentPath().getParentPath() == null);
 
           _miRemovePlaylistDirectory.setEnabled(allTopLevel);
 
@@ -311,8 +317,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
             _miOpenSelectedPlaylists.setEnabled(true);
             boolean singleFileSelected = _playlistDirectoryTree.getSelectionCount() == 1;
             _miRenameSelectedItem.setEnabled(singleFileSelected
-                && !allTopLevel
-                && Files.isRegularFile(GUIScreen.this.getSelectedPlaylistTreeNodes().get(0).getUserObject())
+              && !allTopLevel
+              && Files.isRegularFile(GUIScreen.this.getSelectedPlaylistTreeNodes().get(0).getUserObject())
             );
             _miDeleteFile.setEnabled(true);
           }
@@ -379,7 +385,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
           {
             String curName = selectedFile.getName();
             String nameWithoutExtension = FileUtils.getExtension(selectedFile.getName()).map(
-                ext -> curName.substring(0, curName.lastIndexOf("."))).orElse(curName);
+              ext -> curName.substring(0, curName.lastIndexOf("."))).orElse(curName);
             String newName = nameWithoutExtension + fileFilter.getContentType().getExtensions()[0];
             _savePlaylistAsFileChooser.setSelectedFile(new File(newName));
           }
@@ -967,19 +973,19 @@ public final class GUIScreen extends JFrame implements IListFixGui
     setJMenuBar(_mainMenuBar);
 
     this.componentsRequireActivePlaylist = new Component[]{
-        _openPlaylistLocationMenuItem,
-        _saveAllMenuItem,
-        _saveAsMenuItem,
-        _saveMenuItem,
+      _openPlaylistLocationMenuItem,
+      _saveAllMenuItem,
+      _saveAsMenuItem,
+      _saveMenuItem,
 
-        _closeAllMenuItem,
-        _closeMenuItem,
+      _closeAllMenuItem,
+      _closeMenuItem,
 
-        _miReload,
-        _miReloadAll,
+      _miReload,
+      _miReloadAll,
 
-        _miExactMatchRepairOpenPlaylists,
-        _miClosestMatchRepairOpenPlaylists,
+      _miExactMatchRepairOpenPlaylists,
+      _miClosestMatchRepairOpenPlaylists,
     };
 
     splashScreen.setIconImage(applicationIcon);
@@ -1100,8 +1106,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
   {
     int[] selRows = _playlistDirectoryTree.getSelectionRows();
     if (selRows == null ||
-        selRows.length == 0 ||
-        JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected file?"), "Delete Selected File?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+      selRows.length == 0 ||
+      JOptionPane.showConfirmDialog(this, new JTransparentTextArea("Are you sure you want to delete the selected file?"), "Delete Selected File?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
     {
       return;
     }
@@ -1264,10 +1270,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
   private void openPlaylistFoldersFromPlaylistTree()
   {
     this.getSelectedFilesFromTreePlaylists().stream()
-        .map(file -> Files.isDirectory(file) ? file : file.getParent())
-        .filter(Objects::nonNull)
-        .distinct()
-        .forEach(this::openFolderInExplorerPerformed);
+      .map(file -> Files.isDirectory(file) ? file : file.getParent())
+      .filter(Objects::nonNull)
+      .distinct()
+      .forEach(this::openFolderInExplorerPerformed);
   }
 
   private void openPlaylistLocation(Playlist playList)
@@ -1328,7 +1334,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     {
       _logger.warn("Failed to open playlist", ioe);
       JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected.", ioe.getCause())),
-          "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+        "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -1357,7 +1363,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     {
       _logger.error("Open playlist error", ex);
       JOptionPane.showMessageDialog(this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected.", ex.getCause())),
-          "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+        "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
@@ -1395,7 +1401,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
             _logger.error("Open playlist error", ex);
 
             JOptionPane.showMessageDialog(GUIScreen.this, new JTransparentTextArea(ExStack.textFormatErrorForUser("There was a problem opening the file you selected, are you sure it was a playlist?", ex.getCause())),
-                "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
+              "Open Playlist Error", JOptionPane.ERROR_MESSAGE);
             return;
           }
 
@@ -1444,11 +1450,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     // Tie the DocumentComponent and the Playlist in the editor together via listeners, so the former can update when the latter is modified
     playlist.addModifiedListener(
-        list1 -> {
-          updateTabTitleForPlaylist(list1, tempComp);
-          tempComp.setIcon(getIconForPlaylist(list1));
-          tempComp.setPath(list1.getPath());
-        }
+      list1 -> {
+        updateTabTitleForPlaylist(list1, tempComp);
+        tempComp.setIcon(getIconForPlaylist(list1));
+        tempComp.setPath(list1.getPath());
+      }
     );
 
     // Update the list of open playlists
@@ -1568,10 +1574,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _savePlaylistAsFileChooser.setSelectedFile(playlist.getFile());
     // Select the file-filter to the current playlist
     Arrays.stream(_savePlaylistAsFileChooser.getChoosableFileFilters())
-        .map(filter -> (SpecificPlaylistFileFilter) filter)
-        .filter(filter -> filter.getPlaylistProvider().getId().equals(playlist.getType().name()))
-        .findFirst()
-        .ifPresent(_savePlaylistAsFileChooser::setFileFilter);
+      .map(filter -> (SpecificPlaylistFileFilter) filter)
+      .filter(filter -> filter.getPlaylistProvider().getId().equals(playlist.getType().name()))
+      .findFirst()
+      .ifPresent(_savePlaylistAsFileChooser::setFileFilter);
 
     int rc = _savePlaylistAsFileChooser.showSaveDialog(this);
     if (rc == JFileChooser.APPROVE_OPTION)
@@ -1761,11 +1767,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
     if (playlist.isModified())
     {
       Object[] options =
-          {
-              "Save", "Save As", "Don't Save", "Cancel"
-          };
+        {
+          "Save", "Save As", "Don't Save", "Cancel"
+        };
       int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("The playlist \"" + playlist.getFilename() + "\" has been modified. Do you want to save the changes?"), "Confirm Close",
-          JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
+        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 
       if (rc == 0)
       {
@@ -1827,11 +1833,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
       if (list.isModified())
       {
         Object[] options =
-            {
-                "Discard Changes and Exit", "Cancel"
-            };
+          {
+            "Discard Changes and Exit", "Cancel"
+          };
         int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("You have unsaved changes. Do you really want to discard these changes and exit?"), "Confirm Close",
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         if (rc == JOptionPane.NO_OPTION)
         {
           return;
@@ -1845,12 +1851,14 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     // Store open playlists
     List<String> openPlaylists = this._playlistTabbedPane.getAllEmbeddedMainComponent().stream()
-        .map(playlistEditCtrl -> playlistEditCtrl.getPlaylist().getPath().toString())
-        .collect(Collectors.toList());
+      .map(playlistEditCtrl -> playlistEditCtrl.getPlaylist().getPath().toString())
+      .collect(Collectors.toList());
 
-    List<String> playlistPaths = this._listFixController.getApplicationConfiguration().getConfig().getApplicationState().getPlaylistsOpened();
+    IApplicationState appState = this._listFixController.getApplicationConfiguration().getConfig().getApplicationState();
+    List<String> playlistPaths = appState.getPlaylistsOpened();
     playlistPaths.clear();
     playlistPaths.addAll(openPlaylists);
+    appState.setActivePlaylistIndex(_playlistTabbedPane.getSelectedIndex());
 
     try
     {
@@ -1885,7 +1893,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
         if (ArrayFunctions.containsStringPrefixingAnotherString(_listFixController.getMediaLibrary().getMediaDirectories(), dir, !ListFixController.FILE_SYSTEM_IS_CASE_SENSITIVE))
         {
           JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
-              "Reminder", JOptionPane.INFORMATION_MESSAGE);
+            "Reminder", JOptionPane.INFORMATION_MESSAGE);
           return;
         }
         else
@@ -1900,8 +1908,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
               if (matchCount == 0)
               {
                 JOptionPane.showMessageDialog(this,
-                    new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
-                    "Reminder", JOptionPane.INFORMATION_MESSAGE);
+                  new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
+                  "Reminder", JOptionPane.INFORMATION_MESSAGE);
               }
               removeMediaDir(dirToCheck);
               matchCount++;
@@ -1995,12 +2003,12 @@ public final class GUIScreen extends JFrame implements IListFixGui
   private void _aboutMenuItemActionPerformed()
   {
     JOptionPane.showMessageDialog(this, "listFix( ) v" + applicationVersion + "\n\nBrought To You By: " +
-            "\n          Borewit" +
-            "\n          Jeremy Caron (firewyre) " +
-            "\n          Kennedy Akala (kennedyakala)" +
-            "\n          John Peterson (johnpeterson)" +
-            "\n\nProject home: https://github.com/Borewit/listFix",
-        "About", JOptionPane.INFORMATION_MESSAGE);
+        "\n          Borewit" +
+        "\n          Jeremy Caron (firewyre) " +
+        "\n          Kennedy Akala (kennedyakala)" +
+        "\n          John Peterson (johnpeterson)" +
+        "\n\nProject home: https://github.com/Borewit/listFix",
+      "About", JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void refreshMediaDirs()
@@ -2179,9 +2187,9 @@ public final class GUIScreen extends JFrame implements IListFixGui
     {
       _logger.error("Error creating a new playlist", ex);
       JOptionPane.showMessageDialog(this,
-          new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.", ex.getCause())),
-          "New Playlist Error",
-          JOptionPane.ERROR_MESSAGE);
+        new JTransparentTextArea(ExStack.textFormatErrorForUser("Sorry, there was an error creating a new playlist.  Please try again, or file a bug report.", ex.getCause())),
+        "New Playlist Error",
+        JOptionPane.ERROR_MESSAGE);
     }
 
   }
@@ -2301,8 +2309,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
       this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
       List<Path> playListDirFiles = this.getApplicationConfig().getPlaylistDirectories().stream()
-          .map(Path::of)
-          .collect(Collectors.toList());
+        .map(Path::of)
+        .collect(Collectors.toList());
 
       PlaylistTreeNode playlistTreeNode = FileTreeNodeGenerator.addNodes(null, playListDirFiles);
 
@@ -2329,8 +2337,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     if (selectedPath != null)
     {
       removePlaylistDirectory(Arrays.stream(selectedPath)
-          .map(FileTreeNodeGenerator::treePathToFileSystemPath)
-          .collect(Collectors.toList()));
+        .map(FileTreeNodeGenerator::treePathToFileSystemPath)
+        .collect(Collectors.toList()));
     }
   }
 
