@@ -1848,7 +1848,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
         .map(playlistEditCtrl -> playlistEditCtrl.getPlaylist().getPath().toString())
         .collect(Collectors.toList());
 
-    Set<String> playlistPaths = this._listFixController.getApplicationConfiguration().getConfig().getApplicationState().getPlaylistsOpened();
+    List<String> playlistPaths = this._listFixController.getApplicationConfiguration().getConfig().getApplicationState().getPlaylistsOpened();
     playlistPaths.clear();
     playlistPaths.addAll(openPlaylists);
 
