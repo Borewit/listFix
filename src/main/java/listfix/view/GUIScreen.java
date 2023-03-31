@@ -150,7 +150,20 @@ public final class GUIScreen extends JFrame implements IListFixGui
     initPlaylistListener();
 
     // drag-n-drop support for the playlist directory tree
-    _playlistDirectoryTree.setTransferHandler(new PlaylistFolderTransferHandler(_playlistDirectoryTree, this));
+    _playlistDirectoryTree.setTransferHandler(new FileListTransferHandler()
+    {
+      @Override
+      public boolean handleFileList(List<File> fileList)
+      {
+        return fileList.stream()
+          .filter(File::isDirectory)
+          .map(folder -> {
+            GUIScreen.this.addPlaylistFolder(folder);
+            return true;
+          })
+          .reduce(false, (t, v) -> true);
+      }
+    });
     _playlistDirectoryTree.setRootVisible(false);
     // Show tooltips
     ToolTipManager.sharedInstance().registerComponent(_playlistDirectoryTree);
@@ -638,13 +651,22 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _mediaLibraryPanel.add(_mediaLibraryButtonPanel, BorderLayout.SOUTH);
 
-    _mediaLibraryScrollPane.setMaximumSize(null);
-    _mediaLibraryScrollPane.setMinimumSize(null);
-
     _lstMediaLibraryDirs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    _lstMediaLibraryDirs.setMaximumSize(null);
-    _lstMediaLibraryDirs.setMinimumSize(null);
-    _lstMediaLibraryDirs.setPreferredSize(null);
+    _lstMediaLibraryDirs.setTransferHandler(new FileListTransferHandler()
+    {
+      @Override
+      public boolean handleFileList(List<File> fileList)
+      {
+        return fileList.stream()
+          .filter(File::isDirectory)
+          .map(folder -> {
+            GUIScreen.this.addMediaFolder(folder);
+            return true;
+          })
+          .reduce(false, (t, v) -> true);
+      }
+    });
+
     _mediaLibraryScrollPane.setViewportView(_lstMediaLibraryDirs);
 
     _mediaLibraryPanel.add(_mediaLibraryScrollPane, BorderLayout.CENTER);
@@ -656,13 +678,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _playlistDirectoryPanel.setAlignmentY(0.0F);
     _playlistDirectoryPanel.setLayout(new BorderLayout());
 
-    _treeScrollPane.setMaximumSize(null);
-    _treeScrollPane.setMinimumSize(null);
-
     _playlistDirectoryTree.setDragEnabled(true);
-    _playlistDirectoryTree.setMaximumSize(null);
-    _playlistDirectoryTree.setMinimumSize(null);
-    _playlistDirectoryTree.setPreferredSize(null);
     _playlistDirectoryTree.addKeyListener(new KeyAdapter()
     {
       @Override
@@ -1877,82 +1893,88 @@ public final class GUIScreen extends JFrame implements IListFixGui
     int response = _jMediaDirChooser.showOpenDialog(this);
     if (response == JFileChooser.APPROVE_OPTION)
     {
-      try
-      {
-        UNCFile mediaDir = new UNCFile(_jMediaDirChooser.getSelectedFile());
-        if (getApplicationConfig().getAlwaysUseUNCPaths())
-        {
-          if (mediaDir.onNetworkDrive())
-          {
-            mediaDir = new UNCFile(mediaDir.getUNCPath());
-          }
-        }
-        final String dir = mediaDir.getPath();
-
-        // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-        if (ArrayFunctions.containsStringPrefixingAnotherString(_listFixController.getMediaLibrary().getMediaDirectories(), dir, !ListFixController.FILE_SYSTEM_IS_CASE_SENSITIVE))
-        {
-          JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
-            "Reminder", JOptionPane.INFORMATION_MESSAGE);
-          return;
-        }
-        else
-        {
-          // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
-          int matchCount = 0;
-          for (String dirToCheck : _listFixController.getMediaLibrary().getMediaDirectories())
-          {
-            if (dirToCheck.startsWith(dir))
-            {
-              // Only showing the message the first time we find this condition...
-              if (matchCount == 0)
-              {
-                JOptionPane.showMessageDialog(this,
-                  new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
-                  "Reminder", JOptionPane.INFORMATION_MESSAGE);
-              }
-              removeMediaDir(dirToCheck);
-              matchCount++;
-            }
-          }
-        }
-
-        ProgressWorker<Void, Void> worker = new ProgressWorker<>()
-        {
-          @Override
-          protected Void doInBackground()
-          {
-            MediaLibraryOperator operator = new MediaLibraryOperator(this);
-            operator.addDirectory(dir);
-            return null;
-          }
-        };
-        ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true, true);
-        pd.setVisible(true);
-
-        try
-        {
-          worker.get();
-        }
-        catch (InterruptedException | CancellationException ex)
-        {
-          _logger.debug("Cancelled");
-        }
-        catch (ExecutionException ex)
-        {
-          _logger.error(ex);
-        }
-        _lstMediaLibraryDirs.setListData(new Vector<>(_listFixController.getMediaLibrary().getMediaDirectories()));
-      }
-      catch (HeadlessException e)
-      {
-        JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occurred, media directory could not be added."));
-        _logger.error("Error adding media directory", e);
-      }
+      this.addMediaFolder(_jMediaDirChooser.getSelectedFile());
     }
     else
     {
       _jMediaDirChooser.cancelSelection();
+    }
+    updateMediaDirButtons();
+  }
+
+  private void addMediaFolder(File mediaFolderToAdd)
+  {
+    try
+    {
+      UNCFile mediaDir = new UNCFile(mediaFolderToAdd);
+      if (getApplicationConfig().getAlwaysUseUNCPaths())
+      {
+        if (mediaDir.onNetworkDrive())
+        {
+          mediaDir = new UNCFile(mediaDir.getUNCPath());
+        }
+      }
+      final String dir = mediaDir.getPath();
+
+      // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
+      if (ArrayFunctions.containsStringPrefixingAnotherString(_listFixController.getMediaLibrary().getMediaDirectories(), dir, !ListFixController.FILE_SYSTEM_IS_CASE_SENSITIVE))
+      {
+        JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
+          "Reminder", JOptionPane.INFORMATION_MESSAGE);
+        return;
+      }
+      else
+      {
+        // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
+        int matchCount = 0;
+        for (String dirToCheck : _listFixController.getMediaLibrary().getMediaDirectories())
+        {
+          if (dirToCheck.startsWith(dir))
+          {
+            // Only showing the message the first time we find this condition...
+            if (matchCount == 0)
+            {
+              JOptionPane.showMessageDialog(this,
+                new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
+                "Reminder", JOptionPane.INFORMATION_MESSAGE);
+            }
+            removeMediaDir(dirToCheck);
+            matchCount++;
+          }
+        }
+      }
+
+      ProgressWorker<Void, Void> worker = new ProgressWorker<>()
+      {
+        @Override
+        protected Void doInBackground()
+        {
+          MediaLibraryOperator operator = new MediaLibraryOperator(this);
+          operator.addDirectory(dir);
+          return null;
+        }
+      };
+      ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true, true);
+      pd.setVisible(true);
+
+      try
+      {
+        worker.get();
+      }
+      catch (InterruptedException | CancellationException ex)
+      {
+        _logger.debug("Cancelled");
+      }
+      catch (ExecutionException ex)
+      {
+        _logger.error(ex);
+      }
+      _lstMediaLibraryDirs.setListData(new Vector<>(_listFixController.getMediaLibrary().getMediaDirectories()));
+    }
+    catch (HeadlessException e)
+    {
+      JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occurred, media directory could not be added."));
+      _logger.error("Error adding media directory", e);
     }
     updateMediaDirButtons();
   }
@@ -2042,8 +2064,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     }
   }
 
-  private void _miExactMatchesSearchActionPerformed()//GEN-FIRST:event__miExactMatchesSearchActionPerformed
-  {//GEN-HEADEREND:event__miExactMatchesSearchActionPerformed
+  private void _miExactMatchesSearchActionPerformed()
+  {
     try
     {
       runExactMatchesSearchOnSelectedPlaylists();
@@ -2052,7 +2074,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     {
       throw new RuntimeException(e);
     }
-  }//GEN-LAST:event__miExactMatchesSearchActionPerformed
+  }
 
   private void launchListFixProjectUrl()
   {
