@@ -2,15 +2,15 @@ package listfix.json;
 
 import listfix.config.IApplicationState;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class JsonApplicationState implements IApplicationState
 {
   /**
    * Keep track of playlist opened
    */
-  private final TreeSet<String> playlistsOpened = new TreeSet<>();
+  private final ArrayList<String> playlistsOpened = new ArrayList<>();
 
   /**
    * Keep track of frame positions
@@ -19,7 +19,7 @@ public class JsonApplicationState implements IApplicationState
   private final TreeMap<String, JsonFrameSettings> framePositions = new TreeMap<>();
 
   @Override
-  public TreeSet<String> getPlaylistsOpened()
+  public ArrayList<String> getPlaylistsOpened()
   {
     return playlistsOpened;
   }
