@@ -9,12 +9,12 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Fetch all history for all tags and branches
-      - name: Set up JDK 15
-        uses: actions/setup-java@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: 15
-          distribution: 'adopt'
-          cache: 'gradle'
+          java-version: 17
+          distribution: corretto
+          cache: gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build
