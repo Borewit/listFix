@@ -1904,78 +1904,74 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private void addMediaFolder(File mediaFolderToAdd)
   {
+
+    UNCFile mediaDir = new UNCFile(mediaFolderToAdd);
+    if (getApplicationConfig().getAlwaysUseUNCPaths())
+    {
+      if (mediaDir.onNetworkDrive())
+      {
+        mediaDir = new UNCFile(mediaDir.getUNCPath());
+      }
+    }
+    final String dir = mediaDir.getPath();
+
+    // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
+    if (ArrayFunctions.containsStringPrefixingAnotherString(_listFixController.getMediaLibrary().getMediaDirectories(), dir, !ListFixController.FILE_SYSTEM_IS_CASE_SENSITIVE))
+    {
+      JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
+        "Notification", JOptionPane.INFORMATION_MESSAGE);
+      return;
+    }
+    else
+    {
+      // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
+      int removedFolders = 0;
+      for (String dirToCheck : new ArrayList<>(_listFixController.getMediaLibrary().getMediaDirectories()))
+      {
+        if (dirToCheck.startsWith(dir))
+        {
+          // Only showing the message the first time we find this condition...
+          removeMediaDir(dirToCheck);
+          removedFolders++;
+        }
+      }
+      if (removedFolders > 0)
+      {
+        String message = String.format("Removed %d duplicated media directories", removedFolders);
+        _logger.info(message);
+        JOptionPane.showMessageDialog(this,
+          new JTransparentTextArea(String.format(message)),
+          "Notification", JOptionPane.INFORMATION_MESSAGE);
+      }
+    }
+
+    ProgressWorker<Void, Void> worker = new ProgressWorker<>()
+    {
+      @Override
+      protected Void doInBackground()
+      {
+        MediaLibraryOperator operator = new MediaLibraryOperator(this);
+        operator.addDirectory(dir);
+        return null;
+      }
+    };
+
+    ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true, true);
+    pd.setVisible(true);
+
     try
     {
-      UNCFile mediaDir = new UNCFile(mediaFolderToAdd);
-      if (getApplicationConfig().getAlwaysUseUNCPaths())
-      {
-        if (mediaDir.onNetworkDrive())
-        {
-          mediaDir = new UNCFile(mediaDir.getUNCPath());
-        }
-      }
-      final String dir = mediaDir.getPath();
-
-      // first let's see if this is a subdirectory of any of the media directories already in the list, and error out if so...
-      if (ArrayFunctions.containsStringPrefixingAnotherString(_listFixController.getMediaLibrary().getMediaDirectories(), dir, !ListFixController.FILE_SYSTEM_IS_CASE_SENSITIVE))
-      {
-        JOptionPane.showMessageDialog(this, new JTransparentTextArea("The directory you attempted to add is a subdirectory of one already in your media library, no change was made."),
-          "Reminder", JOptionPane.INFORMATION_MESSAGE);
-        return;
-      }
-      else
-      {
-        // Now check if any of the media directories is a subdirectory of the one we're adding and remove the media directory if so.
-        int matchCount = 0;
-        for (String dirToCheck : _listFixController.getMediaLibrary().getMediaDirectories())
-        {
-          if (dirToCheck.startsWith(dir))
-          {
-            // Only showing the message the first time we find this condition...
-            if (matchCount == 0)
-            {
-              JOptionPane.showMessageDialog(this,
-                new JTransparentTextArea("One or more of your existing media directories is a subdirectory of the directory you just added.  These directories will be removed from your list automatically."),
-                "Reminder", JOptionPane.INFORMATION_MESSAGE);
-            }
-            removeMediaDir(dirToCheck);
-            matchCount++;
-          }
-        }
-      }
-
-      ProgressWorker<Void, Void> worker = new ProgressWorker<>()
-      {
-        @Override
-        protected Void doInBackground()
-        {
-          MediaLibraryOperator operator = new MediaLibraryOperator(this);
-          operator.addDirectory(dir);
-          return null;
-        }
-      };
-      ProgressDialog pd = new ProgressDialog(this, true, worker, "Updating Media Library...", true, true);
-      pd.setVisible(true);
-
-      try
-      {
-        worker.get();
-      }
-      catch (InterruptedException | CancellationException ex)
-      {
-        _logger.debug("Cancelled");
-      }
-      catch (ExecutionException ex)
-      {
-        _logger.error(ex);
-      }
-      _lstMediaLibraryDirs.setListData(new Vector<>(_listFixController.getMediaLibrary().getMediaDirectories()));
+      worker.get();
     }
-    catch (HeadlessException e)
+    catch (InterruptedException | CancellationException ex)
     {
-      JOptionPane.showMessageDialog(this, new JTransparentTextArea("An error has occurred, media directory could not be added."));
-      _logger.error("Error adding media directory", e);
+      _logger.debug("Cancelled");
     }
+    catch (ExecutionException ex)
+    {
+      _logger.error(ex);
+    }
+    _lstMediaLibraryDirs.setListData(new Vector<>(_listFixController.getMediaLibrary().getMediaDirectories()));
     updateMediaDirButtons();
   }
 
