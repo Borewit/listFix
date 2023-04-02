@@ -1,11 +1,5 @@
 package listfix.view.dialogs;
 
-import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DarkStar;
-import com.jgoodies.looks.plastic.theme.SkyBlue;
-import com.jgoodies.looks.windows.WindowsLookAndFeel;
 import listfix.json.JsonAppOptions;
 import listfix.util.OperatingSystem;
 import listfix.view.support.FontExtensions;
@@ -19,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AppOptionsDialog extends JDialog
@@ -31,9 +26,8 @@ public class AppOptionsDialog extends JDialog
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private int _resultCode;
   private String _fileName;
-  private JsonAppOptions _options = null;
-  private Font _chosenFont = null;
-  private LookAndFeelInfo[] _installedLookAndFeelInfos = null;
+  private JsonAppOptions _options;
+  private Font _chosenFont;
 
   private void ApplyOperatingSystemBasedVisibility()
   {
@@ -47,7 +41,7 @@ public class AppOptionsDialog extends JDialog
     }
   }
 
-  private static class IntegerRangeComboBoxModel extends AbstractListModel implements ComboBoxModel
+  private static class IntegerRangeComboBoxModel extends AbstractListModel<Integer> implements ComboBoxModel<Integer>
   {
     private final List<Integer> intList = new ArrayList<>();
     Object _selected;
@@ -79,7 +73,7 @@ public class AppOptionsDialog extends JDialog
     }
 
     @Override
-    public Object getElementAt(int index)
+    public Integer getElementAt(int index)
     {
       return intList.get(index);
     }
@@ -114,10 +108,6 @@ public class AppOptionsDialog extends JDialog
     _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
   }
 
-  public AppOptionsDialog()
-  {
-  }
-
   public String getFileName()
   {
     return _fileName;
@@ -140,44 +130,12 @@ public class AppOptionsDialog extends JDialog
 
   private LookAndFeelInfo[] getInstalledLookAndFeels()
   {
-    if (_installedLookAndFeelInfos == null)
-    {
-      LookAndFeelInfo[] plafs = UIManager.getInstalledLookAndFeels();
-      List<LookAndFeelInfo> lafs = new ArrayList<>();
-      for (LookAndFeelInfo laf : plafs)
-      {
-        if (!laf.getName().toLowerCase().contains("nimbus"))
-        {
-          lafs.add(laf);
-        }
-      }
-
-      // "Install" the L&Fs we have internally added.
-      if (OperatingSystem.isWindows())
-      {
-        lafs.add(new LookAndFeelInfo("Windows (Plastic)", WindowsLookAndFeel.class.getName()));
-      }
-      lafs.add(new LookAndFeelInfo("Plastic - Default", PlasticLookAndFeel.class.getName()));
-      lafs.add(new LookAndFeelInfo("Plastic - DarkStar", DarkStar.class.getName()));
-      lafs.add(new LookAndFeelInfo("Plastic - SkyBlue", SkyBlue.class.getName()));
-      lafs.add(new LookAndFeelInfo("Plastic3D", Plastic3DLookAndFeel.class.getName()));
-      lafs.add(new LookAndFeelInfo("PlasticXP", PlasticXPLookAndFeel.class.getName()));
-
-      _installedLookAndFeelInfos = lafs.toArray(new LookAndFeelInfo[0]);
-    }
-    return _installedLookAndFeelInfos;
+    return UIManager.getInstalledLookAndFeels();
   }
 
   private DefaultComboBoxModel getLookAndFeelMenuItems()
   {
-    LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
-
-    List<String> model = new ArrayList<>();
-    for (LookAndFeelInfo plaf : plafs)
-    {
-      model.add(plaf.getName());
-    }
-    return new DefaultComboBoxModel(model.toArray(new String[0]));
+    return new DefaultComboBoxModel(Arrays.stream(getInstalledLookAndFeels()).map(LookAndFeelInfo::getName).toArray());
   }
 
   private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
@@ -246,43 +204,43 @@ public class AppOptionsDialog extends JDialog
   {
     GridBagConstraints gridBagConstraints;
 
-    topPanel = new JPanel();
-    optionsPanel = new JPanel();
-    _pnlLookAndFeel = new JPanel();
-    jLabel5 = new JLabel();
+    JPanel topPanel = new JPanel();
+    JPanel optionsPanel = new JPanel();
+    JPanel _pnlLookAndFeel = new JPanel();
+    JLabel jLabel5 = new JLabel();
     lookAndFeelComboBox = new JComboBox();
-    _pnlfontChooser = new JPanel();
-    jLabel8 = new JLabel();
+    JPanel _pnlfontChooser = new JPanel();
+    JLabel jLabel8 = new JLabel();
     _fontDisplayLabel = new JLabel();
-    _changeFontButton = new JButton();
-    _pnlNumClosestMatches = new JPanel();
-    jLabel9 = new JLabel();
+    JButton _changeFontButton = new JButton();
+    JPanel _pnlNumClosestMatches = new JPanel();
+    JLabel jLabel9 = new JLabel();
     _cbxMaxClosestMatches = new JComboBox();
-    _pnlRecentListLimit = new JPanel();
-    jLabel1 = new JLabel();
+    JPanel _pnlRecentListLimit = new JPanel();
+    JLabel jLabel1 = new JLabel();
     recentPlaylistLimitComboBox = new JComboBox();
     _pnlUseUnc = new JPanel();
-    jLabel6 = new JLabel();
+    JLabel jLabel6 = new JLabel();
     alwaysUseUNCPathsCheckBox = new JCheckBox();
-    _pnlSaveRelative = new JPanel();
-    jLabel3 = new JLabel();
+    JPanel _pnlSaveRelative = new JPanel();
+    JLabel jLabel3 = new JLabel();
     relativePathsCheckBox = new JCheckBox();
-    _pnlAutoLocate = new JPanel();
-    jLabel2 = new JLabel();
+    JPanel _pnlAutoLocate = new JPanel();
+    JLabel jLabel2 = new JLabel();
     autoLocateCheckBox = new JCheckBox();
-    _pnRefreshMediaLibraryOnStart = new JPanel();
-    jLabel4 = new JLabel();
+    JPanel _pnRefreshMediaLibraryOnStart = new JPanel();
+    JLabel jLabel4 = new JLabel();
     autoRefreshOnStartupCheckBox = new JCheckBox();
     _pnlDisableCaseSensitivity = new JPanel();
-    _lblCaseSensitivity = new JLabel();
+    JLabel _lblCaseSensitivity = new JLabel();
     _cbxCaseSensitivity = new JCheckBox();
 
-    _pnlSmallWords = new JPanel();
-    jLabel10 = new JLabel();
+    JPanel _pnlSmallWords = new JPanel();
+    JLabel jLabel10 = new JLabel();
     _smallWordsTxtField = new JTextField();
-    buttonPanel = new JPanel();
-    jButton1 = new JButton();
-    jButton2 = new JButton();
+    JPanel buttonPanel = new JPanel();
+    JButton jButton1 = new JButton();
+    JButton jButton2 = new JButton();
 
     setMinimumSize(new Dimension(480, 385));
     setModal(true);
@@ -335,14 +293,7 @@ public class AppOptionsDialog extends JDialog
     _changeFontButton.setToolTipText("Choose Font");
     _changeFontButton.setAlignmentY(0.0F);
     _changeFontButton.setMargin(new Insets(2, 3, 2, 3));
-    _changeFontButton.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent evt)
-      {
-        _changeFontButtonActionPerformed();
-      }
-    });
+    _changeFontButton.addActionListener(evt -> _changeFontButtonActionPerformed());
     _pnlfontChooser.add(_changeFontButton);
 
     gridBagConstraints = new GridBagConstraints();
@@ -381,9 +332,6 @@ public class AppOptionsDialog extends JDialog
 
     recentPlaylistLimitComboBox.setModel(new IntegerRangeComboBoxModel(1, 15));
     recentPlaylistLimitComboBox.setSelectedItem(_options.getMaxPlaylistHistoryEntries());
-    recentPlaylistLimitComboBox.setMaximumSize(null);
-    recentPlaylistLimitComboBox.setMinimumSize(null);
-    recentPlaylistLimitComboBox.setPreferredSize(null);
     _pnlRecentListLimit.add(recentPlaylistLimitComboBox);
 
     gridBagConstraints = new GridBagConstraints();
@@ -555,75 +503,51 @@ public class AppOptionsDialog extends JDialog
   }// </editor-fold>//GEN-END:initComponents
 
   private void jButton2ActionPerformed()
-  {//GEN-FIRST:event_jButton2ActionPerformed
+  {
     setVisible(false);
     dispose();
     setResultCode(CANCEL);
-  }//GEN-LAST:event_jButton2ActionPerformed
+  }
 
   private void jButton1ActionPerformed()
-  {//GEN-FIRST:event_jButton1ActionPerformed
+  {
     setVisible(false);
     dispose();
     setResultCode(OK);
-  }//GEN-LAST:event_jButton1ActionPerformed
+  }
 
   /**
    * Closes the dialog
    */
   private void closeDialog()
-  {//GEN-FIRST:event_closeDialog
+  {
     setVisible(false);
     dispose();
-  }//GEN-LAST:event_closeDialog
+  }
 
-  private void _changeFontButtonActionPerformed()//GEN-FIRST:event__changeFontButtonActionPerformed
-  {//GEN-HEADEREND:event__changeFontButtonActionPerformed
+  private void _changeFontButtonActionPerformed()
+  {
     JFontChooser jfc = new JFontChooser();
     jfc.setSelectedFont(_chosenFont);
     jfc.showDialog(this);
     _chosenFont = jfc.getSelectedFont();
     _fontDisplayLabel.setText(FontExtensions.formatFont(_chosenFont));
-  }//GEN-LAST:event__changeFontButtonActionPerformed
+  }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private JCheckBox _cbxCaseSensitivity;
-  private JComboBox _cbxMaxClosestMatches;
-  private JButton _changeFontButton;
+  private JComboBox<Integer> _cbxMaxClosestMatches;
   private JLabel _fontDisplayLabel;
-  private JLabel _lblCaseSensitivity;
-  private JPanel _pnRefreshMediaLibraryOnStart;
-  private JPanel _pnlAutoLocate;
   private JPanel _pnlDisableCaseSensitivity;
 
-  private JPanel _pnlLookAndFeel;
-  private JPanel _pnlNumClosestMatches;
-  private JPanel _pnlRecentListLimit;
-  private JPanel _pnlSaveRelative;
-  private JPanel _pnlSmallWords;
   private JPanel _pnlUseUnc;
-  private JPanel _pnlfontChooser;
   private JTextField _smallWordsTxtField;
   private JCheckBox alwaysUseUNCPathsCheckBox;
   private JCheckBox autoLocateCheckBox;
   private JCheckBox autoRefreshOnStartupCheckBox;
-  private JPanel buttonPanel;
-  private JButton jButton1;
-  private JButton jButton2;
-  private JLabel jLabel1;
-  private JLabel jLabel10;
-  private JLabel jLabel2;
-  private JLabel jLabel3;
-  private JLabel jLabel4;
-  private JLabel jLabel5;
-  private JLabel jLabel6;
-  private JLabel jLabel8;
-  private JLabel jLabel9;
-  private JComboBox lookAndFeelComboBox;
-  private JPanel optionsPanel;
+  private JComboBox<String> lookAndFeelComboBox;
 
-  private JComboBox recentPlaylistLimitComboBox;
+  private JComboBox<Integer> recentPlaylistLimitComboBox;
   private JCheckBox relativePathsCheckBox;
-  private JPanel topPanel;
   // End of variables declaration//GEN-END:variables
 }

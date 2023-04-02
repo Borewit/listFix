@@ -1,10 +1,6 @@
 package listfix.view;
 
 import com.jcabi.manifests.Manifests;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DarkStar;
-import com.jgoodies.looks.plastic.theme.LightGray;
-import com.jgoodies.looks.plastic.theme.SkyBlue;
 import io.github.borewit.lizzy.playlist.PlaylistFormat;
 import listfix.config.*;
 import listfix.controller.ListFixController;
@@ -121,6 +117,20 @@ public final class GUIScreen extends JFrame implements IListFixGui
     // Set the user-selected font and look & feel
     final IAppOptions appConfig = this.getApplicationConfig();
     setApplicationFont(appConfig.getAppFont());
+
+    if (appConfig.getLookAndFeel() == null || appConfig.getLookAndFeel().isEmpty())
+    {
+      appConfig.setLookAndFeel(
+        Arrays.stream(UIManager.getInstalledLookAndFeels())
+          .filter(laf -> laf.getName().equals("Nimbus"))
+          .map(laf -> laf.getClassName())
+          .findFirst()
+          .orElse(UIManager.getSystemLookAndFeelClassName()
+          )
+      );
+      _logger.info("Initialize default look & feel to " + appConfig.getLookAndFeel());
+    }
+
     this.setLookAndFeel(appConfig.getLookAndFeel());
 
     configureFileAndFolderChoosers();
@@ -2416,31 +2426,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
   {
     try
     {
-      String realClassName = className;
-      if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.theme.DarkStar"))
-      {
-        PlasticLookAndFeel.setPlasticTheme(new DarkStar());
-        realClassName = "com.jgoodies.looks.plastic.PlasticLookAndFeel";
-      }
-      else if (className.equals("com.jgoodies.looks.plastic.theme.SkyBlue"))
-      {
-        PlasticLookAndFeel.setPlasticTheme(new SkyBlue());
-        realClassName = "com.jgoodies.looks.plastic.PlasticLookAndFeel";
-      }
-      else if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.PlasticLookAndFeel"))
-      {
-        PlasticLookAndFeel.setPlasticTheme(new LightGray());
-      }
-      else if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.Plastic3DLookAndFeel"))
-      {
-        PlasticLookAndFeel.setPlasticTheme(new LightGray());
-      }
-      else if (className.equalsIgnoreCase("com.jgoodies.looks.plastic.PlasticXPLookAndFeel"))
-      {
-        PlasticLookAndFeel.setPlasticTheme(new LightGray());
-      }
-
-      UIManager.setLookAndFeel(realClassName);
+      UIManager.setLookAndFeel(className);
       updateAllComponentTreeUIs();
     }
     catch (ClassNotFoundException | InstantiationException | IllegalAccessException |

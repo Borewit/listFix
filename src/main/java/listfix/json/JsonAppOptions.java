@@ -2,12 +2,10 @@ package listfix.json;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jgoodies.looks.windows.WindowsLookAndFeel;
 import listfix.config.IAppOptions;
 import listfix.config.IApplicationState;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
-import listfix.util.OperatingSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,8 +20,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private boolean autoRefreshMediaLibraryOnStartup = false;
   private boolean alwaysUseUNCPaths = false;
   private int maxPlaylistHistoryEntries = 5;
-  private String lookAndFeel = OperatingSystem.isWindows() ? WindowsLookAndFeel.class.getName() : UIManager.getSystemLookAndFeelClassName();
-
+  private String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
 
   @Deprecated // Replaced by playlistDirectories
   private String playlistsDirectory;

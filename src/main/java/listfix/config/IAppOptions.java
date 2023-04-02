@@ -12,6 +12,8 @@ public interface IAppOptions extends IPlaylistOptions
 
   String getLookAndFeel();
 
+  void setLookAndFeel(String lookAndFeelClassName);
+
   boolean getAutoRefreshMediaLibraryOnStartup();
 
   String getPlaylistsDirectory();
