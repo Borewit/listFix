@@ -1296,31 +1296,17 @@ public final class GUIScreen extends JFrame implements IListFixGui
   private void openPlaylistFoldersFromPlaylistTree()
   {
     this.getSelectedFilesFromTreePlaylists().stream()
-      .map(file -> Files.isDirectory(file) ? file : file.getParent())
-      .filter(Objects::nonNull)
-      .distinct()
-      .forEach(this::openFolderInExplorerPerformed);
+      .forEach(this::openFileLocation);
   }
 
   private void openPlaylistLocation(Playlist playList)
   {
-    this.openFolderInExplorerPerformed(playList.getPath().getParent());
+   this.openFileLocation(playList.getPath());
   }
 
-  private void openFolderInExplorerPerformed(Path folder)
+  private void openFileLocation(Path path)
   {
-    if (folder != null)
-    {
-      try
-      {
-        Desktop.getDesktop().open(folder.toFile());
-      }
-      catch (IOException e)
-      {
-        _logger.warn("Failed to open playlist folder location", e);
-        throw new RuntimeException(e);
-      }
-    }
+    new OpenFileLocation(this).openFileLocation(path);
   }
 
   @Override

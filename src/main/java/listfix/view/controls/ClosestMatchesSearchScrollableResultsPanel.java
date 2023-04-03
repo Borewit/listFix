@@ -1,5 +1,6 @@
 package listfix.view.controls;
 
+import listfix.io.OpenFileLocation;
 import listfix.model.BatchMatchItem;
 import listfix.model.playlists.PotentialPlaylistEntryMatch;
 import listfix.view.support.ZebraJTable;
@@ -14,8 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -454,18 +453,8 @@ public class ClosestMatchesSearchScrollableResultsPanel extends JPanel
       if (match != null)
       {
         _logger.debug(String.format("Selected: %s", match));
-        Path path = match.getTrack().toAbsolutePath();
-        if (path.getParent() != null)
-        {
-          try
-          {
-            Desktop.getDesktop().open(path.getParent().toFile());
-          }
-          catch (IOException e)
-          {
-            throw new RuntimeException(e);
-          }
-        }
+        // ToDo: use playlist directory to determine absolute path
+        new OpenFileLocation(this).openFileLocation(match.getTrack().toAbsolutePath());
       }
     }
   }

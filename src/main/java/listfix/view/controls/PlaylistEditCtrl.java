@@ -3,11 +3,8 @@ package listfix.view.controls;
 import io.github.borewit.lizzy.content.Content;
 import io.github.borewit.lizzy.playlist.Media;
 import listfix.config.IMediaLibrary;
+import listfix.io.*;
 import listfix.io.datatransfer.PlaylistTransferObject;
-import listfix.io.Constants;
-import listfix.io.FileUtils;
-import listfix.io.IPlaylistOptions;
-import listfix.io.PlaylistScanner;
 import listfix.io.filters.AudioFileFilter;
 import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.model.BatchMatchItem;
@@ -343,19 +340,17 @@ public class PlaylistEditCtrl extends JPanel
 
   private void openPlayListEntryLocation() throws IOException
   {
+    OpenFileLocation openFileLocation = new OpenFileLocation(this);
     for (PlaylistEntry entry : this.getSelectedPlayListEntries().stream().distinct().collect(Collectors.toList()))
     {
       if (entry instanceof FilePlaylistEntry)
       {
-        Path parent = ((FilePlaylistEntry) entry).getAbsolutePath().getParent();
-        if (parent != null)
-        {
-          Desktop.getDesktop().open(parent.toFile());
-        }
+        Path path = ((FilePlaylistEntry) entry).getAbsolutePath();
+        openFileLocation.openFileLocation(path);
       }
       else if (entry instanceof UriPlaylistEntry)
       {
-        Desktop.getDesktop().browse(((UriPlaylistEntry) entry).getURI());
+        BrowserLauncher.launch(((UriPlaylistEntry) entry).getURI());
       }
     }
   }
