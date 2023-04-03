@@ -278,23 +278,24 @@ public class PlaylistEditCtrl extends JPanel
         RowSorter.SortKey key = keys.get(0);
         switch (key.getColumn())
         {
-          case 1:
+          case 1 ->
+          {
             // status
             sortIx = Playlist.SortIx.Status;
             isDescending = key.getSortOrder() == SortOrder.DESCENDING;
-            break;
-
-          case 2:
+          }
+          case 2 ->
+          {
             // filename
             sortIx = Playlist.SortIx.Filename;
             isDescending = key.getSortOrder() == SortOrder.DESCENDING;
-            break;
-
-          case 3:
+          }
+          case 3 ->
+          {
             // path
             sortIx = Playlist.SortIx.Path;
             isDescending = key.getSortOrder() == SortOrder.DESCENDING;
-            break;
+          }
         }
       }
     }
@@ -616,7 +617,6 @@ public class PlaylistEditCtrl extends JPanel
     _btnReorder = new JButton();
     JToolBar.Separator jSeparator2 = new JToolBar.Separator();
     _btnMagicFix = new JButton();
-    _btnLocate = new JButton();
     _btnPlay = new JButton();
     JToolBar.Separator jSeparator5 = new JToolBar.Separator();
     _btnPrevMissing = new JButton();
@@ -648,7 +648,7 @@ public class PlaylistEditCtrl extends JPanel
     _playlistEntryRightClickMenu.add(_miReplace);
     _playlistEntryRightClickMenu.add(jSeparator3);
 
-    _miFindClosest.setText("Find Closest Matches");
+    _miFindClosest.setText("Repair playlist");
     _miFindClosest.addActionListener(evt -> findClosestMatches());
     _playlistEntryRightClickMenu.add(_miFindClosest);
     _playlistEntryRightClickMenu.add(jSeparator4);
@@ -727,19 +727,13 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.add(jSeparator2);
 
     _btnMagicFix = makeButton("magic-fix.png");
-    _btnMagicFix.setToolTipText("Find closest matches");
+    _btnMagicFix.setToolTipText("Repair playlist");
     _btnMagicFix.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnMagicFix.addActionListener(evt -> {
       locateMissingFiles();
       bulkFindClosestMatches();
     });
     _uiToolbar.add(_btnMagicFix);
-
-    _btnLocate = makeButton("edit-find.gif");
-    _btnLocate.setToolTipText("Find Exact Matches");
-    _btnLocate.setEnabled(_playlist != null && _playlist.getFile().exists());
-    _btnLocate.addActionListener(evt -> this.locateMissingFiles());
-    _uiToolbar.add(_btnLocate);
 
     _btnPlay = makeButton("play.png");
     _btnPlay.setToolTipText("Play Selected");
@@ -842,7 +836,7 @@ public class PlaylistEditCtrl extends JPanel
         {
           findClosestMatches();
         }
-        else if (currentlySelectedRow != -1 && (evt.getModifiers() & ActionEvent.CTRL_MASK) <= 0)
+        else if (currentlySelectedRow != -1 && (evt.getModifiersEx() & ActionEvent.CTRL_MASK) <= 0)
         {
           playSelectedEntries();
         }
@@ -971,7 +965,7 @@ public class PlaylistEditCtrl extends JPanel
     if (_playlist.size() > 0)
     {
       int row = _uiTable.getSelectedRow();
-      int modelRow = 0;
+      int modelRow;
 
       // search from the selected row (or the beginning of the list)
       // for the next missing entry, if found, jump to it and bail out.
@@ -1051,8 +1045,9 @@ public class PlaylistEditCtrl extends JPanel
         {
           worker.get();
         }
-        catch (CancellationException ex)
+        catch (CancellationException ignore)
         {
+          // Ignore cancellation
         }
       }
       catch (InterruptedException | ExecutionException e)
@@ -1093,7 +1088,6 @@ public class PlaylistEditCtrl extends JPanel
   private JButton _btnDelete;
   private JButton _btnDown;
   private JButton _btnInvert;
-  private JButton _btnLocate;
   private JButton _btnMagicFix;
   private JButton _btnNextMissing;
   private JButton _btnPlay;
@@ -1133,7 +1127,6 @@ public class PlaylistEditCtrl extends JPanel
     boolean hasPlaylist = _playlist != null;
 
     _btnAdd.setEnabled(hasPlaylist);
-    _btnLocate.setEnabled(hasPlaylist);
     _btnMagicFix.setEnabled(hasPlaylist);
     _btnReorder.setEnabled(hasPlaylist && _playlist.size() > 1);
     _btnReload.setEnabled(hasPlaylist && _playlist.isModified());
@@ -1402,7 +1395,7 @@ public class PlaylistEditCtrl extends JPanel
           if (e.isPopupTrigger())
           {
             boolean isOverItem = rowIx >= 0;
-            if (isOverItem && (e.getModifiers() & ActionEvent.CTRL_MASK) > 0)
+            if (isOverItem && (e.getModifiersEx() & ActionEvent.CTRL_MASK) > 0)
             {
               _uiTable.getSelectionModel().addSelectionInterval(rowIx, rowIx);
             }
@@ -1498,7 +1491,6 @@ public class PlaylistEditCtrl extends JPanel
           List<PlaylistEntry> entries = data.getList();
           int removedAt;
           int insertAtUpdated = dl.getRow();
-          int i = 0;
           for (PlaylistEntry entry : entries)
           {
             // remove them all, we'll re-addAt them in bulk...
@@ -1509,7 +1501,6 @@ public class PlaylistEditCtrl extends JPanel
             {
               insertAtUpdated--;
             }
-            i++;
           }
 
           _playlist.addAllAt(insertAtUpdated, entries);
@@ -1719,9 +1710,12 @@ public class PlaylistEditCtrl extends JPanel
       PlaylistEntry entry = _playlist.get(rowIndex);
       switch (columnIndex)
       {
-        case 0:
+        case 0 ->
+        {
           return rowIndex + 1;
-        case 1:
+        }
+        case 1 ->
+        {
           if (entry.isURL())
           {
             return ImageIcons.IMG_URL;
@@ -1738,12 +1732,19 @@ public class PlaylistEditCtrl extends JPanel
           {
             return ImageIcons.IMG_MISSING;
           }
-        case 2:
+        }
+        case 2 ->
+        {
           return entry.getTrackFileName();
-        case 3:
+        }
+        case 3 ->
+        {
           return entry.getTrackFolder();
-        default:
+        }
+        default ->
+        {
           return null;
+        }
       }
     }
 
