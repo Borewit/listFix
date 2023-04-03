@@ -137,7 +137,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
       appConfig.setLookAndFeel(
         Arrays.stream(UIManager.getInstalledLookAndFeels())
           .filter(laf -> laf.getName().equals("Nimbus"))
-          .map(laf -> laf.getClassName())
+          .map(UIManager.LookAndFeelInfo::getClassName)
           .findFirst()
           .orElse(UIManager.getSystemLookAndFeelClassName()
           )
@@ -549,7 +549,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     Separator jSeparator5 = new Separator();
     JMenuItem _exitMenuItem = new JMenuItem();
     JMenu _repairMenu = new JMenu();
-    JMenuItem _miBatchRepair = new JMenuItem();
     JMenuItem _miExactMatchRepairOpenPlaylists = new JMenuItem();
     JMenuItem _miClosestMatchRepairOpenPlaylists = new JMenuItem();
     JMenu _helpMenu = new JMenu();
@@ -929,13 +928,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _repairMenu.setText("Repair");
 
-    _miBatchRepair.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK));
-    _miBatchRepair.setMnemonic('E');
-    _miBatchRepair.setText("Exact Matches Repair...");
-    _miBatchRepair.setToolTipText("Runs an \"Exact Matches Repair\" on lists chosen from the file system");
-    _miBatchRepair.addActionListener(evt -> onMenuBatchRepairActionPerformed());
-    _repairMenu.add(_miBatchRepair);
-
     _miExactMatchRepairOpenPlaylists.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
     _miExactMatchRepairOpenPlaylists.setText("Quick Repair Currently Open Playlists");
     _miExactMatchRepairOpenPlaylists.setToolTipText("Runs an \"Exact Matches Repair\" on all open playlists");
@@ -1268,8 +1260,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     }
   }
 
-  private void _clearHistoryMenuItemActionPerformed()//GEN-FIRST:event__clearHistoryMenuItemActionPerformed
-  {//GEN-HEADEREND:event__clearHistoryMenuItemActionPerformed
+  private void _clearHistoryMenuItemActionPerformed()
+  {
     try
     {
       _listFixController.clearM3UHistory();
@@ -1279,20 +1271,20 @@ public final class GUIScreen extends JFrame implements IListFixGui
       _logger.error("Error clear M3U history", e);
     }
     updateRecentMenu();
-  }//GEN-LAST:event__clearHistoryMenuItemActionPerformed
+  }
 
-  private void _saveAsMenuItemActionPerformed()//GEN-FIRST:event__saveAsMenuItemActionPerformed
-  {//GEN-HEADEREND:event__saveAsMenuItemActionPerformed
+  private void _saveAsMenuItemActionPerformed()
+  {
     if (_currentPlaylist == null)
     {
       return;
     }
 
     this.showPlaylistSaveAsDialog(_currentPlaylist);
-  }//GEN-LAST:event__saveAsMenuItemActionPerformed
+  }
 
-  private void openIconButtonActionPerformed()//GEN-FIRST:event_openIconButtonActionPerformed
-  {//GEN-HEADEREND:event_openIconButtonActionPerformed
+  private void openIconButtonActionPerformed()
+  {
     if (_currentPlaylist != null)
     {
       _jOpenPlaylistFileChooser.setSelectedFile(_currentPlaylist.getFile());
@@ -1306,11 +1298,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
         this.openPlaylist(file.toPath());
       }
     }
-  }//GEN-LAST:event_openIconButtonActionPerformed(java.awt.event.ActionEvent evt)
+  }
 
   private void openPlaylistFoldersFromPlaylistTree()
   {
-    this.getSelectedFilesFromTreePlaylists().stream()
+    this.getSelectedFilesFromTreePlaylists()
       .forEach(this::openFileLocation);
   }
 
@@ -2091,67 +2083,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
   private void launchListFixUpdateUrl()
   {
     BrowserLauncher.launch("https://github.com/Borewit/listFix/releases");
-  }
-
-  private void onMenuBatchRepairActionPerformed()
-  {
-    JFileChooser dlg = new JFileChooser();
-    dlg.setDialogTitle("Select Playlists and/or Directories");
-    dlg.setAcceptAllFileFilterUsed(false);
-    dlg.addChoosableFileFilter(new AllPlaylistFileFilter());
-    dlg.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-    dlg.setMultiSelectionEnabled(true);
-    if (dlg.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-    {
-      // build complete list of playlists
-      List<Path> files = new ArrayList<>();
-      for (File file : dlg.getSelectedFiles())
-      {
-        Path path = file.toPath();
-        if (Files.isRegularFile(path))
-        {
-          files.add(path);
-        }
-        else
-        {
-          try
-          {
-            files.addAll(PlaylistScanner.getAllPlaylists(path));
-          }
-          catch (IOException e)
-          {
-            throw new RuntimeException(e);
-          }
-        }
-      }
-      if (files.isEmpty())
-      {
-        return;
-      }
-
-      File rootDir = dlg.getCurrentDirectory();
-      BatchRepair br = new BatchRepair(_listFixController.getMediaLibrary(), rootDir);
-      br.setDescription("Exact Matches Search");
-      for (Path file : files)
-      {
-        br.add(new BatchRepairItem(file.toFile(), this.getOptions()));
-      }
-
-      BatchExactMatchesResultsDialog repairDlg = new BatchExactMatchesResultsDialog(this, true, br, this);
-      if (!repairDlg.getUserCancelled())
-      {
-        if (br.isEmpty())
-        {
-          JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
-        }
-        else
-        {
-          repairDlg.setLocationRelativeTo(this);
-          repairDlg.setVisible(true);
-          updatePlaylistDirectoryPanel();
-        }
-      }
-    }
   }
 
   private void _openIconButtonActionPerformed1()

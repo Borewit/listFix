@@ -727,7 +727,7 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.add(jSeparator2);
 
     _btnMagicFix = makeButton("magic-fix.png");
-    _btnMagicFix.setToolTipText("Fix Everything");
+    _btnMagicFix.setToolTipText("Find closest matches");
     _btnMagicFix.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnMagicFix.addActionListener(evt -> {
       locateMissingFiles();
