@@ -3,7 +3,6 @@ package listfix.model.playlists;
 import io.github.borewit.lizzy.content.Content;
 import io.github.borewit.lizzy.playlist.*;
 import listfix.config.IMediaLibrary;
-import listfix.io.FileLauncher;
 import listfix.io.IPlaylistOptions;
 import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.model.BatchMatchItem;
@@ -18,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Playlist
@@ -463,9 +464,9 @@ public class Playlist
     try
     {
       _logger.debug(String.format("Launching file: %s", this.playlistPath));
-      FileLauncher.launch(this.playlistPath.toFile());
+      Desktop.getDesktop().open(this.playlistPath.toFile());
     }
-    catch (IOException | InterruptedException e)
+    catch (IOException e)
     {
       _logger.warn(String.format("Launching file: %s", this.playlistPath), e);
     }

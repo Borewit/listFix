@@ -23,18 +23,31 @@ public class BrowserLauncher
    * Attempts to open the given url in the system's default web browser.
    * Logs failure details and silently fails if a browser can't be opened.
    *
-   * @param url The URL to display in the browser, if successfully launched.
+   * @param uri The URI to display in the browser, if successfully launched.
    */
-  public static void launch(String url)
+  public static void launch(String uri)
+  {
+    try
+    {
+      launch(new URI(uri));
+    }
+    catch (URISyntaxException e)
+    {
+      _logger.error(String.format("Invalid URI: %s", uri), e);
+      JOptionPane.showMessageDialog(null, new JTransparentTextArea(_errMsg + ": " + e.getLocalizedMessage()));
+    }
+  }
+
+  public static void launch(URI uri)
   {
     Desktop desk = Desktop.getDesktop();
     try
     {
-      desk.browse(new URI(url));
+      desk.browse(uri);
     }
-    catch (IOException | URISyntaxException e)
+    catch (IOException e)
     {
-      _logger.error(String.format("Failed to open URL: %s", url), e);
+      _logger.error(String.format("Failed to open URL: %s", uri), e);
       JOptionPane.showMessageDialog(null, new JTransparentTextArea(_errMsg + ": " + e.getLocalizedMessage()));
     }
   }
