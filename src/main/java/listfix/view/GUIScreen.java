@@ -799,6 +799,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _playlistPanel.add(_gettingStartedPanel, "_gettingStartedPanel");
 
     _docTabPanel.setLayout(new BorderLayout());
+    _docTabPanel.setBorder(BorderFactory.createTitledBorder(null, "Playlists Editor", TitledBorder.LEFT, TitledBorder.TOP));
     _docTabPanel.add(_playlistTabbedPane, BorderLayout.CENTER);
 
     _playlistPanel.add(_docTabPanel, "_docTabPanel");
