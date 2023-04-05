@@ -93,7 +93,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
   }
 
   public static String getBuildNumber() {
-    URL url = GUIScreen.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
+    URL url = GUIScreen.class.getResource("/META-INF/MANIFEST.MF");
     try
     {
       Manifest manifest = new Manifest(url.openStream());

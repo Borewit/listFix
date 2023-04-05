@@ -54,10 +54,15 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build
         run: ./gradlew :build
-      - name: jlinkZip
-        run: ./gradlew :jlinkZip
-      - name: Upload Windows jlink image
+      - name: Build Windows installers
+        run: ./gradlew :jpackage
+      - name: Upload Windows msi
         uses: actions/upload-artifact@v3
         with:
-          name: listFix-windows
-          path: build/image.zip
+          name: listFix-windows-msi
+          path: build/jpackage/listfix-*.msi
+      - name: Upload Windows exe
+        uses: actions/upload-artifact@v3
+        with:
+          name: listFix-windows-exe
+          path: build/jpackage/listFix()-*.exe
