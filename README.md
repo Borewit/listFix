@@ -47,12 +47,6 @@ In project folder, run:
 gradlew build
 ```
 
-### Build Windows executable
-In project folder, run:
-```shell
-gradlew createExe
-```
-
 ### Run application
 In project folder, run:
 ```shell
@@ -62,7 +56,7 @@ gradlew run
 ### Build Windows distribution
 In project folder, run:
 ```shell
-gradlew assembleDist
+gradlew jpackage
 ```
 
 ### Build Windows installer
