@@ -30,9 +30,6 @@ plugins {
     id 'application'
     id 'java'
 
-    // https://github.com/openjfx/javafx-gradle-plugin
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-
     id 'checkstyle'
 
     // https://github.com/qoomon/gradle-git-versioning-plugin
@@ -60,13 +57,6 @@ gitVersioning.apply {
 
 sourceCompatibility = 15
 targetCompatibility = 15
-
-javafx {
-    version = '17.0.1'
-    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.swing']
-    configuration = 'implementation'
-}
-
 
 project.mainClassName = 'listfix.view.GUIScreen'
 
