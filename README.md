@@ -36,7 +36,7 @@ If a few files are still missing, they were probably renamed.  listFix() has a w
 
 From the command line:
 ```shell
-java --add-exports java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED -jar listFix-2.6.0-all.jar
+java -jar listFix-2.7.0-all.jar
 ```
 
 ## Development
