@@ -145,6 +145,9 @@ def generatedDir = "$buildDir/generated"
 def generatedSources = "$generatedDir/sources"
 def generatedResources = "$generatedDir/resources"
 def generatedImages = "$generatedResources/images"
+def pathFavicon = "$generatedDir/images/favicon.ico"
+def pathPngIcon = "${generatedImages}/icon.png"
+def pathSvgLogo = "${generatedImages}/listFix() logo.svg"
 
 sourceSets {
     main {
@@ -174,7 +177,7 @@ task makePngIcon(type: Svg2PngTask) {
     source = new File('src/main/svg/listFix() icon.svg')
     width = 64
     height = 64
-    destination = new File("$generatedImages/icon.png")
+    destination = new File(pathPngIcon)
 }
 
 tasks.processResources.dependsOn makePngIcon
@@ -182,13 +185,13 @@ tasks.processResources.dependsOn makePngIcon
 task generateSplashScreenWithVersion(type: Copy) {
     group = 'graphics'
     from 'src/main/svg/listFix() logo.svg'
-    into "$buildDir/generated-src"
+    into generatedImages
     filter(ReplaceTokens, tokens: [VERSION: project.version])
 }
 
 task makeSplashScreen(type: Svg2PngTask, dependsOn: generateSplashScreenWithVersion) {
     group = 'graphics'
-    source = new File("$buildDir/generated-src/listFix() logo.svg")
+    source = new File(pathSvgLogo)
     width = 400
     height = 160
     destination = new File("$generatedImages/listfixSplashScreen.png")
@@ -201,7 +204,7 @@ task makeIcon (type: Svg2IcoTask) {
     input {
         source = file('src/main/svg/listFix() icon.svg')
     }
-    destination = file('website/favicon.ico')
+    destination = file(pathFavicon)
 }
 
 tasks.withType(Checkstyle).configureEach {
@@ -226,7 +229,7 @@ task packageMyApp(type: io.github.fvarrui.javapackager.gradle.PackageTask, depen
     customizedJre = false
     winConfig {
         headerType = 'gui'
-        icoFile = file("${projectDir}/website/favicon.ico")
+        icoFile = file(pathFavicon)
     }
     description = 'Repairs Missing Entries in Playlist Files'
     organizationName = 'Borewit'
