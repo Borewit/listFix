@@ -27,3 +27,10 @@ jobs:
           path: build/test-results/test/*.xml
           reporter: java-junit
           fail-on-error: true
+      - name: Build fatJar
+        run: ./gradlew :fatJar
+      - name: Upload fatJar artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: fatJar
+          path: build/libs/listFix-*-all.jar
