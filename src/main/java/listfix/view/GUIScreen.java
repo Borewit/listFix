@@ -1,6 +1,5 @@
 package listfix.view;
 
-import com.jcabi.manifests.Manifests;
 import io.github.borewit.lizzy.playlist.PlaylistFormat;
 import listfix.config.*;
 import listfix.controller.ListFixController;
@@ -49,6 +48,8 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 public final class GUIScreen extends JFrame implements IListFixGui
@@ -58,15 +59,14 @@ public final class GUIScreen extends JFrame implements IListFixGui
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private final List<Playlist> _openPlaylists = new ArrayList<>();
   private final Image applicationIcon = this.getImageIcon("icon.png").getImage();
-  private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen("images/listfixSplashScreen.png");
-
+  private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen(this.getImageIcon("listfixSplashScreen.png"));
   private ListFixController _listFixController = null;
   private Playlist _currentPlaylist;
   private IPlaylistModifiedListener _playlistListener;
 
   private static final Logger _logger = LogManager.getLogger(GUIScreen.class);
 
-  private static final String applicationVersion = Manifests.read("Implementation-Version");
+  private static final String applicationVersion = getBuildNumber();
 
   private static final int keyEventRenameFile = KeyEvent.VK_F2;
 
@@ -90,6 +90,20 @@ public final class GUIScreen extends JFrame implements IListFixGui
     initComponents();
 
     postInitComponents();
+  }
+
+  public static String getBuildNumber() {
+    URL url = GUIScreen.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
+    try
+    {
+      Manifest manifest = new Manifest(url.openStream());
+      Attributes mainAttributes = manifest.getMainAttributes();
+      return mainAttributes.getValue("Implementation-Version");
+    }
+    catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
