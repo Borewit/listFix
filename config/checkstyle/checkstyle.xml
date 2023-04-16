@@ -20,6 +20,11 @@
 
   <module name="FileTabCharacter"/>
 
+  <!-- Ignore module-info.java -->
+  <module name="BeforeExecutionExclusionFileFilter">
+    <property name="fileNamePattern" value="module\-info\.java$"/>
+  </module>
+
   <module name="TreeWalker">
     <module name="RegexpSinglelineJava">
       <property name="format" value="\s+$"/>

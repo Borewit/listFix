@@ -25,11 +25,8 @@ public class SplashScreen extends JFrame
 {
   private final JLabel statusBar;
 
-  public SplashScreen(String imageResourcePath)
+  public SplashScreen(ImageIcon image)
   {
-    ClassLoader cl = this.getClass().getClassLoader();
-    ImageIcon image = new ImageIcon(cl.getResource(imageResourcePath));
-
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(new JLabel(image));
 

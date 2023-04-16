@@ -34,6 +34,9 @@ plugins {
 
     // https://github.com/qoomon/gradle-git-versioning-plugin
     id 'me.qoomon.git-versioning' version '6.4.2'
+
+    id 'org.beryx.jlink' version '2.26.0'
+    id 'org.gradlex.extra-java-module-info' version '1.3'
 }
 
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
@@ -85,14 +88,10 @@ repositories {
 dependencies {
 
     // Provides christophedelory.playlist.*
-    implementation 'io.github.borewit:lizzy:2.0.0'
+    implementation 'io.github.borewit:lizzy:3.0.0'
 
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-
-    // Apache SLF4J to Log4j2 Adapter (bridge)
-    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl
-    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
 
     implementation 'jakarta.activation:jakarta.activation-api:2.1.1';
 
@@ -106,10 +105,6 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation 'commons-io:commons-io:2.11.0'
 
-    // Used to read the version number from the manifest
-    // https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests/1.2.1
-    implementation 'com.jcabi:jcabi-manifests:1.2.1'
-
     // Provide JFontChooser
     implementation 'com.rover12421.opensource:JFontChooser:1.0.5-3'
 
@@ -121,6 +116,7 @@ dependencies {
 }
 
 application {
+    mainModule = 'listFix.app'
     // Define the main class for the application.
     mainClass = project.mainClassName
 }
@@ -128,6 +124,31 @@ application {
 jar {
     manifest {
         attributes(manifestAttributes)
+    }
+}
+
+// Convert legacy dependency to named Java module
+extraJavaModuleInfo {
+    module('com.rover12421.opensource:JFontChooser', 'say.swing.JFontChooser') {
+        requires('java.desktop');
+        exports('say.swing')
+    }
+    module('org.objenesis:objenesis', 'org.objenesis') {
+        exports('org.objenesis')
+    }
+    module('org.mockito:mockito-core', 'org.mockito.core') {
+        exports('org.mockito.verification')
+    }
+    module('com.jcabi:jcabi-log', 'com.jcabi.log') {
+        exports('com.jcabi.log')
+    }
+    module('com.jcabi:jcabi-manifests', 'com.jcabi.manifests') {
+        //requires('com.jcabi.log')
+        exports('com.jcabi.manifests')
+    }
+    module('com.googlecode.plist:dd-plist', 'dd.plist') {
+        exports('com.dd.plist')
+        requires('java.xml')
     }
 }
 
@@ -148,6 +169,16 @@ sourceSets {
             srcDirs = ['src/main/resources', generatedResources]
         }
     }
+}
+
+jlink {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher{
+        name = 'listfix'
+        noConsole = false
+        jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
+    }
+    forceMerge 'jackson', 'log4j', 'log4j-core', 'slf4j', 'com.jcabi.log'
 }
 
 task fatJar(type: Jar) {

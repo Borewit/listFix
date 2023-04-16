@@ -54,10 +54,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build
         run: ./gradlew :build
-      - name: Assemble
-        run: ./gradlew :assemble
-      - name: Upload compiled Windows distribution
+      - name: jlinkZip
+        run: ./gradlew :jlinkZip
+      - name: Upload Windows jlink image
         uses: actions/upload-artifact@v3
         with:
           name: listFix-windows
-          path: build/distributions/listFix-*.zip
+          path: build/image.zip
