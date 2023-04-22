@@ -1,5 +1,7 @@
 name: CI
-on: [push]
+on:
+  pull_request:
+    types: [synchronize]
 jobs:
   ubuntuBuild:
     name: Build on Ubuntu
@@ -40,6 +42,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -66,3 +69,8 @@ jobs:
         with:
           name: listFix-windows-exe
           path: build/jpackage/listFix()-*.exe
+      - name: Comment PR linking artifact
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            [Build artifacts](https://github.com/Borewit/listFix/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}#artifacts)
