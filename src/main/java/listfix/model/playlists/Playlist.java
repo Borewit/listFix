@@ -949,7 +949,13 @@ public class Playlist
     {
       if (trackPath.isAbsolute() && this.playlistPath.getParent() != null)
       {
-        return this.playlistPath.getParent().relativize(trackPath);
+        try
+        {
+          return this.playlistPath.getParent().relativize(trackPath);
+        }
+        catch (IllegalArgumentException ignore) {
+          // Maybe thrown if the track and playlist have no common root
+        }
       }
       return trackPath;
     }
