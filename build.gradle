@@ -63,11 +63,11 @@ targetCompatibility = 15
 project.mainClassName = 'listfix.view.GUIScreen'
 
 def manifestAttributes = [
-    'Implementation-Title'  : project.applicationName,
-    'Implementation-Version': project.version,
-    'Implementation-Vendor' : 'Borewit',
-    'SCM-Repository'        : 'https://github.com/Borewit/listFix',
-    'Main-Class'            : project.mainClassName
+        'Implementation-Title'  : project.applicationName,
+        'Implementation-Version': project.version,
+        'Implementation-Vendor' : 'Borewit',
+        'SCM-Repository'        : 'https://github.com/Borewit/listFix',
+        'Main-Class'            : project.mainClassName
 ]
 
 def fatJarFilePath = "build/libs/${project.name}-${project.version}-all.jar"
@@ -172,7 +172,7 @@ sourceSets {
 
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher{
+    launcher {
         name = 'listFix()'
         noConsole = true
         jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
@@ -188,13 +188,23 @@ jlink {
         description = 'Fix and repairs broken playlist'
         // imageOptions += ['--win-console']
         installerOptions += [
-            '--vendor', project.vendor,
-            '--app-version', version,
-            '--win-upgrade-uuid', project.windowsUpgradeUuid,
-            '--install-dir', 'listFix',
+                '--vendor', project.vendor,
+                '--app-version', version,
         ]
         if (currentOs.windows) {
-            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
+            installerOptions += [
+                    '--win-upgrade-uuid', project.windowsUpgradeUuid,
+                    '--install-dir', 'listFix',
+                    '--win-per-user-install',
+                    '--win-dir-chooser',
+                    '--win-menu'
+            ]
+        } else if (currentOs.unix) {
+            installerOptions += [
+                    '--install-dir', '/opt/listfix',
+                    '--linux-package-name', 'listfix',
+                    '--linux-rpm-license-type', 'MIT'
+            ]
         }
     }
 }
@@ -238,7 +248,7 @@ task makeSplashScreen(type: Svg2PngTask, dependsOn: generateSplashScreenWithVers
 
 tasks.processResources.dependsOn makeSplashScreen
 
-task makeIcon (type: Svg2IcoTask) {
+task makeIcon(type: Svg2IcoTask) {
     group = 'graphics'
     input {
         source = file('src/main/svg/listFix() icon.svg')

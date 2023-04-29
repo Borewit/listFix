@@ -35,6 +35,14 @@ jobs:
         with:
           name: fatJar
           path: build/libs/listFix-*-all.jar
+      - name: Build jpackage distribution
+        run: :jpackage
+      - name: Upload fatJar artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: fatJar
+          path: build/libs/listfix-*.deb
+
   windowsBuild:
     name: Build on Windows
     runs-on: windows-latest
