@@ -1413,10 +1413,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     // Tie the DocumentComponent and the Playlist in the editor together via listeners, so the former can update when the latter is modified
     playlist.addModifiedListener(
-      list1 -> {
-        updateTabTitleForPlaylist(list1, tempComp);
-        tempComp.setIcon(getIconForPlaylist(list1));
-        tempComp.setPath(list1.getPath());
+      list -> {
+        updateTabTitleForPlaylist(list, tempComp);
+        tempComp.setIcon(getIconForPlaylist(list));
+        tempComp.setPath(list.getPath());
       }
     );
 
