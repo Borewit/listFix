@@ -396,10 +396,7 @@ public class Playlist
     }
 
     // notify the listeners if we have changed...
-    if (this.isModified)
-    {
-      firePlaylistModified();
-    }
+    this.firePlaylistModified();
   }
 
   private void refreshStatus()
