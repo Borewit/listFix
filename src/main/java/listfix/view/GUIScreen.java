@@ -734,8 +734,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _btnOpenSelected.addActionListener(evt -> GUIScreen.this.openTreeSelectedPlaylists());
     _playlistsDirectoryButtonPanel.add(_btnOpenSelected);
 
-    _btnDeepRepair.setText("Deep");
-    _btnDeepRepair.setToolTipText("Deep Batch Repair");
+    _btnDeepRepair.setText("Repair");
+    _btnDeepRepair.setToolTipText("Batch Repair");
     _btnDeepRepair.setEnabled(false);
     _btnDeepRepair.setMargin(new Insets(2, 8, 2, 8));
     _btnDeepRepair.addActionListener(evt -> _btnDeepRepairActionPerformed());
