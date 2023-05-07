@@ -60,11 +60,6 @@ jobs:
         run: ./gradlew :build
       - name: Build Windows installers
         run: ./gradlew :jpackage
-      - name: Upload Windows msi
-        uses: actions/upload-artifact@v3
-        with:
-          name: listFix-windows-msi
-          path: build/jpackage/listfix-*.msi
       - name: Upload Windows exe
         uses: actions/upload-artifact@v3
         with:
