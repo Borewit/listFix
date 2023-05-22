@@ -20,7 +20,7 @@ buildscript {
     // force to use commons-io:2.11.0 instead of svg2ico-gradle-plugin transitive commons-io (which not includes org.apache.commons.io.FileUtils.copyInputStreamToFile method)
     configurations.classpath {
         resolutionStrategy {
-            force 'commons-io:commons-io:2.11.0'
+            force 'commons-io:commons-io:2.12.0'
         }
     }
 }
@@ -102,7 +102,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-io:commons-io:2.12.0'
 
     // Provide JFontChooser
     implementation 'com.rover12421.opensource:JFontChooser:1.0.5-3'
