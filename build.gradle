@@ -9,7 +9,7 @@ buildscript {
     dependencies {
 
         // https://github.com/fvarrui/JavaPackager
-        classpath 'io.github.fvarrui:javapackager:1.7.0'
+        classpath 'io.github.fvarrui:javapackager:1.7.4'
 
         // https://gitlab.com/svg2ico/svg2ico-gradle-plugin
         classpath('gradle.plugin.com.gitlab.svg2ico:svg2ico-gradle-plugin:0.14') {
