@@ -1700,12 +1700,12 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   public void runClosestMatchOnAllTabs()
   {
-    this._playlistTabbedPane.getAllEmbeddedMainComponent().forEach(ctrl -> {
+    for (PlaylistEditCtrl ctrl : this._playlistTabbedPane.getAllEmbeddedMainComponent()) {
       this._playlistTabbedPane.setActiveDocument(ctrl.getPlaylist().getPath());
-      ctrl.locateMissingFiles();
-      ctrl.bulkFindClosestMatches();
-    });
-
+      if (!ctrl.locateMissingFiles() || !ctrl.bulkFindClosestMatches()) {
+        break;
+      }
+    }
   }
 
   private void reloadAllTabs()
