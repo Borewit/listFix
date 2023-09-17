@@ -221,7 +221,11 @@ public class PlaylistEditCtrl extends JPanel
     }
   }
 
-  public void locateMissingFiles()
+  /**
+   * Locate missing files
+   * @return false if cancelled, otherwise true
+   */
+  public boolean locateMissingFiles()
   {
     _logger.debug(markerRepair, "Start locateMissingFiles()");
     ProgressWorker<List<Integer>, String> worker = new ProgressWorker<>()
@@ -261,8 +265,10 @@ public class PlaylistEditCtrl extends JPanel
         }
       }
     };
+
     ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Repairing...");
-    pd.setVisible(true);
+    pd.setVisible(true); // Wait until the worker completed
+    return !worker.isCancelled();
   }
 
   private void reorderList()
@@ -386,7 +392,10 @@ public class PlaylistEditCtrl extends JPanel
     this.findClosestMatches(worker);
   }
 
-  public void bulkFindClosestMatches()
+  /**
+   * @return false if cancelled otherwise true
+   */
+  public boolean bulkFindClosestMatches()
   {
     final Collection<String> libraryFiles = listFixGui.getApplicationConfiguration().getMediaLibrary().getNestedMediaFiles();
     ProgressWorker<List<BatchMatchItem>, String> worker = new ProgressWorker<>()
@@ -398,6 +407,7 @@ public class PlaylistEditCtrl extends JPanel
       }
     };
     this.findClosestMatches(worker);
+    return !worker.isCancelled();
   }
 
   private void findClosestMatches(ProgressWorker<List<BatchMatchItem>, String> worker)
@@ -730,8 +740,9 @@ public class PlaylistEditCtrl extends JPanel
     _btnMagicFix.setToolTipText("Repair playlist");
     _btnMagicFix.setEnabled(_playlist != null && _playlist.getFile().exists());
     _btnMagicFix.addActionListener(evt -> {
-      locateMissingFiles();
-      bulkFindClosestMatches();
+      if (locateMissingFiles()) {
+        bulkFindClosestMatches();
+      }
     });
     _uiToolbar.add(_btnMagicFix);
 
