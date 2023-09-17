@@ -257,7 +257,7 @@ public class PlaylistEditCtrl extends JPanel
         }
         catch (CancellationException | InterruptedException exception)
         {
-          _logger.warn(markerRepair, "Repair interrupted", exception);
+          _logger.debug(markerRepair, "Cancelled locate missing files");
         }
         catch (ExecutionException ex)
         {
