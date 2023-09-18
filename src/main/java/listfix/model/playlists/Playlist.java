@@ -585,7 +585,7 @@ public class Playlist
 
     final long start = System.currentTimeMillis();
 
-    List<PlaylistEntry> fixed = _entries.stream().filter(entry -> {
+    List<PlaylistEntry> fixed = _entries.parallelStream().filter(entry -> {
       if (observer.getCancelled())
       {
         _logger.info(markerPlaylistRepair, "Observer cancelled, quit repair");
