@@ -306,7 +306,6 @@ public class PlaylistEditCtrl extends JPanel
     return !worker.isCancelled();
   }
 
-
   private void reorderList()
   {
     Playlist.SortIx sortIx = Playlist.SortIx.None;
@@ -807,7 +806,6 @@ public class PlaylistEditCtrl extends JPanel
     _uiTableScrollPane.setBorder(BorderFactory.createEtchedBorder());
 
     _uiTable.setAutoCreateRowSorter(true);
-
     _uiTable.setModel(playlistTableModel);
     _uiTable.setDragEnabled(true);
     _uiTable.setFillsViewportHeight(true);
