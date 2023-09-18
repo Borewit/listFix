@@ -14,22 +14,15 @@ public class BatchMatchItem
   /**
    * Playlist position
    */
-  private final int _entryIx;
   private final PlaylistEntry _entry;
   private final List<PotentialPlaylistEntryMatch> matches;
   private PotentialPlaylistEntryMatch selectedMatch;
 
-  public BatchMatchItem(int ix, PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
+  public BatchMatchItem(PlaylistEntry entry, List<PotentialPlaylistEntryMatch> matches)
   {
-    this._entryIx = ix;
     this._entry = entry;
     this.matches = matches;
     this.selectedMatch = matches.size() > 0 ? matches.get(0) : null;
-  }
-
-  public int getEntryIx()
-  {
-    return this._entryIx;
   }
 
   public PlaylistEntry getEntry()

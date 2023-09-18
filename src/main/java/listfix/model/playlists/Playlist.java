@@ -578,22 +578,20 @@ public class Playlist
    * @param mediaLibrary Media library used to reference existing media files
    * @param observer     Progress observer
    */
-  public List<Integer> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
+  public List<PlaylistEntry> repair(IMediaLibrary mediaLibrary, IProgressObserver<String> observer)
   {
     ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(this._entries.size());
 
-    List<Integer> fixed = new ArrayList<>();
-    for (int ix = 0; ix < _entries.size(); ix++)
-    {
+    final long start = System.currentTimeMillis();
+
+    List<PlaylistEntry> fixed = _entries.stream().filter(entry -> {
       if (observer.getCancelled())
       {
         _logger.info(markerPlaylistRepair, "Observer cancelled, quit repair");
-        return null;
+        return false;
       }
       progress.stepCompleted();
-
-      PlaylistEntry entry = this._entries.get(ix);
 
       final boolean caseInsensitiveExactMatching = this.playListOptions.getCaseInsensitiveExactMatching();
       final boolean relativePaths = this.playListOptions.getSavePlaylistsWithRelativePaths();
@@ -607,8 +605,8 @@ public class Playlist
           _logger.debug(markerPlaylistRepair, "Found " + fileEntry.getTrackPath());
           if (filePlaylistEntry.updatePathToMediaLibraryIfFoundOutside(mediaLibrary, caseInsensitiveExactMatching, relativePaths))
           {
-            fixed.add(ix);
-            refreshStatus();
+            this.refreshStatus();
+            return true;
           }
         }
         else
@@ -618,13 +616,16 @@ public class Playlist
           if (entry.isFound())
           {
             _logger.debug(markerPlaylistRepair, "Found & repaired file entry " + fileEntry.getTrackPath());
-            fixed.add(ix);
-            refreshStatus();
+            this.refreshStatus();
+            return true;
           }
         }
       }
-    }
-    _logger.info(markerPlaylistRepair, "Completed.");
+      return false;
+    }).collect(Collectors.toList());
+
+    long timeElapsed = System.currentTimeMillis() - start;
+    _logger.info("Repaired playlist in " + timeElapsed + " ms.");
     return fixed;
   }
 
@@ -694,7 +695,6 @@ public class Playlist
     progress.setTotal(entries.size());
 
     List<BatchMatchItem> fixed = new ArrayList<>();
-    int ix = 0;
     for (PlaylistEntry entry : entries)
     {
       if (observer.getCancelled()) return null;
@@ -703,10 +703,9 @@ public class Playlist
         List<PotentialPlaylistEntryMatch> matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
         if (!matches.isEmpty())
         {
-          fixed.add(new BatchMatchItem(ix, entry, matches));
+          fixed.add(new BatchMatchItem(entry, matches));
         }
       }
-      ix++;
       progress.stepCompleted();
     }
 
