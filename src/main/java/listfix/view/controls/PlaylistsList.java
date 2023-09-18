@@ -1,11 +1,3 @@
-
-
-/*
- * PlaylistsList.java
- *
- * Created on Apr 2, 2011, 12:11:40 PM
- */
-
 package listfix.view.controls;
 
 import listfix.model.BatchRepair;
@@ -26,7 +18,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class PlaylistsList extends JPanel
 {
   private BatchRepair _batch;
@@ -40,7 +31,6 @@ public class PlaylistsList extends JPanel
   {
     initComponents();
   }
-
 
   public PlaylistsList(BatchRepair batch)
   {

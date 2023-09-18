@@ -17,7 +17,7 @@ import listfix.util.ExStack;
 import listfix.view.IListFixGui;
 import listfix.view.dialogs.*;
 import listfix.view.support.IPlaylistModifiedListener;
-import listfix.view.support.ImageIcons;
+
 import listfix.view.support.ProgressWorker;
 import listfix.view.support.ZebraJTable;
 import org.apache.commons.io.FilenameUtils;
@@ -58,6 +58,7 @@ public class PlaylistEditCtrl extends JPanel
   private final FolderChooser _destDirFileChooser = new FolderChooser();
   private Playlist _playlist;
   protected final IListFixGui listFixGui;
+  private boolean refreshPending = false;
 
   private final IPlaylistModifiedListener listener = this::onPlaylistModified;
 
@@ -90,7 +91,25 @@ public class PlaylistEditCtrl extends JPanel
     _btnPlay.setEnabled(_playlist != null);
     _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
     _btnPrevMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
-    getTableModel().fireTableDataChanged();
+    this.fireTableDataChanged();
+  }
+
+  /**
+   * Call fireTableDataChanged() on the GUI thread, and do not call when a pending call is present
+   */
+  private void fireTableDataChanged() {
+    if (!refreshPending) {
+      synchronized (this.playlistTableModel) {
+        refreshPending = true;
+        SwingUtilities.invokeLater(() -> {
+          synchronized (this.playlistTableModel)
+          {
+            refreshPending = false;
+          }
+          getTableModel().fireTableDataChanged();
+        });
+      }
+    }
   }
 
   private void addItems()
@@ -222,19 +241,19 @@ public class PlaylistEditCtrl extends JPanel
   }
 
   /**
-   * Locate missing files
+   * Repair playlist
    * @return false if cancelled, otherwise true
    */
   public boolean locateMissingFiles()
   {
     _logger.debug(markerRepair, "Start locateMissingFiles()");
-    ProgressWorker<List<Integer>, String> worker = new ProgressWorker<>()
+    ProgressWorker<List<PlaylistEntry>, String> worker = new ProgressWorker<>()
     {
       @Override
-      protected List<Integer> doInBackground()
+      protected List<PlaylistEntry> doInBackground()
       {
         _logger.debug(markerRepairWorker, "Start repairing in background....");
-        List<Integer> result = _playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
+        List<PlaylistEntry> result = _playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
         _logger.debug(markerRepairWorker, "Repair completed.");
         return result;
       }
@@ -247,12 +266,13 @@ public class PlaylistEditCtrl extends JPanel
         {
           _logger.debug(markerRepair, "Updating UI-table...");
           _uiTable.clearSelection();
-          List<Integer> fixed = this.get();
-          for (Integer fixIx : fixed)
+
+          for (Integer fixIx : this.getIndexList(this.get()))
           {
             int viewIx = _uiTable.convertRowIndexToView(fixIx);
             _uiTable.addRowSelectionInterval(viewIx, viewIx);
           }
+          playlistTableModel.fireTableDataChanged();
           _logger.debug(markerRepair, "Completed updating UI-table");
         }
         catch (CancellationException | InterruptedException exception)
@@ -264,12 +284,28 @@ public class PlaylistEditCtrl extends JPanel
           _logger.error(markerRepair, "Error processing missing files", ex);
         }
       }
+
+      private List<Integer> getIndexList(List<PlaylistEntry> fixedEntries) {
+        final List<Integer> fixedIndexes = new LinkedList<>();
+        final List<PlaylistEntry> copiedList = new LinkedList<>(fixedEntries);
+
+        // Lookup the playlist index of the fixed playlist entries
+        for (int fixIx = 0; fixIx < _playlist.size() && !copiedList.isEmpty(); ++fixIx) {
+          if (_playlist.get(fixIx) == copiedList.get(0)) {
+            copiedList.remove(0);
+            fixedIndexes.add(fixIx);
+          }
+        }
+        assert fixedIndexes.size() == fixedEntries.size();
+        return fixedIndexes;
+      }
     };
 
     ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Repairing...");
     pd.setVisible(true); // Wait until the worker completed
     return !worker.isCancelled();
   }
+
 
   private void reorderList()
   {
@@ -771,7 +807,8 @@ public class PlaylistEditCtrl extends JPanel
     _uiTableScrollPane.setBorder(BorderFactory.createEtchedBorder());
 
     _uiTable.setAutoCreateRowSorter(true);
-    _uiTable.setModel(new PlaylistTableModel());
+
+    _uiTable.setModel(playlistTableModel);
     _uiTable.setDragEnabled(true);
     _uiTable.setFillsViewportHeight(true);
     _uiTable.setGridColor(new Color(153, 153, 153));
@@ -1113,6 +1150,7 @@ public class PlaylistEditCtrl extends JPanel
   private JMenuItem _miFindClosest;
   private JMenuItem _miReplace;
   private JPopupMenu _playlistEntryRightClickMenu;
+  private final PlaylistTableModel playlistTableModel= new PlaylistTableModel();
   private ZebraJTable _uiTable;
   private JScrollPane _uiTableScrollPane;
 
@@ -1134,7 +1172,7 @@ public class PlaylistEditCtrl extends JPanel
     }
     _playlist = list;
 
-    ((PlaylistTableModel) _uiTable.getModel()).fireTableDataChanged();
+    this.playlistTableModel.changePlaylist(_playlist);
 
     boolean hasPlaylist = _playlist != null;
 
@@ -1693,96 +1731,6 @@ public class PlaylistEditCtrl extends JPanel
   private void initFolderChooser()
   {
     _destDirFileChooser.setDialogTitle("Choose a destination directory...");
-  }
-
-  private class PlaylistTableModel extends AbstractTableModel
-  {
-    @Override
-    public int getRowCount()
-    {
-      if (_playlist != null)
-      {
-        return _playlist.size();
-      }
-      else
-      {
-        return 0;
-      }
-    }
-
-    @Override
-    public int getColumnCount()
-    {
-      return 4;
-    }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex)
-    {
-      PlaylistEntry entry = _playlist.get(rowIndex);
-      switch (columnIndex)
-      {
-        case 0 ->
-        {
-          return rowIndex + 1;
-        }
-        case 1 ->
-        {
-          if (entry.isURL())
-          {
-            return ImageIcons.IMG_URL;
-          }
-          else if (entry.isFixed())
-          {
-            return ImageIcons.IMG_FIXED;
-          }
-          else if (entry.isFound())
-          {
-            return ImageIcons.IMG_FOUND;
-          }
-          else
-          {
-            return ImageIcons.IMG_MISSING;
-          }
-        }
-        case 2 ->
-        {
-          return entry.getTrackFileName();
-        }
-        case 3 ->
-        {
-          return entry.getTrackFolder();
-        }
-        default ->
-        {
-          return null;
-        }
-      }
-    }
-
-    @Override
-    public String getColumnName(int column)
-    {
-      return switch (column)
-        {
-          case 0 -> "#";
-          case 1 -> "";
-          case 2 -> "File Name";
-          case 3 -> "Location";
-          default -> null;
-        };
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex)
-    {
-      return switch (columnIndex)
-        {
-          case 0 -> Integer.class;
-          case 1 -> ImageIcon.class;
-          default -> Object.class;
-        };
-    }
   }
 
   private static class IntRenderer extends DefaultTableCellRenderer
