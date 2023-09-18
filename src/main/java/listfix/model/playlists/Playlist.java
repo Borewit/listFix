@@ -719,15 +719,14 @@ public class Playlist
     return findClosestMatches(entrySelection, libraryFiles, observer);
   }
 
-  public List<Integer> applyClosestMatchSelections(List<BatchMatchItem> items)
+  public List<PlaylistEntry> applyClosestMatchSelections(List<BatchMatchItem> items)
   {
-    List<Integer> fixed = new ArrayList<>();
+    List<PlaylistEntry> fixed = new ArrayList<>();
     for (BatchMatchItem item : items)
     {
       if (item.getSelectedIx() >= 0)
       {
-        int ix = item.getEntryIx();
-        PlaylistEntry playlistEntry = _entries.get(ix);
+        final PlaylistEntry playlistEntry = item.getEntry();
         if (playlistEntry instanceof FilePlaylistEntry)
         {
           ((FilePlaylistEntry) playlistEntry).update(item.getSelectedMatch().getTrack());
@@ -736,12 +735,11 @@ public class Playlist
         {
           throw new UnsupportedOperationException("ToDo");
         }
-        PlaylistEntry tempEntry = _entries.get(ix);
-        tempEntry.recheckFoundStatus();
-        tempEntry.markFixedIfFound();
-        if (tempEntry.isFixed())
+        playlistEntry.recheckFoundStatus();
+        playlistEntry.markFixedIfFound();
+        if (playlistEntry.isFixed())
         {
-          fixed.add(ix);
+          fixed.add(playlistEntry);
         }
       }
     }
@@ -1033,6 +1031,10 @@ public class Playlist
     }
     while (Files.exists(path));
     return path;
+  }
+
+  public int indexOf(PlaylistEntry playlistEntry) {
+    return this._entries.indexOf(playlistEntry);
   }
 
 }

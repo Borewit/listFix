@@ -442,9 +442,10 @@ public class PlaylistEditCtrl extends JPanel
     if (dlg.isAccepted())
     {
       _uiTable.clearSelection();
-      List<Integer> fixed = _playlist.applyClosestMatchSelections(items);
-      for (Integer fixIx : fixed)
+      List<PlaylistEntry> fixed = _playlist.applyClosestMatchSelections(items);
+      for (PlaylistEntry fixEntry : fixed)
       {
+        int fixIx = _playlist.indexOf(fixEntry);
         int viewIx = _uiTable.convertRowIndexToView(fixIx);
         _uiTable.addRowSelectionInterval(viewIx, viewIx);
       }
