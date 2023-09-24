@@ -53,8 +53,7 @@ public class PlaylistEditCtrl extends JPanel
   private static final Marker markerPlaylistControl = MarkerManager.getMarker("PlaylistCtrl");
   private static final Marker markerRepair = MarkerManager.getMarker("PlaylistCtrl-Repair").setParents(markerPlaylistControl);
   private static final Marker markerRepairWorker = MarkerManager.getMarker("PlaylistCtrl-Repair-Worker").setParents(markerRepair);
-  private static final String txtOpenFileLocationSingular = "Open File Location";
-  private static final String txtOpenFileLocationPlural = "Open File Locations";
+
   private final FolderChooser _destDirFileChooser = new FolderChooser();
   private Playlist _playlist;
   protected final IListFixGui listFixGui;
@@ -649,7 +648,7 @@ public class PlaylistEditCtrl extends JPanel
     JPopupMenu.Separator jSeparator4 = new JPopupMenu.Separator();
     JMenuItem _miRemoveDups = new JMenuItem();
     JMenuItem _miRemoveMissing = new JMenuItem();
-    JMenuItem _miCopySelectedFiles = new JMenuItem();
+    _miCopySelectedFiles = new JMenuItem();
     JMenuItem _miNewPlaylistFromSelected = new JMenuItem();
     JToolBar _uiToolbar = new JToolBar();
     _btnSave = new JButton();
@@ -675,7 +674,6 @@ public class PlaylistEditCtrl extends JPanel
     _playlistEntryRightClickMenu.add(_miEditFilename);
 
     _miOpenFileLocation = new JMenuItem();
-    _miOpenFileLocation.setText(txtOpenFileLocationSingular);
     _miOpenFileLocation.addActionListener(evt -> {
       try
       {
@@ -694,7 +692,6 @@ public class PlaylistEditCtrl extends JPanel
     _playlistEntryRightClickMenu.add(_miReplace);
     _playlistEntryRightClickMenu.add(jSeparator3);
 
-    _miFindClosest.setText("Repair playlist");
     _miFindClosest.addActionListener(evt -> findClosestMatches());
     _playlistEntryRightClickMenu.add(_miFindClosest);
     _playlistEntryRightClickMenu.add(jSeparator4);
@@ -707,12 +704,11 @@ public class PlaylistEditCtrl extends JPanel
     _miRemoveMissing.addActionListener(evt -> removeMissing());
     _playlistEntryRightClickMenu.add(_miRemoveMissing);
 
-    _miCopySelectedFiles.setText("Copy Selected Items To...");
     _miCopySelectedFiles.setToolTipText("");
     _miCopySelectedFiles.addActionListener(evt -> _miCopySelectedFilesActionPerformed());
     _playlistEntryRightClickMenu.add(_miCopySelectedFiles);
 
-    _miNewPlaylistFromSelected.setText("Create New Playlist with Selected Items...");
+    _miNewPlaylistFromSelected.setText("Create New Playlist with Selected Tracks...");
     _miNewPlaylistFromSelected.addActionListener(evt -> _miNewPlaylistFromSelectedActionPerformed());
     _playlistEntryRightClickMenu.add(_miNewPlaylistFromSelected);
 
@@ -1147,6 +1143,7 @@ public class PlaylistEditCtrl extends JPanel
   private JMenuItem _miOpenFileLocation;
   private JMenuItem _miFindClosest;
   private JMenuItem _miReplace;
+  private JMenuItem _miCopySelectedFiles;
   private JPopupMenu _playlistEntryRightClickMenu;
   private final PlaylistTableModel playlistTableModel= new PlaylistTableModel();
   private ZebraJTable _uiTable;
@@ -1459,15 +1456,21 @@ public class PlaylistEditCtrl extends JPanel
 
             if (_uiTable.getSelectedRowCount() > 1)
             {
-              _miReplace.setText("Replace Selected Entries");
-              _miEditFilename.setText("Edit Filenames");
-              _miOpenFileLocation.setText(txtOpenFileLocationPlural);
+              _miEditFilename.setText("Edit track filenames");
+
+
+              _miOpenFileLocation.setText("Open track locations");
+              _miReplace.setText("Replace selected entries");
+              _miFindClosest.setText("Repair selected entries");
+              _miCopySelectedFiles.setText("Copy selected track to...");
             }
             else
             {
-              _miEditFilename.setText("Edit Filename");
-              _miReplace.setText("Replace Selected Entry");
-              _miOpenFileLocation.setText(txtOpenFileLocationSingular);
+              _miEditFilename.setText("Edit filename");
+              _miOpenFileLocation.setText("Open track location");
+              _miReplace.setText("Replace selected entry");
+              _miFindClosest.setText("Repair selected entry");
+              _miCopySelectedFiles.setText("Copy selected tracks to...");
             }
 
             _playlistEntryRightClickMenu.show(e.getComponent(), p.x, p.y);
