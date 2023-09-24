@@ -691,13 +691,15 @@ public class Playlist
 
   public List<BatchMatchItem> findClosestMatches(List<PlaylistEntry> entries, Collection<String> libraryFiles, IProgressObserver<String> observer)
   {
+    final long start = System.currentTimeMillis();
+
     ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(entries.size());
 
     List<BatchMatchItem> fixed = new ArrayList<>();
-    for (PlaylistEntry entry : entries)
-    {
-      if (observer.getCancelled()) return null;
+
+    entries.parallelStream().forEach(entry -> {
+      if (observer.getCancelled()) return;
       if (!entry.isURL() && !entry.isFound())
       {
         List<PotentialPlaylistEntryMatch> matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
@@ -707,7 +709,10 @@ public class Playlist
         }
       }
       progress.stepCompleted();
-    }
+    });
+
+    long timeElapsed = System.currentTimeMillis() - start;
+    _logger.info("Resolved closest matches in " + timeElapsed + " ms.");
 
     return fixed;
   }
