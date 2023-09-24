@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-
 public abstract class PlaylistEntry implements Cloneable
 {
   // logger
@@ -126,8 +125,6 @@ public abstract class PlaylistEntry implements Cloneable
     List<PotentialPlaylistEntryMatch> matches = new ArrayList<>();
     ProgressAdapter<String> progress = new ProgressAdapter<>(observer);
     progress.setTotal(mediaFiles.size());
-
-    matches.clear();
 
     // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
     String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getTrackFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
