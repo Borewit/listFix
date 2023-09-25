@@ -75,12 +75,6 @@ public class UriPlaylistEntry extends PlaylistEntry
   }
 
   @Override
-  public String trackPathToString()
-  {
-    return this.uri.toString();
-  }
-
-  @Override
   public boolean equals(Object other)
   {
     return other instanceof UriPlaylistEntry &&

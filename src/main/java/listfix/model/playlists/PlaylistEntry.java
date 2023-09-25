@@ -101,25 +101,6 @@ public abstract class PlaylistEntry implements Cloneable
 
   public abstract boolean isRelative();
 
-  /**
-   * Used to serialize track path to playlist
-   */
-  public abstract String trackPathToString();
-
-  // Try to open the file with the "default" MP3 player (only works on some systems).
-
-  public void play(IPlaylistOptions playListOptions) throws Exception
-  {
-    // ToDo
-//    if (this.isFound() || this.isURL())
-//    {
-//      List<PlaylistEntry> tempList = new ArrayList<>();
-//      tempList.add(this);
-//      Playlist playlist = new Playlist(playListOptions, tempList);
-//      playlist.play();
-//    }
-  }
-
   public List<PotentialPlaylistEntryMatch> findClosestMatches(Collection<String> mediaFiles, IProgressObserver<String> observer, IPlaylistOptions playListOptions)
   {
     List<PotentialPlaylistEntryMatch> matches = new ArrayList<>();

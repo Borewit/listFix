@@ -241,12 +241,6 @@ public class FilePlaylistEntry extends PlaylistEntry
   }
 
   @Override
-  public String trackPathToString()
-  {
-    return this.trackPath.toString();
-  }
-
-  @Override
   public boolean equals(Object other)
   {
     return other instanceof FilePlaylistEntry &&
