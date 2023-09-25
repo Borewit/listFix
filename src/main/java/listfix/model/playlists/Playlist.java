@@ -693,10 +693,10 @@ public class Playlist
   {
     final long start = System.currentTimeMillis();
 
-    ProgressAdapter<String> progress = ProgressAdapter.make(observer);
+    final ProgressAdapter<String> progress = ProgressAdapter.make(observer);
     progress.setTotal(entries.size());
 
-    List<BatchMatchItem> fixed = new ArrayList<>();
+    final List<BatchMatchItem> needToBeFixed = new ArrayList<>();
 
     entries.parallelStream().forEach(entry -> {
       if (observer.getCancelled()) return;
@@ -705,7 +705,7 @@ public class Playlist
         List<PotentialPlaylistEntryMatch> matches = entry.findClosestMatches(libraryFiles, null, this.playListOptions);
         if (!matches.isEmpty())
         {
-          fixed.add(new BatchMatchItem(entry, matches));
+          needToBeFixed.add(new BatchMatchItem(entry, matches));
         }
       }
       progress.stepCompleted();
@@ -714,7 +714,7 @@ public class Playlist
     long timeElapsed = System.currentTimeMillis() - start;
     _logger.info("Resolved closest matches in " + timeElapsed + " ms.");
 
-    return fixed;
+    return needToBeFixed;
   }
 
   public List<BatchMatchItem> findClosestMatchesForSelectedEntries(List<Integer> rowList, Collection<String> libraryFiles, ProgressWorker<List<BatchMatchItem>, String> observer)
