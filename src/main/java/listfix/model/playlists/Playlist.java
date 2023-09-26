@@ -283,23 +283,27 @@ public class Playlist
    */
   public Playlist getSublist(int[] rows) throws IOException
   {
+    return getSublist(Arrays.stream(rows).mapToObj(_entries::get).collect(Collectors.toList()));
+  }
+
+  public Playlist getSublist(Collection<PlaylistEntry> entries) throws IOException
+  {
     final io.github.borewit.lizzy.playlist.Playlist newPlaylist = new io.github.borewit.lizzy.playlist.Playlist();
     final Sequence rootSequence = newPlaylist.getRootSequence();
-    for (int i : rows)
+    for (PlaylistEntry entry : entries)
     {
       String srcUri;
-      if (_entries.get(i) instanceof FilePlaylistEntry)
+      if (entry instanceof FilePlaylistEntry)
       {
         // Normalize to absolute path
-        Path trackPath = ((FilePlaylistEntry) _entries.get(i)).trackPath;
+        Path trackPath = ((FilePlaylistEntry) entry).trackPath;
         srcUri = trackPath.isAbsolute() ? trackPath.toString() : this.playlistPath.getParent().resolve(trackPath).toString();
       }
       else
       {
-        srcUri = _entries.get(i).getMedia().getSource().toString();
+        srcUri = entry.getMedia().getSource().toString();
       }
       Media media = new Media(new Content(srcUri));
-      _entries.get(i).getMedia();
       rootSequence.addComponent(media);
     }
 

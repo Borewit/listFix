@@ -582,40 +582,14 @@ public class PlaylistEditCtrl extends JPanel
 
   private void playSelectedEntries()
   {
+    List<PlaylistEntry> playlistEntries = this.getSelectedPlaylistEntries().stream()
+      .filter(entry -> entry.isFound() || entry.isURL())
+      .collect(Collectors.toList());
+
     try
     {
-      int[] rows;
-      if (_uiTable.getSelectedRowCount() > 0)
-      {
-        rows = _uiTable.getSelectedRows();
-      }
-      else
-      {
-        rows = new int[_uiTable.getRowCount()];
-        for (int r = 0; r < rows.length; r++)
-        {
-          rows[r] = r;
-        }
-      }
-
-      for (int r = 0; r < rows.length; r++)
-      {
-        rows[r] = _uiTable.convertRowIndexToModel(rows[r]);
-      }
-
-      // Get a list of the selected rows that aren't missing, effectively stripping those entries from the selection
-      List<Integer> rowList = new ArrayList<>();
-      for (int i : rows)
-      {
-        if (_playlist.get(i).isFound() || _playlist.get(i).isURL())
-        {
-          rowList.add(i);
-        }
-      }
-      rows = ArrayFunctions.integerListToArray(rowList);
-
       // Get a temp playlist
-      Playlist tempList = _playlist.getSublist(rows);
+      Playlist tempList = _playlist.getSublist(playlistEntries);
 
       // Sanity check, don't launch an empty list
       if (tempList.size() > 0)
@@ -1124,7 +1098,6 @@ public class PlaylistEditCtrl extends JPanel
     {
       throw new RuntimeException("Failed to create new playlist", e);
     }
-
   }
 
   private JButton _btnAdd;
@@ -1328,14 +1301,20 @@ public class PlaylistEditCtrl extends JPanel
 
   private boolean selectedRowsContainFoundEntry()
   {
-    for (int row : _uiTable.getSelectedRows())
+    for (PlaylistEntry playlistEntry : this.getSelectedPlaylistEntries())
     {
-      if (_playlist.get(_uiTable.convertRowIndexToModel(row)).isFound() || _playlist.get(_uiTable.convertRowIndexToModel(row)).isURL())
+      if (playlistEntry.isFound() || playlistEntry.isURL())
       {
         return true;
       }
     }
     return false;
+  }
+
+  public List<PlaylistEntry> getSelectedPlaylistEntries() {
+    return Arrays.stream(_uiTable.getSelectedRows())
+      .mapToObj(row -> _playlist.get(_uiTable.convertRowIndexToModel(row)))
+      .collect(Collectors.toList());
   }
 
   private void initPlaylistTable()
@@ -1365,7 +1344,7 @@ public class PlaylistEditCtrl extends JPanel
       _btnDelete.setEnabled(hasSelected);
       _btnUp.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() > 0);
       _btnDown.setEnabled(_isSortedByFileIx && hasSelected && _uiTable.getSelectedRow() < _uiTable.getRowCount() - 1);
-      _btnPlay.setEnabled(_playlist != null && (_uiTable.getSelectedRow() < 0 || (_uiTable.getSelectedRows().length > 0 && selectedRowsContainFoundEntry())));
+      _btnPlay.setEnabled(_playlist != null && (_uiTable.getSelectedRow() < 0 || (_uiTable.getSelectedRows().length > 0 && this.selectedRowsContainFoundEntry())));
       _btnReload.setEnabled(_playlist != null && _playlist.isModified());
       _btnSave.setEnabled(_playlist != null);
       _btnNextMissing.setEnabled(_playlist != null && _playlist.getMissingCount() > 0);
