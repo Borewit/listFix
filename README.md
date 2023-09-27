@@ -84,5 +84,15 @@ In project folder, run:
 gradlew packageMyApp
 ```
 
+### File locations
+
+| File                       | Windows path                                    | Linux path                              |
+|----------------------------|-------------------------------------------------|-----------------------------------------|
+| Logfile                    | `%USERPROFILE%\.listFix()\logs\rollingfile.log` | `$HOME/.listFix()/logs/rollingfile.log` |
+| Application configuration  | `%USERPROFILE%\.listFix()\options.json`         | `$HOME/.listFix()/options.json`         |
+| Cached media library paths | `%USERPROFILE%\.listFix()\mediaLibrary.json`    | `$HOME/.listFix()/mediaLibrary.json`    |
+| Which playlist to open     | `%USERPROFILE%\.listFix()\history.json `        | `$HOME/.listFix()/history.json`         |
+
+
 Other documentation:
-- [Release procedure](doc/Release Procedure.md)
+- [Release Procedure.md](doc%2FRelease%20Procedure.md)
