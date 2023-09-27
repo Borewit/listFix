@@ -45,7 +45,7 @@ gitVersioning.apply {
             version = '${ref.version}'
         }
         branch('.+') {
-            version = '${describe.tag.version}-${describe.distance}'
+            version = '${describe.tag.version}-${describe.distance}-${commit.short}'
         }
     }
 
@@ -178,8 +178,7 @@ jlink {
         jvmArgs = ['-splash:images/listfixSplashScreen.png']
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
         icon = currentOs.windows ? pathFavicon : pathPngIcon
-        // version = project.version.findIndexOf('-') == -1 ? project.version : project.version.subString(0, project.version.findIndexOf('-'))
-        version = project.version.toString().replace("-", ".")
+        version = project.version.toString().substring(0, project.version.toString().lastIndexOf("-") == -1 ? project.version.toString().length() : project.version.toString().lastIndexOf("-")).replace("-", ".")
         description = 'Fix and repairs broken playlist'
         // imageOptions += ['--win-console']
         installerOptions += [
