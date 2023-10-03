@@ -10,8 +10,6 @@ import listfix.io.filters.AllPlaylistFileFilter;
 import listfix.io.filters.SpecificPlaylistFileFilter;
 import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.json.JsonAppOptions;
-import listfix.model.BatchRepair;
-import listfix.model.BatchRepairItem;
 import listfix.model.PlaylistHistory;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
@@ -196,7 +194,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _playlistDirectoryTree.getSelectionModel().addTreeSelectionListener(e -> {
       boolean hasSelected = _playlistDirectoryTree.getSelectionCount() > 0;
       _btnOpenSelected.setEnabled(hasSelected);
-      _btnDeepRepair.setEnabled(hasSelected);
     });
 
     // addAt popup menu to playlist tree on right-click
@@ -348,7 +345,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
           if (_playlistDirectoryTree.getSelectionCount() > 0)
           {
-            _miClosestMatchesSearch.setEnabled(true);
             _miOpenSelectedPlaylists.setEnabled(true);
             boolean singleFileSelected = _playlistDirectoryTree.getSelectionCount() == 1;
             _miRenameSelectedItem.setEnabled(singleFileSelected
@@ -359,7 +355,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
           }
           else
           {
-            _miClosestMatchesSearch.setEnabled(false);
             _miOpenSelectedPlaylists.setEnabled(false);
             _miDeleteFile.setEnabled(false);
             _miRenameSelectedItem.setEnabled(false);
@@ -492,7 +487,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _miRemovePlaylistDirectory = new JMenuItem();
     _miOpenSelectedPlaylists = new JMenuItem();
     JMenuItem _miOpenSelectedPlaylistLocation = new JMenuItem();
-    _miClosestMatchesSearch = new JMenuItem();
     _miDeleteFile = new JMenuItem();
     _miRenameSelectedItem = new JMenuItem();
     JPanel _statusPanel = new JPanel();
@@ -513,7 +507,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     JButton _btnSetPlaylistsDir = new JButton();
     JButton _btnRefresh = new JButton();
     _btnOpenSelected = new JButton();
-    _btnDeepRepair = new JButton();
     _playlistPanel = new JPanel();
     JPanel _gettingStartedPanel = new JPanel();
     JPanel _verticalPanel = new JPanel();
@@ -566,10 +559,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _miOpenSelectedPlaylistLocation.setText("Open playlist location");
     _miOpenSelectedPlaylistLocation.addActionListener(evt -> this.openPlaylistFoldersFromPlaylistTree());
     _playlistTreeRightClickMenu.add(_miOpenSelectedPlaylistLocation);
-
-    _miClosestMatchesSearch.setText("Repair playlist");
-    _miClosestMatchesSearch.addActionListener(evt -> _miClosestMatchesSearchActionPerformed());
-    _playlistTreeRightClickMenu.add(_miClosestMatchesSearch);
 
     _miDeleteFile.setMnemonic('D');
     _miDeleteFile.setText("Delete file(s)");
@@ -733,13 +722,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _btnOpenSelected.setMinimumSize(new Dimension(71, 25));
     _btnOpenSelected.addActionListener(evt -> GUIScreen.this.openTreeSelectedPlaylists());
     _playlistsDirectoryButtonPanel.add(_btnOpenSelected);
-
-    _btnDeepRepair.setText("Repair");
-    _btnDeepRepair.setToolTipText("Batch Repair");
-    _btnDeepRepair.setEnabled(false);
-    _btnDeepRepair.setMargin(new Insets(2, 8, 2, 8));
-    _btnDeepRepair.addActionListener(evt -> _btnDeepRepairActionPerformed());
-    _playlistsDirectoryButtonPanel.add(_btnDeepRepair);
 
     _playlistDirectoryPanel.add(_playlistsDirectoryButtonPanel, BorderLayout.PAGE_END);
 
@@ -1003,36 +985,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void runClosestMatchesSearchOnSelectedLists() throws IOException
-  {
-    _logger.debug("Run Closest Matches Search...");
-    List<Path> files = this.getRecursiveSelectedFilesFromTreePlaylists();
-    if (files.isEmpty())
-    {
-      return;
-    }
-    BatchRepair br = new BatchRepair(_listFixController.getMediaLibrary(), files.get(0).toFile());
-    br.setDescription("Closest Matches Search");
-    for (Path file : files)
-    {
-      br.add(new BatchRepairItem(file.toFile(), this.getOptions()));
-    }
-    MultiListBatchClosestMatchResultsDialog dlg = new MultiListBatchClosestMatchResultsDialog(this, true, br, this.getOptions());
-    if (!dlg.getUserCancelled())
-    {
-      if (br.isEmpty())
-      {
-        JOptionPane.showMessageDialog(this, new JTransparentTextArea("There was nothing to fix in the list(s) that were processed."));
-      }
-      else
-      {
-        dlg.setLocationRelativeTo(this);
-        dlg.setVisible(true);
-        updatePlaylistDirectoryPanel();
-      }
-    }
-  }
-
   private void openTreeSelectedPlaylists()
   {
     this.getSelectedFilesFromTreePlaylists().forEach(toOpen -> {
@@ -1049,24 +1001,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
         openPlaylist(toOpen);
       }
     });
-  }
-
-  private List<Path> getRecursiveSelectedFilesFromTreePlaylists() throws IOException
-  {
-    List<Path> files = new ArrayList<>();
-    for (Path file : this.getSelectedFilesFromTreePlaylists())
-    {
-      if (Files.isRegularFile(file))
-      {
-        files.add(file);
-      }
-      else
-      {
-        // We're dealing w/ a folder, get all the lists it contains.
-        files.addAll(PlaylistScanner.getAllPlaylists(file));
-      }
-    }
-    return files;
   }
 
   private List<Path> getSelectedFilesFromTreePlaylists()
@@ -2095,30 +2029,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     }
   }
 
-  private void _btnDeepRepairActionPerformed()
-  {
-    try
-    {
-      runClosestMatchesSearchOnSelectedLists();
-    }
-    catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void _miClosestMatchesSearchActionPerformed()
-  {
-    try
-    {
-      runClosestMatchesSearchOnSelectedLists();
-    }
-    catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
-
   private void _miReloadActionPerformed()
   {
     if (_playlistTabbedPane.getActiveTab() != null)
@@ -2360,12 +2270,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
     return url;
   }
 
-  private JButton _btnDeepRepair;
   private JButton _btnOpenSelected;
   private JDocumentTabbedPane<PlaylistEditCtrl> _playlistTabbedPane;
   private JSplitPane _leftSplitPane;
   private JList<String> _lstMediaLibraryDirs;
-  private JMenuItem _miClosestMatchesSearch;
   private JMenuItem _miDeleteFile;
   private JMenuItem _miOpenSelectedPlaylists;
   private JMenuItem _miRefreshDirectoryTree;
