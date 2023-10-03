@@ -1,4 +1,4 @@
-//for Ant filter
+// For Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
@@ -66,8 +66,6 @@ def manifestAttributes = [
     'SCM-Repository'        : 'https://github.com/Borewit/listFix',
     'Main-Class'            : project.mainClassName
 ]
-
-def fatJarFilePath = "build/libs/${project.name}-${project.version}-all.jar"
 
 repositories {
     // Use Maven Central for resolving dependencies.
