@@ -16,8 +16,6 @@ public interface IAppOptions extends IPlaylistOptions
 
   boolean getAutoRefreshMediaLibraryOnStartup();
 
-  String getPlaylistsDirectory();
-
   /**
    * Returns configured application font.
    */
