@@ -178,7 +178,7 @@ jlink {
         jvmArgs = ['-splash:images/listfixSplashScreen.png']
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
         icon = currentOs.windows ? pathFavicon : pathPngIcon
-        version = project.version.toString().substring(0, project.version.toString().lastIndexOf("-") == -1 ? project.version.toString().length() : project.version.toString().lastIndexOf("-")).replace("-", ".")
+        version = project.version.substring(0, project.version.lastIndexOf("-") == -1 ? project.version.length() : project.version.lastIndexOf("-")).replace("-", ".")
         description = 'Fix and repairs broken playlist'
         // imageOptions += ['--win-console']
         installerOptions += [
