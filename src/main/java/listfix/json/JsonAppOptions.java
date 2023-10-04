@@ -102,18 +102,6 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
     this.alwaysUseUNCPaths = alwaysUseUNCPaths;
   }
 
-
-  @Override
-  public String getPlaylistsDirectory()
-  {
-    return this.playlistsDirectory;
-  }
-
-  public void setPlaylistsDirectory(String playlistsDirectory)
-  {
-    this.playlistsDirectory = playlistsDirectory;
-  }
-
   @Override
   public Set<String> getPlaylistDirectories()
   {
