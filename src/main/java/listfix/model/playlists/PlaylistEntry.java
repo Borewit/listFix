@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public abstract class PlaylistEntry implements Cloneable
 {
@@ -106,24 +105,49 @@ public abstract class PlaylistEntry implements Cloneable
 
   public List<PotentialPlaylistEntryMatch> findClosestMatches(Collection<String> mediaFiles, IProgressObserver<String> observer, IPlaylistOptions playListOptions)
   {
+    List<PotentialPlaylistEntryMatch> matches = new ArrayList<>();
     ProgressAdapter<String> progress = new ProgressAdapter<>(observer);
     progress.setTotal(mediaFiles.size());
 
     // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
     String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getTrackFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
-
-    return mediaFiles.stream().map(mediaFilePath -> {
-
+    File mediaFile;
+    int score;
+    for (String mediaFilePath : mediaFiles)
+    {
+      if (observer == null || !observer.getCancelled())
+      {
         progress.stepCompleted();
 
-        final File mediaFile = new File(mediaFilePath);
-        final int score = new FileNameTokenizer(playListOptions).score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
+        mediaFile = new File(mediaFilePath);
 
-        return new PotentialPlaylistEntryMatch(mediaFile.toPath(), score);
-      })
-      .sorted(matchedPlaylistEntryComparator)
-      .limit(playListOptions.getMaxClosestResults())
-      .collect(Collectors.toList());
+        // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
+        score = new FileNameTokenizer(playListOptions).score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
+        if (score > 0)
+        {
+          // Only keep the top X highest-rated matches (default is 20), anything more than that has a good chance of using too much memory
+          // on systems w/ huge media libraries, too little RAM, or when fixing excessively large playlists (the things you have to worry
+          // about when people run your software on ancient PCs in Africa =])
+          if (matches.size() < playListOptions.getMaxClosestResults())
+          {
+            matches.add(new PotentialPlaylistEntryMatch(mediaFile.toPath(), score));
+          }
+          else
+          {
+            if (matches.get(playListOptions.getMaxClosestResults() - 1).getScore() < score)
+            {
+              matches.set(playListOptions.getMaxClosestResults() - 1, new PotentialPlaylistEntryMatch(mediaFile.toPath(), score));
+            }
+          }
+          matches.sort(matchedPlaylistEntryComparator);
+        }
+      }
+      else
+      {
+        return null;
+      }
+    }
+    return matches;
   }
 
   @Override
