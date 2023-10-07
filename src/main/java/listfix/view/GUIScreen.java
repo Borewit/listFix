@@ -165,7 +165,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     updateMediaDirButtons();
     updateRecentMenu();
-    refreshStatusLabel(null);
+    onPlaylistModified(null);
 
     ((CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
 
@@ -1345,22 +1345,13 @@ public final class GUIScreen extends JFrame implements IListFixGui
     final JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.openDocument(editor, path, icon);
     _playlistTabbedPane.setActiveDocument(path);
 
-    // Tie the DocumentComponent and the Playlist in the editor together via listeners, so the former can update when the latter is modified
-    playlist.addModifiedListener(
-      list -> {
-        updateTabTitleForPlaylist(list, tempComp);
-        tempComp.setIcon(getIconForPlaylist(list));
-        tempComp.setPath(list.getPath());
-      }
-    );
-
     // Update the list of open playlists
     _openPlaylists.add(playlist);
 
     // update title and status bar if list was modified during loading (due to fix on load option)
     if (playlist.isModified())
     {
-      refreshStatusLabel(playlist);
+      this.onPlaylistModified(playlist);
       updateTabTitleForPlaylist(playlist, tempComp);
     }
 
@@ -1595,7 +1586,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _currentPlaylist = list;
 
-    refreshStatusLabel(_currentPlaylist);
+    this.onPlaylistModified(_currentPlaylist);
     if (_currentPlaylist != null)
     {
       _currentPlaylist.addModifiedListener(_playlistListener);
@@ -1610,16 +1601,17 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private void onPlaylistModified(Playlist list)
   {
-    refreshStatusLabel(list);
-  }
-
-  private void refreshStatusLabel(Playlist list)
-  {
     if (list != null)
     {
       String fmt = "Currently Open: %s%s     Number of entries in list: %d     Number of lost entries: %d     Number of URLs: %d     Number of open playlists: %d";
       String txt = String.format(fmt, list.getFilename(), list.isModified() ? "*" : "", list.size(), list.getMissingCount(), list.getUrlCount(), _playlistTabbedPane.getDocumentCount());
       statusLabel.setText(txt);
+
+      JDocumentComponent<PlaylistEditCtrl> comp = this._playlistTabbedPane.getDocument(list.getPath());
+
+      updateTabTitleForPlaylist(list, comp);
+      comp.setIcon(getIconForPlaylist(list));
+      comp.setPath(list.getPath());
     }
     else
     {
@@ -1987,14 +1979,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
       _openPlaylists.add(_currentPlaylist);
 
-      refreshStatusLabel(_currentPlaylist);
+      onPlaylistModified(_currentPlaylist);
       _currentPlaylist.addModifiedListener(_playlistListener);
-
-      _currentPlaylist.addModifiedListener(list -> {
-        updateTabTitleForPlaylist(list, tempComp);
-        tempComp.setIcon(getIconForPlaylist(list));
-        tempComp.setPath(list.getPath());
-      });
 
       if (_playlistTabbedPane.getDocumentCount() == 1)
       {
