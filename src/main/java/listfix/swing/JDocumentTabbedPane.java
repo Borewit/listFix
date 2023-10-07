@@ -1,5 +1,8 @@
 package listfix.swing;
 
+import listfix.model.playlists.Playlist;
+import listfix.view.controls.PlaylistEditCtrl;
+
 import javax.swing.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
@@ -9,9 +12,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
+public class JDocumentTabbedPane extends JTabbedPane
 {
-  private final List<IDocumentChangeListener<G>> documentChangeListeners = new ArrayList<>();
+  private final List<IDocumentChangeListener> documentChangeListeners = new ArrayList<>();
 
   public JDocumentTabbedPane()
   {
@@ -20,18 +23,18 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
       @Override
       public void componentAdded(ContainerEvent e)
       {
-        if (e.getChild() instanceof JDocumentComponent)
+        if (e.getChild() instanceof JPlaylistComponent)
         {
-          documentChangeListeners.forEach(listener -> listener.documentOpened((JDocumentComponent<G>) e.getChild()));
+          documentChangeListeners.forEach(listener -> listener.documentOpened((JPlaylistComponent) e.getChild()));
         }
       }
 
       @Override
       public void componentRemoved(ContainerEvent e)
       {
-        if (e.getChild() instanceof JDocumentComponent)
+        if (e.getChild() instanceof JPlaylistComponent)
         {
-          documentChangeListeners.forEach(listener -> listener.documentClosed((JDocumentComponent<G>) e.getChild()));
+          documentChangeListeners.forEach(listener -> listener.documentClosed((JPlaylistComponent) e.getChild()));
         }
       }
     });
@@ -41,7 +44,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
       int index = sourceTabbedPane.getSelectedIndex();
       if (index != -1)
       {
-        JDocumentComponent<G> doc = JDocumentTabbedPane.this.getComponentAt(index);
+        JPlaylistComponent doc = JDocumentTabbedPane.this.getComponentAt(index);
         documentChangeListeners.forEach(listener -> listener.documentActivated(doc));
       }
     });
@@ -53,21 +56,21 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
   }
 
   @Override
-  public JDocumentComponent<G> getComponentAt(int documentIndex)
+  public JPlaylistComponent getComponentAt(int documentIndex)
   {
-    return (JDocumentComponent<G>) super.getComponentAt(documentIndex);
+    return (JPlaylistComponent) super.getComponentAt(documentIndex);
   }
 
-  public JDocumentComponent<G> getActiveTab()
+  public JPlaylistComponent getActiveTab()
   {
     int index = super.getSelectedIndex();
     if (index == -1) return null;
     return this.getComponentAt(index);
   }
 
-  public void setActiveDocument(Path path)
+  public void setActivePlaylist(Playlist playlist)
   {
-    int i = this.getDocumentIndexByPath(path);
+    int i = this.getDocumentIndexByPlaylist(playlist);
     if (i != -1)
     {
       super.setSelectedIndex(i);
@@ -75,12 +78,12 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     }
   }
 
-  public void setActiveDocument(JDocumentComponent<G> doc)
+  public void setActivePlaylist(JPlaylistComponent doc)
   {
     super.setSelectedIndex(this.getDocumentIndex(doc));
   }
 
-  public int getDocumentIndex(JDocumentComponent<G> doc)
+  public int getDocumentIndex(JPlaylistComponent doc)
   {
     for (int i = 0; i < super.getTabCount(); ++i)
     {
@@ -92,12 +95,12 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     return -1;
   }
 
-  public int getDocumentIndexByPath(Path path)
+  public int getDocumentIndexByPlaylist(Playlist playlist)
   {
     for (int i = 0; i < super.getTabCount(); ++i)
     {
-      JDocumentComponent<G> doc = this.getComponentAt(i);
-      if (path.equals(doc.getPath()))
+      JPlaylistComponent doc = this.getComponentAt(i);
+      if (playlist == doc.getPlaylist())
       {
         return i;
       }
@@ -109,7 +112,7 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
   {
     for (int i = 0; i < super.getTabCount(); ++i)
     {
-      JDocumentComponent doc = (JDocumentComponent) super.getComponentAt(i);
+      JPlaylistComponent doc = (JPlaylistComponent) super.getComponentAt(i);
       if (name.equals(doc.getName()))
       {
         return i;
@@ -131,64 +134,73 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     super.setSelectedIndex(nextIndex);
   }
 
-  public JDocumentComponent<G> getDocument(Path path)
+  public JPlaylistComponent getPlaylist(Playlist playlist)
   {
-    int i = getDocumentIndexByPath(path);
+    int i = getDocumentIndexByPlaylist(playlist);
     return i == -1 ? null : this.getComponentAt(i);
   }
 
-  public JDocumentComponent<G> openDocument(G editor, Path path)
+  public JPlaylistComponent getPlaylist(Path playlistPath)
   {
-    return this.openDocument(editor, path, null);
+    int tabCount = this.getTabCount();
+    for (int i = 0; i < tabCount; ++i)
+    {
+      JPlaylistComponent playlist = this.getComponentAt(i);
+      if (playlist.getPlaylist().getPath().equals(playlistPath)) {
+        return playlist;
+      }
+    }
+    return null;
   }
 
   /**
    * Remove document with corresponding path
    *
-   * @param path Path to remove
+   * @param playlistPath Path to remove
    */
-  public void remove(Path path)
+  public void remove(Path playlistPath)
   {
-    this.remove(this.getDocument(path));
+    JPlaylistComponent playlist = getPlaylist(playlistPath);
+    if (playlist != null) {
+      this.remove(playlist);
+    }
   }
 
-  public JDocumentComponent<G> openDocument(G editor, Path path, ImageIcon icon)
+  /**
+   * Remove given playlist
+   *
+   * @param playlist Playlist to remove
+   */
+  public void remove(Playlist playlist)
   {
-    JDocumentComponent<G> doc = new JDocumentComponent<G>(this, editor, path);
-    doc.setIcon(icon);
-    int index = this.getTabCount();
-    this.addTab(null, null, doc, doc.getPath().toString());
+    this.remove(this.getPlaylist(playlist));
+  }
 
-    JClosableTabComponent<G> tabComponent = doc.getTabComponent();
+  public JPlaylistComponent openPlaylist(PlaylistEditCtrl editor, Playlist playlist)
+  {
+    JPlaylistComponent doc = new JPlaylistComponent(this, editor, playlist);
+    int index = this.getTabCount();
+    this.addTab(null, null, doc, doc.getPlaylist().toString());
+
+    JClosableTabComponent tabComponent = doc.getTabComponent();
     this.setTabComponentAt(index, tabComponent);
     tabComponent.addMouseListener(new MouseAdapter()
     {
       @Override
       public void mousePressed(MouseEvent e)
       {
-        JDocumentTabbedPane.this.setActiveDocument(doc);
+        JDocumentTabbedPane.this.setActivePlaylist(doc);
       }
     });
 
     return doc;
   }
 
-  public boolean renameDocument(Path oldPath, Path newPath)
-  {
-    JDocumentComponent<G> doc = this.getDocument(oldPath);
-    if (doc != null)
-    {
-      doc.setName(newPath.getFileName().toString());
-      return true;
-    }
-    return false;
-  }
-
   public void closeAll()
   {
     while (super.getTabCount() > 0)
     {
-      this.closeDocument(0);
+      this.closePlaylist(0);
     }
   }
 
@@ -197,23 +209,24 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     int i = super.getSelectedIndex();
     if (i != -1)
     {
-      this.closeDocument(i);
+      this.closePlaylist(i);
     }
   }
 
-  public void closeDocument(int i)
+  public void closePlaylist(int i)
   {
-    JDocumentComponent<G> doc = this.getComponentAt(i);
+    JPlaylistComponent doc = this.getComponentAt(i);
     if (doc != null)
     {
       super.remove(i);
+      doc.setPlaylist(null); // Clean up listener
     }
   }
 
   public void tryToClose(int i)
   {
-    JDocumentComponent<G> doc = this.getComponentAt(i);
-    for (IDocumentChangeListener<G> listener : documentChangeListeners)
+    JPlaylistComponent doc = this.getComponentAt(i);
+    for (IDocumentChangeListener listener : documentChangeListeners)
     {
       if (!listener.tryClosingDocument(doc))
       {
@@ -224,23 +237,23 @@ public class JDocumentTabbedPane<G extends JComponent> extends JTabbedPane
     this.remove(i);
   }
 
-  public void addDocumentChangeListener(IDocumentChangeListener<G> listener)
+  public void addDocumentChangeListener(IDocumentChangeListener listener)
   {
     this.documentChangeListeners.add(listener);
   }
 
-  public void removeCloseDocumentListener(IDocumentChangeListener<G> listener)
+  public void removeCloseDocumentListener(IDocumentChangeListener listener)
   {
     this.documentChangeListeners.remove(listener);
   }
 
-  public List<G> getAllEmbeddedMainComponent()
+  public List<PlaylistEditCtrl> getPlaylistEditors()
   {
-    List<G> list = new ArrayList<>();
+    List<PlaylistEditCtrl> list = new ArrayList<>();
     int tabCount = this.getTabCount();
     for (int i = 0; i < tabCount; ++i)
     {
-      JDocumentComponent<G> doc = this.getComponentAt(i);
+      JPlaylistComponent doc = this.getComponentAt(i);
       list.add(doc.getComponent());
     }
     return list;

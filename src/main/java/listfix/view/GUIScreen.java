@@ -14,7 +14,7 @@ import listfix.model.PlaylistHistory;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
 import listfix.swing.IDocumentChangeListener;
-import listfix.swing.JDocumentComponent;
+import listfix.swing.JPlaylistComponent;
 import listfix.swing.JDocumentTabbedPane;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
@@ -55,7 +55,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
   private final JFileChooser _jOpenPlaylistFileChooser = new JFileChooser();
   private final JFileChooser _savePlaylistAsFileChooser = new JFileChooser();
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
-  private final List<Playlist> _openPlaylists = new ArrayList<>();
   private final Image applicationIcon = getImageIcon("icon.png").getImage();
   private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen(getImageIcon("listfixSplashScreen.png"));
   private ListFixController _listFixController = null;
@@ -260,10 +259,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private void recheckStatusOfOpenPlaylists()
   {
-    for (Playlist playlist : _openPlaylists)
-    {
-      playlist.updateModifiedStatus();
-    }
+    this._playlistTabbedPane.getPlaylistEditors().stream().map(PlaylistEditCtrl::getPlaylist).forEach(Playlist::updateModifiedStatus);
   }
 
   private void configureGlobalKeyboardListener()
@@ -514,7 +510,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     JPanel _spacerPanel = new JPanel();
     JButton _newIconButton = new JButton();
     JPanel _docTabPanel = new JPanel();
-    _playlistTabbedPane = new JDocumentTabbedPane<>();
+    _playlistTabbedPane = new JDocumentTabbedPane();
     JMenuBar _mainMenuBar = new JMenuBar();
     JMenu _fileMenu = new JMenu();
     JMenuItem _newPlaylistMenuItem = new JMenuItem();
@@ -926,25 +922,24 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _mainMenuBar.add(_helpMenu);
 
-    _playlistTabbedPane.addDocumentChangeListener(new IDocumentChangeListener<>()
+    _playlistTabbedPane.addDocumentChangeListener(new IDocumentChangeListener()
     {
       @Override
-      public boolean tryClosingDocument(JDocumentComponent<PlaylistEditCtrl> document)
+      public boolean tryClosingDocument(JPlaylistComponent document)
       {
         return GUIScreen.this.tryCloseTab(document);
       }
 
       @Override
-      public void documentOpened(JDocumentComponent<PlaylistEditCtrl> document)
+      public void documentOpened(JPlaylistComponent document)
       {
         updateMenuItemStatuses();
       }
 
       @Override
-      public void documentClosed(JDocumentComponent<PlaylistEditCtrl> document)
+      public void documentClosed(JPlaylistComponent playlistComponent)
       {
-        final Playlist playlist = getPlaylistFromDocumentComponent(document);
-        cleanupOnTabClose(playlist);
+        cleanupOnTabClose(playlistComponent);
         if (_playlistTabbedPane.getDocumentCount() == 0)
         {
           ((CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_gettingStartedPanel");
@@ -954,7 +949,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
       }
 
       @Override
-      public void documentActivated(JDocumentComponent<PlaylistEditCtrl> doc)
+      public void documentActivated(JPlaylistComponent doc)
       {
         GUIScreen.this.currentTabChanged(doc);
       }
@@ -1118,11 +1113,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
         }
         treeNode.setUserObject(destPath);
         ((DefaultTreeModel) _playlistDirectoryTree.getModel()).nodeChanged(treeNode);
-        JDocumentComponent<PlaylistEditCtrl> doc = this._playlistTabbedPane.getDocument(nodePath);
+        JPlaylistComponent doc = this._playlistTabbedPane.getPlaylist(nodePath);
         if (doc != null)
         {
           // Update playlist editor, if open
-          doc.setPath(destPath);
+          doc.setPlaylist(doc.getPlaylist());
         }
 
       }
@@ -1239,14 +1234,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
   public void openPlaylist(final Path playlistPath)
   {
     // do nothing if the file is already open.
-    for (Playlist list : _openPlaylists)
-    {
-      if (list.getPath().equals(playlistPath))
-      {
-        _playlistTabbedPane.setActiveDocument(playlistPath);
-        return;
-      }
-    }
+
+    this._playlistTabbedPane.getPlaylistEditors().stream()
+      .map(PlaylistEditCtrl::getPlaylist)
+      .filter(list -> list.getPath().equals(playlistPath))
+      .findAny().ifPresent(list -> _playlistTabbedPane.setActivePlaylist(list));
 
     try
     {
@@ -1264,7 +1256,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
       return;
     }
 
-    JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.getDocument(playlistPath);
+    JPlaylistComponent tempComp = _playlistTabbedPane.getPlaylist(playlistPath);
     if (tempComp == null)
     {
       ProgressWorker<Playlist, String> worker = new ProgressWorker<>()
@@ -1328,7 +1320,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     }
     else
     {
-      _playlistTabbedPane.setActiveDocument(playlistPath);
+      _playlistTabbedPane.setActivePlaylist(tempComp.getPlaylist());
     }
   }
 
@@ -1338,15 +1330,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
     editor.setPlaylist(playlist);
 
-    // Add the tab to the tabbed pane
-    final Path path = playlist.getPath();
-    final ImageIcon icon = getIconForPlaylist(editor.getPlaylist());
-
-    final JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.openDocument(editor, path, icon);
-    _playlistTabbedPane.setActiveDocument(path);
-
-    // Update the list of open playlists
-    _openPlaylists.add(playlist);
+    final JPlaylistComponent tempComp = _playlistTabbedPane.openPlaylist(editor, playlist);
+    _playlistTabbedPane.setActivePlaylist(playlist);
 
     // update title and status bar if list was modified during loading (due to fix on load option)
     if (playlist.isModified())
@@ -1359,28 +1344,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     {
       ((CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_docTabPanel");
     }
-  }
-
-  private ImageIcon getIconForPlaylist(Playlist list)
-  {
-    ImageIcon icon;
-    int missing = list.getMissingCount();
-    if (missing > 0)
-    {
-      icon = ImageIcons.IMG_MISSING;
-    }
-    else
-    {
-      if (list.getFixedCount() > 0 || list.isModified())
-      {
-        icon = ImageIcons.IMG_FIXED;
-      }
-      else
-      {
-        icon = ImageIcons.IMG_FOUND;
-      }
-    }
-    return icon;
   }
 
   public void updateRecentMenu()
@@ -1414,7 +1377,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     SwingUtilities.updateComponentTreeUI(_playlistTabbedPane);
   }
 
-  private Playlist getPlaylistFromDocumentComponent(JDocumentComponent<PlaylistEditCtrl> ctrl)
+  private Playlist getPlaylistFromDocumentComponent(JPlaylistComponent ctrl)
   {
     return ctrl.getComponent().getPlaylist();
   }
@@ -1552,11 +1515,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     history.add(playlist.getFile().getPath());
     history.write();
     updateRecentMenu();
-
-    if (!originalPlaylistPath.equals(saveAsPath))
-    {
-      _playlistTabbedPane.renameDocument(originalPlaylistPath, saveAsPath);
-    }
   }
 
   private void updateMenuItemStatuses()
@@ -1570,7 +1528,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     this.currentTabChanged(_playlistTabbedPane.getActiveTab());
   }
 
-  private void currentTabChanged(JDocumentComponent<PlaylistEditCtrl> documentComponent)
+  private void currentTabChanged(JPlaylistComponent documentComponent)
   {
     Playlist list = documentComponent != null ? documentComponent.getComponent().getPlaylist() : null;
     if (list == _currentPlaylist)
@@ -1606,12 +1564,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
       String fmt = "Currently Open: %s%s     Number of entries in list: %d     Number of lost entries: %d     Number of URLs: %d     Number of open playlists: %d";
       String txt = String.format(fmt, list.getFilename(), list.isModified() ? "*" : "", list.size(), list.getMissingCount(), list.getUrlCount(), _playlistTabbedPane.getDocumentCount());
       statusLabel.setText(txt);
-
-      JDocumentComponent<PlaylistEditCtrl> comp = this._playlistTabbedPane.getDocument(list.getPath());
-
-      updateTabTitleForPlaylist(list, comp);
-      comp.setIcon(getIconForPlaylist(list));
-      comp.setPath(list.getPath());
     }
     else
     {
@@ -1619,15 +1571,15 @@ public final class GUIScreen extends JFrame implements IListFixGui
     }
   }
 
-  private void updateTabTitleForPlaylist(Playlist list, JDocumentComponent<PlaylistEditCtrl> comp)
+  private void updateTabTitleForPlaylist(Playlist list, JPlaylistComponent comp)
   {
-    comp.setPath(list.getPath());
+    comp.setPlaylist(list);
   }
 
   public void runClosestMatchOnAllTabs()
   {
-    for (PlaylistEditCtrl ctrl : this._playlistTabbedPane.getAllEmbeddedMainComponent()) {
-      this._playlistTabbedPane.setActiveDocument(ctrl.getPlaylist().getPath());
+    for (PlaylistEditCtrl ctrl : this._playlistTabbedPane.getPlaylistEditors()) {
+      this._playlistTabbedPane.setActivePlaylist(ctrl.getPlaylist());
       if (!ctrl.locateMissingFiles() || !ctrl.bulkFindClosestMatches()) {
         break;
       }
@@ -1636,13 +1588,13 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private void reloadAllTabs()
   {
-    this._playlistTabbedPane.getAllEmbeddedMainComponent().forEach(ctrl -> {
-      this._playlistTabbedPane.setActiveDocument(ctrl.getPlaylist().getPath());
+    this._playlistTabbedPane.getPlaylistEditors().forEach(ctrl -> {
+      this._playlistTabbedPane.setActivePlaylist(ctrl.getPlaylist());
       ctrl.reloadPlaylist();
     });
   }
 
-  public boolean tryCloseTab(JDocumentComponent<PlaylistEditCtrl> ctrl)
+  public boolean tryCloseTab(JPlaylistComponent ctrl)
   {
     final Playlist playlist = getPlaylistFromDocumentComponent(ctrl);
     if (playlist.isModified())
@@ -1673,7 +1625,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
           boolean savedOk = worker.get();
           if (savedOk)
           {
-            cleanupOnTabClose(playlist);
+            this.cleanupOnTabClose(ctrl);
             return true;
           }
         }
@@ -1694,7 +1646,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
       }
       else if (rc == 2)
       {
-        cleanupOnTabClose(playlist);
+        this.cleanupOnTabClose(ctrl);
         return true;
       }
       return false;
@@ -1702,36 +1654,33 @@ public final class GUIScreen extends JFrame implements IListFixGui
     return true;
   }
 
-  private void cleanupOnTabClose(Playlist list)
+  private void cleanupOnTabClose(JPlaylistComponent playlistComponent)
   {
-    _openPlaylists.remove(list);
+    playlistComponent.setPlaylist(null); // Remove listeners
   }
 
   private void confirmCloseApp()
   {
-    for (Playlist list : _openPlaylists)
-    {
-      if (list.isModified())
+    final Optional<Playlist> hasModifiedPlaylist = this._playlistTabbedPane.getPlaylistEditors().stream()
+      .map(PlaylistEditCtrl::getPlaylist)
+      .filter(Playlist::isModified)
+      .findAny();
+
+    if (hasModifiedPlaylist.isPresent()) {
+      Object[] options =
+        {
+          "Discard Changes and Exit", "Cancel"
+        };
+      int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("You have unsaved changes. Do you really want to discard these changes and exit?"), "Confirm Close",
+        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+      if (rc == JOptionPane.NO_OPTION)
       {
-        Object[] options =
-          {
-            "Discard Changes and Exit", "Cancel"
-          };
-        int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("You have unsaved changes. Do you really want to discard these changes and exit?"), "Confirm Close",
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-        if (rc == JOptionPane.NO_OPTION)
-        {
-          return;
-        }
-        else
-        {
-          break;
-        }
+        return;
       }
     }
 
     // Store open playlists
-    List<String> openPlaylists = this._playlistTabbedPane.getAllEmbeddedMainComponent().stream()
+    List<String> openPlaylists = this._playlistTabbedPane.getPlaylistEditors().stream()
       .map(playlistEditCtrl -> playlistEditCtrl.getPlaylist().getPath().toString())
       .collect(Collectors.toList());
 
@@ -1971,13 +1920,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
     try
     {
       _currentPlaylist = Playlist.makeNewPersistentPlaylist(this.getOptions());
-      Path path = _currentPlaylist.getPath();
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
-      final JDocumentComponent<PlaylistEditCtrl> tempComp = _playlistTabbedPane.openDocument(editor, path);
-      _playlistTabbedPane.setActiveDocument(path);
-
-      _openPlaylists.add(_currentPlaylist);
+      _playlistTabbedPane.openPlaylist(editor, _currentPlaylist);
+      _playlistTabbedPane.setActivePlaylist(_currentPlaylist);
 
       onPlaylistModified(_currentPlaylist);
       _currentPlaylist.addModifiedListener(_playlistListener);
@@ -2257,7 +2203,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
   }
 
   private JButton _btnOpenSelected;
-  private JDocumentTabbedPane<PlaylistEditCtrl> _playlistTabbedPane;
+  private JDocumentTabbedPane _playlistTabbedPane;
   private JSplitPane _leftSplitPane;
   private JList<String> _lstMediaLibraryDirs;
   private JMenuItem _miDeleteFile;
