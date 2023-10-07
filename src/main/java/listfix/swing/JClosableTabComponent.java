@@ -10,13 +10,13 @@ import java.awt.event.*;
  * Contains a JLabel to show the text and
  * a JButton to close the tab it belongs to
  */
-public class JClosableTabComponent<G extends JComponent> extends JPanel
+public class JClosableTabComponent extends JPanel
 {
-  private final JDocumentTabbedPane<G> pane;
+  private final JDocumentTabbedPane pane;
 
   private final JLabel label;
 
-  public JClosableTabComponent(final JDocumentTabbedPane<G> pane)
+  public JClosableTabComponent(final JDocumentTabbedPane pane)
   {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));
