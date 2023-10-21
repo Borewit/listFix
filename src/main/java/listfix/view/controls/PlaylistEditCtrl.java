@@ -616,7 +616,6 @@ public class PlaylistEditCtrl extends JPanel
     _playlistEntryRightClickMenu = new JPopupMenu();
     _miEditFilename = new JMenuItem();
     _miOpenFileLocation = new JMenuItem();
-    _miReplace = new JMenuItem();
     JPopupMenu.Separator jSeparator3 = new JPopupMenu.Separator();
     _miFindClosest = new JMenuItem();
     JPopupMenu.Separator jSeparator4 = new JPopupMenu.Separator();
@@ -625,21 +624,9 @@ public class PlaylistEditCtrl extends JPanel
     _miCopySelectedFiles = new JMenuItem();
     JMenuItem _miNewPlaylistFromSelected = new JMenuItem();
     JToolBar _uiToolbar = new JToolBar();
-    _btnSave = new JButton();
-    _btnReload = new JButton();
-    _btnAdd = new JButton();
-    _btnDelete = new JButton();
     JToolBar.Separator jSeparator1 = new JToolBar.Separator();
-    _btnUp = new JButton();
-    _btnDown = new JButton();
-    _btnInvert = new JButton();
-    _btnReorder = new JButton();
     JToolBar.Separator jSeparator2 = new JToolBar.Separator();
-    _btnMagicFix = new JButton();
-    _btnPlay = new JButton();
     JToolBar.Separator jSeparator5 = new JToolBar.Separator();
-    _btnPrevMissing = new JButton();
-    _btnNextMissing = new JButton();
     _uiTableScrollPane = new JScrollPane();
     _uiTable = createTable();
 
@@ -661,6 +648,7 @@ public class PlaylistEditCtrl extends JPanel
     });
     _playlistEntryRightClickMenu.add(_miOpenFileLocation);
 
+    _miReplace = new JMenuItem();
     _miReplace.setText("Replace Selected Entry");
     _miReplace.addActionListener(evt -> replaceSelectedEntries());
     _playlistEntryRightClickMenu.add(_miReplace);
@@ -700,14 +688,7 @@ public class PlaylistEditCtrl extends JPanel
     _btnReload = makeButton("gtk-refresh.png");
     _btnReload.setToolTipText("Reload");
     _btnReload.setEnabled(playlist != null && playlist.isModified());
-    _btnReload.addMouseListener(new MouseAdapter()
-    {
-      @Override
-      public void mouseClicked(MouseEvent evt)
-      {
-        reloadPlaylist();
-      }
-    });
+    _btnReload.addActionListener(evt -> reloadPlaylist());
     _uiToolbar.add(_btnReload);
 
     _btnAdd = makeButton("edit-add.gif");
