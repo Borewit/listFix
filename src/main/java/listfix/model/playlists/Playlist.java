@@ -985,7 +985,8 @@ public class Playlist
       OutputStream observableOutputStream = observer == null ? os : new ObservableOutputStream(os, currentFileSize, observer);
       try
       {
-        this.specificPlaylist.writeTo(observableOutputStream, null);
+        final String encoding = this.playlistPath.toString().toLowerCase().endsWith(".m3u8") ? "UTF-8" : null;
+        this.specificPlaylist.writeTo(observableOutputStream, encoding);
       }
       catch (Exception e)
       {
