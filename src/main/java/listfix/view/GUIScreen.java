@@ -65,8 +65,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private static final String applicationVersion = getBuildNumber();
 
-  private static final int keyEventRenameFile = KeyEvent.VK_F2;
-
   /**
    * The components should only be enabled when 1 or more playlists are loaded
    */
@@ -563,7 +561,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _playlistTreeRightClickMenu.add(_miDeleteFile);
 
     _miRenameSelectedItem.setMnemonic('R');
-    _miRenameSelectedItem.setAccelerator(KeyStroke.getKeyStroke(keyEventRenameFile, 0));
     _miRenameSelectedItem.setText("Rename");
     _miRenameSelectedItem.setToolTipText("Rename selected file or folder");
     _miRenameSelectedItem.addActionListener(evt -> this.renameTreeSelectedNode());
