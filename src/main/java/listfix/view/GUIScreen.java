@@ -13,6 +13,7 @@ import listfix.json.JsonAppOptions;
 import listfix.model.PlaylistHistory;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
+import listfix.model.playlists.PlaylistProviderNotFoundException;
 import listfix.swing.IDocumentChangeListener;
 import listfix.swing.JPlaylistComponent;
 import listfix.swing.JDocumentTabbedPane;
@@ -1916,7 +1917,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
   {
     try
     {
-      _currentPlaylist = Playlist.makeNewPersistentPlaylist(this.getOptions());
+      _currentPlaylist = Playlist.makeNewPersistentPlaylist("m3u8", this.getOptions());
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
       _playlistTabbedPane.openPlaylist(editor, _currentPlaylist);
@@ -1930,7 +1931,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
         ((CardLayout) _playlistPanel.getLayout()).show(_playlistPanel, "_docTabPanel");
       }
     }
-    catch (IOException ex)
+    catch (IOException | PlaylistProviderNotFoundException ex)
     {
       _logger.error("Error creating a new playlist", ex);
       JOptionPane.showMessageDialog(this,
@@ -1938,7 +1939,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
         "New Playlist Error",
         JOptionPane.ERROR_MESSAGE);
     }
-
   }
 
   private void _closeMenuItemActionPerformed()
