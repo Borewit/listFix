@@ -12,7 +12,6 @@ import listfix.model.EditFilenameResult;
 import listfix.model.PlaylistEntryList;
 
 import listfix.model.playlists.*;
-import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.view.IListFixGui;
 import listfix.view.dialogs.*;
@@ -670,7 +669,7 @@ public class PlaylistEditCtrl extends JPanel
     _miCopySelectedFiles.addActionListener(evt -> _miCopySelectedFilesActionPerformed());
     _playlistEntryRightClickMenu.add(_miCopySelectedFiles);
 
-    _miNewPlaylistFromSelected.setText("Create New Playlist with Selected Tracks...");
+    _miNewPlaylistFromSelected.setText("Create new playlist with selected tracks...");
     _miNewPlaylistFromSelected.addActionListener(evt -> _miNewPlaylistFromSelectedActionPerformed());
     _playlistEntryRightClickMenu.add(_miNewPlaylistFromSelected);
 
@@ -1060,24 +1059,19 @@ public class PlaylistEditCtrl extends JPanel
 
   private void _miNewPlaylistFromSelectedActionPerformed()
   {
-
-    List<Integer> rowList = new ArrayList<>();
-    int[] uiRows = _uiTable.getSelectedRows();
-    for (int x : uiRows)
+    final List<PlaylistEntry> playlistEntries = this.getSelectedPlaylistEntries();
+    if (!playlistEntries.isEmpty())
     {
-      rowList.add(_uiTable.convertRowIndexToModel(x));
-    }
-    int[] rows = ArrayFunctions.integerListToArray(rowList);
-    // Creating the playlist and copying the entries gives us a new list w/ the "Untitled-X" style name.
-    try
-    {
-      Playlist sublist = Playlist.makeNewPersistentPlaylist(this.getPlaylistOptions());
-      sublist.addAllAt(0, playlist.getSublist(rows).getEntries());
-      this.listFixGui.openNewTabForPlaylist(sublist);
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException("Failed to create new playlist", e);
+      try
+      {
+        Playlist sublist = Playlist.makeNewPersistentPlaylist(this.getPlaylist().getFilename(), this.getPlaylistOptions());
+        sublist.addAllAt(0, playlistEntries);
+        this.listFixGui.openNewTabForPlaylist(sublist);
+      }
+      catch (Exception e)
+      {
+        throw new RuntimeException("Failed to create new playlist", e);
+      }
     }
   }
 

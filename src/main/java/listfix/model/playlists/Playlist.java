@@ -3,6 +3,7 @@ package listfix.model.playlists;
 import io.github.borewit.lizzy.content.Content;
 import io.github.borewit.lizzy.playlist.*;
 import listfix.config.IMediaLibrary;
+import listfix.io.FileUtils;
 import listfix.io.IPlaylistOptions;
 import listfix.io.playlists.LizzyPlaylistUtil;
 import listfix.model.BatchMatchItem;
@@ -55,6 +56,7 @@ public class Playlist
   private final List<IPlaylistModifiedListener> _listeners = new ArrayList<>();
 
   private static final PlaylistFormat defaultPlaylistFormat = PlaylistFormat.m3u;
+  private static final String defaultPlaylistExtension = "m3u8";
 
   public static Playlist load(Path playlistPath, IProgressObserver<String> observer, IPlaylistOptions playListOptions) throws IOException
   {
@@ -93,12 +95,18 @@ public class Playlist
     return newPlaylist;
   }
 
-  public static Playlist makeNewPersistentPlaylist(IPlaylistOptions playListOptions) throws IOException
+  public static Playlist makeNewPersistentPlaylist(String extension, IPlaylistOptions playListOptions) throws IOException, PlaylistProviderNotFoundException
   {
-    final Path path = getNewPlaylistFilename();
-    final io.github.borewit.lizzy.playlist.Playlist playlist = new io.github.borewit.lizzy.playlist.Playlist();
-    SpecificPlaylist specificPlaylist = LizzyPlaylistUtil.writeNewPlaylist(playlist, path, defaultPlaylistFormat);
-    return new Playlist(path, playListOptions, specificPlaylist);
+    final Path path = getNewPlaylistFilename(extension);
+    SpecificPlaylistFactory specificPlaylistFactory = SpecificPlaylistFactory.getInstance();
+    List<SpecificPlaylistProvider> providers = specificPlaylistFactory.findProvidersByExtension(extension);
+    if (!providers.isEmpty())
+    {
+      final io.github.borewit.lizzy.playlist.Playlist playlist = new io.github.borewit.lizzy.playlist.Playlist();
+      SpecificPlaylist specificPlaylist = providers.get(0).toSpecificPlaylist(playlist);
+      return new Playlist(path, playListOptions, specificPlaylist);
+    }
+    throw new PlaylistProviderNotFoundException("Could not find a playlist provided for " + extension);
   }
 
   /**
@@ -1011,7 +1019,7 @@ public class Playlist
   {
     if (_isNew)
     {
-      this.playlistPath = getNewPlaylistFilename();
+      this.playlistPath = getNewPlaylistFilename(defaultPlaylistExtension);
       this.playlistPath.toFile().deleteOnExit();
       this.isModified = false;
       _isNew = true;
@@ -1029,13 +1037,14 @@ public class Playlist
     refreshStatus();
   }
 
-  public static synchronized Path getNewPlaylistFilename()
+  public static synchronized Path getNewPlaylistFilename(String pathOrExtension)
   {
+    final String extension = pathOrExtension.contains(".") ? FileUtils.getFileExtension(pathOrExtension) : pathOrExtension;
     Path path;
     do
     {
       ++NEW_LIST_COUNT;
-      path = Path.of(HOME_DIR, "Untitled-" + NEW_LIST_COUNT + ".m3u8");
+      path = Path.of(HOME_DIR, "Untitled-" + NEW_LIST_COUNT + "." + extension);
     }
     while (Files.exists(path));
     return path;
