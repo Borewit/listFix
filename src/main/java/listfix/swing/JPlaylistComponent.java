@@ -65,7 +65,7 @@ public class JPlaylistComponent extends JPanel
     }
 
     this.closableTabComponent.setTitle(playlist.getPath().getFileName().toString());
-    this.closableTabComponent.setTooltip(playlist.toString());
+    this.closableTabComponent.setTooltip(playlist.getPath().toString());
 
     playlist.addModifiedListener(this.playlistListener);
 
@@ -75,6 +75,7 @@ public class JPlaylistComponent extends JPanel
   private void onPlaylistModified(Playlist list)
   {
     this.closableTabComponent.setTitle(playlist.getPath().getFileName().toString());
+    this.closableTabComponent.setTooltip(playlist.getPath().toString());
     this.setIcon(this.getIconForPlaylist());
   }
 
