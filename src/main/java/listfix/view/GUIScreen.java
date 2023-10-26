@@ -66,6 +66,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private static final String applicationVersion = getBuildNumber();
 
+  private static final String DefaultPlaylistFormatExtension = ".m3u8";
+
   /**
    * The components should only be enabled when 1 or more playlists are loaded
    */
@@ -751,8 +753,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _verticalPanel.add(_spacerPanel);
 
     _newIconButton.setIcon(getImageIcon("icon_new_file.png")); // NOI18N
-    _newIconButton.setText("New Playlist");
-    _newIconButton.setToolTipText("New Playlist");
+    _newIconButton.setText("New playlist");
+    _newIconButton.setToolTipText("Create new empty playlist");
     _newIconButton.setAlignmentY(0.0F);
     _newIconButton.setFocusable(false);
     _newIconButton.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -816,8 +818,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _closeAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
     _closeAllMenuItem.setMnemonic('A');
-    _closeAllMenuItem.setText("Close All");
-    _closeAllMenuItem.setToolTipText("Closes All Open Playlists");
+    _closeAllMenuItem.setText("Close all");
+    _closeAllMenuItem.setToolTipText("Closes all open playlists");
     _closeAllMenuItem.addActionListener(evt -> this._playlistTabbedPane.closeAll());
     _fileMenu.add(_closeAllMenuItem);
     _fileMenu.add(jSeparator1);
@@ -830,14 +832,14 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
     _saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
     _saveAsMenuItem.setMnemonic('V');
-    _saveAsMenuItem.setText("Save As");
+    _saveAsMenuItem.setText("Save as");
     _saveAsMenuItem.addActionListener(evt -> _saveAsMenuItemActionPerformed());
     _fileMenu.add(_saveAsMenuItem);
 
     _saveAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
     _saveAllMenuItem.setMnemonic('S');
     _saveAllMenuItem.setText("Save All");
-    _saveAllMenuItem.setToolTipText("Save All Open Playlists");
+    _saveAllMenuItem.setToolTipText("Save all open playlists");
     _saveAllMenuItem.addActionListener(evt -> _saveAllMenuItemActionPerformed());
     _fileMenu.add(_saveAllMenuItem);
     _fileMenu.add(jSeparator2);
@@ -845,7 +847,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _miReload.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
     _miReload.setMnemonic('R');
     _miReload.setText("Reload");
-    _miReload.setToolTipText("Reloads The Currently Open Playlist");
+    _miReload.setToolTipText("Reloads the current open playlist");
     _miReload.addActionListener(evt -> _miReloadActionPerformed());
     _fileMenu.add(_miReload);
 
@@ -1659,21 +1661,28 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private void confirmCloseApp()
   {
-    final Optional<Playlist> hasModifiedPlaylist = this._playlistTabbedPane.getPlaylistEditors().stream()
+    final Collection<Playlist> modifiedPlaylists = this._playlistTabbedPane.getPlaylistEditors().stream()
       .map(PlaylistEditCtrl::getPlaylist)
       .filter(Playlist::isModified)
-      .findAny();
+      .collect(Collectors.toList());
 
-    if (hasModifiedPlaylist.isPresent()) {
+    if (!modifiedPlaylists.isEmpty()) {
       Object[] options =
         {
-          "Discard Changes and Exit", "Cancel"
+          "Discard changes and exit", "Cancel"
         };
       int rc = JOptionPane.showOptionDialog(this, new JTransparentTextArea("You have unsaved changes. Do you really want to discard these changes and exit?"), "Confirm Close",
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
       if (rc == JOptionPane.NO_OPTION)
       {
         return;
+      }
+      else if (rc == JOptionPane.YES_OPTION)
+      {
+        // Close unsaved playlists to prevent to prevent those from being re-opened next run
+        modifiedPlaylists.stream().filter(Playlist::isNew).forEach(unsavedPlaylist -> {
+          this._playlistTabbedPane.remove(unsavedPlaylist);
+        });
       }
     }
 
@@ -1686,7 +1695,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
     List<String> playlistPaths = appState.getPlaylistsOpened();
     playlistPaths.clear();
     playlistPaths.addAll(openPlaylists);
-    appState.setActivePlaylistIndex(_playlistTabbedPane.getSelectedIndex());
+    appState.setActivePlaylistIndex(openPlaylists.isEmpty() ? null : _playlistTabbedPane.getSelectedIndex());
 
     try
     {
@@ -1917,7 +1926,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
   {
     try
     {
-      _currentPlaylist = Playlist.makeNewPersistentPlaylist("m3u8", this.getOptions());
+      _currentPlaylist = Playlist.makeNewPersistentPlaylist(DefaultPlaylistFormatExtension, this.getOptions());
       PlaylistEditCtrl editor = new PlaylistEditCtrl(this);
       editor.setPlaylist(_currentPlaylist);
       _playlistTabbedPane.openPlaylist(editor, _currentPlaylist);

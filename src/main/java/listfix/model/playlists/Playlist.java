@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class Playlist
 {
-  private static final String HOME_DIR = System.getProperty("user.home");
+  private static final String DEFAULT_SAVE_FOLDER = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 
   private static int NEW_LIST_COUNT = -1;
 
@@ -48,7 +49,7 @@ public class Playlist
   private int _urlCount;
   private int _missingCount;
   private boolean isModified;
-  private boolean _isNew;
+  private boolean isUnsaved;
   private static final Logger _logger = LogManager.getLogger(Playlist.class);
 
   private final IPlaylistOptions playListOptions;
@@ -63,7 +64,7 @@ public class Playlist
     SpecificPlaylist specificPlaylist = LizzyPlaylistUtil.readPlaylist(playlistPath);
     Playlist playlist = new Playlist(playlistPath, playListOptions, specificPlaylist);
     playlist.load(observer);
-    playlist._isNew = false;
+    playlist.isUnsaved = false;
     return playlist;
   }
 
@@ -119,6 +120,7 @@ public class Playlist
     this.playlistPath = playlistPath;
     this.playListOptions = playListOptions;
     this.specificPlaylist = playlist;
+    this.isUnsaved = true;
     this.isModified = false;
     toPlaylistEntries(this._entries, playlist.toPlaylist().getRootSequence());
     refreshStatus();
@@ -258,7 +260,7 @@ public class Playlist
     // change original _entries
     replaceEntryListContents(_entries, _originalEntries);
     this.isModified = false;
-    _isNew = false;
+    this.isUnsaved = false;
 
     // set entries unfixed if we're being watched...
     // (otherwise writing out a temp file for playback, at least right now)
@@ -483,7 +485,7 @@ public class Playlist
 
   public boolean isNew()
   {
-    return this._isNew;
+    return this.isUnsaved;
   }
 
   public void replace(int index, PlaylistEntry newEntry)
@@ -1017,12 +1019,12 @@ public class Playlist
    */
   public void reload(IProgressObserver<String> observer) throws IOException
   {
-    if (_isNew)
+    if (isUnsaved)
     {
       this.playlistPath = getNewPlaylistFilename(defaultPlaylistExtension);
       this.playlistPath.toFile().deleteOnExit();
       this.isModified = false;
-      _isNew = true;
+      isUnsaved = true;
       _entries.clear();
       _originalEntries.clear();
     }
@@ -1044,7 +1046,7 @@ public class Playlist
     do
     {
       ++NEW_LIST_COUNT;
-      path = Path.of(HOME_DIR, "Untitled-" + NEW_LIST_COUNT + "." + extension);
+      path = Path.of(DEFAULT_SAVE_FOLDER, "Untitled-" + NEW_LIST_COUNT + "." + extension);
     }
     while (Files.exists(path));
     return path;

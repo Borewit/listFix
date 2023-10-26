@@ -679,7 +679,7 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.setRollover(true);
 
     _btnSave = makeButton("save.gif");
-    _btnSave.setToolTipText("Save");
+    _btnSave.setToolTipText("Save playlist");
     _btnSave.setEnabled(playlist != null);
     _btnSave.addActionListener(evt -> savePlaylist());
     _uiToolbar.add(_btnSave);
@@ -691,7 +691,7 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.add(_btnReload);
 
     _btnAdd = makeButton("edit-add.gif");
-    _btnAdd.setToolTipText("Append/Insert");
+    _btnAdd.setToolTipText("Append / Insert");
     _btnAdd.addActionListener(ignore -> this.addItems());
     _uiToolbar.add(_btnAdd);
 
@@ -702,12 +702,12 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.add(jSeparator1);
 
     _btnUp = makeButton("arrow-up.gif");
-    _btnUp.setToolTipText("Move Up");
+    _btnUp.setToolTipText("Move up");
     _btnUp.addActionListener(event -> this.moveSelectedRowsUp());
     _uiToolbar.add(_btnUp);
 
     _btnDown = makeButton("arrow_down.gif");
-    _btnDown.setToolTipText("Move Down");
+    _btnDown.setToolTipText("Move down");
     _btnDown.addActionListener(event -> this.moveSelectedRowsDown());
     _uiToolbar.add(_btnDown);
 
@@ -717,7 +717,7 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.add(_btnInvert);
 
     _btnReorder = makeButton("reorder.png");
-    _btnReorder.setToolTipText("Change Playlist Order");
+    _btnReorder.setToolTipText("Change playlist order");
     _btnReorder.addActionListener(event -> this.reorderList());
     _uiToolbar.add(_btnReorder);
     _uiToolbar.add(jSeparator2);
@@ -740,13 +740,13 @@ public class PlaylistEditCtrl extends JPanel
     _uiToolbar.add(jSeparator5);
 
     _btnPrevMissing = makeButton("prev.png");
-    _btnPrevMissing.setToolTipText("Previous Missing Entry");
+    _btnPrevMissing.setToolTipText("Previous missing entry");
     _btnPrevMissing.setEnabled(playlist != null && playlist.getMissingCount() > 0);
     _btnPrevMissing.addActionListener(evt -> _btnPrevMissingActionPerformed());
     _uiToolbar.add(_btnPrevMissing);
 
     _btnNextMissing = makeButton("next.png");
-    _btnNextMissing.setToolTipText("Next Missing Entry");
+    _btnNextMissing.setToolTipText("Next missing entry");
     _btnNextMissing.setEnabled(playlist != null && playlist.getMissingCount() > 0);
     _btnNextMissing.addActionListener(evt -> _btnNextMissingActionPerformed());
     _uiToolbar.add(_btnNextMissing);
