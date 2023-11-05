@@ -251,9 +251,10 @@ public final class GUIScreen extends JFrame implements IListFixGui
         .filter(Files::exists)
         .forEach(GUIScreen.this::openPlaylist);
 
-      if (appState.getActivePlaylistIndex() != null)
+      final Integer playlistIndex = appState.getActivePlaylistIndex();
+      if (playlistIndex != null && playlistIndex < _playlistTabbedPane.getDocumentCount())
       {
-        _playlistTabbedPane.setSelectedIndex(appState.getActivePlaylistIndex());
+        _playlistTabbedPane.setSelectedIndex(playlistIndex);
       }
     });
   }
