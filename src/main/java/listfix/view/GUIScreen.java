@@ -15,14 +15,16 @@ import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistFactory;
 import listfix.model.playlists.PlaylistProviderNotFoundException;
 import listfix.swing.IDocumentChangeListener;
-import listfix.swing.JPlaylistComponent;
 import listfix.swing.JDocumentTabbedPane;
+import listfix.swing.JPlaylistComponent;
 import listfix.util.ArrayFunctions;
 import listfix.util.ExStack;
 import listfix.util.FileTypeSearch;
 import listfix.view.controls.JTransparentTextArea;
 import listfix.view.controls.PlaylistEditCtrl;
-import listfix.view.dialogs.*;
+import listfix.view.dialogs.AppOptionsDialog;
+import listfix.view.dialogs.FolderChooser;
+import listfix.view.dialogs.ProgressDialog;
 import listfix.view.support.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -90,7 +93,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
     postInitComponents();
   }
 
-  public static String getBuildNumber() {
+  public static String getBuildNumber()
+  {
     URL url = getResourceUrl("/META-INF/MANIFEST.MF");
     try
     {
@@ -402,17 +406,18 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _savePlaylistAsFileChooser.addPropertyChangeListener(propertyChangeEvent -> {
       if (_savePlaylistAsFileChooser.isVisible() && propertyChangeEvent.getPropertyName().equals(JFileChooser.FILE_FILTER_CHANGED_PROPERTY))
       {
-        System.out.printf("Selected file = %s\n", _savePlaylistAsFileChooser.getSelectedFile());
+        // We want the last filename the user entered
+        String currentFileName = ((BasicFileChooserUI) _savePlaylistAsFileChooser.getUI()).getFileName();
+        System.out.printf("Selected file = %s\n", currentFileName);
         SpecificPlaylistFileFilter fileFilter = (SpecificPlaylistFileFilter) propertyChangeEvent.getNewValue();
-        final File selectedFile = _savePlaylistAsFileChooser.getSelectedFile();
-        if (selectedFile != null)
+        if (currentFileName != null)
         {
+          File userFile = new File(_savePlaylistAsFileChooser.getCurrentDirectory(), currentFileName);
           // Current selected file is not compliant with FileFilter, let's adjust it
-          if (!fileFilter.getContentType().accept(selectedFile))
+          if (!fileFilter.getContentType().accept(userFile))
           {
-            String curName = selectedFile.getName();
-            String nameWithoutExtension = FileUtils.getExtension(selectedFile.getName()).map(
-              ext -> curName.substring(0, curName.lastIndexOf("."))).orElse(curName);
+            String nameWithoutExtension = FileUtils.getExtension(currentFileName).map(
+              ext -> currentFileName.substring(0, currentFileName.lastIndexOf("."))).orElse(currentFileName);
             String newName = nameWithoutExtension + fileFilter.getContentType().getExtensions()[0];
             _savePlaylistAsFileChooser.setSelectedFile(new File(newName));
           }
@@ -1182,7 +1187,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   private void openPlaylistLocation(Playlist playList)
   {
-   this.openFileLocation(playList.getPath());
+    this.openFileLocation(playList.getPath());
   }
 
   private void openFileLocation(Path path)
@@ -1579,9 +1584,11 @@ public final class GUIScreen extends JFrame implements IListFixGui
 
   public void runClosestMatchOnAllTabs()
   {
-    for (PlaylistEditCtrl ctrl : this._playlistTabbedPane.getPlaylistEditors()) {
+    for (PlaylistEditCtrl ctrl : this._playlistTabbedPane.getPlaylistEditors())
+    {
       this._playlistTabbedPane.setActivePlaylist(ctrl.getPlaylist());
-      if (!ctrl.locateMissingFiles() || !ctrl.bulkFindClosestMatches()) {
+      if (!ctrl.locateMissingFiles() || !ctrl.bulkFindClosestMatches())
+      {
         break;
       }
     }
@@ -1667,7 +1674,8 @@ public final class GUIScreen extends JFrame implements IListFixGui
       .filter(Playlist::isModified)
       .collect(Collectors.toList());
 
-    if (!modifiedPlaylists.isEmpty()) {
+    if (!modifiedPlaylists.isEmpty())
+    {
       Object[] options =
         {
           "Discard changes and exit", "Cancel"
