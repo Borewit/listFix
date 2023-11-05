@@ -584,7 +584,15 @@ public class PlaylistEditCtrl extends JPanel
     List<PlaylistEntry> playlistEntries = this.getSelectedPlaylistEntries().stream()
       .filter(entry -> entry.isFound() || entry.isURL())
       .collect(Collectors.toList());
+    this.playEntries(playlistEntries);
+  }
+  private void playAllEntries()
+  {
+    this.playEntries(this.playlist.getEntries());
+  }
 
+  private void playEntries(final List<PlaylistEntry> playlistEntries)
+  {
     try
     {
       // Get a temp playlist
@@ -809,14 +817,14 @@ public class PlaylistEditCtrl extends JPanel
     }
     else
     {
-      if (playlist.isModified())
+      if (this.playlist.isModified())
       {
         // this plays all entries if nothing is selected, and plays what the user has in memory
-        playSelectedEntries();
+        this.playAllEntries();
       }
       else
       {
-        playlist.play();
+        this.playlist.play();
       }
     }
   }
