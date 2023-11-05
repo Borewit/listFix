@@ -479,7 +479,7 @@ public class Playlist
     }
     catch (IOException e)
     {
-      _logger.warn(String.format("Launching file: %s", this.playlistPath), e);
+      _logger.warn(String.format("Failed to launching file: %s", this.playlistPath), e);
     }
   }
 
