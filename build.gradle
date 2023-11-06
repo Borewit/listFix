@@ -33,7 +33,7 @@ plugins {
     id 'me.qoomon.git-versioning' version '6.4.2'
 
     id 'org.beryx.jlink' version '3.0.0'
-    id 'org.gradlex.extra-java-module-info' version '1.4.2'
+    id 'org.gradlex.extra-java-module-info' version '1.5'
 }
 
 apply plugin: 'com.gitlab.svg2ico'
