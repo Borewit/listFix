@@ -24,7 +24,7 @@ public class PlaylistTransferObject
     SpecificPlaylist specificPlaylist = LizzyPlaylistUtil.toPlaylist(playlistFormat, playlist);
     try
     {
-      specificPlaylist.writeTo(outputStream, null);
+      specificPlaylist.writeTo(outputStream);
     }
     catch (Exception e)
     {

@@ -115,7 +115,7 @@ public class LizzyPlaylistUtil
     try (OutputStream outputStream = Files.newOutputStream(path, options))
     {
       SpecificPlaylist specificPlaylist = specificPlaylistFactory.getProvider(playlistFormat).toSpecificPlaylist(playlist);
-      specificPlaylist.writeTo(outputStream, null);
+      specificPlaylist.writeTo(outputStream);
       return specificPlaylist;
     }
   }

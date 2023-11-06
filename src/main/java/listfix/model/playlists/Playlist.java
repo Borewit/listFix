@@ -166,7 +166,7 @@ public class Playlist
         final InputStream observableInputStream = observer == null ? is : new ObservableInputStream(is, Files.size(playlistPath), observer);
         try
         {
-          this.specificPlaylist = specificPlaylistProvider.readFrom(observableInputStream, null);
+          this.specificPlaylist = specificPlaylistProvider.readFrom(observableInputStream);
           if (this.specificPlaylist != null)
           {
             toPlaylistEntries(playlistEntries, this.specificPlaylist.toPlaylist().getRootSequence());
@@ -985,8 +985,7 @@ public class Playlist
       OutputStream observableOutputStream = observer == null ? os : new ObservableOutputStream(os, currentFileSize, observer);
       try
       {
-        final String encoding = this.playlistPath.toString().toLowerCase().endsWith(".m3u8") ? "UTF-8" : null;
-        this.specificPlaylist.writeTo(observableOutputStream, encoding);
+        this.specificPlaylist.writeTo(observableOutputStream);
       }
       catch (Exception e)
       {
