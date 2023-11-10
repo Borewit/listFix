@@ -985,7 +985,7 @@ public class Playlist
   public final void save(PlaylistFormat format, IProgressObserver<String> observer) throws IOException
   {
     this.syncEntriesToSpecificPlaylist(format);
-    _logger.debug(String.format("Writing playlist to %s", this.playlistPath));
+    _logger.info(String.format("Writing playlist to %s", this.playlistPath));
     // avoid resetting total if part of batch operation
 
     // Guess the future file length, to have progress indication
