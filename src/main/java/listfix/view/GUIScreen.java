@@ -335,7 +335,7 @@ public final class GUIScreen extends JFrame implements IListFixGui
           final boolean allTopLevel = selectPath != null && Arrays.stream(selectPath)
             .allMatch(path -> path.getParentPath() != null && path.getParentPath().getParentPath() == null);
 
-          _miRemovePlaylistDirectory.setEnabled(allTopLevel);
+          _miRemovePlaylistDirectory.setVisible(allTopLevel);
 
           if (_playlistDirectoryTree.getSelectionCount() > 0)
           {
