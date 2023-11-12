@@ -180,7 +180,7 @@ jlink {
         icon = currentOs.windows ? pathFavicon : pathPngIcon
         version = project.version.substring(0, project.version.lastIndexOf("-") == -1 ? project.version.length() : project.version.lastIndexOf("-")).replace("-", ".")
         description = 'Fix and repairs broken playlist'
-        // imageOptions += ['--win-console']
+        imageOptions += ['--win-console']
         installerOptions += [
                 '--vendor', project.vendor,
                 '--app-version', version,
