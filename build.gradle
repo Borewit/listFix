@@ -201,6 +201,13 @@ jlink {
             ]
         }
     }
+
+    mergedModule {
+        additive = true
+        uses "org.apache.logging.log4j.spi.Provider"
+        uses "org.apache.logging.log4j.core.util.WatchEventService"
+        uses "org.apache.logging.log4j.core.util.ContextDataProvider"
+    }
 }
 
 task fatJar(type: Jar) {
