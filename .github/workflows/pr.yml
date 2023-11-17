@@ -13,6 +13,7 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      # Only works on action triggered by pull_request
       - name: Comment PR linking artifact
         uses: thollander/actions-comment-pull-request@v2
         with:
