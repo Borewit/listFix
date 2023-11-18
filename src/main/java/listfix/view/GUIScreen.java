@@ -25,6 +25,7 @@ import listfix.view.controls.PlaylistEditCtrl;
 import listfix.view.dialogs.AppOptionsDialog;
 import listfix.view.dialogs.FolderChooser;
 import listfix.view.dialogs.ProgressDialog;
+import listfix.view.dialogs.SaveAsPlaylistFileChooser;
 import listfix.view.support.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 public final class GUIScreen extends JFrame implements IListFixGui
 {
   private final JFileChooser _jOpenPlaylistFileChooser = new JFileChooser();
-  private final JFileChooser _savePlaylistAsFileChooser = new JFileChooser();
+  private final JFileChooser _savePlaylistAsFileChooser = new SaveAsPlaylistFileChooser();
   private final FolderChooser _jMediaDirChooser = new FolderChooser();
   private final Image applicationIcon = getImageIcon("icon.png").getImage();
   private final listfix.view.support.SplashScreen splashScreen = new listfix.view.support.SplashScreen(getImageIcon("listfixSplashScreen.png"));
@@ -396,38 +396,6 @@ public final class GUIScreen extends JFrame implements IListFixGui
     _jMediaDirChooser.setAcceptAllFileFilterUsed(false);
     _jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
     _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
-
-    _savePlaylistAsFileChooser.setDialogTitle("Save File:");
-    _savePlaylistAsFileChooser.setAcceptAllFileFilterUsed(false);
-    _savePlaylistAsFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    // Generate filters from dynamically loaded Lizzy playlist service providers
-    LizzyPlaylistUtil.getPlaylistExtensionFilters().forEach(_savePlaylistAsFileChooser::addChoosableFileFilter);
-    // Adjust target file name based on the filter selection
-    _savePlaylistAsFileChooser.addPropertyChangeListener(propertyChangeEvent -> {
-      if (_savePlaylistAsFileChooser.isVisible() && propertyChangeEvent.getPropertyName().equals(JFileChooser.FILE_FILTER_CHANGED_PROPERTY))
-      {
-        // We want the last filename the user entered
-        String currentFileName = ((BasicFileChooserUI) _savePlaylistAsFileChooser.getUI()).getFileName();
-        System.out.printf("Selected file = %s\n", currentFileName);
-        SpecificPlaylistFileFilter fileFilter = (SpecificPlaylistFileFilter) propertyChangeEvent.getNewValue();
-        if (currentFileName != null)
-        {
-          File userFile = new File(_savePlaylistAsFileChooser.getCurrentDirectory(), currentFileName);
-          // Current selected file is not compliant with FileFilter, let's adjust it
-          if (!fileFilter.getContentType().accept(userFile))
-          {
-            String nameWithoutExtension = FileUtils.getExtension(currentFileName).map(
-              ext -> currentFileName.substring(0, currentFileName.lastIndexOf("."))).orElse(currentFileName);
-            String newName = nameWithoutExtension + fileFilter.getContentType().getExtensions()[0];
-            _savePlaylistAsFileChooser.setSelectedFile(new File(newName));
-          }
-        }
-      }
-      else
-      {
-        System.out.printf("property %s = %s\n", propertyChangeEvent.getPropertyName(), propertyChangeEvent.getNewValue());
-      }
-    });
   }
 
   public IAppOptions getOptions()
