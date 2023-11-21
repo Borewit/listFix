@@ -1,7 +1,10 @@
 name: CI
 
 on:
-  workflow_call
+  pull_request:
+    types:
+      - opened
+  push:
 
 jobs:
   ubuntuBuild:
@@ -20,7 +23,7 @@ jobs:
           distribution: corretto
           cache: gradle
       - name: Git describe
-        id: ghd
+        id: gitDescribe
         uses: proudust/gh-describe@v1
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -39,40 +42,75 @@ jobs:
       - name: Upload fatJar artifact
         uses: actions/upload-artifact@v3
         with:
-          name: fatJar-${{ steps.ghd.outputs.describe }}
+          name: fatJar-${{ steps.gitDescribe.outputs.describe }}
           path: build/libs/listFix-*-all.jar
+    outputs:
+      version: ${{ steps.gitDescribe.outputs.describe }}
   windowsBuild:
     name: Build deployment on Windows
     runs-on: windows-latest
     permissions:
       checks: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v3
+        id: checkout
         with:
           fetch-depth: 0 # Fetch all history for all tags and branches
       - name: Set up JDK 17
+        id: jdk
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: corretto
           cache: gradle
       - name: Setup Gradle
+        id: gradle
         uses: gradle/gradle-build-action@v2
       - name: Git describe
-        id: ghd
+        id: gitDescribe
         uses: proudust/gh-describe@v1
       - name: Build
+        id: gradle_build
         run: ./gradlew :build
       - name: Build Windows installers
+        id: gradle_jpackage
         run: ./gradlew :jpackage
       - name: Upload Windows exe installer
+        id: upload_artifact_installer
         uses: actions/upload-artifact@v3
         with:
-          name: listFix-windows-installer-exe-${{ steps.ghd.outputs.describe }}
+          name: listFix-windows-installer-exe-${{ steps.gitDescribe.outputs.describe }}
           path: build/jpackage/listFix()-*.exe
       - name: Upload Windows binaries
+        id: upload_artifact_binaries
         uses: actions/upload-artifact@v3
         with:
-          name: listFix-windows-binaries-${{ steps.ghd.outputs.describe }}
+          name: listFix-windows-binaries-${{ steps.gitDescribe.outputs.describe }}
           path: build/jpackage/listFix()
+  commentArtifacts:
+    name: Link build artifacts
+    runs-on: ubuntu-latest
+    needs: [ubuntuBuild, windowsBuild]
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+        with:
+          # Can be "open", "closed", or "all".  Defaults to "open".
+          state: open
+      - name: PR number
+        run: echo '${{ steps.findPr.outputs.number }}'
+      # Only works on action triggered by pull_request
+      - name: "Add Comment to PR"
+        id: pr_comment
+        uses: thollander/actions-comment-pull-request@v2
+        if: success() && ${{ steps.findPr.outputs.number }}
+        with:
+          pr_number: ${{ steps.findPr.outputs.number }}
+          message: |
+            PR #${{ steps.findPr.outputs.number }} building commit ${{github.sha}}:
+            [listFix() **${{ needs.ubuntuBuild.outputs.version }}**](https://github.com/Borewit/listFix/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}#artifacts) 
+            in run ${{ github.run_id }}/${{ github.run_attempt }}.
+          mode: recreate
+          create_if_not_exists: true
