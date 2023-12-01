@@ -67,6 +67,8 @@ def manifestAttributes = [
     'Main-Class'            : project.mainClassName
 ]
 
+def cleanVersion = project.version.substring(0, project.version.indexOf("-") == -1 ? project.version.length() : project.version.indexOf("-"))
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -178,12 +180,12 @@ jlink {
         jvmArgs = ['-splash:images/listfixSplashScreen.png']
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
         icon = currentOs.windows ? pathFavicon : pathPngIcon
-        version = project.version.substring(0, project.version.lastIndexOf("-") == -1 ? project.version.length() : project.version.lastIndexOf("-")).replace("-", ".")
         description = 'Fix and repairs broken playlist'
         // imageOptions += ['--win-console']
+        imageOptions += ['--app-version', cleanVersion]
         installerOptions += [
                 '--vendor', project.vendor,
-                '--app-version', version,
+                '--app-version', cleanVersion
         ]
         if (currentOs.windows) {
             installerOptions += [
@@ -208,6 +210,12 @@ jlink {
         uses "org.apache.logging.log4j.core.util.WatchEventService"
         uses "org.apache.logging.log4j.core.util.ContextDataProvider"
     }
+}
+
+task windowsPortableFolder(type: Copy, dependsOn: jpackage) {
+    group = 'distribution'
+    from "${buildDir}/jpackage/listFix()"
+    into "${buildDir}/distributions/portable/listFix()-${project.version}"
 }
 
 task fatJar(type: Jar) {
