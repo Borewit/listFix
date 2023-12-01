@@ -105,7 +105,7 @@ jobs:
       - name: "Add Comment to PR"
         id: pr_comment
         uses: thollander/actions-comment-pull-request@v2
-        if: success() && ${{ steps.findPr.outputs.number }}
+        if: success() && (steps.findPr.outputs.number > 0)
         with:
           pr_number: ${{ steps.findPr.outputs.number }}
           message: |
