@@ -69,6 +69,8 @@ def manifestAttributes = [
 
 def cleanVersion = project.version.substring(0, project.version.indexOf("-") == -1 ? project.version.length() : project.version.indexOf("-"))
 
+def jpackageName = 'listFix';
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -170,7 +172,7 @@ sourceSets {
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher{
-        name = 'listFix()'
+        name = jpackageName
         noConsole = true
         jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
     }
@@ -214,8 +216,8 @@ jlink {
 
 task windowsPortableFolder(type: Copy, dependsOn: jpackage) {
     group = 'distribution'
-    from "${buildDir}/jpackage/listFix()"
-    into "${buildDir}/distributions/portable/listFix()-${project.version}"
+    from "${buildDir}/jpackage/${jpackageName}"
+    into "${buildDir}/distributions/portable/listFix-${project.version}"
 }
 
 task fatJar(type: Jar) {
