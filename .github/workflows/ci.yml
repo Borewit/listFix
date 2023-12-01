@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: listFix-windows-installer-exe-${{ steps.gitDescribe.outputs.describe }}
-          path: build/jpackage/listFix()-*.exe
+          path: build/jpackage/listFix-*.exe
       - name: Upload Windows binaries
         id: upload_artifact_binaries
         uses: actions/upload-artifact@v3
