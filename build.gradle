@@ -227,6 +227,7 @@ task fatJar(type: Jar) {
     }
     setDuplicatesStrategy(DuplicatesStrategy.WARN)
     archiveBaseName = 'listFix'
+    archiveVersion = project.version
     archiveClassifier = 'all'
     from { configurations.runtimeClasspath.filter { it.exists() }.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
