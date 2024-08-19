@@ -30,7 +30,7 @@ plugins {
     id 'checkstyle'
 
     // https://github.com/qoomon/gradle-git-versioning-plugin
-    id 'me.qoomon.git-versioning' version '6.4.3'
+    id 'me.qoomon.git-versioning' version '6.4.4'
 
     id 'org.beryx.jlink' version '3.1.1'
     id 'org.gradlex.extra-java-module-info' version '1.8'
