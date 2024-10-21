@@ -107,7 +107,7 @@ dependencies {
     implementation 'com.rover12421.opensource:JFontChooser:1.0.5-3'
 
     // JUnit Jupiter using Gradle's native JUnit Platform
-    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation platform('org.junit:junit-bom:5.11.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testRuntimeOnly 'org.junit.platform:junit-platform-reporting'
