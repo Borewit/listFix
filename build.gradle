@@ -79,14 +79,14 @@ repositories {
     }
     mavenLocal()
     // Staging repository
-    maven { url 'https://s01.oss.sonatype.org/content/groups/staging/' }
-    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    //maven { url 'https://s01.oss.sonatype.org/content/groups/staging/' }
+    //maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
 
     // Provides christophedelory.playlist.*
-    implementation 'io.github.borewit:lizzy:4.0.1'
+    implementation 'io.github.borewit:lizzy:4.1.0'
 
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
@@ -183,6 +183,7 @@ jlink {
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
         icon = currentOs.windows ? pathFavicon : pathPngIcon
         description = 'Fix and repairs broken playlist'
+        forceMerge 'log4j' // Solves duplicate `uses` in merged module-info
         // imageOptions += ['--win-console']
         imageOptions += ['--app-version', cleanVersion]
         installerOptions += [
