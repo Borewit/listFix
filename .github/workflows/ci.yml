@@ -26,7 +26,7 @@ jobs:
         id: gitDescribe
         uses: proudust/gh-describe@v1
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
       - name: Build
         run: ./gradlew :build
       - name: Test Report
@@ -65,7 +65,7 @@ jobs:
           cache: gradle
       - name: Setup Gradle
         id: gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
       - name: Git describe
         id: gitDescribe
         uses: proudust/gh-describe@v1
