@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,9 +41,9 @@ public class LizzyPlaylistUtil
   }
 
   /**
-   * Convert Lizzy specific playlist providers in
+   * Convert Lizzy specific playlist providers in.
    *
-   * @return List of PlaylistExtensionFilters representing all context types
+   * @return List of PlaylistExtensionFilters representing all context types.
    */
   public static List<SpecificPlaylistFileFilter> getPlaylistExtensionFilters()
   {
@@ -57,11 +59,11 @@ public class LizzyPlaylistUtil
   }
 
   /**
-   * Converts a collection of files to a Lizzy Playlist
+   * Converts a collection of files to a Lizzy Playlist.
    *
-   * @param playlistFormat Lizzy playlist format ID
-   * @param playlist       Collection of files
-   * @return Lizzy Playlist
+   * @param playlistFormat Lizzy playlist format ID.
+   * @param playlist       Collection of files.
+   * @return Lizzy Playlist.
    */
   public static SpecificPlaylist toPlaylist(PlaylistFormat playlistFormat, Playlist playlist)
   {
@@ -79,12 +81,12 @@ public class LizzyPlaylistUtil
   }
 
   /**
-   * Read playlist from InputStream
+   * Read playlist from InputStream.
    * Does not close the inputStream!
    *
-   * @param playlistFormat Source playlist type, e.g. "mp3"
-   * @param inputStream    Stream to read from
-   * @return Lizzy Playlist
+   * @param playlistFormat Source playlist type, e.g. "mp3".
+   * @param inputStream    Stream to read from.
+   * @return Lizzy Playlist.
    */
   public static SpecificPlaylist readPlaylistFromInputStream(PlaylistFormat playlistFormat, InputStream inputStream)
   {
@@ -97,7 +99,6 @@ public class LizzyPlaylistUtil
         throw new IOException("Failed to load playlist");
       }
       return specificPlaylist;
-
     }
     catch (Exception e)
     {
@@ -121,7 +122,9 @@ public class LizzyPlaylistUtil
   }
 
   public static boolean providerAccepts(SpecificPlaylistProvider provider, String filename) {
-    return Arrays.stream(provider.getContentTypes()).anyMatch(types -> types.matchExtension(filename));
+    // For internal extension matching, normalize the filename.
+    String normalizedFilename = filename == null ? null : Normalizer.normalize(filename, Form.NFC);
+    return Arrays.stream(provider.getContentTypes()).anyMatch(types -> types.matchExtension(normalizedFilename));
   }
 
   public static String getPreferredExtensionFor(PlaylistFormat playlistFormat)
@@ -130,10 +133,10 @@ public class LizzyPlaylistUtil
   }
 
   /**
-   * Determine if the path provided is a playlist
+   * Determine if the path provided is a playlist.
    *
-   * @param path Path to test
-   * @return True if the path is a file, and ends with a playlist extension
+   * @param path Path to test.
+   * @return True if the path is a file and ends with a playlist extension.
    */
   public static boolean isPlaylist(Path path)
   {

@@ -11,6 +11,8 @@ import listfix.util.OperatingSystem;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.Collection;
 
 public class FilePlaylistEntry extends PlaylistEntry
@@ -23,6 +25,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   public FilePlaylistEntry(Playlist playlist, Media media)
   {
     super(playlist, media);
+    // Use the raw string from media source for file system checks
     this.trackPath = convertPath(Path.of(media.getSource().toString()));
     this.playlistPath = playlist.getPath();
     // should we skip the exists check?
@@ -43,9 +46,7 @@ public class FilePlaylistEntry extends PlaylistEntry
       {
         if (OperatingSystem.isWindows())
         {
-          // try one more thing, winamp creates some stupid lists (saves out pseudo-relative lists where the entries are assumed to be on the same drive as where the list is found)
-          // only attempt this hack on windows...
-
+          // try one more thing, winamp creates some lists with pseudo-relative paths on Windows
           Path reconstructedTrackPath = playlistPath.getRoot().resolve(trackPath);
 
           Files.exists(reconstructedTrackPath);
@@ -74,6 +75,7 @@ public class FilePlaylistEntry extends PlaylistEntry
 
   private static Path convertPath(Path path)
   {
+    // Use raw string for file system path conversion
     String pathAsString = path.toString();
     if (isWindows)
     {
@@ -93,24 +95,37 @@ public class FilePlaylistEntry extends PlaylistEntry
   }
 
   /**
-   * Update the filename portion of the track path
+   * Normalize the filename or path string to NFC form.
    *
-   * @param filename New filename to assign
+   * @param filename String to normalize.
+   * @return Normalized string.
+   */
+  public static String normalizeFilename(String filename) {
+    return filename == null ? null : Normalizer.normalize(filename, Form.NFC);
+  }
+
+  /**
+   * Update the filename portion of the track path.
+   *
+   * @param filename New filename to assign.
    */
   public void setFileName(String filename)
   {
+    // Use the raw filename for file system operations; normalization is applied upon retrieval
     this.trackPath = this.trackPath.getParent().resolve(filename);
     this.recheckFoundStatus();
   }
 
   /**
-   * Todo: rename to resolved path
+   * Todo: rename to resolved path.
    *
-   * @return Resolved path, relative to playlist folder
+   * @return Resolved path, relative to the playlist folder.
    */
   public Path getAbsolutePath()
   {
-    return this.trackPath.isAbsolute() ? this.trackPath : this.playlistPath.getParent().resolve(this.trackPath).normalize();
+    Path absolutePath = this.trackPath.isAbsolute() ? this.trackPath : this.playlistPath.getParent().resolve(this.trackPath).normalize();
+    System.out.println("Computed absolute path: " + absolutePath);
+    return absolutePath;
   }
 
   private boolean skipExistsCheck()
@@ -120,18 +135,17 @@ public class FilePlaylistEntry extends PlaylistEntry
     return isFound() || ArrayFunctions.containsStringPrefixingAnotherString(emptyPaths, this.getTrackFolder(), false);
   }
 
-
   public boolean findNewLocationFromFileList(Collection<String> fileList, boolean caseInsensitiveExactMatching, boolean useRelativePath)
   {
     String fileSearchResult = null;
-    String trimmedFileName = this.getTrackFileName().trim();
+    // Normalize the file name for internal comparison
+    String trimmedFileName = normalizeFilename(this.getTrackFileName().trim());
     boolean caseSensitiveMatching = !isWindows && !caseInsensitiveExactMatching;
     String candidateFileName;
     for (String file : fileList)
     {
-      // Get the filename from the media library entry that we're looking at so we can compare it directly to the filename we're searching for.
-      candidateFileName = Path.of(file).getFileName().toString();
-
+      // Get the filename from the media library entry for direct comparison (normalized)
+      candidateFileName = normalizeFilename(Path.of(file).getFileName().toString());
       if (caseSensitiveMatching ? candidateFileName.equals(trimmedFileName) : candidateFileName.equalsIgnoreCase(trimmedFileName))
       {
         fileSearchResult = file;
@@ -179,6 +193,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   public void update(Path track)
   {
     this.trackPath = track;
+    // Use raw track string for file system checks; normalization is applied later upon retrieval
     Content content = new Content(track.toString());
     this.media.setSource(content);
   }
@@ -219,13 +234,15 @@ public class FilePlaylistEntry extends PlaylistEntry
   public String getTrackFolder()
   {
     Path parent = this.trackPath.getParent();
-    return parent == null ? "" : parent.toString();
+    // Internal comparisons use normalized strings
+    return parent == null ? "" : normalizeFilename(parent.toString());
   }
 
   @Override
   public String getTrackFileName()
   {
-    return this.trackPath.getFileName().toString();
+    // Internal comparisons use normalized strings
+    return normalizeFilename(this.trackPath.getFileName().toString());
   }
 
   @Override
