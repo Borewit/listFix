@@ -3,20 +3,31 @@ package listfix.util;
 import listfix.io.IPlaylistOptions;
 
 import java.io.File;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
-
 
 public class FileNameTokenizer
 {
   private static final String separators = " .-_[]{},/\\`'~!@#$%^\"&*()+=|:;";
   public List<String> ignoreList = new ArrayList<>();
 
+  /**
+   * Normalize a filename or path string to NFC form.
+   *
+   * @param input String to normalize.
+   * @return Normalized string.
+   */
+  public static String normalizeFilename(String input) {
+    return input == null ? null : Normalizer.normalize(input, Form.NFC);
+  }
+
   public FileNameTokenizer(IPlaylistOptions filePathOptions)
   {
-    StringTokenizer tokenMaker = new StringTokenizer(filePathOptions.getIgnoredSmallWords(), " ,;|");
+    StringTokenizer tokenMaker = new StringTokenizer(normalizeFilename(filePathOptions.getIgnoredSmallWords()), " ,;|");
     while (tokenMaker.hasMoreTokens())
     {
       ignoreList.add(tokenMaker.nextToken());
@@ -25,12 +36,12 @@ public class FileNameTokenizer
 
   public int score(String filename1, String filename2)
   {
-    return scoreMatchingTokens(splitFileName(filename1), splitFileName(filename2));
+    return scoreMatchingTokens(splitFileName(normalizeFilename(filename1)), splitFileName(normalizeFilename(filename2)));
   }
-
 
   public String removeExtensionFromFileName(String name)
   {
+    name = normalizeFilename(name);
     String result = name;
     int index = name.lastIndexOf(".");
     if (index >= 0)
@@ -42,13 +53,15 @@ public class FileNameTokenizer
 
   public static File changeExtension(File f, String newExtension)
   {
-    int i = f.getName().lastIndexOf('.');
-    String name = f.getName().substring(0, i);
+    String fileName = normalizeFilename(f.getName());
+    int i = fileName.lastIndexOf('.');
+    String name = fileName.substring(0, i);
     return new File(f.getParent(), name + newExtension);
   }
 
   public String getExtensionFromFileName(String name)
   {
+    name = normalizeFilename(name);
     int ix = name.lastIndexOf('.');
     if (ix >= 0 && ix < name.length() - 1)
       return name.substring(ix + 1);
@@ -58,14 +71,14 @@ public class FileNameTokenizer
 
   private List<String> splitFileName(String fileName)
   {
-    fileName = removeExtensionFromFileName(fileName);
+    fileName = normalizeFilename(removeExtensionFromFileName(fileName));
     StringTokenizer tokenMaker = new StringTokenizer(fileName, separators);
     int tokenCount = tokenMaker.countTokens();
     List<String> result = new ArrayList<>();
-    String token = "";
+    String token;
     for (int i = 0; i < tokenCount; i++)
     {
-      token = tokenMaker.nextToken();
+      token = normalizeFilename(tokenMaker.nextToken());
       if (token.length() > 1 && !ignoreList.contains(token))
       {
         result.add(token);
@@ -107,26 +120,23 @@ public class FileNameTokenizer
     }
 
     int result = 0;
-    String token;
     if (array2Counts.keySet().size() > 0)
     {
       result = array2Counts.keySet().size() == 1 ? 1 : (int) Math.pow(3.0, array2Counts.keySet().size());
       for (String s : array2Counts.keySet())
       {
-        token = s;
-        int array1Count = array1Counts.get(token);
-        int array2Count = array2Counts.get(token);
+        int array1Count = array1Counts.get(s);
+        int array2Count = array2Counts.get(s);
         if (array1Count < array2Count)
         {
-          result = result + ((token.length() - 1) * array1Count);
+          result += ((s.length() - 1) * array1Count);
         }
         else
         {
-          result = result + ((token.length() - 1) * array2Count);
+          result += ((s.length() - 1) * array2Count);
         }
       }
     }
-
     return result;
   }
 }

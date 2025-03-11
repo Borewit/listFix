@@ -4,6 +4,8 @@ import listfix.config.PlaylistHistoryConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,59 +17,89 @@ public class PlaylistHistory
   private int limit = 0;
 
   /**
-   * Creates a new instance of PlaylistHistory
+   * Creates a new instance of PlaylistHistory.
    */
   public PlaylistHistory(int x)
   {
     limit = x;
   }
 
-
   public void setCapacity(int maxPlaylistHistoryEntries)
   {
     limit = maxPlaylistHistoryEntries;
     if (limit < playlists.size())
     {
-      ((ArrayList) playlists).subList(limit, playlists.size()).clear();
+      ((ArrayList<?>) playlists).subList(limit, playlists.size()).clear();
     }
   }
-
 
   protected int getLimit() // added to assist testing
   {
     return limit;
   }
 
-
   protected List<String> getPlaylists() // added to assist testing
   {
     return playlists;
   }
 
+  /**
+   * Normalize the filename or path string to NFC form.
+   *
+   * @param filename String to normalize.
+   * @return Normalized string.
+   */
+  private static String normalizeFilename(String filename) {
+    return filename == null ? null : Normalizer.normalize(filename, Form.NFC);
+  }
 
+  /**
+   * Initializes the history from a list of file names.
+   * Checks file existence using the raw file names.
+   *
+   * @param input List of file names.
+   */
   public void initHistory(List<String> input)
   {
     int i = 0;
     for (String fileName : input)
     {
+      // Use raw file name for existence check
       File testFile = new File(fileName);
       if (testFile.exists())
       {
         playlists.add(fileName);
       }
       i++;
-      if (i > limit)
+      if (i >= limit)
         break;
     }
   }
 
-
+  /**
+   * Adds a filename to the history.
+   * Uses the raw filename for existence check, but compares entries
+   * using normalized forms.
+   *
+   * @param filename The filename to add.
+   */
   public void add(String filename)
   {
+    // Check existence with raw filename
     File testFile = new File(filename);
     if (testFile.exists())
     {
-      int index = playlists.indexOf(filename);
+      String normalizedInput = normalizeFilename(filename);
+      int index = -1;
+      for (int i = 0; i < playlists.size(); i++)
+      {
+        String normalizedExisting = normalizeFilename(playlists.get(i));
+        if (normalizedExisting.equals(normalizedInput))
+        {
+          index = i;
+          break;
+        }
+      }
       if (index > -1)
       {
         String temp = playlists.remove(index);
@@ -88,7 +120,6 @@ public class PlaylistHistory
     }
   }
 
-
   public String[] getFilenames()
   {
     String[] result = new String[playlists.size()];
@@ -99,14 +130,13 @@ public class PlaylistHistory
     return result;
   }
 
-
   public void clearHistory()
   {
     playlists.clear();
   }
 
   /**
-   * Load last opened playlists from disk
+   * Load last opened playlists from disk.
    */
   public void load() throws IOException
   {

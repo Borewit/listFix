@@ -12,6 +12,8 @@ import listfix.view.support.ProgressAdapter;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +42,16 @@ public abstract class PlaylistEntry implements Cloneable
   private static final Pattern CAMEL_CASE_PATTERN = Pattern.compile("(([a-z])([A-Z]))");
 
   /**
+   * Helper method to normalize a filename or path string to NFC form.
+   *
+   * @param input the string to normalize.
+   * @return normalized string.
+   */
+  public static String normalize(String input) {
+    return input == null ? null : Normalizer.normalize(input, Form.NFC);
+  }
+
+  /**
    * Returns the _status.
    */
   public PlaylistEntryStatus getStatus()
@@ -48,7 +60,6 @@ public abstract class PlaylistEntry implements Cloneable
   }
 
   // Construct an M3U URL entry.
-
   protected PlaylistEntry(Playlist playlist, Media media)
   {
     this.playlist = playlist;
@@ -109,8 +120,10 @@ public abstract class PlaylistEntry implements Cloneable
     ProgressAdapter<String> progress = new ProgressAdapter<>(observer);
     progress.setTotal(mediaFiles.size());
 
-    // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
-    String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(getTrackFileName()).replaceAll("")).replaceAll("$2 $3").toLowerCase();
+    // For internal matching, normalize the track file name.
+    String normalizedTrackName = normalize(getTrackFileName());
+    // Remove apostrophes and insert spaces between camel case letters for tokenization.
+    String entryName = CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(normalizedTrackName).replaceAll("")).replaceAll("$2 $3").toLowerCase();
     File mediaFile;
     int score;
     for (String mediaFilePath : mediaFiles)
@@ -121,13 +134,13 @@ public abstract class PlaylistEntry implements Cloneable
 
         mediaFile = new File(mediaFilePath);
 
-        // Remove apostrophes and addAt spaces between lowercase and capital letters so we can tokenize by camel case.
-        score = new FileNameTokenizer(playListOptions).score(entryName, CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFile.getName()).replaceAll("")).replaceAll("$2 $3").toLowerCase());
+        // Normalize the media file name for token matching.
+        String mediaFileName = normalize(mediaFile.getName());
+        score = new FileNameTokenizer(playListOptions).score(entryName,
+          CAMEL_CASE_PATTERN.matcher(APOS_PATTERN.matcher(mediaFileName).replaceAll("")).replaceAll("$2 $3").toLowerCase());
         if (score > 0)
         {
-          // Only keep the top X highest-rated matches (default is 20), anything more than that has a good chance of using too much memory
-          // on systems w/ huge media libraries, too little RAM, or when fixing excessively large playlists (the things you have to worry
-          // about when people run your software on ancient PCs in Africa =])
+          // Only keep the top X highest-rated matches (default is 20)
           if (matches.size() < playListOptions.getMaxClosestResults())
           {
             matches.add(new PotentialPlaylistEntryMatch(mediaFile.toPath(), score));
