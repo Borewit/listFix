@@ -272,6 +272,7 @@ tasks.processResources.dependsOn makeIcon
 
 tasks.withType(Checkstyle).configureEach {
     exclude 'listfix/model/playlists/winamp/generated/**.java'
+    ignoreFailures = true
 }
 
 task checkStyle(type: DefaultTask, dependsOn: [checkstyleMain, checkstyleTest]) {

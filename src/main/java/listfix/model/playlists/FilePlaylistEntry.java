@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import listfix.config.IMediaLibrary;
+import listfix.config.MissingFileCacheConfiguration;
+import listfix.controller.ListFixController;
 import listfix.io.FileUtils;
 import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.ArrayFunctions;
@@ -34,25 +36,61 @@ public class FilePlaylistEntry extends PlaylistEntry {
       _status = PlaylistEntryStatus.Found;
     } else {
       // file was not found
-      if (!this.trackPath.isAbsolute()) {
-        if (OperatingSystem.isWindows()) {
-          // try one more thing, winamp creates some lists with pseudo-relative paths on
-          // Windows
-          Path reconstructedTrackPath = playlistPath.getRoot().resolve(trackPath);
 
-          Files.exists(reconstructedTrackPath);
+      // --- Start Cache Integration ---
+      boolean foundInCache = false;
+      String originalPathString = this.trackPath.toString();
+      try {
+        MissingFileCacheConfiguration cacheConfig = ListFixController.getInstance().getMissingFileCacheConfiguration();
+        String cachedPathString = cacheConfig.getConfig().getFixedPath(originalPathString);
 
-          if (Files.exists(reconstructedTrackPath)) {
-            _status = PlaylistEntryStatus.Found;
-            this.trackPath = playlistPath.relativize(reconstructedTrackPath);
+        if (cachedPathString != null) {
+          Path cachedPath = Path.of(cachedPathString);
+          // Verify the cached path actually exists before applying it
+          if (Files.exists(cachedPath)) {
+            this.trackPath = cachedPath; // Update to the cached path
+            _status = PlaylistEntryStatus.Found; // Mark as found
+            _isFixed = true; // Mark as fixed by cache
+            foundInCache = true;
+            // logger.debug("Applied fix from cache: '{}' -> '{}'", originalPathString,
+            // cachedPathString);
+          } else {
+            // Cache entry is stale, file no longer exists at the cached location
+            // logger.debug("Cache miss (stale entry): '{}' -> '{}' (not found)",
+            // originalPathString, cachedPathString);
+            // Optionally, remove the stale entry?
+            // cacheConfig.getConfig().removeFix(originalPathString); cacheConfig.write();
+          }
+        }
+      } catch (Exception e) {
+        // Log error accessing cache, but don't prevent playlist loading
+        // logger.error("Error accessing missing file cache for path: {}",
+        // originalPathString, e);
+      }
+      // --- End Cache Integration ---
+
+      if (!foundInCache) {
+        // Original logic if not found in cache or cache check failed/was stale
+        if (!this.trackPath.isAbsolute()) {
+          if (OperatingSystem.isWindows()) {
+            // try one more thing, winamp creates some lists with pseudo-relative paths on
+            // Windows
+            Path reconstructedTrackPath = playlistPath.getRoot().resolve(trackPath);
+
+            Files.exists(reconstructedTrackPath);
+
+            if (Files.exists(reconstructedTrackPath)) {
+              _status = PlaylistEntryStatus.Found;
+              this.trackPath = playlistPath.relativize(reconstructedTrackPath);
+            } else {
+              _status = PlaylistEntryStatus.Missing;
+            }
           } else {
             _status = PlaylistEntryStatus.Missing;
           }
         } else {
           _status = PlaylistEntryStatus.Missing;
         }
-      } else {
-        _status = PlaylistEntryStatus.Missing;
       }
     }
   }
@@ -94,10 +132,9 @@ public class FilePlaylistEntry extends PlaylistEntry {
    * @return Resolved path, relative to the playlist folder.
    */
   public Path getAbsolutePath() {
-    Path absolutePath =
-        this.trackPath.isAbsolute()
-            ? this.trackPath
-            : this.playlistPath.getParent().resolve(this.trackPath).normalize();
+    Path absolutePath = this.trackPath.isAbsolute()
+        ? this.trackPath
+        : this.playlistPath.getParent().resolve(this.trackPath).normalize();
     System.out.println("Computed absolute path: " + absolutePath);
     return absolutePath;
   }

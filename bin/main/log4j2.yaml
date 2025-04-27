@@ -1,0 +1,45 @@
+configuration:
+
+  name: Default
+
+  properties:
+    property:
+      - name: log-path
+        value: "${sys:user.home}/.listFix()/logs"
+      - name: archive
+        value: "${log-path}/archive"
+
+  appenders:
+    console:
+      name: Console-Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c - %msg%n"
+
+    rollingFile:
+      name: RollingFile-Appender
+      fileName: "${log-path}/rollingfile.log"
+      filePattern: "${archive}/rollingfile.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c - %msg%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 2 MB
+      DefaultRolloverStrategy:
+        max: '30'
+
+  loggers:
+    root:
+      level: debug
+      appender-ref:
+        - ref: Console-Appender
+          level: debug
+        - ref: RollingFile-Appender
+          level: info
+
+    logger:
+      - name: listfix
+        level: debug
+      - name: com.jcabi.manifests
+        level: info
+

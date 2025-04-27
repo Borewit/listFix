@@ -12,6 +12,7 @@ public final class ListFixController implements IApplicationConfiguration {
   private boolean showMediaDirWindow;
   private MediaLibraryConfiguration mediaLibraryConfiguration;
   private ApplicationOptionsConfiguration applicationOptionsConfiguration;
+  private MissingFileCacheConfiguration missingFileCacheConfiguration;
   private PlaylistHistory history;
 
   public static final boolean FILE_SYSTEM_IS_CASE_SENSITIVE = File.separatorChar == '/';
@@ -32,10 +33,10 @@ public final class ListFixController implements IApplicationConfiguration {
       // Load / initialize application configuration
       this.mediaLibraryConfiguration = MediaLibraryConfiguration.load();
       this.applicationOptionsConfiguration = ApplicationOptionsConfiguration.load();
+      this.missingFileCacheConfiguration = MissingFileCacheConfiguration.load();
 
-      this.history =
-          new PlaylistHistory(
-              this.applicationOptionsConfiguration.getConfig().getMaxPlaylistHistoryEntries());
+      this.history = new PlaylistHistory(
+          this.applicationOptionsConfiguration.getConfig().getMaxPlaylistHistoryEntries());
       this.history.load();
 
       mediaLibraryConfiguration.cleanNonExistingMediaDirectories();
@@ -44,7 +45,8 @@ public final class ListFixController implements IApplicationConfiguration {
     } catch (Exception e) {
       showMediaDirWindow = true;
 
-      // This happens by design the first time the app is executed, so to minimize confusion, we
+      // This happens by design the first time the app is executed, so to minimize
+      // confusion, we
       // disable console logging when we distribute listFix()
       this.logger.error("Error initializing", e);
     }
@@ -94,5 +96,10 @@ public final class ListFixController implements IApplicationConfiguration {
     return history.getFilenames();
   }
 
-  public void switchMediaLibraryToMappedDrives() {}
+  public void switchMediaLibraryToMappedDrives() {
+  }
+
+  public MissingFileCacheConfiguration getMissingFileCacheConfiguration() {
+    return missingFileCacheConfiguration;
+  }
 }

@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.table.*;
 import listfix.config.IMediaLibrary;
+import listfix.config.MissingFileCacheConfiguration;
+import listfix.controller.ListFixController;
 import listfix.io.*;
 import listfix.io.datatransfer.PlaylistTransferObject;
 import listfix.io.filters.AudioFileFilter;
@@ -44,13 +46,13 @@ import org.apache.logging.log4j.MarkerManager;
 public class PlaylistEditCtrl extends JPanel {
   private static final Logger _logger = LogManager.getLogger(PlaylistEditCtrl.class);
   private static final NumberFormat _intFormatter = NumberFormat.getIntegerInstance();
-  private static final DataFlavor _playlistEntryListFlavor =
-      new DataFlavor(PlaylistEntryList.class, "PlaylistEntyList");
+  private static final DataFlavor _playlistEntryListFlavor = new DataFlavor(PlaylistEntryList.class,
+      "PlaylistEntyList");
   private static final Marker markerPlaylistControl = MarkerManager.getMarker("PlaylistCtrl");
-  private static final Marker markerRepair =
-      MarkerManager.getMarker("PlaylistCtrl-Repair").setParents(markerPlaylistControl);
-  private static final Marker markerRepairWorker =
-      MarkerManager.getMarker("PlaylistCtrl-Repair-Worker").setParents(markerRepair);
+  private static final Marker markerRepair = MarkerManager.getMarker("PlaylistCtrl-Repair")
+      .setParents(markerPlaylistControl);
+  private static final Marker markerRepairWorker = MarkerManager.getMarker("PlaylistCtrl-Repair-Worker")
+      .setParents(markerRepair);
 
   private final FolderChooser _destDirFileChooser = new FolderChooser();
   private Playlist playlist;
@@ -89,7 +91,8 @@ public class PlaylistEditCtrl extends JPanel {
   }
 
   /**
-   * Call fireTableDataChanged() on the GUI thread, and do not call when a pending call is present
+   * Call fireTableDataChanged() on the GUI thread, and do not call when a pending
+   * call is present
    */
   private void fireTableDataChanged() {
     if (!refreshPending) {
@@ -123,69 +126,66 @@ public class PlaylistEditCtrl extends JPanel {
 
       showWaitCursor(true);
 
-      final List<Path> pathList =
-          Arrays.stream(files).map(File::toPath).collect(Collectors.toList());
+      final List<Path> pathList = Arrays.stream(files).map(File::toPath).collect(Collectors.toList());
 
-      ProgressWorker<Void, String> worker =
-          new ProgressWorker<>() {
-            @Override
-            protected Void doInBackground() throws IOException {
-              int selected = _uiTable.getSelectedRow();
-              int insertIx =
-                  selected >= 0 ? _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow()) : -1;
+      ProgressWorker<Void, String> worker = new ProgressWorker<>() {
+        @Override
+        protected Void doInBackground() throws IOException {
+          int selected = _uiTable.getSelectedRow();
+          int insertIx = selected >= 0 ? _uiTable.convertRowIndexToModel(_uiTable.getSelectedRow()) : -1;
 
-              if (insertIx >= 0) {
-                // Adding somewhere in the middle
-                int count = playlist.addAt(insertIx, pathList, this);
-                firstIx = insertIx;
-                lastIx = firstIx + count - 1;
-              } else {
-                // Adding at the end...
-                firstIx = Math.max(playlist.size(), 0);
-                int numAdded = playlist.add(pathList, this);
-                lastIx = firstIx + numAdded - 1;
-              }
+          if (insertIx >= 0) {
+            // Adding somewhere in the middle
+            int count = playlist.addAt(insertIx, pathList, this);
+            firstIx = insertIx;
+            lastIx = firstIx + count - 1;
+          } else {
+            // Adding at the end...
+            firstIx = Math.max(playlist.size(), 0);
+            int numAdded = playlist.add(pathList, this);
+            lastIx = firstIx + numAdded - 1;
+          }
 
-              return null;
+          return null;
+        }
+
+        private int firstIx;
+        private int lastIx;
+
+        @Override
+        protected void done() {
+          try {
+            get();
+          } catch (InterruptedException ex) {
+            _logger.info("Cancelled");
+          } catch (ExecutionException ex) {
+            showWaitCursor(false);
+            _logger.error("Add File Error", ex);
+            JOptionPane.showMessageDialog(
+                PlaylistEditCtrl.this.getParentFrame(),
+                ex,
+                "Add File Error",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+
+          // update list and select new items
+          PlaylistTableModel model = getTableModel();
+          if (_isSortedByFileIx) {
+            // rows are in playlist order, so use quick update and selection methods
+            _uiTable.clearSelection();
+            _uiTable.addRowSelectionInterval(firstIx, lastIx);
+          } else {
+            // rows are in unknown order, so find and select each new row
+            model.fireTableDataChanged();
+            for (int ix = firstIx; ix <= lastIx; ix++) {
+              int viewIx = _uiTable.convertRowIndexToView(ix);
+              _uiTable.addRowSelectionInterval(viewIx, viewIx);
             }
-
-            private int firstIx;
-            private int lastIx;
-
-            @Override
-            protected void done() {
-              try {
-                get();
-              } catch (InterruptedException ex) {
-                _logger.info("Cancelled");
-              } catch (ExecutionException ex) {
-                showWaitCursor(false);
-                _logger.error("Add File Error", ex);
-                JOptionPane.showMessageDialog(
-                    PlaylistEditCtrl.this.getParentFrame(),
-                    ex,
-                    "Add File Error",
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-              }
-
-              // update list and select new items
-              PlaylistTableModel model = getTableModel();
-              if (_isSortedByFileIx) {
-                // rows are in playlist order, so use quick update and selection methods
-                _uiTable.clearSelection();
-                _uiTable.addRowSelectionInterval(firstIx, lastIx);
-              } else {
-                // rows are in unknown order, so find and select each new row
-                model.fireTableDataChanged();
-                for (int ix = firstIx; ix <= lastIx; ix++) {
-                  int viewIx = _uiTable.convertRowIndexToView(ix);
-                  _uiTable.addRowSelectionInterval(viewIx, viewIx);
-                }
-              }
-              resizeAllColumns();
-            }
-          };
+          }
+          resizeAllColumns();
+        }
+      };
 
       ProgressDialog pd = new ProgressDialog(null, true, worker, "Adding items...");
       pd.setVisible(true);
@@ -226,52 +226,50 @@ public class PlaylistEditCtrl extends JPanel {
    */
   public boolean locateMissingFiles() {
     _logger.debug(markerRepair, "Start locateMissingFiles()");
-    ProgressWorker<List<PlaylistEntry>, String> worker =
-        new ProgressWorker<>() {
-          @Override
-          protected List<PlaylistEntry> doInBackground() {
-            _logger.debug(markerRepairWorker, "Start repairing in background....");
-            List<PlaylistEntry> result =
-                playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
-            _logger.debug(markerRepairWorker, "Repair completed.");
-            return result;
+    ProgressWorker<List<PlaylistEntry>, String> worker = new ProgressWorker<>() {
+      @Override
+      protected List<PlaylistEntry> doInBackground() {
+        _logger.debug(markerRepairWorker, "Start repairing in background....");
+        List<PlaylistEntry> result = playlist.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
+        _logger.debug(markerRepairWorker, "Repair completed.");
+        return result;
+      }
+
+      @Override
+      protected void done() {
+        _logger.debug(markerRepair, "Handling background done()");
+        try {
+          _logger.debug(markerRepair, "Updating UI-table...");
+          _uiTable.clearSelection();
+
+          for (Integer fixIx : this.getIndexList(this.get())) {
+            int viewIx = _uiTable.convertRowIndexToView(fixIx);
+            _uiTable.addRowSelectionInterval(viewIx, viewIx);
           }
+          playlistTableModel.fireTableDataChanged();
+          _logger.debug(markerRepair, "Completed updating UI-table");
+        } catch (CancellationException | InterruptedException exception) {
+          _logger.debug(markerRepair, "Cancelled locate missing files");
+        } catch (ExecutionException ex) {
+          _logger.error(markerRepair, "Error processing missing files", ex);
+        }
+      }
 
-          @Override
-          protected void done() {
-            _logger.debug(markerRepair, "Handling background done()");
-            try {
-              _logger.debug(markerRepair, "Updating UI-table...");
-              _uiTable.clearSelection();
+      private List<Integer> getIndexList(List<PlaylistEntry> fixedEntries) {
+        final List<Integer> fixedIndexes = new LinkedList<>();
+        final List<PlaylistEntry> copiedList = new LinkedList<>(fixedEntries);
 
-              for (Integer fixIx : this.getIndexList(this.get())) {
-                int viewIx = _uiTable.convertRowIndexToView(fixIx);
-                _uiTable.addRowSelectionInterval(viewIx, viewIx);
-              }
-              playlistTableModel.fireTableDataChanged();
-              _logger.debug(markerRepair, "Completed updating UI-table");
-            } catch (CancellationException | InterruptedException exception) {
-              _logger.debug(markerRepair, "Cancelled locate missing files");
-            } catch (ExecutionException ex) {
-              _logger.error(markerRepair, "Error processing missing files", ex);
-            }
+        // Lookup the playlist index of the fixed playlist entries
+        for (int fixIx = 0; fixIx < playlist.size() && !copiedList.isEmpty(); ++fixIx) {
+          if (playlist.get(fixIx) == copiedList.get(0)) {
+            copiedList.remove(0);
+            fixedIndexes.add(fixIx);
           }
-
-          private List<Integer> getIndexList(List<PlaylistEntry> fixedEntries) {
-            final List<Integer> fixedIndexes = new LinkedList<>();
-            final List<PlaylistEntry> copiedList = new LinkedList<>(fixedEntries);
-
-            // Lookup the playlist index of the fixed playlist entries
-            for (int fixIx = 0; fixIx < playlist.size() && !copiedList.isEmpty(); ++fixIx) {
-              if (playlist.get(fixIx) == copiedList.get(0)) {
-                copiedList.remove(0);
-                fixedIndexes.add(fixIx);
-              }
-            }
-            assert fixedIndexes.size() == fixedEntries.size();
-            return fixedIndexes;
-          }
-        };
+        }
+        assert fixedIndexes.size() == fixedEntries.size();
+        return fixedIndexes;
+      }
+    };
 
     ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Repairing...");
     pd.setVisible(true); // Wait until the worker completed
@@ -306,8 +304,7 @@ public class PlaylistEditCtrl extends JPanel {
       }
     }
 
-    ReorderPlaylistDialog dlg =
-        new ReorderPlaylistDialog(getParentFrame(), true, sortIx, isDescending);
+    ReorderPlaylistDialog dlg = new ReorderPlaylistDialog(getParentFrame(), true, sortIx, isDescending);
     dlg.setLocationRelativeTo(getParentFrame());
     dlg.setVisible(true);
     sortIx = dlg.getSelectedSortIx();
@@ -333,9 +330,8 @@ public class PlaylistEditCtrl extends JPanel {
     for (int row : rows) {
       int rowIx = _uiTable.convertRowIndexToModel(row);
       PlaylistEntry entry = playlist.get(rowIx);
-      EditFilenameResult response =
-          EditFilenameDialog.showDialog(
-              getParentFrame(), "Edit Filename", true, entry.getTrackFileName());
+      EditFilenameResult response = EditFilenameDialog.showDialog(
+          getParentFrame(), "Edit Filename", true, entry.getTrackFileName());
       if (response.getResultCode() == EditFilenameDialog.OK) {
         playlist.changeEntryFileName(rowIx, response.getFileName());
         // entry.setFileName(response.getFileName());
@@ -346,8 +342,7 @@ public class PlaylistEditCtrl extends JPanel {
 
   private void openPlayListEntryLocation() throws IOException {
     OpenFileLocation openFileLocation = new OpenFileLocation(this);
-    for (PlaylistEntry entry :
-        this.getSelectedPlayListEntries().stream().distinct().collect(Collectors.toList())) {
+    for (PlaylistEntry entry : this.getSelectedPlayListEntries().stream().distinct().collect(Collectors.toList())) {
       if (entry instanceof FilePlaylistEntry) {
         Path path = ((FilePlaylistEntry) entry).getAbsolutePath();
         openFileLocation.openFileLocation(path);
@@ -369,18 +364,17 @@ public class PlaylistEditCtrl extends JPanel {
 
   private void findClosestMatches() {
     final Collection<String> libraryFiles = this.getMediaLibrary().getNestedMediaFiles();
-    ProgressWorker<List<BatchMatchItem>, String> worker =
-        new ProgressWorker<>() {
-          @Override
-          protected List<BatchMatchItem> doInBackground() {
-            List<Integer> rowList = new ArrayList<>();
-            int[] uiRows = _uiTable.getSelectedRows();
-            for (int x : uiRows) {
-              rowList.add(_uiTable.convertRowIndexToModel(x));
-            }
-            return playlist.findClosestMatchesForSelectedEntries(rowList, libraryFiles, this);
-          }
-        };
+    ProgressWorker<List<BatchMatchItem>, String> worker = new ProgressWorker<>() {
+      @Override
+      protected List<BatchMatchItem> doInBackground() {
+        List<Integer> rowList = new ArrayList<>();
+        int[] uiRows = _uiTable.getSelectedRows();
+        for (int x : uiRows) {
+          rowList.add(_uiTable.convertRowIndexToModel(x));
+        }
+        return playlist.findClosestMatchesForSelectedEntries(rowList, libraryFiles, this);
+      }
+    };
     this.findClosestMatches(worker);
   }
 
@@ -388,23 +382,21 @@ public class PlaylistEditCtrl extends JPanel {
    * @return false if cancelled otherwise true
    */
   public boolean bulkFindClosestMatches() {
-    final Collection<String> libraryFiles =
-        listFixGui.getApplicationConfiguration().getMediaLibrary().getNestedMediaFiles();
-    ProgressWorker<List<BatchMatchItem>, String> worker =
-        new ProgressWorker<>() {
-          @Override
-          protected List<BatchMatchItem> doInBackground() {
-            return playlist.findClosestMatches(libraryFiles, this);
-          }
-        };
+    final Collection<String> libraryFiles = listFixGui.getApplicationConfiguration().getMediaLibrary()
+        .getNestedMediaFiles();
+    ProgressWorker<List<BatchMatchItem>, String> worker = new ProgressWorker<>() {
+      @Override
+      protected List<BatchMatchItem> doInBackground() {
+        return playlist.findClosestMatches(libraryFiles, this);
+      }
+    };
     this.findClosestMatches(worker);
     return !worker.isCancelled();
   }
 
   private void findClosestMatches(ProgressWorker<List<BatchMatchItem>, String> worker) {
-    ProgressDialog pd =
-        new ProgressDialog(
-            getParentFrame(), true, worker, "Finding closest matches for all selected files...");
+    ProgressDialog pd = new ProgressDialog(
+        getParentFrame(), true, worker, "Finding closest matches for all selected files...");
     pd.setVisible(true);
 
     final List<BatchMatchItem> items;
@@ -422,8 +414,7 @@ public class PlaylistEditCtrl extends JPanel {
       return;
     }
 
-    BatchClosestMatchResultsDialog dlg =
-        new BatchClosestMatchResultsDialog(getParentFrame(), items);
+    BatchClosestMatchResultsDialog dlg = new BatchClosestMatchResultsDialog(getParentFrame(), items);
     dlg.setLocationRelativeTo(getParentFrame());
     dlg.setVisible(true);
     if (dlg.isAccepted()) {
@@ -460,12 +451,26 @@ public class PlaylistEditCtrl extends JPanel {
             .ifPresent(mediaDir -> chooser.setCurrentDirectory(new File(mediaDir)));
       }
 
-      if (entry instanceof FilePlaylistEntry) {
-        chooser.setSelectedFile(((FilePlaylistEntry) entry).getAbsolutePath().toFile());
-      }
-      if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
+      File file = null;
+      String originalPath = null;
+      String correctedPath = null;
 
+      if (entry instanceof FilePlaylistEntry) {
+        // Use the original path stored in the entry
+        originalPath = ((FilePlaylistEntry) entry).getTrackPath().toString();
+      } else if (entry instanceof UriPlaylistEntry) {
+        originalPath = ((UriPlaylistEntry) entry).getURI().toString();
+      }
+
+      if (chooser.showOpenDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION) {
+        file = chooser.getSelectedFile();
+        if (file != null) {
+          correctedPath = file.getPath();
+        }
+      }
+
+      // Proceed only if a file was selected
+      if (file != null && correctedPath != null) {
         // make sure the replacement file is not a playlist
         if (LizzyPlaylistUtil.isPlaylist(file.toPath())) {
           JOptionPane.showMessageDialog(
@@ -476,11 +481,26 @@ public class PlaylistEditCtrl extends JPanel {
               JOptionPane.ERROR_MESSAGE);
           return;
         }
+
+        // Perform the replacement
         Media media = new Media();
-        media.setSource(new Content(file.getPath()));
+        media.setSource(new Content(correctedPath));
         PlaylistEntry newEntry = new FilePlaylistEntry(playlist, media);
         playlist.replace(rowIx, newEntry);
         getTableModel().fireTableRowsUpdated(rowIx, rowIx);
+
+        // Add the fix to the cache and persist AFTER successful replacement
+        if (originalPath != null) {
+          try {
+            MissingFileCacheConfiguration cacheConfig = ListFixController.getInstance()
+                .getMissingFileCacheConfiguration();
+            cacheConfig.addFixAndPersist(originalPath, correctedPath);
+          } catch (IOException e) {
+            _logger.error(
+                "Failed to add fix to persistent cache for original path: {}", originalPath, e);
+            // Optional: Inform user about cache save failure
+          }
+        }
       }
     }
   }
@@ -490,8 +510,7 @@ public class PlaylistEditCtrl extends JPanel {
     if (dupCount > 0) {
       getTableModel().fireTableDataChanged();
     }
-    String msg =
-        dupCount == 1 ? "Removed 1 duplicate" : String.format("Removed %d duplicates", dupCount);
+    String msg = dupCount == 1 ? "Removed 1 duplicate" : String.format("Removed %d duplicates", dupCount);
     JOptionPane.showMessageDialog(
         getParentFrame(),
         new JTransparentTextArea(msg),
@@ -504,8 +523,7 @@ public class PlaylistEditCtrl extends JPanel {
     if (count > 0) {
       getTableModel().fireTableDataChanged();
     }
-    String msg =
-        count == 1 ? "Removed 1 missing entry" : String.format("Removed %d missing entries", count);
+    String msg = count == 1 ? "Removed 1 missing entry" : String.format("Removed %d missing entries", count);
     JOptionPane.showMessageDialog(
         getParentFrame(),
         new JTransparentTextArea(msg),
@@ -537,10 +555,9 @@ public class PlaylistEditCtrl extends JPanel {
   }
 
   private void playSelectedEntries() {
-    List<PlaylistEntry> playlistEntries =
-        this.getSelectedPlaylistEntries().stream()
-            .filter(entry -> entry.isFound() || entry.isURL())
-            .collect(Collectors.toList());
+    List<PlaylistEntry> playlistEntries = this.getSelectedPlaylistEntries().stream()
+        .filter(entry -> entry.isFound() || entry.isURL())
+        .collect(Collectors.toList());
     this.playEntries(playlistEntries);
   }
 
@@ -763,7 +780,8 @@ public class PlaylistEditCtrl extends JPanel {
       playSelectedEntries();
     } else {
       if (this.playlist.isModified()) {
-        // this plays all entries if nothing is selected, and plays what the user has in memory
+        // this plays all entries if nothing is selected, and plays what the user has in
+        // memory
         this.playAllEntries();
       } else {
         this.playlist.play();
@@ -793,49 +811,47 @@ public class PlaylistEditCtrl extends JPanel {
 
   public void reloadPlaylist() {
     if (playlist.isModified()) {
-      Object[] options = {"Discard Changes and Reload", "Cancel"};
-      int rc =
-          JOptionPane.showOptionDialog(
-              this.getParentFrame(),
-              new JTransparentTextArea(
-                  "The current list is modified, do you really want to discard these changes and reload from source?"),
-              "Confirm Reload",
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.QUESTION_MESSAGE,
-              null,
-              options,
-              options[1]);
+      Object[] options = { "Discard Changes and Reload", "Cancel" };
+      int rc = JOptionPane.showOptionDialog(
+          this.getParentFrame(),
+          new JTransparentTextArea(
+              "The current list is modified, do you really want to discard these changes and reload from source?"),
+          "Confirm Reload",
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE,
+          null,
+          options,
+          options[1]);
       if (rc == JOptionPane.YES_NO_OPTION) {
-        ProgressWorker<Void, String> worker =
-            new ProgressWorker<>() {
-              @Override
-              protected Void doInBackground() throws IOException {
-                this.setMessage("Please wait while your playlist is reloaded from disk.");
-                playlist.reload(this);
-                return null;
-              }
+        ProgressWorker<Void, String> worker = new ProgressWorker<>() {
+          @Override
+          protected Void doInBackground() throws IOException {
+            this.setMessage("Please wait while your playlist is reloaded from disk.");
+            playlist.reload(this);
+            return null;
+          }
 
-              @Override
-              protected void done() {
-                showWaitCursor(false);
-                try {
-                  get();
-                } catch (CancellationException | InterruptedException ex) {
-                  return;
-                } catch (ExecutionException ex) {
-                  _logger.error("Reload error", ex);
-                  JOptionPane.showMessageDialog(
-                      PlaylistEditCtrl.this.getParentFrame(),
-                      ex,
-                      "Reload Error",
-                      JOptionPane.ERROR_MESSAGE);
-                  return;
-                }
+          @Override
+          protected void done() {
+            showWaitCursor(false);
+            try {
+              get();
+            } catch (CancellationException | InterruptedException ex) {
+              return;
+            } catch (ExecutionException ex) {
+              _logger.error("Reload error", ex);
+              JOptionPane.showMessageDialog(
+                  PlaylistEditCtrl.this.getParentFrame(),
+                  ex,
+                  "Reload Error",
+                  JOptionPane.ERROR_MESSAGE);
+              return;
+            }
 
-                getTableModel().fireTableDataChanged();
-                resizeAllColumns();
-              }
-            };
+            getTableModel().fireTableDataChanged();
+            resizeAllColumns();
+          }
+        };
         showWaitCursor(true);
         worker.execute();
       }
@@ -938,19 +954,18 @@ public class PlaylistEditCtrl extends JPanel {
       try {
         final File destDir = _destDirFileChooser.getSelectedFile();
 
-        ProgressWorker<Void, String> worker =
-            new ProgressWorker<>() {
-              @Override
-              protected Void doInBackground() {
-                List<Integer> rowList = new ArrayList<>();
-                int[] uiRows = _uiTable.getSelectedRows();
-                for (int x : uiRows) {
-                  rowList.add(_uiTable.convertRowIndexToModel(x));
-                }
-                playlist.copySelectedEntries(rowList, destDir, this);
-                return null;
-              }
-            };
+        ProgressWorker<Void, String> worker = new ProgressWorker<>() {
+          @Override
+          protected Void doInBackground() {
+            List<Integer> rowList = new ArrayList<>();
+            int[] uiRows = _uiTable.getSelectedRows();
+            for (int x : uiRows) {
+              rowList.add(_uiTable.convertRowIndexToModel(x));
+            }
+            playlist.copySelectedEntries(rowList, destDir, this);
+            return null;
+          }
+        };
         ProgressDialog pd = new ProgressDialog(getParentFrame(), true, worker, "Copying Files...");
         pd.setVisible(true);
 
@@ -976,9 +991,8 @@ public class PlaylistEditCtrl extends JPanel {
     final List<PlaylistEntry> playlistEntries = this.getSelectedPlaylistEntries();
     if (!playlistEntries.isEmpty()) {
       try {
-        Playlist sublist =
-            Playlist.makeNewPersistentPlaylist(
-                this.getPlaylist().getFilename(), this.getPlaylistOptions());
+        Playlist sublist = Playlist.makeNewPersistentPlaylist(
+            this.getPlaylist().getFilename(), this.getPlaylistOptions());
         sublist.addAllAt(0, playlistEntries);
         this.listFixGui.openNewTabForPlaylist(sublist);
       } catch (Exception e) {
@@ -1063,9 +1077,8 @@ public class PlaylistEditCtrl extends JPanel {
     _uiTable.autoResizeColumn(3);
     TableColumnModel cm = _uiTable.getColumnModel();
     TableCellRenderer renderer = _uiTable.getDefaultRenderer(Integer.class);
-    Component comp =
-        renderer.getTableCellRendererComponent(
-            _uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
+    Component comp = renderer.getTableCellRendererComponent(
+        _uiTable, (_uiTable.getRowCount() + 1) * 10, false, false, 0, 0);
     int width = comp.getPreferredSize().width + 4;
     TableColumn col = cm.getColumn(0);
     col.setMinWidth(width);
@@ -1124,16 +1137,16 @@ public class PlaylistEditCtrl extends JPanel {
               FilePlaylistEntry filePlaylistEntry = (FilePlaylistEntry) entry;
               if (filePlaylistEntry.isRelative()) {
                 /*
-                Shows full relative path
-                if (!entry.getPath().isEmpty())
-                {
-                  return entry.getPath() + entry.getFileName();
-                }
-                else
-                {
-                  return "." + Constants.FS + entry.getFileName();
-                }
-                */
+                 * Shows full relative path
+                 * if (!entry.getPath().isEmpty())
+                 * {
+                 * return entry.getPath() + entry.getFileName();
+                 * }
+                 * else
+                 * {
+                 * return "." + Constants.FS + entry.getFileName();
+                 * }
+                 */
 
                 // Show the full absolute path of a relative entry
                 return FilenameUtils.normalize(filePlaylistEntry.getAbsolutePath().toString());
@@ -1334,11 +1347,13 @@ public class PlaylistEditCtrl extends JPanel {
             final JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
 
             if (info.isDataFlavorSupported(_playlistEntryListFlavor)) {
-              // This is the flavor we handle when the user is dragging entries around that are
+              // This is the flavor we handle when the user is dragging entries around that
+              // are
               // already part of the list
               return handlePlaylistEntryFlavor(info, dl);
             } else if (info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-              // This is the flavor we handle when the user drags any file in from a Windows OS
+              // This is the flavor we handle when the user drags any file in from a Windows
+              // OS
               return this.handleFileListFlavor(info, dl, PlaylistEditCtrl.this.listFixGui);
             }
             return false;
@@ -1349,8 +1364,7 @@ public class PlaylistEditCtrl extends JPanel {
             // Get the entries that are being dropped.
             Transferable t = info.getTransferable();
             try {
-              PlaylistEntryList data =
-                  (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
+              PlaylistEntryList data = (PlaylistEntryList) t.getTransferData(_playlistEntryListFlavor);
               List<PlaylistEntry> entries = data.getList();
               int removedAt;
               int insertAtUpdated = dl.getRow();
@@ -1377,30 +1391,27 @@ public class PlaylistEditCtrl extends JPanel {
               TransferSupport info, final JTable.DropLocation dl, IListFixGui parent) {
             List<File> fileList;
             try {
-              fileList =
-                  (List<File>)
-                      info.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+              fileList = (List<File>) info.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
             } catch (UnsupportedFlavorException | IOException ex) {
               _logger.warn("Failed to extract file list from dropped transfer", ex);
               return false;
             }
 
-            if (fileList.isEmpty()) return false;
+            if (fileList.isEmpty())
+              return false;
 
-            String question =
-                String.format(
-                    "You dragged %d files into this list, would you like to insert them or open them for repair?",
-                    fileList.size());
-            int result =
-                JOptionPane.showOptionDialog(
-                    getParentFrame(),
-                    new JTransparentTextArea(question),
-                    "Insert or Open?",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    new String[] {"Insert", "Open", "Cancel"},
-                    "Insert");
+            String question = String.format(
+                "You dragged %d files into this list, would you like to insert them or open them for repair?",
+                fileList.size());
+            int result = JOptionPane.showOptionDialog(
+                getParentFrame(),
+                new JTransparentTextArea(question),
+                "Insert or Open?",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                new String[] { "Insert", "Open", "Cancel" },
+                "Insert");
 
             if (result == JOptionPane.YES_OPTION) {
               // Insert
@@ -1451,53 +1462,49 @@ public class PlaylistEditCtrl extends JPanel {
           private int processDroppedPlaylist(final Path tempFile, int insertAt) {
             final int currentInsertPoint = insertAt;
 
-            ProgressWorker<Playlist, String> worker =
-                new ProgressWorker<>() {
-                  @Override
-                  protected Playlist doInBackground() throws Exception {
-                    Playlist list =
-                        PlaylistFactory.getPlaylist(
-                            tempFile, this, PlaylistEditCtrl.this.getPlaylistOptions());
-                    if (PlaylistEditCtrl.this
-                        .listFixGui
-                        .getApplicationConfiguration()
-                        .getAppOptions()
-                        .getAutoLocateEntriesOnPlaylistLoad()) {
-                      list.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
-                    }
-                    return list;
-                  }
+            ProgressWorker<Playlist, String> worker = new ProgressWorker<>() {
+              @Override
+              protected Playlist doInBackground() throws Exception {
+                Playlist list = PlaylistFactory.getPlaylist(
+                    tempFile, this, PlaylistEditCtrl.this.getPlaylistOptions());
+                if (PlaylistEditCtrl.this.listFixGui
+                    .getApplicationConfiguration()
+                    .getAppOptions()
+                    .getAutoLocateEntriesOnPlaylistLoad()) {
+                  list.repair(PlaylistEditCtrl.this.getMediaLibrary(), this);
+                }
+                return list;
+              }
 
-                  @Override
-                  protected void done() {
-                    Playlist list;
-                    try {
-                      list = get();
-                      playlist.addAllAt(currentInsertPoint, list.getEntries());
-                    } catch (CancellationException ignore) {
-                      // Ignore exception
-                    } catch (InterruptedException | ExecutionException ex) {
-                      JOptionPane.showMessageDialog(
-                          PlaylistEditCtrl.this.getParentFrame(),
-                          new JTransparentTextArea(
-                              ExStack.textFormatErrorForUser(
-                                  "There was a problem opening the file you selected, are you sure it was a playlist?",
-                                  ex.getCause())),
-                          "Open Playlist Error",
-                          JOptionPane.ERROR_MESSAGE);
-                      _logger.error("Open playlist error", ex);
-                    }
-                  }
-                };
+              @Override
+              protected void done() {
+                Playlist list;
+                try {
+                  list = get();
+                  playlist.addAllAt(currentInsertPoint, list.getEntries());
+                } catch (CancellationException ignore) {
+                  // Ignore exception
+                } catch (InterruptedException | ExecutionException ex) {
+                  JOptionPane.showMessageDialog(
+                      PlaylistEditCtrl.this.getParentFrame(),
+                      new JTransparentTextArea(
+                          ExStack.textFormatErrorForUser(
+                              "There was a problem opening the file you selected, are you sure it was a playlist?",
+                              ex.getCause())),
+                      "Open Playlist Error",
+                      JOptionPane.ERROR_MESSAGE);
+                  _logger.error("Open playlist error", ex);
+                }
+              }
+            };
             String filename = tempFile.toString();
-            ProgressDialog pd =
-                new ProgressDialog(
-                    getParentFrame(),
-                    true,
-                    worker,
-                    "Loading '"
-                        + (filename.length() > 70 ? filename.substring(0, 70) : filename)
-                        + "'...");
+            ProgressDialog pd = new ProgressDialog(
+                getParentFrame(),
+                true,
+                worker,
+                "Loading '"
+                    + (filename.length() > 70 ? filename.substring(0, 70) : filename)
+                    + "'...");
             int plistSize = playlist.size();
             pd.setVisible(true);
             return playlist.size() - plistSize;
