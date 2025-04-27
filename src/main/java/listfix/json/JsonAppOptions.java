@@ -2,18 +2,16 @@ package listfix.json;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.awt.*;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.swing.*;
 import listfix.config.IAppOptions;
 import listfix.config.IApplicationState;
 import listfix.io.Constants;
 import listfix.io.IPlaylistOptions;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Set;
-import java.util.TreeSet;
-
-public class JsonAppOptions implements IPlaylistOptions, IAppOptions
-{
+public class JsonAppOptions implements IPlaylistOptions, IAppOptions {
   // Init default values.
   private boolean savePlaylistsWithRelativePaths = false;
   private boolean autoLocateEntriesOnPlaylistLoad = false;
@@ -30,6 +28,7 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   @JsonSerialize(using = JsonFontSerializer.class)
   @JsonDeserialize(using = JsonFontDeserializer.class)
   private Font appFont = new Font("SansSerif", Font.PLAIN, 11);
+
   private int maxClosestResults = 20;
   private String ignoredSmallWords = "an, and, dsp, in, my, of, the, to";
   private boolean caseInsensitiveExactMatching = !Constants.FILE_SYSTEM_IS_CASE_SENSITIVE;
@@ -37,74 +36,61 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
   private final JsonApplicationState applicationState = new JsonApplicationState();
 
   @Override
-  public boolean getAutoLocateEntriesOnPlaylistLoad()
-  {
+  public boolean getAutoLocateEntriesOnPlaylistLoad() {
     return autoLocateEntriesOnPlaylistLoad;
   }
 
-  public void setAutoLocateEntriesOnPlaylistLoad(boolean autoLocateEntriesOnPlaylistLoad)
-  {
+  public void setAutoLocateEntriesOnPlaylistLoad(boolean autoLocateEntriesOnPlaylistLoad) {
     this.autoLocateEntriesOnPlaylistLoad = autoLocateEntriesOnPlaylistLoad;
   }
 
   @Override
-  public int getMaxPlaylistHistoryEntries()
-  {
+  public int getMaxPlaylistHistoryEntries() {
     return maxPlaylistHistoryEntries;
   }
 
-  public void setLookAndFeel(String lookAndFeel)
-  {
+  public void setLookAndFeel(String lookAndFeel) {
     this.lookAndFeel = lookAndFeel;
   }
 
   @Override
-  public String getLookAndFeel()
-  {
+  public String getLookAndFeel() {
     return lookAndFeel;
   }
 
-  public void setMaxPlaylistHistoryEntries(int maxPlaylistHistoryEntries)
-  {
+  public void setMaxPlaylistHistoryEntries(int maxPlaylistHistoryEntries) {
     this.maxPlaylistHistoryEntries = maxPlaylistHistoryEntries;
   }
 
-  public void setAutoRefreshMediaLibraryOnStartup(boolean autoRefreshMediaLibraryOnStartup)
-  {
+  public void setAutoRefreshMediaLibraryOnStartup(boolean autoRefreshMediaLibraryOnStartup) {
     this.autoRefreshMediaLibraryOnStartup = autoRefreshMediaLibraryOnStartup;
   }
 
   @Override
-  public boolean getAutoRefreshMediaLibraryOnStartup()
-  {
+  public boolean getAutoRefreshMediaLibraryOnStartup() {
     return autoRefreshMediaLibraryOnStartup;
   }
 
   @Override
-  public boolean getSavePlaylistsWithRelativePaths()
-  {
+  public boolean getSavePlaylistsWithRelativePaths() {
     return savePlaylistsWithRelativePaths;
   }
 
-  public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths)
-  {
+  public void setSavePlaylistsWithRelativePaths(boolean savePlaylistsWithRelativePaths) {
     this.savePlaylistsWithRelativePaths = savePlaylistsWithRelativePaths;
   }
 
   @Override
-  public boolean getAlwaysUseUNCPaths()
-  {
+  public boolean getAlwaysUseUNCPaths() {
     return alwaysUseUNCPaths;
   }
 
-  public void setAlwaysUseUNCPaths(boolean alwaysUseUNCPaths)
-  {
+  public void setAlwaysUseUNCPaths(boolean alwaysUseUNCPaths) {
     this.alwaysUseUNCPaths = alwaysUseUNCPaths;
   }
 
   @Override
-  public Set<String> getPlaylistDirectories()
-  {
+  public Set<String> getPlaylistDirectories() {
     return this.playlistDirectories;
   }
 
@@ -112,16 +98,14 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
    * @return The appFont
    */
   @Override
-  public Font getAppFont()
-  {
+  public Font getAppFont() {
     return appFont;
   }
 
   /**
    * @param appFont The appFont to set
    */
-  public void setAppFont(Font appFont)
-  {
+  public void setAppFont(Font appFont) {
     this.appFont = appFont;
   }
 
@@ -129,16 +113,14 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
    * @return The maxClosestResults
    */
   @Override
-  public int getMaxClosestResults()
-  {
+  public int getMaxClosestResults() {
     return maxClosestResults;
   }
 
   /**
    * @param maxClosestResults the maxClosestResults to set
    */
-  public void setMaxClosestResults(int maxClosestResults)
-  {
+  public void setMaxClosestResults(int maxClosestResults) {
     this.maxClosestResults = maxClosestResults;
   }
 
@@ -146,16 +128,14 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
    * @return The ignoredSmallWords
    */
   @Override
-  public String getIgnoredSmallWords()
-  {
+  public String getIgnoredSmallWords() {
     return ignoredSmallWords;
   }
 
   /**
    * @param ignoredSmallWords The ignoredSmallWords to set
    */
-  public void setIgnoredSmallWords(String ignoredSmallWords)
-  {
+  public void setIgnoredSmallWords(String ignoredSmallWords) {
     this.ignoredSmallWords = ignoredSmallWords;
   }
 
@@ -163,22 +143,19 @@ public class JsonAppOptions implements IPlaylistOptions, IAppOptions
    * @return The caseInsensitiveExactMatching
    */
   @Override
-  public boolean getCaseInsensitiveExactMatching()
-  {
+  public boolean getCaseInsensitiveExactMatching() {
     return caseInsensitiveExactMatching;
   }
 
   /**
    * @param caseInsensitiveExactMatching The caseInsensitiveExactMatching to set
    */
-  public void setCaseInsensitiveExactMatching(boolean caseInsensitiveExactMatching)
-  {
+  public void setCaseInsensitiveExactMatching(boolean caseInsensitiveExactMatching) {
     this.caseInsensitiveExactMatching = caseInsensitiveExactMatching;
   }
 
   @Override
-  public IApplicationState getApplicationState()
-  {
+  public IApplicationState getApplicationState() {
     return this.applicationState;
   }
 }

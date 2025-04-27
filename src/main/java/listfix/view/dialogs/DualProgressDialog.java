@@ -1,71 +1,64 @@
 package listfix.view.dialogs;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeSupport;
+import javax.swing.*;
 
 /**
  * Dialog displaying double progressbar to show progress of nested background tasks.
  *
  * @param <T> the result type returned by this SwingWorker's doInBackground and get methods
- * @param <V> the type used for carrying out intermediate results by this SwingWorker's publish and process methods
+ * @param <V> the type used for carrying out intermediate results by this SwingWorker's publish and
+ *     process methods
  */
-public class DualProgressDialog<T, V> extends JDialog
-{
+public class DualProgressDialog<T, V> extends JDialog {
   private SwingWorker<T, V> _worker;
   private JLabel _overallLabel;
   private JProgressBar _overallProgress;
   private JLabel _taskLabel;
   private JProgressBar _taskProgress;
 
-  public DualProgressDialog(Frame parent, String title, boolean modal)
-  {
+  public DualProgressDialog(Frame parent, String title, boolean modal) {
     super(parent, title, modal);
     initComponents();
   }
 
-  public DualProgressDialog(Frame parent, String title, String taskMsg, String overallMsg)
-  {
+  public DualProgressDialog(Frame parent, String title, String taskMsg, String overallMsg) {
     this(parent, title, true);
     _taskLabel.setText(taskMsg);
     _overallLabel.setText(overallMsg);
     pack();
     setSize(400, getHeight());
     setLocationRelativeTo(parent);
-    addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowOpened(WindowEvent e)
-      {
-        _worker.execute();
-      }
-    });
+    addWindowListener(
+        new WindowAdapter() {
+          @Override
+          public void windowOpened(WindowEvent e) {
+            _worker.execute();
+          }
+        });
   }
 
-  public void show(SwingWorker<T, V> worker)
-  {
+  public void show(SwingWorker<T, V> worker) {
     _worker = worker;
 
     PropertyChangeSupport pcs = _worker.getPropertyChangeSupport();
 
     // close dialog when state changes to done
-    pcs.addPropertyChangeListener("state", evt -> {
-      if (_worker.isDone())
-      {
-        setVisible(false);
-      }
-    });
+    pcs.addPropertyChangeListener(
+        "state",
+        evt -> {
+          if (_worker.isDone()) {
+            setVisible(false);
+          }
+        });
 
     setVisible(true);
   }
 
-  /**
-   * This method is called from within the constructor to
-   * initialize the form.
-   */
-  private void initComponents()
-  {
+  /** This method is called from within the constructor to initialize the form. */
+  private void initComponents() {
     GridBagConstraints gridBagConstraints;
 
     JPanel _middlePanel = new JPanel();
@@ -78,14 +71,13 @@ public class DualProgressDialog<T, V> extends JDialog
     JButton _cancelButton = new JButton();
 
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosing(WindowEvent evt)
-      {
-        formWindowClosing();
-      }
-    });
+    addWindowListener(
+        new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent evt) {
+            formWindowClosing();
+          }
+        });
 
     _middlePanel.setLayout(new GridBagLayout());
 
@@ -125,14 +117,13 @@ public class DualProgressDialog<T, V> extends JDialog
 
     _cancelButton.setText("Cancel");
     _cancelButton.addActionListener(this::_cancelButtonActionPerformed);
-    _cancelButton.addKeyListener(new KeyAdapter()
-    {
-      @Override
-      public void keyPressed(KeyEvent evt)
-      {
-        _cancelButtonKeyPressed(evt);
-      }
-    });
+    _cancelButton.addKeyListener(
+        new KeyAdapter() {
+          @Override
+          public void keyPressed(KeyEvent evt) {
+            _cancelButtonKeyPressed(evt);
+          }
+        });
     _bottomPanel.add(_cancelButton);
 
     getContentPane().add(_bottomPanel, BorderLayout.SOUTH);
@@ -140,41 +131,33 @@ public class DualProgressDialog<T, V> extends JDialog
     pack();
   }
 
-  private void _cancelButtonActionPerformed(ActionEvent ignore)
-  {
+  private void _cancelButtonActionPerformed(ActionEvent ignore) {
     _worker.cancel(true);
   }
 
-  private void formWindowClosing()
-  {
+  private void formWindowClosing() {
     _worker.cancel(true);
   }
 
-  private void _cancelButtonKeyPressed(KeyEvent evt)
-  {
-    if (evt.getKeyCode() == KeyEvent.VK_ESCAPE)
-    {
+  private void _cancelButtonKeyPressed(KeyEvent evt) {
+    if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
       _worker.cancel(true);
     }
   }
 
-  public JLabel getTaskLabel()
-  {
+  public JLabel getTaskLabel() {
     return _taskLabel;
   }
 
-  public JProgressBar getTaskProgressBar()
-  {
+  public JProgressBar getTaskProgressBar() {
     return _taskProgress;
   }
 
-  public JLabel getOverallLabel()
-  {
+  public JLabel getOverallLabel() {
     return _overallLabel;
   }
 
-  public JProgressBar getOverallProgressBar()
-  {
+  public JProgressBar getOverallProgressBar() {
     return _overallProgress;
   }
 }

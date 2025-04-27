@@ -1,9 +1,6 @@
 package listfix.model.enums;
 
-
-public enum PlaylistEntryStatus
-{
-
+public enum PlaylistEntryStatus {
   Exists,
 
   Missing,

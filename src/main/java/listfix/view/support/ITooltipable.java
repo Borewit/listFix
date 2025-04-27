@@ -1,6 +1,5 @@
 package listfix.view.support;
 
-public interface ITooltipable
-{
+public interface ITooltipable {
   String getToolTip();
 }

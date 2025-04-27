@@ -1,31 +1,25 @@
 package listfix.config;
 
+import java.io.IOException;
 import listfix.json.JsonPlayListHistory;
 
-import java.io.IOException;
+public class PlaylistHistoryConfiguration extends JsonConfigFile<JsonPlayListHistory> {
 
-public class PlaylistHistoryConfiguration extends JsonConfigFile<JsonPlayListHistory>
-{
-
-  public PlaylistHistoryConfiguration()
-  {
+  public PlaylistHistoryConfiguration() {
     super("history.json");
   }
 
   @Override
-  public void read() throws IOException
-  {
+  public void read() throws IOException {
     this.jsonPojo = readJson(this.jsonFile, JsonPlayListHistory.class);
   }
 
   @Override
-  public void initPojo()
-  {
+  public void initPojo() {
     this.jsonPojo = new JsonPlayListHistory();
   }
 
-  public static PlaylistHistoryConfiguration load() throws IOException
-  {
+  public static PlaylistHistoryConfiguration load() throws IOException {
     PlaylistHistoryConfiguration config = new PlaylistHistoryConfiguration();
     config.init();
     return config;

@@ -1,89 +1,72 @@
 package listfix.model.playlists;
 
 import io.github.borewit.lizzy.playlist.Media;
-import listfix.model.enums.PlaylistEntryStatus;
-
 import java.net.URI;
 import java.net.URISyntaxException;
+import listfix.model.enums.PlaylistEntryStatus;
 
-public class UriPlaylistEntry extends PlaylistEntry
-{
+public class UriPlaylistEntry extends PlaylistEntry {
   // The entry's URI (for URLs).
   private final URI uri;
 
-  public UriPlaylistEntry(Playlist playlist, Media media)
-  {
+  public UriPlaylistEntry(Playlist playlist, Media media) {
     super(playlist, media);
-    try
-    {
+    try {
       this.uri = media.getSource().getURI();
-    }
-    catch (URISyntaxException e)
-    {
+    } catch (URISyntaxException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public URI getURI()
-  {
+  public URI getURI() {
     return this.uri;
   }
 
   @Override
-  public UriPlaylistEntry clone()
-  {
+  public UriPlaylistEntry clone() {
     UriPlaylistEntry urlPlayListEntry = new UriPlaylistEntry(this.playlist, this.media);
     this.copyTo(urlPlayListEntry);
     return urlPlayListEntry;
   }
 
   @Override
-  protected boolean exists()
-  {
+  protected boolean exists() {
     return false;
   }
 
   @Override
-  public void recheckFoundStatus()
-  {
+  public void recheckFoundStatus() {
     _status = PlaylistEntryStatus.Missing;
     _isFixed = false;
   }
 
   @Override
-  public String getTrackFolder()
-  {
+  public String getTrackFolder() {
     return "";
   }
 
   @Override
-  public String getTrackFileName()
-  {
+  public String getTrackFileName() {
     return this.uri.toString();
   }
 
   @Override
-  public boolean isURL()
-  {
+  public boolean isURL() {
     return true;
   }
 
   @Override
-  public boolean isRelative()
-  {
+  public boolean isRelative() {
     return false;
   }
 
   @Override
-  public boolean equals(Object other)
-  {
-    return other instanceof UriPlaylistEntry &&
-      this.uri.equals(((UriPlaylistEntry) other).uri);
+  public boolean equals(Object other) {
+    return other instanceof UriPlaylistEntry && this.uri.equals(((UriPlaylistEntry) other).uri);
   }
 
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     return this.uri.hashCode();
   }
 }

@@ -1,11 +1,9 @@
 package listfix.config;
 
+import java.awt.*;
 import listfix.io.IPlaylistOptions;
 
-import java.awt.*;
-
-public interface IAppOptions extends IPlaylistOptions
-{
+public interface IAppOptions extends IPlaylistOptions {
   boolean getAutoLocateEntriesOnPlaylistLoad();
 
   int getMaxPlaylistHistoryEntries();
@@ -16,9 +14,7 @@ public interface IAppOptions extends IPlaylistOptions
 
   boolean getAutoRefreshMediaLibraryOnStartup();
 
-  /**
-   * Returns configured application font.
-   */
+  /** Returns configured application font. */
   Font getAppFont();
 
   IApplicationState getApplicationState();

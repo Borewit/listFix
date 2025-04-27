@@ -1,23 +1,20 @@
 package listfix.view;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public abstract class FileListTransferHandler extends TransferHandler
-{
+public abstract class FileListTransferHandler extends TransferHandler {
 
   private final Logger _logger = LogManager.getLogger(FileListTransferHandler.class);
 
   @Override
-  public boolean canImport(JComponent comp, DataFlavor[] transferFlavors)
-  {
+  public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
     return Arrays.stream(transferFlavors).anyMatch(DataFlavor.javaFileListFlavor::equals);
   }
 
@@ -28,17 +25,12 @@ public abstract class FileListTransferHandler extends TransferHandler
    * @return true if the data was inserted into the component, false otherwise
    */
   @Override
-  public boolean importData(TransferSupport support)
-  {
+  public boolean importData(TransferSupport support) {
     final Transferable transferable = support.getTransferable();
-    if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
-    {
-      try
-      {
+    if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+      try {
         handleFileList((List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor));
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
         _logger.error("Transfer Java-file-list failed", e);
       }
     }
@@ -47,6 +39,7 @@ public abstract class FileListTransferHandler extends TransferHandler
 
   /**
    * Called when a Java-File-List is transferred
+   *
    * @param fileList Transferred Java-File-List
    */
   public abstract boolean handleFileList(List<File> fileList);

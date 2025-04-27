@@ -1,7 +1,6 @@
 package listfix.model.playlists;
 
-public class PlaylistProviderNotFoundException extends Exception
-{
+public class PlaylistProviderNotFoundException extends Exception {
   public PlaylistProviderNotFoundException(String message) {
     super(message);
   }

@@ -11,32 +11,22 @@ import java.util.List;
 ============================================================================
  */
 
+public class StringExtensions {
 
-public class StringExtensions
-{
-
-  public static List<String> splitCamelCase(String inputString)
-  {
+  public static List<String> splitCamelCase(String inputString) {
     List<String> result = new ArrayList<>();
     char[] chars = inputString.toCharArray();
     StringBuilder buffer = new StringBuilder();
-    for (int i = 0; i < chars.length; i++)
-    {
-      if (i == 0)
-      {
+    for (int i = 0; i < chars.length; i++) {
+      if (i == 0) {
         buffer.append(chars[i]);
-      }
-      else
-      {
-        if (Character.isUpperCase(chars[i]))
-        {
+      } else {
+        if (Character.isUpperCase(chars[i])) {
           // start a new token in the buffer, saving the current buffer off to the result list
           result.add(buffer.toString());
           buffer.setLength(0);
           buffer.append(chars[i]);
-        }
-        else
-        {
+        } else {
           buffer.append(chars[i]);
         }
       }

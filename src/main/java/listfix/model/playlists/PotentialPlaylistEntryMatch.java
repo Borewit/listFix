@@ -7,29 +7,24 @@ import java.nio.file.Path;
  *
  * @author jcaron
  */
-
-public class PotentialPlaylistEntryMatch
-{
+public class PotentialPlaylistEntryMatch {
   private final Path track;
   private final String trackFolder;
   private final String trackFilename;
   private final int _score;
 
-  public PotentialPlaylistEntryMatch(Path track, int score)
-  {
+  public PotentialPlaylistEntryMatch(Path track, int score) {
     this.track = track;
     this.trackFilename = track.getFileName().toString();
     this.trackFolder = track.getParent() == null ? "" : track.getParent().toString();
     this._score = score;
   }
 
-  public int getScore()
-  {
+  public int getScore() {
     return _score;
   }
 
-  public Path getTrack()
-  {
+  public Path getTrack() {
     return this.track;
   }
 
@@ -39,13 +34,11 @@ public class PotentialPlaylistEntryMatch
    * @return Matching score & track-file-name
    */
   @Override
-  public String toString()
-  {
+  public String toString() {
     return String.format("%d: %s", this._score, trackFilename);
   }
 
-  public String getTrackFolder()
-  {
+  public String getTrackFolder() {
     return this.trackFolder;
   }
 }

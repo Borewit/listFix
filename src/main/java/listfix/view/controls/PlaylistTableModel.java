@@ -1,14 +1,12 @@
 package listfix.view.controls;
 
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import listfix.model.playlists.Playlist;
 import listfix.model.playlists.PlaylistEntry;
 import listfix.view.support.ImageIcons;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-
-class PlaylistTableModel extends AbstractTableModel
-{
+class PlaylistTableModel extends AbstractTableModel {
   private Playlist playlist;
 
   PlaylistTableModel() {
@@ -21,89 +19,66 @@ class PlaylistTableModel extends AbstractTableModel
   }
 
   @Override
-  public int getRowCount()
-  {
-    if (playlist != null)
-    {
+  public int getRowCount() {
+    if (playlist != null) {
       return playlist.size();
-    }
-    else
-    {
+    } else {
       return 0;
     }
   }
 
   @Override
-  public int getColumnCount()
-  {
+  public int getColumnCount() {
     return 4;
   }
 
   @Override
-  public Object getValueAt(int rowIndex, int columnIndex)
-  {
+  public Object getValueAt(int rowIndex, int columnIndex) {
     PlaylistEntry entry = playlist.get(rowIndex);
-    switch (columnIndex)
-    {
-      case 0 ->
-      {
+    switch (columnIndex) {
+      case 0 -> {
         return rowIndex + 1;
       }
-      case 1 ->
-      {
-        if (entry.isURL())
-        {
+      case 1 -> {
+        if (entry.isURL()) {
           return ImageIcons.IMG_URL;
-        }
-        else if (entry.isFixed())
-        {
+        } else if (entry.isFixed()) {
           return ImageIcons.IMG_FIXED;
-        }
-        else if (entry.isFound())
-        {
+        } else if (entry.isFound()) {
           return ImageIcons.IMG_FOUND;
-        }
-        else
-        {
+        } else {
           return ImageIcons.IMG_MISSING;
         }
       }
-      case 2 ->
-      {
+      case 2 -> {
         return entry.getTrackFileName();
       }
-      case 3 ->
-      {
+      case 3 -> {
         return entry.getTrackFolder();
       }
-      default ->
-      {
+      default -> {
         return null;
       }
     }
   }
 
   @Override
-  public String getColumnName(int column)
-  {
-    return switch (column)
-      {
-        case 0 -> "#";
-        case 1 -> "";
-        case 2 -> "File Name";
-        case 3 -> "Location";
-        default -> null;
-      };
+  public String getColumnName(int column) {
+    return switch (column) {
+      case 0 -> "#";
+      case 1 -> "";
+      case 2 -> "File Name";
+      case 3 -> "Location";
+      default -> null;
+    };
   }
 
   @Override
-  public Class<?> getColumnClass(int columnIndex)
-  {
-    return switch (columnIndex)
-      {
-        case 0 -> Integer.class;
-        case 1 -> ImageIcon.class;
-        default -> Object.class;
-      };
+  public Class<?> getColumnClass(int columnIndex) {
+    return switch (columnIndex) {
+      case 0 -> Integer.class;
+      case 1 -> ImageIcon.class;
+      default -> Object.class;
+    };
   }
 }

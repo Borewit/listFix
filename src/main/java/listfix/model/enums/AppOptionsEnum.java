@@ -1,8 +1,6 @@
 package listfix.model.enums;
 
-
-public final class AppOptionsEnum
-{
+public final class AppOptionsEnum {
 
   public static final Integer SAVE_RELATIVE_REFERENCES = 0;
 

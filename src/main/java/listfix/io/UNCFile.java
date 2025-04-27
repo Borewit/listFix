@@ -1,91 +1,66 @@
 package listfix.io;
 
-import pspdash.NetworkDriveList;
-
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import pspdash.NetworkDriveList;
 
-public class UNCFile extends File
-{
+public class UNCFile extends File {
   private static final NetworkDriveList driveLister = new NetworkDriveList();
   private static final List<UNCFile> networkDrives = new ArrayList<>();
 
-  static
-  {
+  static {
     File[] roots = File.listRoots();
-    for (File root : roots)
-    {
+    for (File root : roots) {
       UNCFile file = new UNCFile(root);
-      if (file.onNetworkDrive())
-      {
+      if (file.onNetworkDrive()) {
         networkDrives.add(file);
       }
     }
   }
 
-
-  public UNCFile(String pathname)
-  {
+  public UNCFile(String pathname) {
     super(pathname);
   }
 
-
-  public UNCFile(File parent, String child)
-  {
+  public UNCFile(File parent, String child) {
     super(parent, child);
   }
 
-
-  public UNCFile(String parent, String child)
-  {
+  public UNCFile(String parent, String child) {
     super(parent, child);
   }
 
-
-  public UNCFile(URI uri)
-  {
+  public UNCFile(URI uri) {
     super(uri);
   }
 
-
-  public UNCFile(File file)
-  {
+  public UNCFile(File file) {
     super(file.getPath());
   }
 
-
-  public String getDrivePath()
-  {
+  public String getDrivePath() {
     String result = this.getPath();
-    if (this.isInUNCFormat())
-    {
+    if (this.isInUNCFormat()) {
       result = driveLister.fromUNCName(this.getAbsolutePath());
     }
     return result;
   }
 
-
-  public String getUNCPath()
-  {
+  public String getUNCPath() {
     String result = this.getPath();
-    if (this.onNetworkDrive())
-    {
+    if (this.onNetworkDrive()) {
       result = driveLister.toUNCName(this.getAbsolutePath());
     }
     return result;
   }
 
-
-  public boolean isInUNCFormat()
-  {
+  public boolean isInUNCFormat() {
     return this.getAbsolutePath().startsWith("\\\\");
   }
 
-
-  public static List<UNCFile> listMappedRoots()
-  {
+  public static List<UNCFile> listMappedRoots() {
     return networkDrives;
   }
 
@@ -94,13 +69,11 @@ public class UNCFile extends File
    *
    * @return True if the file is on a network drive, false otherwise.
    */
-  public boolean onNetworkDrive()
-  {
+  public boolean onNetworkDrive() {
     return driveLister.onNetworkDrive(this.getAbsolutePath());
   }
 
-  public static UNCFile from(File file)
-  {
+  public static UNCFile from(File file) {
     return new UNCFile(file);
   }
 }

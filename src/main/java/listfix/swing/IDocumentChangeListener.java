@@ -2,8 +2,7 @@ package listfix.swing;
 
 import javax.swing.*;
 
-public interface IDocumentChangeListener
-{
+public interface IDocumentChangeListener {
   /**
    * Fired when the user tried to close the document
    *

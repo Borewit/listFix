@@ -1,12 +1,5 @@
 package listfix.view.dialogs;
 
-import listfix.json.JsonAppOptions;
-import listfix.util.OperatingSystem;
-import listfix.view.support.FontExtensions;
-import say.swing.JFontChooser;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +8,14 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import listfix.json.JsonAppOptions;
+import listfix.util.OperatingSystem;
+import listfix.view.support.FontExtensions;
+import say.swing.JFontChooser;
 
-public class AppOptionsDialog extends JDialog
-{
+public class AppOptionsDialog extends JDialog {
 
   public static final int OK = 0;
   public static final int CANCEL = 1;
@@ -29,68 +27,52 @@ public class AppOptionsDialog extends JDialog
   private JsonAppOptions _options;
   private Font _chosenFont;
 
-  private void ApplyOperatingSystemBasedVisibility()
-  {
-    if (!OperatingSystem.isWindows())
-    {
+  private void ApplyOperatingSystemBasedVisibility() {
+    if (!OperatingSystem.isWindows()) {
       _pnlUseUnc.setVisible(false);
-    }
-    else if (OperatingSystem.isWindows())
-    {
+    } else if (OperatingSystem.isWindows()) {
       _pnlDisableCaseSensitivity.setVisible(false);
     }
   }
 
-  private static class IntegerRangeComboBoxModel extends AbstractListModel<Integer> implements ComboBoxModel<Integer>
-  {
+  private static class IntegerRangeComboBoxModel extends AbstractListModel<Integer>
+      implements ComboBoxModel<Integer> {
     private final List<Integer> intList = new ArrayList<>();
     Object _selected;
 
-    IntegerRangeComboBoxModel(int i, int i0)
-    {
-      for (int j = i; j <= i0; j++)
-      {
+    IntegerRangeComboBoxModel(int i, int i0) {
+      for (int j = i; j <= i0; j++) {
         intList.add(j);
       }
     }
 
     @Override
-    public void setSelectedItem(Object anItem)
-    {
+    public void setSelectedItem(Object anItem) {
       _selected = anItem;
     }
 
     @Override
-    public Object getSelectedItem()
-    {
+    public Object getSelectedItem() {
       return _selected;
     }
 
     @Override
-    public int getSize()
-    {
+    public int getSize() {
       return intList.size();
     }
 
     @Override
-    public Integer getElementAt(int index)
-    {
+    public Integer getElementAt(int index) {
       return intList.get(index);
     }
   }
 
-  /**
-   * Creates new form EditFilenameDialog
-   */
-  public AppOptionsDialog(Frame parent, String title, boolean modal, JsonAppOptions opts)
-  {
+  /** Creates new form EditFilenameDialog */
+  public AppOptionsDialog(Frame parent, String title, boolean modal, JsonAppOptions opts) {
     super(parent, title, modal);
-    if (opts == null)
-    {
+    if (opts == null) {
       _options = new JsonAppOptions();
-    }
-    else
-    {
+    } else {
       _options = opts;
     }
     initComponents();
@@ -100,108 +82,97 @@ public class AppOptionsDialog extends JDialog
     initPlaylistDirectoryFolderChooser();
   }
 
-  private void initPlaylistDirectoryFolderChooser()
-  {
+  private void initPlaylistDirectoryFolderChooser() {
     _jMediaDirChooser.setDialogTitle("Specify a playlists directory...");
     _jMediaDirChooser.setAcceptAllFileFilterUsed(false);
     _jMediaDirChooser.setMinimumSize(new Dimension(400, 500));
     _jMediaDirChooser.setPreferredSize(new Dimension(400, 500));
   }
 
-  public String getFileName()
-  {
+  public String getFileName() {
     return _fileName;
   }
 
-  public void setFileName(String x)
-  {
+  public void setFileName(String x) {
     _fileName = x;
   }
 
-  public void setResultCode(int i)
-  {
+  public void setResultCode(int i) {
     _resultCode = i;
   }
 
-  public int getResultCode()
-  {
+  public int getResultCode() {
     return _resultCode;
   }
 
-  private LookAndFeelInfo[] getInstalledLookAndFeels()
-  {
+  private LookAndFeelInfo[] getInstalledLookAndFeels() {
     return UIManager.getInstalledLookAndFeels();
   }
 
-  private DefaultComboBoxModel getLookAndFeelMenuItems()
-  {
-    return new DefaultComboBoxModel(Arrays.stream(getInstalledLookAndFeels()).map(LookAndFeelInfo::getName).toArray());
+  private DefaultComboBoxModel getLookAndFeelMenuItems() {
+    return new DefaultComboBoxModel(
+        Arrays.stream(getInstalledLookAndFeels()).map(LookAndFeelInfo::getName).toArray());
   }
 
-  private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index)
-  {
+  private LookAndFeelInfo getInstalledLookAndFeelAtIndex(int index) {
     UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
-    if (index < plafs.length)
-    {
+    if (index < plafs.length) {
       return plafs[index];
     }
     return plafs[0];
   }
 
-  private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name)
-  {
+  private LookAndFeelInfo getInstalledLookAndFeelByClassName(String name) {
     UIManager.LookAndFeelInfo[] plafs = getInstalledLookAndFeels();
-    for (LookAndFeelInfo plaf : plafs)
-    {
-      if (name.equals(plaf.getClassName()))
-      {
+    for (LookAndFeelInfo plaf : plafs) {
+      if (name.equals(plaf.getClassName())) {
         return plaf;
       }
     }
     return plafs[0];
   }
 
-
-  public JsonAppOptions showDialog()
-  {
+  public JsonAppOptions showDialog() {
     this.center();
     this.setVisible(true);
-    if (this.getResultCode() == OK)
-    {
+    if (this.getResultCode() == OK) {
       _options.setAutoLocateEntriesOnPlaylistLoad(autoLocateCheckBox.isSelected());
-      _options.setMaxPlaylistHistoryEntries(((Integer) recentPlaylistLimitComboBox.getItemAt(recentPlaylistLimitComboBox.getSelectedIndex())));
+      _options.setMaxPlaylistHistoryEntries(
+          ((Integer)
+              recentPlaylistLimitComboBox.getItemAt(
+                  recentPlaylistLimitComboBox.getSelectedIndex())));
       _options.setSavePlaylistsWithRelativePaths(relativePathsCheckBox.isSelected());
       _options.setAutoRefreshMediaLibraryOnStartup(autoRefreshOnStartupCheckBox.isSelected());
-      _options.setLookAndFeel(getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
+      _options.setLookAndFeel(
+          getInstalledLookAndFeelAtIndex(lookAndFeelComboBox.getSelectedIndex()).getClassName());
       _options.setAlwaysUseUNCPaths(alwaysUseUNCPathsCheckBox.isSelected());
       _options.setAppFont(_chosenFont);
-      _options.setMaxClosestResults(((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())));
+      _options.setMaxClosestResults(
+          ((Integer) _cbxMaxClosestMatches.getItemAt(_cbxMaxClosestMatches.getSelectedIndex())));
       _options.setIgnoredSmallWords(_smallWordsTxtField.getText().trim());
       _options.setCaseInsensitiveExactMatching(_cbxCaseSensitivity.isSelected());
     }
     return _options;
   }
 
-  private void center()
-  {
+  private void center() {
     Point parentLocation = this.getParent().getLocationOnScreen();
     double x = parentLocation.getX();
     double y = parentLocation.getY();
     int width = this.getParent().getWidth();
     int height = this.getParent().getHeight();
 
-    this.setLocation((int) x + (width - this.getPreferredSize().width) / 2, (int) y + (height - this.getPreferredSize().height) / 2);
+    this.setLocation(
+        (int) x + (width - this.getPreferredSize().width) / 2,
+        (int) y + (height - this.getPreferredSize().height) / 2);
   }
 
   /**
-   * This method is called from within the constructor to
-   * initialize the form.
-   * WARNING: Do NOT modify this code. The content of this method is
-   * always regenerated by the Form Editor.
+   * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+   * modify this code. The content of this method is always regenerated by the Form Editor.
    */
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-  private void initComponents()
-  {
+  private void initComponents() {
     GridBagConstraints gridBagConstraints;
 
     JPanel topPanel = new JPanel();
@@ -244,14 +215,13 @@ public class AppOptionsDialog extends JDialog
 
     setMinimumSize(new Dimension(480, 385));
     setModal(true);
-    addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosing(WindowEvent evt)
-      {
-        closeDialog();
-      }
-    });
+    addWindowListener(
+        new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent evt) {
+            closeDialog();
+          }
+        });
     getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
     topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -269,7 +239,8 @@ public class AppOptionsDialog extends JDialog
     _pnlLookAndFeel.add(jLabel5);
 
     lookAndFeelComboBox.setModel(this.getLookAndFeelMenuItems());
-    lookAndFeelComboBox.setSelectedItem(this.getInstalledLookAndFeelByClassName(_options.getLookAndFeel()).getName());
+    lookAndFeelComboBox.setSelectedItem(
+        this.getInstalledLookAndFeelByClassName(_options.getLookAndFeel()).getName());
     _pnlLookAndFeel.add(lookAndFeelComboBox);
 
     gridBagConstraints = new GridBagConstraints();
@@ -306,7 +277,8 @@ public class AppOptionsDialog extends JDialog
     _pnlNumClosestMatches.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
 
     jLabel9.setText("Number of closest matches to return when searching:");
-    jLabel9.setToolTipText("This value has memory usage implications, if you run out of memory while repairing a list, dial this down to 20 or less.");
+    jLabel9.setToolTipText(
+        "This value has memory usage implications, if you run out of memory while repairing a list, dial this down to 20 or less.");
     jLabel9.setMinimumSize(new Dimension(257, 20));
     _pnlNumClosestMatches.add(jLabel9);
 
@@ -473,26 +445,24 @@ public class AppOptionsDialog extends JDialog
     jButton1.setText("OK");
     jButton1.setMinimumSize(new Dimension(49, 20));
     jButton1.setPreferredSize(null);
-    jButton1.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent evt)
-      {
-        jButton1ActionPerformed();
-      }
-    });
+    jButton1.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+            jButton1ActionPerformed();
+          }
+        });
     buttonPanel.add(jButton1);
 
     jButton2.setText("Cancel");
     jButton2.setMinimumSize(new Dimension(67, 20));
-    jButton2.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent evt)
-      {
-        jButton2ActionPerformed();
-      }
-    });
+    jButton2.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+            jButton2ActionPerformed();
+          }
+        });
     buttonPanel.add(jButton2);
 
     topPanel.add(buttonPanel);
@@ -500,33 +470,27 @@ public class AppOptionsDialog extends JDialog
     getContentPane().add(topPanel);
 
     pack();
-  }// </editor-fold>//GEN-END:initComponents
+  } // </editor-fold>//GEN-END:initComponents
 
-  private void jButton2ActionPerformed()
-  {
+  private void jButton2ActionPerformed() {
     setVisible(false);
     dispose();
     setResultCode(CANCEL);
   }
 
-  private void jButton1ActionPerformed()
-  {
+  private void jButton1ActionPerformed() {
     setVisible(false);
     dispose();
     setResultCode(OK);
   }
 
-  /**
-   * Closes the dialog
-   */
-  private void closeDialog()
-  {
+  /** Closes the dialog */
+  private void closeDialog() {
     setVisible(false);
     dispose();
   }
 
-  private void _changeFontButtonActionPerformed()
-  {
+  private void _changeFontButtonActionPerformed() {
     JFontChooser jfc = new JFontChooser();
     jfc.setSelectedFont(_chosenFont);
     jfc.showDialog(this);
