@@ -7,6 +7,7 @@ import listfix.io.FileUtils;
 import listfix.model.enums.PlaylistEntryStatus;
 import listfix.util.ArrayFunctions;
 import listfix.util.OperatingSystem;
+import listfix.util.PathSanitizer;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class FilePlaylistEntry extends PlaylistEntry
   public FilePlaylistEntry(Playlist playlist, Media media)
   {
     super(playlist, media);
-    this.trackPath = convertPath(Path.of(media.getSource().toString()));
+    this.trackPath = convertPath(PathSanitizer.makePath(media.getSource().toString()));
     this.playlistPath = playlist.getPath();
     // should we skip the exists check?
     if (this.skipExistsCheck())
