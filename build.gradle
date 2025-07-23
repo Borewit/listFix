@@ -86,7 +86,7 @@ repositories {
 dependencies {
 
     // Provides christophedelory.playlist.*
-    implementation 'io.github.borewit:lizzy:4.1.1'
+    implementation 'io.github.borewit:lizzy:4.1.2'
 
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
