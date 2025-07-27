@@ -22,7 +22,14 @@ public class PathSanitizer
 
     for (int i = 0; i < parts.length; i++) {
       String part = parts[i];
-      String sanitizedPart = IS_WINDOWS ? sanitizeWindowsPath(part) : sanitizeUnixPath(part);
+
+      String sanitizedPart;
+      if (IS_WINDOWS && i == 0 && part.substring(0, 2).matches("^[A-Z]:$")) {
+        sanitizedPart = part.substring(0, 2) + sanitizeWindowsPath(part.substring(2));
+      }
+      else {
+          sanitizedPart = IS_WINDOWS ? sanitizeWindowsPath(part) : sanitizeUnixPath(part);
+      }
 
       if (i > 0) {
         sanitizedPath.append(File.separator);
