@@ -235,7 +235,7 @@ task fatJar(type: Jar) {
 
 task makePngIcon(type: Svg2PngTask) {
     group = 'graphics'
-    source = file('src/main/svg/listFix() icon.svg')
+    source = new File('src/main/svg/listFix() icon.svg')
     width = 64
     height = 64
     destination = new File(pathPngIcon)
