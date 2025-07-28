@@ -24,7 +24,7 @@ public class PathSanitizer
       String part = parts[i];
 
       String sanitizedPart;
-      if (IS_WINDOWS && i == 0 && part.substring(0, 2).matches("^[A-Z]:$")) {
+      if (IS_WINDOWS && i == 0 && part.matches("^[a-zA-Z]:.*")) {
         sanitizedPart = part.substring(0, 2) + sanitizeWindowsPath(part.substring(2));
       }
       else {
